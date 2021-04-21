@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { combineLatest, Subscription } from 'rxjs';
 import { CGCoinListItem, CoinGeckoService } from '../_services/coin-gecko.service';
 import { MidgardService } from '../_services/midgard.service';
 import { Asset, isNonNativeRuneToken } from '../_classes/asset';
@@ -91,6 +91,7 @@ export class PoolCreateComponent implements OnInit, OnDestroy {
   ethRouter: string;
   ethContractApprovalRequired: boolean;
   user: User;
+  depositsDisabled: boolean;
 
   //view of the page
   view: CreatePoolViews;
@@ -105,6 +106,7 @@ export class PoolCreateComponent implements OnInit, OnDestroy {
     public overlaysService: OverlaysService
   ) {
     this.rune = new Asset(`THOR.RUNE`);
+    this.depositsDisabled = false;
 
     const balances$ = this.userService.userBalances$.subscribe(
       (balances) => {
@@ -162,6 +164,7 @@ export class PoolCreateComponent implements OnInit, OnDestroy {
     });
 
     this.getCoinGeckoCoinList();
+    this.getPoolCap();
 
     //because you get the user already before prop init this will be called with asset of undifiend
     const user$ = this.userService.user$.subscribe(
@@ -175,6 +178,24 @@ export class PoolCreateComponent implements OnInit, OnDestroy {
 
     this.subs.push(params$, user$);
 
+  }
+
+  getPoolCap() {
+    const mimir$ = this.midgardService.getMimir();
+    const network$ = this.midgardService.getNetwork();
+    const combined = combineLatest([mimir$, network$]);
+    const sub = combined.subscribe( ([mimir, network]) => {
+
+      const totalPooledRune = +network.totalPooledRune / (10 ** 8);
+
+      if (mimir && mimir['mimir//MAXLIQUIDITYRUNE']) {
+        const maxLiquidityRune = mimir['mimir//MAXLIQUIDITYRUNE'] / (10 ** 8);
+        this.depositsDisabled = (totalPooledRune / maxLiquidityRune >= .9);
+      }
+
+    });
+
+    this.subs.push(sub);
   }
 
   getEthRouter() {
@@ -197,9 +218,9 @@ export class PoolCreateComponent implements OnInit, OnDestroy {
         this.pools = poolNames;
 
         /** MCCN TESTING */
-        // if (this.pools.includes(currentPool)) {
-        //   this.router.navigate(['/', 'deposit', currentPool]);
-        // }
+        if (this.pools.includes(currentPool)) {
+          this.router.navigate(['/', 'deposit', currentPool]);
+        }
 
         this.checkCreateableMarkets();
       }
@@ -262,6 +283,7 @@ export class PoolCreateComponent implements OnInit, OnDestroy {
 
     return !this.balances || !this.runeAmount || !this.assetAmount
     || this.insufficientBnb || this.runeAmount < 1000 || this.ethContractApprovalRequired
+    || this.depositsDisabled
     || (this.balances
       && (this.runeAmount > this.runeBalance || this.assetAmount > this.userService.maximumSpendableBalance(this.asset, this.assetBalance))
     );
@@ -273,6 +295,12 @@ export class PoolCreateComponent implements OnInit, OnDestroy {
       return 'Please connect wallet';
     } else if (this.ethContractApprovalRequired) {
       return 'Ready';
+    }
+    else if (this.depositsDisabled) {
+      return 'Pool Cap > 90%';
+    }
+    else if (this.ethContractApprovalRequired) {
+      return 'Create Pool';
     } else if (this.balances && (!this.runeAmount || !this.assetAmount)) {
       return 'Prepare';
     } else if (this.balances && (this.runeAmount > this.runeBalance
@@ -304,13 +332,9 @@ export class PoolCreateComponent implements OnInit, OnDestroy {
       this.selectableMarkets = this.balances.filter( (balance) => {
         const asset = balance.asset;
 
-        /** MCCN TESTING */
-        // return !this.pools.find((pool) => pool === `${asset.chain}.${asset.symbol}`)
-        //   && !isNonNativeRuneToken(asset)
-        //   && asset.chain !== 'THOR';
-        return !isNonNativeRuneToken(asset)
+        return !this.pools.find((pool) => pool === `${asset.chain}.${asset.symbol}`)
+          && !isNonNativeRuneToken(asset)
           && asset.chain !== 'THOR';
-
 
       }).map( (balance) => {
         return {asset: new Asset(`${balance.asset.chain}.${balance.asset.symbol}`)};
