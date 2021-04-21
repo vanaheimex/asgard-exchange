@@ -6,13 +6,14 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 /** COMPONENTS */
 import { AppComponent } from './app.component';
-import { ConnectComponent, ConnectModal } from './_components/connect/connect.component';
+// import { ConnectComponent, ConnectModal } from './_components/connect/connect.component';
 import { ConfimSendComponent } from './_components/user-settings/user-settings-dialog/confim-send/confim-send.component';
-import { ConnectErrorComponent } from './_components/connect/connect-error/connect-error.component';
+// import { ConnectErrorComponent } from './_components/connect/connect-error/connect-error.component';
 import { HeaderComponent } from './_components/header/header.component';
-import { KeystoreConnectComponent } from './_components/connect/keystore-connect/keystore-connect.component';
+// import { KeystoreConnectComponent } from './_components/connect/keystore-connect/keystore-connect.component';
 import { LastBlockIndicatorComponent } from './_components/last-block-indicator/last-block-indicator.component';
-import { KeystoreCreateComponent } from './_components/connect/keystore-create/keystore-create.component';
+// import { LedgerConnectComponent } from './_components/connect/ledger-connect/ledger-connect.component';
+// import { KeystoreCreateComponent } from './_components/connect/keystore-create/keystore-create.component';
 import { PendingTxsModalComponent } from './_components/user-settings/user-settings-dialog/pending-txs/pending-txs-modal.component';
 import { UserAddressComponent } from './_components/user-settings/user-settings-dialog/user-address/user-address.component';
 import { UserSettingsComponent } from './_components/user-settings/user-settings.component';
@@ -23,6 +24,7 @@ import { TestnetWarningComponent } from './_components/testnet-warning/testnet-w
 import { UserAssetComponent } from './_components/user-settings/user-settings-dialog/user-asset/user-asset.component';
 import { SendAssetComponent } from './_components/user-settings/user-settings-dialog/send-asset/send-asset.component';
 import { UserAddressAddTokenComponent } from './_components/user-settings/user-settings-dialog/user-address-add-token/user-address-add-token.component';
+import { NativeRunePromptModalComponent } from './_components/native-rune-prompt/native-rune-prompt-modal/native-rune-prompt-modal.component';
 
 /** MODULES */
 import { AppRoutingModule } from './app-routing.module';
@@ -30,6 +32,10 @@ import { AssetsListModule } from './_components/assets-list/assets-list.module';
 import { AssetInputModule } from './_components/asset-input/asset-input.module';
 import { TransactionProcessingModalModule } from './_components/transaction-processing-modal/transaction-processing-modal.module';
 import { DirectivesModule } from './_directives/directives.module';
+import { ArrowModule } from './_components/arrow/arrow.module';
+import { TextFieldModule } from './_components/text-field/text-field.module';
+import { BreadcrumbModule } from './_components/breadcrumb/breadcrumb.module';
+import { TagModule } from './_components/tag/tag.module';
 import { PhraseWordsListModule } from './_components/phrase-words-list/phrase-words-list.module';
 
 /** SERVICES */
@@ -70,6 +76,9 @@ import { NativeRunePromptModule } from './_components/native-rune-prompt/native-
 import { UpgradeRuneModule } from './_components/upgrade-rune/upgrade-rune.module';
 import { UpgradeRuneConfirmModule } from './_components/upgrade-rune-confirm/upgrade-rune-confirm.module';
 import { SochainService } from './_services/sochain.service';
+import { NoticeModule } from './_components/notice/notice.module';
+import { AccountSettingsComponent } from './_components/account-settings/account-settings.component';
+import { SeedPhraseComponent } from './_components/account-settings/seed-phrase/seed-phrase.component';
 import { ThorchainPricesService } from './_services/thorchain-prices.service';
 import { HaskoinService } from './_services/haskoin.service';
 import { ModalSectionHeaderModule } from './_components/modal-section-header/modal-section-header.module';
@@ -81,12 +90,13 @@ import { TransactionUtilsService } from './_services/transaction-utils.service';
   declarations: [
     AppComponent,
     HeaderComponent,
-    ConnectComponent,
-    ConnectModal,
-    KeystoreConnectComponent,
-    ConnectErrorComponent,
+    // ConnectComponent,
+    // ConnectModal,
+    // KeystoreConnectComponent,
+    // ConnectErrorComponent,
     LastBlockIndicatorComponent,
-    KeystoreCreateComponent,
+    // LedgerConnectComponent,
+    // KeystoreCreateComponent,
     UserSettingsComponent,
     UserSettingsDialogComponent,
     PendingTxsModalComponent,
@@ -102,7 +112,9 @@ import { TransactionUtilsService } from './_services/transaction-utils.service';
     DepositConfirmComponent,
     DepositFormComponent,
     UserAddressAddTokenComponent,
-    KeystoreCreateStorePhraseComponent,
+    AccountSettingsComponent,
+    SeedPhraseComponent,
+    // KeystoreCreateStorePhraseComponent,
   ],
   imports: [
     AssetInputModule,
@@ -128,9 +140,14 @@ import { TransactionUtilsService } from './_services/transaction-utils.service';
     AppRoutingModule,
     TransactionSuccessModalModule,
     DirectivesModule,
+    ArrowModule,
+    TextFieldModule,
+    BreadcrumbModule,
+    TagModule,
+    NoticeModule,
+    NativeRunePromptModule,
     ModalSectionHeaderModule,
     PhraseWordsListModule,
-    MatTooltipModule
   ],
   providers: [
     BinanceService,

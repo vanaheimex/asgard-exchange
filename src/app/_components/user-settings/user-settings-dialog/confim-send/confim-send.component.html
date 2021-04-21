@@ -1,53 +1,109 @@
-<div *ngIf="txState == 'PENDING_CONFIRMATION' && asset">
+<div class="container-wrapper" *ngIf="txState === 'PENDING_CONFIRMATION' || mode === 'ERROR'">
+  <div class="container">
+    <div class="content-top">
+      <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'wallet', call: 'wallet'}, {name: asset.asset.chain, call: 'chain'}, {name: asset.asset.chain + '.' + asset.asset.ticker, call: 'asset'}, {name: 'send', disable: true}]" [message]="message" (funcCaller)="navCaller($event)" [isError]="mode === 'ERROR'"></app-breadcrumb>
+      <div class="top-right">
+      </div>
+    </div>
 
-  <app-modal-section-header sectionTitle="Confirm Send" [displayBackBtn]="true" (back)="back.emit()"></app-modal-section-header>
+    <div mat-dialog-content>
 
-  <div class="p-4 confirm-modal-head">
+      <div class="modal-head confirm-modal-head">
 
-    <div class="flex justify-between transaction-detail clear-both">
+        <app-asset-input
+          label="Send"
+          [(selectedAsset)]="asset.asset"
+          [(assetUnit)]="amount"
+          [balance]="asset.balance.amount().toNumber()"
+          [disabledAssetSymbol]="asset.asset.symbol"
+          [selectableMarkets]="[asset]"
+          [disabledMarketSelect]="true"
+          [disableInput]="true"
+          [hideMax]="true"
+          [isSource]="true">
+        </app-asset-input>
 
-      <div class="flex items-center">
-        <div style="margin-right: 12px;" class="asset-icon-container flex items-center">
-          <img *ngIf="asset.asset && asset.asset.iconPath" [src]="asset.asset.iconPath" appImgFallback />
-          <mat-icon *ngIf="!asset.asset.iconPath">help_outline</mat-icon>
-        </div>
-        <span style="margin-right: 8px; font-size: 20px">{{amount}}</span>
+        <app-arrow></app-arrow>
+
+        <app-text-field selectedType="Text" mode="Double" typeTwo="text" label="Recipient Address" labelTwo="Memo" [(textOfField)]="recipientAddress" [disable]="true" [disableTwo]="true"></app-text-field>
+        <!-- <app-text-field *ngIf="mode === 'SUCCESS'"  selectedType="Text" mode="Single" label="Recipient Address" [(textOfField)]="recipientAddress" [disable]="true"></app-text-field> -->
+        <!-- <div *ngIf="mode === 'SUCCESS'">
+          <app-arrow></app-arrow>
+          <app-notice [tags]="['Copy', 'Explorer']" [isMono]="true">
+            <span text style="font-family: inherit;">{{hash.substring(0, 20) + '...' + hash.substring(hash.length - 20, hash.length)}}</span>
+            <div tag_one (click)="copyToClipboard(hash)">
+              <span>COPY</span>
+            </div>
+            <div tag_two>
+              <a target="_blank" style="text-decoration: none; color: inherit;" [href]="getExplorerPath() + '/' + hash">Explore</a>
+            </div>
+          </app-notice>
+        </div> -->
+
       </div>
 
-      <span>{{asset.asset.ticker}}</span>
-
     </div>
 
-    <div class="flex">
-      <mat-icon style="margin-left: 4px; margin-bottom: 12px;" class="to-btn-icon disabled text-sm">arrow_downward</mat-icon>
+    <div class="bottom-actions two-btn">
+      <div class="right-btn">
+        <div>
+          <button class="close-btn" (click)="back.emit()">
+            <span>cancel</span>
+          </button>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="left-btn">
+        <div>
+          <button [disabled]="loading || insufficientChainBalance" (click)="submitTransaction()" class="next-btn">
+            <span>confirm</span>
+          </button>
+        </div>
+      </div>
     </div>
-
-    <div class="uni-input">
-      <label>Recipient Address</label>
-      <textarea [(ngModel)]="recipientAddress" name="recipient-address" [disabled]="true"></textarea>
+    <!-- <div class="bottom-actions">
+      <div style="width: 100%;">
+        <button [disabled]="true" class="next-btn" aria-label="TRANSACTION PROCESSING…">
+          <span>PLEASE WAIT…</span>
+        </button>
+      </div>
     </div>
-
-    <div *ngIf="loading" style="height: 56px;" class="flex justify-center items-center w-full mt-4">
-      <mat-progress-spinner mode="indeterminate" diameter="30"></mat-progress-spinner>
-    </div>
-
-    <button *ngIf="!loading" (click)="submitTransaction()" mat-flat-button color="primary" class="main-action-btn w-full" [disabled]="insufficientChainBalance">
-      <span *ngIf="insufficientChainBalance">Insufficient {{asset.asset.chain}}</span>
-      <span *ngIf="!insufficientChainBalance">Send {{asset.asset.ticker}}</span>
-    </button>
-
+    <div class="bottom-actions" *ngIf="(mode === 'SUCCESS' && asset) || mode === 'ERROR'">
+      <div style="width: 100%;">
+        <button class="close-btn" aria-label="CLOSE" (click)="mode === 'SUCCESS' ? close.emit() : back.emit()">
+          <span>close</span>
+        </button>
+      </div>
+    </div> -->
   </div>
-
 </div>
 
 <app-transaction-processing-modal
   *ngIf="txState === 'SUBMITTING' && asset"
-  transactionDetail="Sending {{asset.asset.ticker}}">
+  [isSending]="true"
+  [label]="['Sending']"
+  [asset]="[asset]"
+  [amount]="[amount]"
+  [recipientAddress]="recipientAddress">
+  <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'wallet', call: 'wallet'}, {name: asset.asset.chain, call: 'chain'}, {name: asset.asset.chain + '.' + asset.asset.ticker, call: 'asset'}, {name: 'send', disable: true}]" message="TRANSACTION PROCESSING" (funcCaller)="navCaller($event)"></app-breadcrumb>
 </app-transaction-processing-modal>
 
-<div *ngIf="txState === 'ERROR'" class="flex flex-col items-center py-8 text-sm">
+<app-transaction-success-modal
+  *ngIf="txState === 'SUCCESS' && asset"
+  [isSending]="true"
+  [label]="['Sent']"
+  [asset]="[asset]"
+  [chain]="asset.asset.chain"
+  [amount]="[amount]"
+  [hash]="hash"
+  (closeDialog)="close.emit()"
+  [recipientAddress]="recipientAddress">
+  <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'wallet', call: 'wallet'}, {name: asset.asset.chain, call: 'chain'}, {name: asset.asset.chain + '.' + asset.asset.ticker, call: 'asset'}, {name: 'send', disable: true}]" message="SUCCESS" (funcCaller)="navCaller($event)"></app-breadcrumb>
+</app-transaction-success-modal>
+
+<!-- <div *ngIf="txState === 'ERROR'" class="flex flex-col items-center py-8 text-sm">
   <mat-icon>warning</mat-icon>
   There was an error sending.<br />
   {{error}}
-</div>
+</div> -->
 

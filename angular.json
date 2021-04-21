@@ -1,5 +1,8 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "cli": {
+    "analytics": false
+  },
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
@@ -41,6 +44,22 @@
                 {
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.prod.ts"
+                }
+              ],
+              "index": {
+                "input": "src/index.prod.html",
+                "output": "index.html"
+              },
+              "assets": [
+                {
+                  "glob": "**/*",
+                  "input": "src/assets/",
+                  "output": "/assets/"
+                },
+                {
+                  "glob": "favicon.ico",
+                  "input": "src/favicon",
+                  "output": "/"
                 }
               ],
               "optimization": true,

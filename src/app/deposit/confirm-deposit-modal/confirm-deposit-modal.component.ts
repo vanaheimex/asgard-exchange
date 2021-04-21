@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { assetAmount, assetToBase, assetToString, baseAmount } from '@xchainjs/xchain-util';
 import { Subscription } from 'rxjs';
@@ -14,16 +14,24 @@ import { Client as EthereumClient, ETH_DECIMAL } from '@xchainjs/xchain-ethereum
 import { Client as LitecoinClient } from '@xchainjs/xchain-litecoin';
 import { Client as BchClient } from '@xchainjs/xchain-bitcoincash';
 import { EthUtilsService } from 'src/app/_services/eth-utils.service';
+import { OverlaysService } from 'src/app/_services/overlays.service';
+import { Router } from '@angular/router';
 import { Balances } from '@xchainjs/xchain-client';
+import { AssetAndBalance } from 'src/app/_classes/asset-and-balance';
 
+// assets should be added for asset-input as designed.
 export interface ConfirmDepositData {
-  asset;
-  rune;
+  asset: AssetAndBalance;
+  rune: AssetAndBalance;
   assetAmount: number;
   runeAmount: number;
   user: User;
   runeBasePrice: number;
   assetBasePrice: number;
+  runeBalance: number;
+  assetBalance: number;
+  runePrice: number;
+  assetPrice: number;
   estimatedFee: number;
 }
 
@@ -44,13 +52,17 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
   estimatedMinutes: number;
   balances: Balances;
 
+  //foe this interface it should be imported from despoit page
+  @Input() data: ConfirmDepositData;
+  @Output() close: EventEmitter<boolean> = new EventEmitter<boolean>();
+
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: ConfirmDepositData,
-    public dialogRef: MatDialogRef<ConfirmDepositModalComponent>,
     private txStatusService: TransactionStatusService,
     private midgardService: MidgardService,
     private ethUtilsService: EthUtilsService,
     private userService: UserService,
+    private overlaysService: OverlaysService,
+    private router: Router
   ) {
     this.loading = true;
     this.txState = TransactionConfirmationState.PENDING_CONFIRMATION;
@@ -73,7 +85,7 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
 
     this.estimateTime();
 
-    if (this.data.asset.chain === 'ETH') {
+    if (this.data.asset.asset.chain === 'ETH') {
       this.estimateEthGasPrice();
     } else {
       this.loading = false;
@@ -82,10 +94,10 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
   }
 
   async estimateTime() {
-    if (this.data.asset.chain === 'ETH' && this.data.asset.symbol !== 'ETH') {
-      this.estimatedMinutes = await this.ethUtilsService.estimateERC20Time(assetToString(this.data.asset), this.data.assetAmount);
+    if (this.data.asset.asset.chain === 'ETH' && this.data.asset.asset.symbol !== 'ETH') {
+      this.estimatedMinutes = await this.ethUtilsService.estimateERC20Time(assetToString(this.data.asset.asset), this.data.assetAmount);
     } else {
-      this.estimatedMinutes = this.txStatusService.estimateTime(this.data.asset.chain, this.data.assetAmount);
+      this.estimatedMinutes = this.txStatusService.estimateTime(this.data.asset.asset.chain, this.data.assetAmount);
     }
   }
 
@@ -107,20 +119,20 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
   async deposit(pools: PoolAddressDTO[]) {
 
     const clients = this.data.user.clients;
-    const asset = this.data.asset;
+    const asset = this.data.asset.asset;
     const thorClient = clients.thorchain;
     const thorchainAddress = await thorClient.getAddress();
     let hash = '';
 
     // get token address
-    const address = await this.userService.getTokenAddress(this.data.user, this.data.asset.chain);
+    const address = await this.userService.getTokenAddress(this.data.user, this.data.asset.asset.chain);
     if (!address || address === '') {
       console.error('no address found');
       return;
     }
 
     // find recipient pool
-    const recipientPool = pools.find( (pool) => pool.chain === this.data.asset.chain );
+    const recipientPool = pools.find( (pool) => pool.chain === this.data.asset.asset.chain );
     if (!recipientPool) {
       console.error('no recipient pool found');
       return;
@@ -130,7 +142,7 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
     try {
 
       // deposit using xchain
-      switch (this.data.asset.chain) {
+      switch (this.data.asset.asset.chain) {
         case 'BNB':
           const bnbClient = this.data.user.clients.binance;
           hash = await this.binanceDeposit(bnbClient, thorchainAddress, recipientPool);
@@ -157,7 +169,7 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
           break;
 
         default:
-          console.error(`${this.data.asset.chain} does not match`);
+          console.error(`${this.data.asset.asset.chain} does not match`);
           return;
       }
 
@@ -197,10 +209,10 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
     this.txStatusService.addTransaction({
       chain: 'THOR',
       hash: runeHash,
-      ticker: `${this.data.asset.ticker}-RUNE`,
+      ticker: `${this.data.asset.asset.ticker}-RUNE`,
       status: TxStatus.PENDING,
       action: TxActions.DEPOSIT,
-      symbol: this.data.asset.symbol,
+      symbol: this.data.asset.asset.symbol,
       isThorchainTx: true
     });
     this.txState = TransactionConfirmationState.SUCCESS;
@@ -208,13 +220,13 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
 
   async ethereumDeposit(client: EthereumClient, thorchainAddress: string, recipientPool: PoolAddressDTO) {
     try {
-      const asset = this.data.asset;
+      const asset = this.data.asset.asset;
       const targetTokenMemo = `+:${asset.chain}.${asset.symbol}:${thorchainAddress}`;
 
-      const decimal = await this.ethUtilsService.getAssetDecimal(this.data.asset, client);
+      const decimal = await this.ethUtilsService.getAssetDecimal(this.data.asset.asset, client);
       let amount = assetToBase(assetAmount(this.data.assetAmount, decimal)).amount();
 
-      const balanceAmount = this.userService.findRawBalance(this.balances, this.data.asset);
+      const balanceAmount = this.userService.findRawBalance(this.balances, this.data.asset.asset);
       // const balanceAmount = assetToBase(assetAmount(this.data.asset.balance.amount(), decimal)).amount();
 
       if (amount.isGreaterThan(balanceAmount)) {
@@ -240,7 +252,7 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
     // deposit token
     try {
 
-      const asset = this.data.asset;
+      const asset = this.data.asset.asset;
       const targetTokenMemo = `+:${asset.chain}.${asset.symbol}:${thorchainAddress}`;
       const hash = await client.transfer({
         asset: {
@@ -262,11 +274,11 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
   async bitcoinDeposit(client: BitcoinClient, thorchainAddress: string, recipientPool: PoolAddressDTO): Promise<string> {
     // deposit token
     try {
-      const asset = this.data.asset;
+      const asset = this.data.asset.asset;
       const targetTokenMemo = `+:${asset.chain}.${asset.symbol}:${thorchainAddress}`;
 
       // TODO -> consolidate this with BTC, BCH, LTC
-      const balanceAmount = this.userService.findRawBalance(this.balances, this.data.asset);
+      const balanceAmount = this.userService.findRawBalance(this.balances, this.data.asset.asset);
       const toBase = assetToBase(assetAmount(this.data.assetAmount));
       const feeToBase = assetToBase(assetAmount(this.data.estimatedFee));
       const amount = (balanceAmount
@@ -287,9 +299,9 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
 
       const hash = await client.transfer({
         asset: {
-          chain: this.data.asset.chain,
-          symbol: this.data.asset.symbol,
-          ticker: this.data.asset.ticker
+          chain: this.data.asset.asset.chain,
+          symbol: this.data.asset.asset.symbol,
+          ticker: this.data.asset.asset.ticker
         },
         amount: baseAmount(amount),
         recipient: recipientPool.address,
@@ -306,11 +318,11 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
   async bchDeposit(client: BchClient, thorchainAddress: string, recipientPool: PoolAddressDTO): Promise<string> {
     // deposit token
     try {
-      const asset = this.data.asset;
+      const asset = this.data.asset.asset;
       const targetTokenMemo = `+:${asset.chain}.${asset.symbol}:${thorchainAddress}`;
 
       // TODO -> consolidate this with BTC, BCH, LTC
-      const balanceAmount = this.userService.findRawBalance(this.balances, this.data.asset);
+      const balanceAmount = this.userService.findRawBalance(this.balances, this.data.asset.asset);
       const toBase = assetToBase(assetAmount(this.data.assetAmount));
       const feeToBase = assetToBase(assetAmount(this.data.estimatedFee));
       const amount = (balanceAmount
@@ -331,9 +343,9 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
 
       const hash = await client.transfer({
         asset: {
-          chain: this.data.asset.chain,
-          symbol: this.data.asset.symbol,
-          ticker: this.data.asset.ticker
+          chain: this.data.asset.asset.chain,
+          symbol: this.data.asset.asset.symbol,
+          ticker: this.data.asset.asset.ticker
         },
         amount: baseAmount(amount),
         recipient: recipientPool.address,
@@ -350,11 +362,11 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
   async litecoinDeposit(client: LitecoinClient, thorchainAddress: string, recipientPool: PoolAddressDTO): Promise<string> {
     // deposit token
     try {
-      const asset = this.data.asset;
+      const asset = this.data.asset.asset;
       const targetTokenMemo = `+:${asset.chain}.${asset.symbol}:${thorchainAddress}`;
 
       // TODO -> consolidate this with BTC, BCH, LTC
-      const balanceAmount = this.userService.findRawBalance(this.balances, this.data.asset);
+      const balanceAmount = this.userService.findRawBalance(this.balances, this.data.asset.asset);
       const toBase = assetToBase(assetAmount(this.data.assetAmount));
       const feeToBase = assetToBase(assetAmount(this.data.estimatedFee));
       const amount = (balanceAmount
@@ -375,9 +387,9 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
 
       const hash = await client.transfer({
         asset: {
-          chain: this.data.asset.chain,
-          symbol: this.data.asset.symbol,
-          ticker: this.data.asset.ticker
+          chain: this.data.asset.asset.chain,
+          symbol: this.data.asset.asset.symbol,
+          ticker: this.data.asset.asset.ticker
         },
         amount: baseAmount(amount),
         recipient: recipientPool.address,
@@ -394,7 +406,7 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
   async estimateEthGasPrice() {
 
     const user = this.data.user;
-    const sourceAsset = this.data.asset;
+    const sourceAsset = this.data.asset.asset;
 
     if (user && user.clients && user.clients.ethereum && user.clients.thorchain) {
       const ethClient = user.clients.ethereum;
@@ -408,9 +420,9 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
         async (addresses) => {
 
           const ethInbound = addresses.find( (inbound) => inbound.chain === 'ETH' );
-          const decimal = await this.ethUtilsService.getAssetDecimal(this.data.asset, ethClient);
+          const decimal = await this.ethUtilsService.getAssetDecimal(this.data.asset.asset, ethClient);
           let amount = assetToBase(assetAmount(this.data.assetAmount, decimal)).amount();
-          const balanceAmount = this.userService.findRawBalance(this.balances, this.data.asset);
+          const balanceAmount = this.userService.findRawBalance(this.balances, this.data.asset.asset);
 
           if (amount.isGreaterThan(balanceAmount)) {
             amount = balanceAmount;
@@ -437,8 +449,36 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
 
   }
 
+  goToNav(nav: string) {
+    if (nav === 'pool') {
+      this.router.navigate(['/', 'pool']);
+    }
+    else if (nav === 'swap') {
+      this.router.navigate(['/', 'swap']);
+    }
+    else if (nav === 'deposit') {
+      this.router.navigate(['/', 'deposit', `${this.data.asset.asset.chain}.${this.data.asset.asset.symbol}`])
+    }
+    else if (nav === 'deposit-back') {
+      this.overlaysService.setCurrentDepositView('Deposit');
+    }
+  }
+
+  getMessage(): string {
+    if (this.error) {
+      return this.error
+    }
+    else {
+      return 'confirm'
+    }
+  }
+
   closeDialog(transactionSucess?: boolean) {
-    this.dialogRef.close(transactionSucess);
+    this.close.emit(transactionSucess);
+  }
+
+  closeToPool() {
+    this.router.navigate(['/', 'pool']);
   }
 
   ngOnDestroy() {

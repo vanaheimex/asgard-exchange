@@ -7,10 +7,11 @@ import { Asset, isNonNativeRuneToken } from '../_classes/asset';
 import { UserService } from '../_services/user.service';
 import { Balances } from '@xchainjs/xchain-client';
 import { AssetAndBalance } from '../_classes/asset-and-balance';
-import { ConfirmPoolCreateComponent } from './confirm-pool-create/confirm-pool-create.component';
+import { ConfirmCreatePoolData, ConfirmPoolCreateComponent } from './confirm-pool-create/confirm-pool-create.component';
 import { MatDialog } from '@angular/material/dialog';
 import { User } from '../_classes/user';
 import { baseAmount } from '@xchainjs/xchain-util';
+import { CreatePoolViews, OverlaysService } from '../_services/overlays.service';
 
 @Component({
   selector: 'app-pool-create',
@@ -91,13 +92,17 @@ export class PoolCreateComponent implements OnInit, OnDestroy {
   ethContractApprovalRequired: boolean;
   user: User;
 
+  //view of the page
+  view: CreatePoolViews;
+  data: ConfirmCreatePoolData;
+
   constructor(
-    private dialog: MatDialog,
     private route: ActivatedRoute,
     private router: Router,
     private midgardService: MidgardService,
     private cgService: CoinGeckoService,
     private userService: UserService,
+    public overlaysService: OverlaysService
   ) {
     this.rune = new Asset(`THOR.RUNE`);
 
@@ -116,17 +121,15 @@ export class PoolCreateComponent implements OnInit, OnDestroy {
       }
     );
 
-    const user$ = this.userService.user$.subscribe(
-      (user) => {
-        this.user = user;
-
-        if (this.asset && this.asset.chain === 'ETH' && this.asset.ticker !== 'ETH') {
-          this.checkContractApproved(this.asset);
-        }
+    const createPoolView$ = this.overlaysService.createPoolView.subscribe(
+      (view) => {
+        this.view = view;
       }
-    );
+    )
 
-    this.subs = [balances$, user$];
+    this.overlaysService.setCurrentCreatePoolView('Create');
+
+    this.subs = [balances$, createPoolView$];
 
   }
 
@@ -160,7 +163,17 @@ export class PoolCreateComponent implements OnInit, OnDestroy {
 
     this.getCoinGeckoCoinList();
 
-    this.subs.push(params$);
+    //because you get the user already before prop init this will be called with asset of undifiend
+    const user$ = this.userService.user$.subscribe(
+      (user) => {
+        this.user = user;
+        if (this.asset && this.asset.chain === 'ETH' && this.asset.ticker !== 'ETH') {
+          this.checkContractApproved(this.asset);
+        }
+      }
+    );
+
+    this.subs.push(params$, user$);
 
   }
 
@@ -170,6 +183,8 @@ export class PoolCreateComponent implements OnInit, OnDestroy {
         const ethInbound = addresses.find( (inbound) => inbound.chain === 'ETH' );
         if (ethInbound) {
           this.ethRouter = ethInbound.router;
+          //fixed werid bug from reskin not getting this eth router before user assignment
+          this.checkContractApproved(this.asset);
         }
       }
     );
@@ -254,16 +269,18 @@ export class PoolCreateComponent implements OnInit, OnDestroy {
   }
 
   mainButtonText(): string {
-
     if (!this.balances) {
       return 'Please connect wallet';
     } else if (this.ethContractApprovalRequired) {
-      return 'Create Pool';
+      return 'Ready';
     } else if (this.balances && (!this.runeAmount || !this.assetAmount)) {
-      return 'Enter an amount';
+      return 'Prepare';
     } else if (this.balances && (this.runeAmount > this.runeBalance
       || this.assetAmount > this.userService.maximumSpendableBalance(this.asset, this.assetBalance))) {
-      return 'Insufficient balance';
+      if (this.runeAmount > this.runeBalance)
+        return `Insufficient ${this.rune.chain}.${this.rune.ticker} balance`;
+      else
+        return `Insufficient ${this.asset.chain}.${this.asset.ticker} balance`;
     } else if (this.insufficientBnb) {
       return 'Insufficient BNB for Fee';
     }
@@ -272,7 +289,7 @@ export class PoolCreateComponent implements OnInit, OnDestroy {
     }
     else if (this.balances && this.runeAmount && this.assetAmount
       && (this.runeAmount <= this.runeBalance) && (this.assetAmount <= this.assetBalance)) {
-      return 'Create Pool';
+      return 'Ready';
     } else {
       console.warn('mismatch case for main button text');
       return;
@@ -303,30 +320,57 @@ export class PoolCreateComponent implements OnInit, OnDestroy {
 
   }
 
+  goToNav(nav: string) {
+    if (nav === 'pool') {
+      this.router.navigate(['/', 'pool']);
+    }
+    else if (nav === 'swap') {
+      this.router.navigate(['/', 'swap']);
+    }
+    else if (nav === 'create') {
+      this.router.navigate(['/', 'create-pool'], {queryParams: {pool: `${this.asset.chain}.${this.asset.symbol}`}});
+    }
+    else if (nav === 'create-back') {
+      this.overlaysService.setCurrentCreatePoolView('Create');
+    }
+  }
+
   openConfirmationDialog() {
 
-    const dialogRef = this.dialog.open(
-      ConfirmPoolCreateComponent,
-      {
-        width: '50vw',
-        maxWidth: '420px',
-        minWidth: '260px',
-        data: {
-          asset: this.asset,
-          rune: this.rune,
-          assetAmount: this.assetAmount,
-          runeAmount: this.runeAmount,
-        }
-      }
-    );
+    // const dialogRef = this.dialog.open(
+    //   ConfirmPoolCreateComponent,
+    //   {
+    //     width: '50vw',
+    //     maxWidth: '420px',
+    //     minWidth: '260px',
+    //     data: {
+    //       asset: this.asset,
+    //       rune: this.rune,
+    //       assetAmount: this.assetAmount,
+    //       runeAmount: this.runeAmount,
+    //     }
+    //   }
+    // );
 
-    dialogRef.afterClosed().subscribe( (transactionSuccess: boolean) => {
 
-      if (transactionSuccess) {
-        this.assetAmount = 0;
-      }
+    this.data = {
+      asset: this.asset,
+      rune: this.rune,
+      assetAmount: this.assetAmount,
+      runeAmount: this.runeAmount,
+      assetBalance: this.assetBalance,
+      runeBalance: this.runeBalance
+    }
 
-    });
+    this.overlaysService.setCurrentCreatePoolView('Confirm');
+
+    // dialogRef.afterClosed().subscribe( (transactionSuccess: boolean) => {
+
+    //   if (transactionSuccess) {
+    //     this.assetAmount = 0;
+    //   }
+
+    // });
   }
 
   async checkContractApproved(asset: Asset) {
@@ -335,15 +379,24 @@ export class PoolCreateComponent implements OnInit, OnDestroy {
       const assetAddress = asset.symbol.slice(asset.ticker.length + 1);
       const strip0x = assetAddress.substr(2);
       const isApproved = await this.user.clients.ethereum.isApproved(this.ethRouter, strip0x, baseAmount(1));
+
+      console.log(isApproved);
+
       this.ethContractApprovalRequired = !isApproved;
     }
 
   }
 
+  close(transactionSuccess: boolean) {
+    if (transactionSuccess) {
+      this.assetAmount = 0;
+    }
+    this.overlaysService.setCurrentCreatePoolView('Create');
+  }
+
   back() {
     this.router.navigate(['/', 'pool']);
   }
-
 
   contractApproved() {
     this.ethContractApprovalRequired = false;

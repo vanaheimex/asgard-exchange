@@ -1,6 +1,7 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { KeystoreService } from 'src/app/_services/keystore.service';
+import { OverlaysService, MainViewsEnum } from 'src/app/_services/overlays.service';
 import { UserService } from 'src/app/_services/user.service';
 
 @Component({
@@ -13,17 +14,20 @@ export class ReconnectDialogComponent implements OnInit {
   keystorePassword: string;
   keystoreError: boolean;
   keystoreConnecting: boolean;
-  keystore;
+  // keystore;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data,
-    private dialogRef: MatDialogRef<ReconnectDialogComponent>,
+    // @Inject(MAT_DIALOG_DATA) public data,
+    // private dialogRef: MatDialogRef<ReconnectDialogComponent>,
     private keystoreService: KeystoreService,
-    private userService: UserService
+    private userService: UserService,
+    public overlayService: OverlaysService
   ) {
     this.keystoreConnecting = false;
-    this.keystore = data.keystore;
+    // this.keystore = data.keystore;
   }
+
+  @Input() keystore: any;
 
   ngOnInit(): void {
   }
@@ -49,7 +53,7 @@ export class ReconnectDialogComponent implements OnInit {
       localStorage.setItem('keystore', JSON.stringify(this.keystore));
       const user = await this.keystoreService.unlockKeystore(this.keystore, this.keystorePassword);
       this.userService.setUser(user);
-      this.dialogRef.close();
+      this.overlayService.setViews(MainViewsEnum.Swap, 'Swap');
     } catch (error) {
       this.keystoreConnecting = false;
       this.keystoreError = true;
@@ -58,8 +62,8 @@ export class ReconnectDialogComponent implements OnInit {
   }
 
   forgetKeystore() {
+    this.overlayService.setViews(MainViewsEnum.Swap, 'Swap');
     localStorage.clear();
-    this.dialogRef.close();
   }
 
 }

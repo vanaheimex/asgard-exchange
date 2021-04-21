@@ -14,6 +14,10 @@ import { ApproveEthContractModule } from '../_components/approve-eth-contract/ap
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { DirectivesModule } from '../_directives/directives.module';
 import { SectionHeadModule } from '../_components/section-head/section-head.module';
+import { BreadcrumbModule } from '../_components/breadcrumb/breadcrumb.module';
+import { RightOptionModule } from '../_components/right-option/right-option.module';
+import { ArrowModule } from '../_components/arrow/arrow.module';
+import { MarketsModalModule } from '../_components/markets-modal/markets-modal.module';
 import { RetryRuneDepositComponent } from './retry-rune-deposit/retry-rune-deposit.component';
 
 
@@ -32,7 +36,10 @@ import { RetryRuneDepositComponent } from './retry-rune-deposit/retry-rune-depos
     ApproveEthContractModule,
     DirectivesModule,
     SectionHeadModule,
-    MatTooltipModule,
+    BreadcrumbModule,
+    RightOptionModule,
+    ArrowModule,
+    MarketsModalModule,
     RouterModule.forChild([
       {
         path: ':asset',

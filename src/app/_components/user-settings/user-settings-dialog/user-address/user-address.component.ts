@@ -10,6 +10,7 @@ import { ExplorerPathsService } from 'src/app/_services/explorer-paths.service';
 import { UserService } from 'src/app/_services/user.service';
 import { PoolDTO } from 'src/app/_classes/pool';
 import { ThorchainPricesService } from 'src/app/_services/thorchain-prices.service';
+import { OverlaysService } from 'src/app/_services/overlays.service';
 
 @Component({
   selector: 'app-user-address',
@@ -30,19 +31,23 @@ export class UserAddressComponent implements OnInit {
   subs: Subscription[];
   assets: AssetAndBalance[];
   loading: boolean;
+  loadingBalance: boolean;
   explorerPath: string;
   error: string;
+  copied: boolean = false;
 
   constructor(
     private userService: UserService,
     private copyService: CopyService,
     private explorerPathsService: ExplorerPathsService,
-    private thorchainPricesService: ThorchainPricesService
+    private thorchainPricesService: ThorchainPricesService,
+    private overlaysService: OverlaysService
   ) {
     this.back = new EventEmitter<null>();
     this.navigateToAsset = new EventEmitter<AssetAndBalance>();
     this.navigateToAddToken = new EventEmitter<null>();
     this.loading = true;
+    this.loadingBalance = false;
   }
 
   ngOnInit(): void {
@@ -51,7 +56,7 @@ export class UserAddressComponent implements OnInit {
 
     const balances$ = this.userService.userBalances$.subscribe(
       (balances) => {
-
+        console.log(balances);
         if (balances) {
           this.balances = balances.filter( (balance) => balance.asset.chain === this.chain );
         }
@@ -75,7 +80,17 @@ export class UserAddressComponent implements OnInit {
 
   }
 
+  getMessage(): string {
+    if (this.error) {
+      return `${this.chain} END POINT ERROR`;
+    }
+    else {
+      return 'SELECT';
+    }
+  }
+
   createAssetList() {
+
     if (this.balances && this.pools) {
 
       this.assets = this.balances.reduce( (list: AssetAndBalance[], balance) => {
@@ -103,6 +118,7 @@ export class UserAddressComponent implements OnInit {
         }
 
         list.push(assetBalance);
+
         return list;
 
       }, []);
@@ -156,18 +172,28 @@ export class UserAddressComponent implements OnInit {
         return 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png';
 
       case 'THOR':
-        return 'assets/images/token-icons/thorchain-logo.png';
+        return '/assets/icons/logo-thor-rune.svg';
     }
   }
 
   copyToClipboard(address: string) {
-    this.copyService.copyToClipboard(address);
+    let result = this.copyService.copyToClipboard(address);
+
+    if (result)
+      this.copied = true;
   }
 
   async refreshBalances() {
-    this.loading = true;
+    this.loadingBalance = true;
     await this.userService.fetchBalances();
-    this.loading = false;
+    setTimeout(() => {
+      this.loadingBalance = false;
+    }, 1500);
+  }
+
+  navCaller(nav) {
+    if (nav === 'wallet')
+      this.overlaysService.setCurrentUserView({userView: 'Addresses', address: null, chain: null, asset: null});
   }
 
   selectAsset(asset: Asset) {
@@ -176,6 +202,12 @@ export class UserAddressComponent implements OnInit {
       this.navigateToAsset.next(match);
     } else {
       console.error('no match found for asset: ', asset);
+    }
+  }
+
+  ngOnDestroy(): void {
+    for (const sub of this.subs) {
+      sub.unsubscribe();
     }
   }
 

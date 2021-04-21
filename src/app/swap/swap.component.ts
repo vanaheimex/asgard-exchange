@@ -31,12 +31,27 @@ import { AssetAndBalance } from '../_classes/asset-and-balance';
 import { PoolDTO } from '../_classes/pool';
 import { SlippageToleranceService } from '../_services/slippage-tolerance.service';
 import { PoolAddressDTO } from '../_classes/pool-address';
+import { MainViewsEnum, OverlaysService } from '../_services/overlays.service';
 import { ThorchainPricesService } from '../_services/thorchain-prices.service';
 import { TransactionUtilsService } from '../_services/transaction-utils.service';
 
 export enum SwapType {
   DOUBLE_SWAP = 'double_swap',
   SINGLE_SWAP = 'single_swap',
+}
+
+export interface SwapData {
+  sourceAsset: AssetAndBalance;
+  targetAsset: AssetAndBalance;
+  bnbFee: number;
+  basePrice: number;
+  inputValue: number;
+  outputValue: BigNumber;
+  user: User;
+  slip: number;
+  balance: number;
+  runePrice: number;
+  outboundTransactionFee: number;
 }
 
 @Component({
@@ -68,6 +83,9 @@ export class SwapComponent implements OnInit, OnDestroy {
   private _sourceAssetUnit: number;
   private _sourceAssetTokenValue: BaseAmount;
 
+  //price of the selected asset
+  sourceAssetPrice: number;
+
   get selectedSourceAsset() {
     return this._selectedSourceAsset;
   }
@@ -82,15 +100,15 @@ export class SwapComponent implements OnInit, OnDestroy {
 
     this._selectedSourceAsset = asset;
 
-    if (!this.isRune(this._selectedSourceAsset)) {
+    if (this._selectedSourceAsset && !this.isRune(this._selectedSourceAsset)) {
       this.getPoolDetails(this._selectedSourceAsset.chain, this._selectedSourceAsset.symbol, 'source');
     } else if (this._selectedSourceAsset && this.isRune(this._selectedSourceAsset)) {
       this.updateSwapDetails();
     }
 
-    this.sourceBalance = this.userService.findBalance(this.balances, asset);
+    this.sourceBalance = this._selectedSourceAsset ? this.userService.findBalance(this.balances, asset) : 0;
 
-    if (asset.chain === 'ETH' && asset.ticker !== 'ETH') {
+    if (this._selectedSourceAsset && asset.chain === 'ETH' && asset.ticker !== 'ETH') {
       this.checkContractApproved();
     }
 
@@ -120,6 +138,7 @@ export class SwapComponent implements OnInit, OnDestroy {
   private _targetAssetUnit: BigNumber;
 
   targetAssetUnitDisplay: number;
+  targetAssetPrice: number;
 
   get selectedTargetAsset() {
     return this._selectedTargetAsset;
@@ -161,12 +180,19 @@ export class SwapComponent implements OnInit, OnDestroy {
   sourceBalance: number;
   targetBalance: number;
 
+  errorMessage: string;
   calculatingTargetAsset: boolean;
   poolDetailTargetError: boolean;
   poolDetailSourceError: boolean;
 
   insufficientBnb: boolean;
   selectableMarkets: AssetAndBalance[];
+  targetMarketShow: boolean;
+  sourceMarketShow: boolean;
+  swapData: SwapData;
+  confirmShow: boolean;
+
+  runePrice: number;
 
   /**
    * ETH specific
@@ -187,10 +213,19 @@ export class SwapComponent implements OnInit, OnDestroy {
     private binanceService: BinanceService,
     private slipLimitService: SlippageToleranceService,
     private thorchainPricesService: ThorchainPricesService,
+    public overlaysService: OverlaysService,
     private txUtilsService: TransactionUtilsService) {
 
     this.selectedSourceAsset = new Asset('THOR.RUNE');
     this.ethContractApprovalRequired = false;
+    this.selectableMarkets = undefined;
+    // Just in case at the begining There is no Source Asset yet.
+    // this.selectedSourceAsset = new Asset(`BNB.${this.runeSymbol}`);
+    // this.overlaysService.setCurrentSwapView('Swap');
+    // this.overlayShow = false;
+    // this.targetMarketShow = false;
+    // this.sourceMarketShow = false;
+    // this.confirmShow = false;
 
     const balances$ = this.userService.userBalances$.subscribe(
       (balances) => {
@@ -212,9 +247,20 @@ export class SwapComponent implements OnInit, OnDestroy {
       }
     );
 
+
     const user$ = this.userService.user$.subscribe(
       async (user) => {
         this.user = user;
+
+        if (!user) {
+          this.sourceAssetUnit = null;
+          this.selectedTargetAsset = null;
+          this.selectedSourceAsset = null;
+          this.targetAssetUnit = null;
+          this.sourceBalance = undefined;
+          this.targetBalance = undefined;
+          this.balances = undefined;
+        }
       }
     );
 
@@ -243,6 +289,15 @@ export class SwapComponent implements OnInit, OnDestroy {
     );
   }
 
+  goToSettings() {
+    this.overlaysService.setSettingViews(MainViewsEnum.AccountSetting, 'SLIP');
+  }
+
+  transactionSuccess() {
+    this.targetAssetUnit = null;
+    this.sourceAssetUnit = null;
+  }
+
   isRune(asset: Asset): boolean {
     return asset && asset.ticker === 'RUNE'; // covers BNB and native
   }
@@ -261,6 +316,21 @@ export class SwapComponent implements OnInit, OnDestroy {
       }
     );
   }
+
+  // isError(): string {
+  //   if (this.selectedSourceAsset && this.balances && this.sourceAssetUnit > this.userService.maximumSpendableBalance(this.selectedSourceAsset, this.sourceBalance))
+  //     return `Insufficient ${this.selectedSourceAsset.chain}.${this.selectedSourceAsset.ticker} balance`;
+  //   else if (this.balances && this.selectedSourceAsset && this.selectedSourceAsset.chain === 'BNB' && this.insufficientBnb)
+  //     return 'Insufficient BNB for Fee';
+  //   else if(this.balances && (this.slip * 100) > this.slippageTolerance)
+  //     return `ready with high slip`
+  //   else if (this.queue && this.queue.outbound >= 12)
+  //     return 'THORChain Network Latency'
+  //   else if(this.errorMessage)
+  //     return this.errorMessage
+  //   else
+  //     return ''
+  // }
 
   getProxiedInboundAddresses() {
     this.midgardService.getInboundAddresses().subscribe(
@@ -336,6 +406,7 @@ export class SwapComponent implements OnInit, OnDestroy {
       || (this.targetAssetUnitDisplay <= this.userService.minimumSpendable(this.selectedTargetAsset))
       || !this.user || !this.balances
       || this.ethContractApprovalRequired
+      || !(this.sourceBalance > 0) // source is BNB and not enough funds to cover fee
       || (this.queue && this.queue.outbound >= 12)
       || (this.slip * 100) > this.slippageTolerance
       || (this.selectedSourceAsset.chain === 'BNB' && this.insufficientBnb) // source is BNB and not enough funds to cover fee
@@ -345,11 +416,87 @@ export class SwapComponent implements OnInit, OnDestroy {
         && (this.selectedTargetAsset.chain === 'ETH' && this.selectedTargetAsset.symbol !== 'ETH') );
   }
 
+  // getMessage() {
+  //   let message = '';
+  //   if(this.isError() != '')
+  //     message = this.isError();
+  //   else if(this.user && this.balances) {
+  //     message = 'prepare';
+  //     if (!this.formInvalid())
+  //       message = 'ready';
+  //   }
+  //   else if(this.user && !this.balances)
+  //     message = "LOADING BALANCE"
+  //   else if(!message)
+  //     message = 'connect wallet';
+  //   return message
+  // }
+
+  isError(): boolean {
+    /** User Not connected */
+    if (!this.user || !this.balances) {
+      return false;
+    }
+
+    /** Loading balance from the user */
+    if (this.user && !this.balances) {
+      return false;
+    }
+
+    /** THORChain is backed up */
+    if (this.queue && this.queue.outbound >= 12) {
+      return true;
+    }
+
+    /** No target asset selected */
+    if (!this.selectedTargetAsset) {
+      return false;
+    }
+
+    /** No source amount set */
+    if (!this.sourceAssetUnit || !this.selectedTargetAsset) {
+      return false;
+    }
+
+    /** Source amount is higher than user spendable amount */
+    if (this.sourceAssetUnit > this.userService.maximumSpendableBalance(this.selectedSourceAsset, this.sourceBalance)) {
+      return true;
+    }
+
+    /** BNB chain tx and user doesn't have enough BNB  */
+    if (this.selectedSourceAsset.chain === 'BNB' && this.insufficientBnb) {
+      return true;
+    }
+
+    /** Amount is too low, considered "dusting" */
+    if ( (this.sourceAssetUnit <= this.userService.minimumSpendable(this.selectedSourceAsset))
+      || (this.targetAssetUnitDisplay <= this.userService.minimumSpendable(this.selectedTargetAsset))) {
+        return true;
+    }
+
+    /** Exceeds slip tolerance set in user settings */
+    if ((this.slip * 100) > this.slippageTolerance) {
+      return true;
+    }
+
+    /** Good to go */
+    if (this.user && this.sourceAssetUnit && this.sourceAssetUnit <= this.sourceBalance && this.selectedTargetAsset) {
+      return false;
+    } else {
+      console.warn('error creating main button text');
+    }
+  }
+
   mainButtonText(): string {
 
     /** User Not connected */
     if (!this.user || !this.balances) {
-      return 'Please connect wallet';
+      return 'Connect wallet';
+    }
+
+    /** Loading balance from the user */
+    if (this.user && !this.balances) {
+      return 'LOADING BALANCE';
     }
 
     /** THORChain is backed up */
@@ -358,8 +505,8 @@ export class SwapComponent implements OnInit, OnDestroy {
     }
 
     /** No target asset selected */
-    if (!this.selectedTargetAsset) {
-      return 'Select a token';
+    if (!this.selectedTargetAsset || !this.selectedSourceAsset) {
+      return 'Select';
     }
 
     /** TEMPORARILY RESTRICT BTC/LTC -> ERC20 DUE TO BYTE SIZE ERROR */
@@ -375,7 +522,7 @@ export class SwapComponent implements OnInit, OnDestroy {
 
     /** Source amount is higher than user spendable amount */
     if (this.sourceAssetUnit > this.userService.maximumSpendableBalance(this.selectedSourceAsset, this.sourceBalance)) {
-      return 'Insufficient balance';
+      return `Insufficient ${this.selectedSourceAsset.chain}.${this.selectedSourceAsset.ticker} balance`;
     }
 
     /** BNB chain tx and user doesn't have enough BNB  */
@@ -387,7 +534,7 @@ export class SwapComponent implements OnInit, OnDestroy {
     if ( (this.sourceAssetUnit <= this.userService.minimumSpendable(this.selectedSourceAsset))
       || (this.targetAssetUnitDisplay <= this.userService.minimumSpendable(this.selectedTargetAsset))) {
         return 'Amount too low';
-      }
+    }
 
     /** Exceeds slip tolerance set in user settings */
     if ((this.slip * 100) > this.slippageTolerance) {
@@ -403,36 +550,33 @@ export class SwapComponent implements OnInit, OnDestroy {
 
   }
 
+  getBalance() {
+    return (this.selectedSourceAsset && this.sourceBalance
+      && (this.sourceAssetUnit > this.userService.maximumSpendableBalance(this.selectedSourceAsset, this.sourceBalance)))
+  }
+
   openConfirmationDialog() {
-    const dialogRef = this.dialog.open(
-      ConfirmSwapModalComponent,
-      {
-        minWidth: '260px',
-        maxWidth: '420px',
-        width: '50vw',
-        data: {
-          sourceAsset: this.selectedSourceAsset,
-          targetAsset: this.selectedTargetAsset,
-          outboundTransactionFee: this.outboundTransactionFee,
-          bnbFee: this.binanceTransferFeeDisplay,
-          basePrice: this.basePrice,
-          inputValue: this.sourceAssetUnit,
-          outputValue: this.targetAssetUnit.div(10 ** 8),
-          user: this.user,
-          slip: this.slip,
-          estimatedFee: this.inputNetworkFee
-        }
-      }
-    );
+    const output = this.targetAssetUnit.div(10 ** 8);
 
-    dialogRef.afterClosed().subscribe( (transactionSuccess: boolean) => {
+    let sourceAsset = this.selectableMarkets.find( (asset) => `${asset.asset.chain}.${asset.asset.ticker}` === `${this.selectedSourceAsset.chain}.${this.selectedSourceAsset.ticker}`);
+    let targetAsset = this.selectableMarkets.find( (asset) => `${asset.asset.chain}.${asset.asset.ticker}` === `${this.selectedTargetAsset.chain}.${this.selectedTargetAsset.ticker}`);
 
-      if (transactionSuccess) {
-        this.targetAssetUnit = null;
-        this.sourceAssetUnit = null;
-      }
+    this.swapData = {
+      sourceAsset: sourceAsset,
+      targetAsset: targetAsset,
+      bnbFee: this.binanceTransferFeeDisplay,
+      basePrice: this.basePrice,
+      inputValue: this.sourceAssetUnit,
+      outputValue: output,
+      user: this.user,
+      slip: this.slip,
+      balance: this.sourceBalance,
+      outboundTransactionFee: this.outboundTransactionFee,
+      runePrice: this.runePrice
+    }
 
-    });
+
+    this.overlaysService.setCurrentSwapView('Confirm')
   }
 
   getPoolDetails(chain: string, symbol: string, type: 'source' | 'target') {
@@ -448,6 +592,7 @@ export class SwapComponent implements OnInit, OnDestroy {
         }
       },
       (err) => {
+        this.errorMessage = "Error while fetching pool details"
         console.error('error fetching pool details: ', err);
         this.poolDetailTargetError = (type === 'target') ? true : this.poolDetailTargetError;
         this.poolDetailSourceError = (type === 'source') ? true : this.poolDetailSourceError;
@@ -461,7 +606,10 @@ export class SwapComponent implements OnInit, OnDestroy {
       (res) => {
         this.outboundTransactionFee = bn(res.int_64_values.OutboundTransactionFee).div(10 ** 8).toNumber();
       },
-      (err) => console.error('error fetching constants: ', err)
+      (err) => {
+        this.errorMessage = "Can't Fetch Constants"
+        console.error('error fetching constants: ', err)
+      }
     );
   }
 
@@ -482,6 +630,20 @@ export class SwapComponent implements OnInit, OnDestroy {
       this.calculateTargetUnits();
     } else {
       this.calculatingTargetAsset = false;
+    }
+
+    // Getting the source asset price from selected pools
+    if (this.selectableMarkets && this.balances && this._selectedSourceAsset) {
+      this.sourceAssetPrice = this.selectableMarkets.find( (pool) => `${pool.asset.chain}.${pool.asset.ticker}` === `${this._selectedSourceAsset.chain}.${this._selectedSourceAsset.ticker}`).assetPriceUSD;
+    }
+
+    // Getting the source asset price from selected pools
+    if (this.selectableMarkets && this.balances && this._selectedTargetAsset) {
+      this.targetAssetPrice = this.selectableMarkets.find( (pool) => `${pool.asset.chain}.${pool.asset.ticker}` === `${this._selectedTargetAsset.chain}.${this._selectedTargetAsset.ticker}`).assetPriceUSD;
+    }
+
+    if (this.selectableMarkets && this.balances && this._selectedSourceAsset) {
+      this.runePrice = this.selectableMarkets.find( (asset) => `${asset.asset.chain}.${asset.asset.ticker}` === `THOR.RUNE`).assetPriceUSD;
     }
   }
 

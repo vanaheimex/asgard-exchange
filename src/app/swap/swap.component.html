@@ -1,115 +1,133 @@
-<div class="container">
-  <nav>
-    <a [routerLink]="['/', 'swap']" routerLinkActive="active">Swap</a>
-    <a [routerLink]="['/', 'pool']" routerLinkActive="active">Pool</a>
-  </nav>
+<div class="container-wrapper">
+  <div class="container">
+    <div *ngIf="this.overlaysService.getCurrentSwapView() === 'Swap'">
 
-  <div class="relative">
+      <div class="main-container">
+        <nav class="content-top">
+          <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'swap', disable: true}]" [isError]="isError()" [message]="mainButtonText()"></app-breadcrumb>
+          <div class="top-right">
+            <app-right-option *ngIf="user" [switchField]="{right: {text: 'Pool', tag: '', disable: false}, left: {text: 'Swap', tag: '', disable: false}}"></app-right-option>
+            <app-right-option *ngIf="!user" [switchField]="{right: {text: 'Pool', tag: '', disable: true}, left: {text: 'Swap', tag: '', disable: true}}"></app-right-option>
+          </div>
+        </nav>
 
-    <!-- SOURCE -->
-    <app-asset-input
-      label="Send"
-      [(selectedAsset)]="selectedSourceAsset"
-      [(assetUnit)]="sourceAssetUnit"
-      [balance]="sourceBalance"
-      [disabledAssetSymbol]="selectedTargetAsset ? selectedTargetAsset.symbol : null"
-      [selectableMarkets]="selectableMarkets">
-    </app-asset-input>
+        <!-- SOURCE -->
+        <app-asset-input
+          label="Send"
+          [isSource]="true"
+          [(selectedAsset)]="selectedSourceAsset"
+          [(assetUnit)]="sourceAssetUnit"
+          [balance]="sourceBalance"
+          [disableInput]="user ? false : true"
+          [disableUser]="user ? false : true"
+          [disabledAssetSymbol]="selectedTargetAsset ? selectedTargetAsset.symbol : null"
+          [selectableMarkets]="selectableMarkets"
+          (lunchMarket)="overlaysService.setCurrentSwapView('SourceAsset')">
+        </app-asset-input>
 
-    <div class="flex justify-between items-center float-right">
-      <button class="reverse-transaction" (click)="reverseTransaction()" [disabled]="!selectedSourceAsset || !selectedTargetAsset">
-        <mat-icon [class.disabled]="!selectedSourceAsset || !selectedTargetAsset" class="to-btn-icon text-xl">swap_vert</mat-icon>
-      </button>
+        <app-arrow [isGrey]="!user || !balances || !selectedSourceAsset || !selectedTargetAsset" [seperator]="!selectedSourceAsset || !selectedTargetAsset"
+          (onClick)="reverseTransaction()"
+        ></app-arrow>
+
+        <!-- TARGET -->
+        <app-asset-input
+          label="Receive"
+          [isSource]="false"
+          [(selectedAsset)]="selectedTargetAsset"
+          [(assetUnit)]="targetAssetUnitDisplay"
+          [balance]="targetBalance"
+          [disableInput]="true"
+          [disabledAssetSymbol]="selectedSourceAsset ? selectedSourceAsset.symbol : null"
+          [loading]="calculatingTargetAsset"
+          [hideMax]="true"
+          [error]="poolDetailTargetError || poolDetailSourceError"
+          [selectableMarkets]="selectableMarkets"
+          [showBalance]="false"
+          [disableInput]="user ? false : true"
+          [disableUser]="user ? false : true"
+          (lunchMarket)="overlaysService.setCurrentSwapView('TargetAsset')">
+        </app-asset-input>
+
+        <div class="swap-details" *ngIf="user">
+          <div class="flex justify-between">
+            <span class="tx-detail-label">Price:</span>
+            <span
+              *ngIf="basePrice && selectedTargetAsset && selectedSourceAsset, else noPrice">{{basePrice | number:"1.2-4"}}
+              {{selectedSourceAsset.ticker}} per {{selectedTargetAsset.ticker}}<span *ngIf="sourceAssetPrice" class="mono" style="margin-left: 5px">(${{sourceAssetPrice * basePrice | number: '0.2-2'}})</span></span>
+            <ng-template #noPrice>
+              <span>...</span>
+            </ng-template>
+          </div>
+          <!-- total fee and slip -->
+          <!-- <div class="flex justify-between">
+            <span class="tx-detail-label">Network Fees:</span>
+            <span *ngIf="!outboundTransactionFee && !inputNetworkFee && !outputNetworkFee">Shown on confirmation</span>
+            <span *ngIf="outboundTransactionFee">
+              <span>{{outboundTransactionFee}} RUNE</span>
+              <span *ngIf="selectedSourceAsset && !isNativeRune(selectedSourceAsset) && inputNetworkFee"> + {{inputNetworkFee | number:"1.0-8"}} {{selectedSourceAsset.ticker}}.{{selectedSourceAsset.chain}}</span>
+              <span *ngIf="selectedTargetAsset && !isNativeRune(selectedTargetAsset) && outputNetworkFee"> + {{outputNetworkFee | number:"1.0-8"}} {{selectedTargetAsset.ticker}}.{{selectedTargetAsset.chain}}</span>
+              <span *ngIf="outboundTransactionFee && runePrice"> (${{ (outboundTransactionFee * runePrice) + (inputNetworkFee ? inputNetworkFee * sourceAssetPrice : 0) + (outputNetworkFee ? outputNetworkFee * targetAssetPrice : 0) | number: "0.2-4"}})</span>
+            </span>
+          </div> -->
+          <div *ngIf="selectedSourceAsset" class="flex justify-between">
+            <span class="tx-detail-label">Network Fee:</span>
+            <span *ngIf="inputNetworkFee">{{inputNetworkFee | number:"1.0-8"}} {{selectedSourceAsset.chain}}.{{selectedSourceAsset.ticker}}</span>
+            <span *ngIf="!inputNetworkFee">...</span>
+          </div>
+
+          <div class="flex justify-between">
+            <span class="tx-detail-label">Slip:</span>
+            <span *ngIf="slip" [ngStyle]="{'color': (slip * 100) > slippageTolerance ? '#FF4954' : 'var(--primary-default)'}">{{slip | percent:"0.2-4" }}<span *ngIf="sourceAssetPrice" class="mono" style="margin-left: 5px;">(${{(sourceAssetPrice * sourceAssetUnit) * slip | number: '1.2-2'}})</span></span>
+            <span *ngIf="!slip">...</span>
+          </div>
+
+          <div class="flex justify-between">
+            <span>Settings:</span>
+            <span>{{slippageTolerance}}% slip tolerance <span class="adjust" (click)="goToSettings()">(click to adjust)</span></span>
+          </div>
+
+        </div>
+
+        <!-- please connect button -->
+        <div class="bottom-actions">
+          <button *ngIf="user"
+              (click)="openConfirmationDialog()"
+              class="next-btn graident-btn"
+              [disabled]="formInvalid() || !balances">
+            <span>Swap</span>
+            <!-- <span *ngIf="!balances">Swap (Loading balance...)</span> -->
+          </button>
+          <app-connect *ngIf="!user"></app-connect>
+        </div>
+
+      </div>
     </div>
 
-    <!-- TARGET -->
-    <app-asset-input
-      [label]="selectedTargetAsset ? 'Receive (est)' : 'Receive'"
-      [(selectedAsset)]="selectedTargetAsset"
-      [(assetUnit)]="targetAssetUnitDisplay"
-      [balance]="targetBalance"
-      [disableInput]="true"
-      [disabledAssetSymbol]="selectedSourceAsset ? selectedSourceAsset.symbol : null"
-      [loading]="calculatingTargetAsset"
-      [hideMax]="true"
-      [error]="poolDetailTargetError || poolDetailSourceError"
-      [selectableMarkets]="selectableMarkets">
-    </app-asset-input>
-
-    <div>
-      <div class="flex justify-between swap-details">
-        <span>Price:</span>
-        <span *ngIf="basePrice && selectedSourceAsset && selectedTargetAsset">{{basePrice | number:"1.2-6"}} {{selectedSourceAsset.ticker}} per {{selectedTargetAsset.ticker}}</span>
-        <span *ngIf="!basePrice">-</span>
-      </div>
-
-      <div class="flex justify-between swap-details">
-        <span class="tx-detail-label">Slip</span>
-        <span *ngIf="slip">{{slip | percent:"0.2-4" }}</span>
-        <span *ngIf="!slip">-</span>
-      </div>
-
-      <div *ngIf="selectedSourceAsset" class="flex justify-between swap-details">
-        <span class="tx-detail-label">Network Fee</span>
-        <span *ngIf="inputNetworkFee">{{inputNetworkFee | number:"1.0-8"}} {{selectedSourceAsset.chain}}.{{selectedSourceAsset.ticker}}</span>
-        <span *ngIf="!inputNetworkFee">-</span>
-      </div>
-
+    <div class="overlay-container overlay-connect-wallet" *ngIf="overlaysService.getCurrentSwapView() == 'TargetAsset'">
+      <app-markets-modal
+        [(selectedAsset)]="selectedTargetAsset" [selectableMarkets]="selectableMarkets"
+        [disabledAssetSymbol]="selectedSourceAsset ? selectedSourceAsset.symbol : null"
+        (close)="overlaysService.setCurrentSwapView('Swap')">
+        <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'swap', swapView: 'Swap', mainView: 'Swap'}, {name: 'SEARCH', disable: true}]" message="TYPE IN THE FIELD"></app-breadcrumb>
+      </app-markets-modal>
     </div>
 
-    <div class="flex">
-      <app-approve-eth-contract
-        *ngIf="ethContractApprovalRequired && ethInboundAddress && selectedSourceAsset"
-        class="w-1/2 mr-2"
-        [contractAddress]="ethInboundAddress.router"
-        [asset]="selectedSourceAsset"
-        (approved)="contractApproved()">
-      </app-approve-eth-contract>
-      <button
-        (click)="openConfirmationDialog()"
-        class="main-action-btn"
-        mat-flat-button
-        color="primary"
-        [disabled]="formInvalid()"
-        [ngClass]="ethContractApprovalRequired ? 'w-1/2' : 'w-full'"
-      >
-        <!-- {{mainButtonText()}} -->
-
-        <!-- TEMPORARILY DISABLE BTC/LTC TO ERC20 -->
-        <!-- LINK TO GITLAB ISSUE -->
-        <div class="flex flex-col">
-          <span>{{mainButtonText()}}</span>
-          <a class="underline text-blue-400" *ngIf="( (this.selectedSourceAsset.chain === 'BTC' || this.selectedSourceAsset.chain === 'LTC')
-            && (this.selectedTargetAsset.chain === 'ETH' && this.selectedTargetAsset.symbol !== 'ETH') )"
-            target="_blank" href="https://gitlab.com/thorchain/thornode/-/issues/886">
-              View Gitlab Issue
-          </a>
-        </div>
-
-      </button>
+    <div class="overlay-container overlay-connect-wallet" *ngIf="overlaysService.getCurrentSwapView() == 'SourceAsset'">
+      <app-markets-modal
+        [(selectedAsset)]="selectedSourceAsset" [selectableMarkets]="selectableMarkets"
+        [disabledAssetSymbol]="selectedTargetAsset ? selectedTargetAsset.symbol : null"
+        (close)="overlaysService.setCurrentSwapView('Swap')">
+        <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'swap', swapView: 'Swap', mainView: 'Swap'}, {name: 'SEARCH', disable: true}]" message="TYPE IN THE FIELD"></app-breadcrumb>
+      </app-markets-modal>
     </div>
 
-    <!-- <div class="tag" *ngIf="basePrice && selectedTargetAsset && selectedSourceAsset">
-      <div class="tag-contents">
-        <div class="flex justify-between" style="margin-bottom: 6px;">
-          <span class="tx-detail-label">Total Fee</span>
-          <span>{{binanceTransferFeeDisplay | number:"0.0-6"}} BNB</span>
-        </div>
-        <div class="flex justify-between" style="margin-bottom: 6px;">
-          <span class="tx-detail-label"></span>
-          <span>{{runeTransactionFee}} Rune</span>
-        </div>
-        <div class="flex justify-between">
-          <span class="tx-detail-label">Slip</span>
-          <span>{{slip | percent:"0.2-4" }}</span>
-        </div>
-      </div>
-    </div> -->
+    <div class="overlay-container overlay-connect-wallet" *ngIf="overlaysService.getCurrentSwapView() == 'Connect'">
+      <app-connect-modal></app-connect-modal>
+    </div>
 
+    <div class="overlay-container" *ngIf="overlaysService.getCurrentSwapView() == 'Confirm'">
+      <app-confirm-swap-modal *ngIf="swapData" [swapData]="swapData" (closeTransaction)="transactionSuccess()">
+      </app-confirm-swap-modal>
+    </div>
   </div>
-
 </div>
-
-
-
-

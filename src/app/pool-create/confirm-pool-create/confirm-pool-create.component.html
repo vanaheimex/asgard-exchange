@@ -1,99 +1,90 @@
 <div *ngIf="data">
 
-  <div *ngIf="txState == 'PENDING_CONFIRMATION'">
-
-    <div class="confirm-modal-head p-4">
-
-      <div class="flex justify-between items-center mb-4">
-        <h1 mat-dialog-title>Confirm Create Pool</h1>
-        <div mat-dialog-actions>
-          <button mat-icon-button aria-label="Close Dialog" (click)="closeDialog()" mat-dialog-close>
-            <mat-icon>close</mat-icon>
+  <div class="container-wrapper" *ngIf="txState == 'PENDING_CONFIRMATION'">
+    <div class="container">
+      <div class="content-top">
+        <app-breadcrumb [path]="[{name: 'vanaheimex', call: 'swap'}, {name: 'Pools', call: 'pool'}, {name: 'Create', call: 'create'}]" [isError]="" message="Confirm" (funcCaller)="goToNav($event)"></app-breadcrumb>
+        <div class="top-right">
+          <div class="right-option">
+          </div>
+        </div>
+      </div>
+      <app-asset-input
+        label="Deposit"
+        [(selectedAsset)]="data.asset"
+        [(assetUnit)]="data.assetAmount"
+        [balance]="data.assetBalance"
+        [disabledMarketSelect]="true"
+        [disableInput]="true"
+        [disabledAssetSymbol]="data.rune.symbol"
+        [hideMax]="true"
+        [isSource]="true">
+      </app-asset-input>
+      <app-arrow [isPlus]="true"></app-arrow>
+      <app-asset-input
+        label="Deposit"
+        [(selectedAsset)]="data.rune"
+        [(assetUnit)]="data.runeAmount"
+        [balance]="data.runeBalance"
+        [disabledMarketSelect]="true"
+        [disableInput]="true"
+        [disabledAssetSymbol]="data.rune.symbol"
+        [isSource]="true"
+        [hideMax]="true">
+      </app-asset-input>
+      <div class="swap-details">
+        <div class="flex justify-between">
+          <span class="tx-detail-label">{{data.asset.chain}} Fee:</span>
+          <span *ngIf="!data.asset.chain" class="tx-detail-label">...</span>
+          <span *ngIf="networkFee">{{networkFee | number:"0.0-5"}}</span>
+          <span *ngIf="!networkFee">...</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="tx-detail-label">Disclaimer:</span>
+          <span>Output is estimated</span>
+        </div>
+      </div>
+      <div class="bottom-actions two-btn">
+        <div class="left-btn">
+          <button class="close-btn"
+            (click)="closeDialog()"
+          >
+            <span>Cancel</span>
+          </button>
+        </div>
+        <div class="divider"></div>
+        <div class="right-btn">
+          <button class="next-btn"
+            (click)="submitTransaction()"
+          >
+            <span>Confirm</span>
           </button>
         </div>
       </div>
-
-      <div class="flex justify-between transaction-detail">
-
-        <div class="flex items-center">
-          <div class="asset-icon-container flex items-center mr-4">
-            <img *ngIf="data.asset && data.asset.iconPath" [src]="data.asset.iconPath" appImgFallback />
-            <mat-icon *ngIf="!data.asset || !data.asset.iconPath">help_outline</mat-icon>
-          </div>
-          <span class="text-xl mr-2">{{data.assetAmount}}</span>
-        </div>
-
-        <span>{{data.asset.ticker}}</span>
-      </div>
-
-      <div class="flex">
-        <mat-icon class="to-btn-icon disabled ml-1 mb-4 text-sm">add</mat-icon>
-      </div>
-
-      <div class="flex justify-between transaction-detail">
-
-        <div class="flex items-center">
-          <div class="asset-icon-container flex items-center mr-4">
-            <img *ngIf="data.rune && data.rune.iconPath" [src]="data.rune.iconPath" appImgFallback />
-            <mat-icon *ngIf="!data.rune || !data.rune.iconPath">help_outline</mat-icon>
-          </div>
-          <span class="text-xl mr-2">{{data.runeAmount}}</span>
-        </div>
-
-        <span>{{data.rune.ticker}}</span>
-
-      </div>
-
-      <span class="italic text-gray-300 text-xs">Output is estimated.</span>
-
-    </div>
-
-    <div class="pt-8 px-8">
-      <div mat-dialog-content class="confirm-modal-content">
-
-        <div>
-
-          <div class="flex justify-between mb-2">
-            <span *ngIf="data.asset && data.asset.chain" class="tx-detail-label">{{data.asset.chain}} Fee</span>
-            <span *ngIf="!data.asset.chain" class="tx-detail-label">- Fee</span>
-            <span *ngIf="networkFee">{{networkFee | number:"0.0-5"}}</span>
-            <span *ngIf="!networkFee">-</span>
-          </div>
-
-        </div>
-
-        <div *ngIf="loading" style="height: 56px;" class="flex justify-center items-center w-full mt-4">
-          <mat-progress-spinner mode="indeterminate" diameter="30"></mat-progress-spinner>
-        </div>
-
-        <button
-          *ngIf="!loading"
-          (click)="submitTransaction()"
-          mat-flat-button
-          color="primary"
-          class="main-action-btn w-full"
-          [disabled]="insufficientChainBalance">
-            <span *ngIf="!insufficientChainBalance">Confirm Deposit</span>
-            <span *ngIf="insufficientChainBalance">Insufficient {{data.asset.chain}} Balance</span>
-        </button>
-
-      </div>
-
     </div>
 
   </div>
 
   <app-transaction-processing-modal
     *ngIf="txState == 'SUBMITTING'"
+    [asset]="[{asset: data.asset, balance: data.assetBalance, assetPriceUSD: 0}, {asset: data.rune, balance: data.runeBalance, assetPriceUSD: 0}]"
+    [label]="['Depositing', 'Depositing']"
+    [amount]="[data.assetAmount, data.runeAmount]"
     transactionDetail="Depositing {{data.assetAmount}} {{data.asset.ticker}} + {{data.runeAmount}} {{data.rune.ticker}}"
     (closeDialog)="closeDialog()">
+    <app-breadcrumb [path]="[{name: 'vanaheimex', call: 'swap'}, {name: 'Pools', disable: true}, {name: 'Create', disable: true}]" message="Transaction Processing" (funcCaller)="goToNav($event)"></app-breadcrumb>
   </app-transaction-processing-modal>
 
   <app-transaction-success-modal
     *ngIf="txState === 'SUCCESS'"
     [chain]="data.asset.chain"
     [hash]="hash"
-    (closeDialog)="closeDialog(true)">
+    [asset]="[{asset: data.asset, balance: data.assetBalance, assetPriceUSD: 0}, {asset: data.rune, balance: data.runeBalance, assetPriceUSD: 0}]"
+    [label]="['Deposited', 'Deposited']"
+    [amount]="[data.assetAmount, data.runeAmount]"
+    (closeDialog)="closeDialog(true)"
+    [externalTx]="true">
+    <app-breadcrumb [path]="[{name: 'vanaheimex', call: 'swap'}, {name: 'Pools', call: 'pool'}, {name: 'Create', disable: true}]" message="Success" (funcCaller)="goToNav($event)"></app-breadcrumb>
   </app-transaction-success-modal>
 
 </div>

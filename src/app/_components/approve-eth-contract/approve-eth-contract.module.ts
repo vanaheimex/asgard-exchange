@@ -9,7 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 
 
 @NgModule({
-  declarations: [ApproveEthContractComponent, ApproveEthContractModalComponent],
+  declarations: [ApproveEthContractComponent],
   imports: [
     CommonModule,
     MatButtonModule,

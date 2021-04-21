@@ -1,8 +1,8 @@
 import { Component, Input, OnDestroy, OnInit, Output, EventEmitter } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { Asset } from '@xchainjs/xchain-util';
 import { Subscription } from 'rxjs';
 import { User } from 'src/app/_classes/user';
+import { OverlaysService } from 'src/app/_services/overlays.service';
 import { TransactionStatusService } from 'src/app/_services/transaction-status.service';
 import { UserService } from 'src/app/_services/user.service';
 import { ApproveEthContractModalComponent } from './approve-eth-contract-modal/approve-eth-contract-modal.component';
@@ -23,7 +23,7 @@ export class ApproveEthContractComponent implements OnInit, OnDestroy {
   isApprovedTxHash: string;
   approving: boolean;
 
-  constructor(private userService: UserService, private txStatusService: TransactionStatusService, private dialog: MatDialog) {
+  constructor(private userService: UserService, private txStatusService: TransactionStatusService, private overlaysService: OverlaysService) {
 
     this.approved = new EventEmitter<null>();
     this.approving = false;
@@ -47,27 +47,36 @@ export class ApproveEthContractComponent implements OnInit, OnDestroy {
   }
 
   openConfirmationDialog() {
-    const dialogRef = this.dialog.open(
-      ApproveEthContractModalComponent,
-      {
-        minWidth: '260px',
-        maxWidth: '420px',
-        width: '50vw',
-        data: {
-          contractAddress: this.contractAddress,
-          asset: this.asset
-        }
-      }
-    );
 
-    dialogRef.afterClosed().subscribe( (isApprovedTxHash: string) => {
+    this.overlaysService.setCurrentCreatePoolView('Approve');
+    // const dialogRef = this.dialog.open(
+    //   ApproveEthContractModalComponent,
+    //   {
+    //     minWidth: '260px',
+    //     maxWidth: '420px',
+    //     width: '50vw',
+    //     data: {
+    //       contractAddress: this.contractAddress,
+    //       asset: this.asset
+    //     }
+    //   }
+    // );
 
-      if (isApprovedTxHash) {
-        this.isApprovedTxHash = isApprovedTxHash;
-        this.approving = true;
-      }
+    // dialogRef.afterClosed().subscribe( (isApprovedTxHash: string) => {
 
-    });
+    //   if (isApprovedTxHash) {
+    //     this.isApprovedTxHash = isApprovedTxHash;
+    //     this.approving = true;
+    //   }
+
+    // });
+  }
+
+  approveHash(isApprovedTxHash) {
+    if (isApprovedTxHash) {
+      this.isApprovedTxHash = isApprovedTxHash;
+      this.approving = true;
+    }
   }
 
   ngOnDestroy(): void {

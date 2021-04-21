@@ -1,9 +1,42 @@
-<div class="flex items-center justify-end">
-  <span class="text-gray-400" *ngIf="lastBlock">{{lastBlock}}</span>
-  <span class="text-gray-400" *ngIf="!lastBlock">000000</span>
-  <div class="relative">
-    <span class="block relative rounded-full bg-green-500 ml-2 w-2 h-2"></span>
-    <div *ngIf="updating" style="border-bottom-color: rgb(21, 163, 111);" class="rounded-full absolute w-4 h-4 bottom-0 left-1 -mb-1 border-2 border-transparent animate-spin"></div>
-  </div>
+<div class="nav-social">
+  <a class="social-item" href="https://t.me/thorchain_org" target="_blank"
+    ><img
+      class="icon-pic"
+      alt="telegram-link"
+      src="/assets/icons/social-telegram-icon.svg" /><img
+      class="hover-pic"
+      alt="telegram-link-hover"
+      [src]="isTestnet ? '/assets/icons/social-telegram-icon-hover-testnet.svg' : '/assets/icons/social-telegram-icon-hover.svg'"
+  /></a>
+  <a class="social-item github-icon" [href]="gitHubUrl" target="_blank"
+    ><img
+      class="icon-pic"
+      alt="github-link"
+      src="/assets/icons/social-github-icon.svg" /><img
+      class="hover-pic"
+      alt="telegram-link-hover"
+      [src]="isTestnet ? '/assets/icons/social-github-icon-hover-testnet.svg' : '/assets/icons/social-github-icon-hover.svg'"
+  /></a>
+  <a class="social-item" href="https://twitter.com/thorchain_org" target="_blank"
+    ><img
+      class="icon-pic"
+      alt="twitter-link"
+      src="/assets/icons/social-twitter-icon.svg" /><img
+      class="hover-pic"
+      alt="telegram-link-hover"
+      [src]="isTestnet ? '/assets/icons/social-twitter-icon-hover-testnet.svg' : '/assets/icons/social-twitter-icon-hover.svg'"
+  /></a>
 </div>
-
+<div class="nav-rune-container">
+  <a class="no-style" href="https://viewblock.io/thorchain" target="_blank">
+    <div class="nav-rune" [ngClass]="{'nav-rune-new-block': updating}">
+      <div class="nav-rune-logo">
+        <img src="/assets/images/rune-symbol.svg" alt="">
+      </div>
+      <div class="nav-rune-number">
+        <span [ngClass]="{'nav-rune-number-new-block': updating}" *ngIf="lastBlock">{{ lastBlock | number:'1.0':'en-US' }}</span>
+        <span *ngIf="!lastBlock">CONNECTING</span>
+      </div>
+    </div>
+  </a>
+</div>

@@ -5,12 +5,13 @@ import { catchError, switchMap, takeUntil } from 'rxjs/operators';
 import { LastBlock } from 'src/app/_classes/last-block';
 import { LastBlockService } from 'src/app/_services/last-block.service';
 import { MidgardService } from 'src/app/_services/midgard.service';
-import { ReconnectDialogComponent } from './_components/reconnect-dialog/reconnect-dialog.component';
+import { OverlaysService, MainViewsEnum } from './_services/overlays.service';
 import { UserService } from './_services/user.service';
 import { Chain } from '@xchainjs/xchain-util';
 import { AssetAndBalance } from './_classes/asset-and-balance';
 import { Asset } from './_classes/asset';
 import { environment } from 'src/environments/environment';
+import { links } from 'src/app/_const/links';
 
 @Component({
   selector: 'app-root',
@@ -21,16 +22,32 @@ export class AppComponent implements OnInit, OnDestroy {
 
   killPolling: Subject<void> = new Subject();
   subs: Subscription[];
+  isTestnet: boolean;
+  showSwap: boolean;
+  _showUserSetting: boolean;
+  _showReconnect: boolean;
+  keystore: any;
+
+  currentView: MainViewsEnum;
+  currentViewType = MainViewsEnum;
+
   chainBalanceErrors: Chain[];
   nonNativeRuneAssets: AssetAndBalance[];
   appLocked: boolean;
+  appUrl: string;
 
   constructor(
-    private dialog: MatDialog,
     private midgardService: MidgardService,
     private lastBlockService: LastBlockService,
+    private overlaysService: OverlaysService,
     private userService: UserService
   ) {
+    this.isTestnet = (environment.network === 'testnet');
+    this.appUrl = this.isTestnet ? links.appUrl : links.testnetUrl;
+    this.overlaysService.setViews(MainViewsEnum.Swap, 'Swap');
+    const overlay$ = this.overlaysService.currentView.subscribe(val => {
+      this.currentView = val;
+    })
 
     this.appLocked = environment.appLocked ?? false;
 
@@ -77,27 +94,39 @@ export class AppComponent implements OnInit, OnDestroy {
     const keystoreString = localStorage.getItem('keystore');
     const keystore = JSON.parse(keystoreString);
     if (keystore) {
-      this.openReconnectDialog(keystore);
+      this.keystore = keystore;
+      this.openReconnectDialog();
     }
-  }
 
-  notificationsExist(): boolean {
-    return ( (this.nonNativeRuneAssets && this.nonNativeRuneAssets.length > 0)
-      || (this.chainBalanceErrors && this.chainBalanceErrors.length > 0));
-  }
+    if (this.isTestnet) {
+      document.documentElement.style.setProperty('--primary-default', '#F3BA2F');
+      document.documentElement.style.setProperty('--primary-graident-bottom-left', '#F3BA2F');
+      document.documentElement.style.setProperty('--primary-graident-top-right', '#F3BA2F');
+    }
 
-  openReconnectDialog(keystore) {
-    this.dialog.open(
-      ReconnectDialogComponent,
-      {
-        maxWidth: '420px',
-        width: '50vw',
-        minWidth: '260px',
-        data: {
-          keystore
-        }
+    document.addEventListener("mousedown", (e) => {
+      if (document.querySelector('.expandable') && (e.target as HTMLTextAreaElement).compareDocumentPosition(document.querySelector(".expandable")) !== 10) {
+        this.overlaysService.setMenu(false);
       }
-    );
+    })
+  }
+
+  openReconnectDialog() {
+    //TODO: this needs to be shown every time keystroke has been find
+    // this.showReconnect = true;
+    // this.overlaysService.setCurrentView('Reconnect')
+    this.overlaysService.setCurrentView(MainViewsEnum.Reconnect);
+    // this.dialog.open(
+    //   ReconnectDialogComponent,
+    //   {
+    //     maxWidth: '420px',
+    //     width: '50vw',
+    //     minWidth: '260px',
+    //     data: {
+    //       keystore
+    //     }
+    //   }
+    // );
   }
 
   pollLastBlock(): void {

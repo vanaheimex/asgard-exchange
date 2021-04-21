@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject, Input, Output, EventEmitter } from '@angular/core';
 import { Market } from 'src/app/_classes/market';
 import { UserService } from 'src/app/_services/user.service';
 import { Asset } from '../../_classes/asset';
@@ -7,6 +7,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { User } from 'src/app/_classes/user';
 import { Balances } from '@xchainjs/xchain-client';
 import { AssetAndBalance } from 'src/app/_classes/asset-and-balance';
+import { OverlaysService } from 'src/app/_services/overlays.service';
 
 
 @Component({
@@ -39,13 +40,22 @@ export class MarketsModalComponent implements OnInit, OnDestroy {
   loading: boolean;
   user: User;
 
+  @Input() overlay: boolean;
+  @Output() overlayChange = new EventEmitter<boolean>();
+
+  @Input() selectableMarkets: AssetAndBalance[];
+  @Input() disabledAssetSymbol: string;
+
+  @Input() selectedAsset: Asset;
+  @Output() selectedAssetChange = new EventEmitter<Asset>();
+  @Output() close = new EventEmitter<null>();
+
   constructor(
     private userService: UserService,
-    @Inject(MAT_DIALOG_DATA) public data: { disabledAssetSymbol: string, selectableMarkets: AssetAndBalance[] },
-    public dialogRef: MatDialogRef<MarketsModalComponent>
+    public overlaysService: OverlaysService
   ) {
 
-    this.marketListItems = this.data.selectableMarkets;
+    // this.marketListItems = this.selectableMarkets;
 
     const user$ = this.userService.user$.subscribe(
       (user) => {
@@ -67,13 +77,15 @@ export class MarketsModalComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.marketListItems = this.selectableMarkets;
+
     this.initList();
   }
 
   sortMarketsByUserBalance(): void {
     // Sort first by user balances
     if (this.userBalances && this.marketListItems) {
-
+      this.marketListItems = this.marketListItems.filter((asset) => this.disabledAssetSymbol !== asset.asset.symbol)
       this.marketListItems = this.userService.sortMarketsByUserBalance(this.userBalances, this.marketListItems);
       this.filteredMarketListItems = this.marketListItems;
     }
@@ -92,12 +104,23 @@ export class MarketsModalComponent implements OnInit, OnDestroy {
   }
 
   selectItem(item: Asset) {
-    if (item.symbol !== this.data.disabledAssetSymbol) {
-      this.dialogRef.close(item);
+    if (item.symbol !== '') {
+      // this.dialogRef.close(item);
+      console.log(item)
+      if (this.disabledAssetSymbol != item.symbol) {
+        this.selectedAssetChange.emit(item);
+        // this.overlay = false;
+        // this.overlayChange.emit(this.overlay);
+        // this.overlaysService.setCurrentSwapView('Swap');
+        this.close.emit();
+      }
     }
   }
 
   closeDialog() {
-    this.dialogRef.close();
+    // this.overlay = false;
+    // this.overlayChange.emit(this.overlay);
+    // this.overlaysService.setCurrentSwapView('Swap');
+    this.close.emit();
   }
 }

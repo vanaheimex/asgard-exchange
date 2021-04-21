@@ -13,10 +13,15 @@ import { TransactionProcessingModalModule } from '../_components/transaction-pro
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ApproveEthContractModule } from '../_components/approve-eth-contract/approve-eth-contract.module';
 import { DirectivesModule } from '../_directives/directives.module';
+import { BreadcrumbModule } from '../_components/breadcrumb/breadcrumb.module';
+import { ArrowModule } from '../_components/arrow/arrow.module';
+import { MarketsModalModule } from '../_components/markets-modal/markets-modal.module';
+import { ApproveEthContractModalComponent } from '../_components/approve-eth-contract/approve-eth-contract-modal/approve-eth-contract-modal.component';
+import { NoticeModule } from '../_components/notice/notice.module';
 
 
 @NgModule({
-  declarations: [PoolCreateComponent, ConfirmPoolCreateComponent],
+  declarations: [PoolCreateComponent, ConfirmPoolCreateComponent, ApproveEthContractModalComponent],
   imports: [
     CommonModule,
     AssetInputModule,
@@ -29,6 +34,10 @@ import { DirectivesModule } from '../_directives/directives.module';
     TransactionProcessingModalModule,
     ApproveEthContractModule,
     DirectivesModule,
+    BreadcrumbModule,
+    ArrowModule,
+    MarketsModalModule,
+    NoticeModule,
     RouterModule.forChild([
       {
         path: '',

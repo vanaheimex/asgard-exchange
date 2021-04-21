@@ -86,14 +86,67 @@ export class UserService {
 
   }
 
+  // helper function to get the client name by chain name
+  getClientByChain(chain: Chain): string {
+    let key: string;
+    switch (chain) {
+      case 'BNB':
+        key = 'binance'
+        break;
+      case 'ETH':
+        key = 'ethereum'
+        break;
+      case 'BTC':
+        key = 'bitcoin'
+        break;
+      case 'BCH':
+        key = 'bitcoinCash'
+        break;
+      case 'LTC':
+        key = 'litecoin'
+        break;
+      case 'THOR':
+        key = 'thorchain'
+        break;
+    }
+    return key;
+  }
+
+  async fetchBalance(chain: Chain): Promise<void> {
+    let key = this.getClientByChain(chain);
+    if (key === 'binance') {
+      this.getBinanceBalances();
+    } else if (key === 'ethereum') {
+      this.getEthereumBalances();
+    } else {
+      this.getGeneralBalance(key);
+    }
+  }
+
   setBalances(balances: Balances) {
     this._balances = balances;
     this.userBalancesSource.next(balances);
   }
 
+  // it seems updating balances will be better than only pushing to it.
   pushBalances(balances: Balances) {
-    this._balances = [...this._balances, ...balances];
-    this.userBalancesSource.next(this._balances);
+    for (let i = 0; i < balances.length; i++) {
+      let _balance = balances[i];
+      const index = this._balances.findIndex( (balance) => balance.asset.ticker === _balance.asset.ticker && balance.asset.chain === _balance.asset.chain)
+
+      if (index === -1) {
+        console.log('adding this balance..', _balance)
+
+        this._balances = [...this._balances, _balance];
+        this.userBalancesSource.next(this._balances);
+      } else {
+        console.log('updating this...', _balance)
+
+        this._balances[index] = _balance;
+        this.userBalancesSource.next(this._balances);
+      }
+
+    }
   }
 
   pushChainBalanceErrors(chain: Chain) {
@@ -333,6 +386,10 @@ export class UserService {
 
     return marketListItems;
 
+  }
+
+  async getAdrressChain(chain: Chain) {
+    return await this.getTokenAddress(this.userSource.value, chain)
   }
 
   async getTokenAddress(user: User, chain: Chain): Promise<string> {

@@ -8,8 +8,11 @@ import { AssetAndBalance } from 'src/app/_classes/asset-and-balance';
 import { PoolAddressDTO } from 'src/app/_classes/pool-address';
 import { User } from 'src/app/_classes/user';
 import { TransactionConfirmationState } from 'src/app/_const/transaction-confirmation-state';
+import { CopyService } from 'src/app/_services/copy.service';
 import { EthUtilsService } from 'src/app/_services/eth-utils.service';
+import { ExplorerPathsService } from 'src/app/_services/explorer-paths.service';
 import { MidgardService } from 'src/app/_services/midgard.service';
+import { MainViewsEnum, OverlaysService } from 'src/app/_services/overlays.service';
 import { TransactionStatusService, TxActions, TxStatus } from 'src/app/_services/transaction-status.service';
 import { UserService } from 'src/app/_services/user.service';
 
@@ -21,10 +24,14 @@ import { UserService } from 'src/app/_services/user.service';
 export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
 
   @Input() asset: AssetAndBalance;
+  @Input() nativeRune: AssetAndBalance;
   @Input() amount: number;
   @Output() back: EventEmitter<null>;
   @Output() transactionSuccessful: EventEmitter<string>;
+
   txState: TransactionConfirmationState;
+  binanceExplorerUrl: string;
+  ethereumExplorerUrl: string;
   user: User;
   subs: Subscription[];
   hash: string;
@@ -34,17 +41,23 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
   ethNetworkFee: number;
   loading: boolean;
 
+  message: string;
+
   constructor(
     private midgardService: MidgardService,
     private userService: UserService,
     private txStatusService: TransactionStatusService,
-    private ethUtilsService: EthUtilsService
+    private ethUtilsService: EthUtilsService,
+    private copyService: CopyService,
+    private explorerPathsService: ExplorerPathsService,
+    private oveylaysService: OverlaysService
   ) {
     this.loading = true;
     this.insufficientChainBalance = false;
     this.back = new EventEmitter<null>();
     this.transactionSuccessful = new EventEmitter<string>();
     this.txState = TransactionConfirmationState.PENDING_CONFIRMATION;
+
 
     const user$ = this.userService.user$.subscribe(
       (user) => this.user = user
@@ -60,11 +73,20 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
       }
     );
 
+    this.binanceExplorerUrl = `${this.explorerPathsService.binanceExplorerUrl}/tx`;
+    this.ethereumExplorerUrl = `${this.explorerPathsService.ethereumExplorerUrl}/tx`;
+
     this.subs = [user$, balances$];
 
   }
 
+  copyToClipboard(): void {
+    this.copyService.copyToClipboard(this.hash);
+  }
+
   ngOnInit(): void {
+
+    this.message = "Confirm"
 
     if (this.asset) {
       if (this.asset.asset.chain === 'BNB') {
@@ -74,6 +96,7 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
       } else if (this.asset.asset.chain === 'ETH') {
         this.estimateEthGasPrice();
       } else {
+        this.message = "no chain match";
         console.error('no chain match: ', this.asset?.asset);
       }
     }
@@ -152,6 +175,7 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
             if (this.user.type === 'keystore') {
               this.keystoreTransfer(matchingPool);
             } else {
+              this.message = "no matching user type"
               console.error('no matching user type');
             }
 
@@ -198,9 +222,11 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
             isThorchainTx: false
           });
 
+          // this because of fetchBalances might gives a bug
           this.userService.pollNativeRuneBalance(this.runeBalance ?? 0);
 
-          this.transactionSuccessful.next(hash);
+          // this.transactionSuccessful.next(hash);
+          this.txState = TransactionConfirmationState.SUCCESS;
 
         } else if (asset.chain === 'ETH') {
 
@@ -242,8 +268,8 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
 
           this.userService.pollNativeRuneBalance(this.runeBalance ?? 0);
 
-          this.transactionSuccessful.next(hash);
-
+          // this.transactionSuccessful.next(hash);
+          this.txState = TransactionConfirmationState.SUCCESS;
         }
 
       } else {
@@ -251,6 +277,7 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
       }
 
     } catch (error) {
+      this.message = "an error occurred"
       console.error('error making transfer: ', error);
       this.txState = TransactionConfirmationState.ERROR;
     }
@@ -259,6 +286,10 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
 
   getRuneUpgradeMemo(thorAddress: string): string {
     return `SWITCH:${thorAddress}`;
+  }
+
+  close(): void {
+    this.oveylaysService.setViews(MainViewsEnum.Swap, 'Swap');
   }
 
   ngOnDestroy() {

@@ -50,9 +50,12 @@ export class CopyService {
     selectText();
     copyTo();
 
-    this._snackBar.open('Copied to Clipboard', '', {
-      duration: 2000,
-    });
+    // this._snackBar.open('Copied to Clipboard', '', {
+    //   duration: 2000,
+    // });
+
+    //changing it to the copied text
+    return true
 
   }
 

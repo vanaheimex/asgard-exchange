@@ -13,6 +13,9 @@ import { IconTickerModule } from '../_components/icon-ticker/icon-ticker.module'
 import { TransactionLedgerConfirmModalModule } from '../_components/transaction-ledger-confirm-modal/transaction-ledger-confirm-modal.module';
 import { DirectivesModule } from '../_directives/directives.module';
 import { SectionHeadModule } from '../_components/section-head/section-head.module';
+import { BreadcrumbModule } from '../_components/breadcrumb/breadcrumb.module';
+import { ArrowModule } from '../_components/arrow/arrow.module';
+import { DoubleAssetFieldModule } from '../_components/double-asset-field/double-asset-field.module';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 
@@ -30,7 +33,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     IconTickerModule,
     DirectivesModule,
     SectionHeadModule,
-    MatTooltipModule,
+    BreadcrumbModule,
+    ArrowModule,
+    DoubleAssetFieldModule,
     RouterModule.forChild([
       {
         path: ':asset',

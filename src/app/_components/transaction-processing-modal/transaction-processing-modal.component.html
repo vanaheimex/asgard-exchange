@@ -1,6 +1,102 @@
+<div class="container-wrapper">
+  <div class="container">
+
+    <div class="content-top">
+      <ng-content></ng-content>
+      <div class="top-right">
+      </div>
+    </div>
+
+    <div mat-dialog-content>
+
+      <div class="modal-head confirm-modal-head" *ngIf="isSending && !isWithdraw">
+
+        <app-asset-input
+          [label]="label[0]"
+          [(selectedAsset)]="asset[0].asset"
+          [(assetUnit)]="amount[0]"
+          [disabledAssetSymbol]="asset[0].asset.symbol"
+          [disabledMarketSelect]="true"
+          [disableInput]="true"
+          [hideMax]="true"
+          [isSource]="true">
+        </app-asset-input>
+
+        <app-arrow></app-arrow>
+
+        <app-text-field selectedType="Text" mode="Double" typeTwo="text" label="Recipient Address" labelTwo="Memo" [(textOfField)]="recipientAddress" [disable]="true" [disableTwo]="true"></app-text-field>
+
+      </div>
+
+    </div>
+
+    <div *ngIf="!isSending && !isWithdraw">
+
+      <app-asset-input
+        [label]="label[0]"
+        [(selectedAsset)]="asset[0].asset"
+        [(assetUnit)]="amount[0]"
+        [disabledAssetSymbol]="asset[0].asset.symbol"
+        [disabledMarketSelect]="true"
+        [disableInput]="true"
+        [hideMax]="true"
+        [isSource]="true">
+      </app-asset-input>
+
+      <app-arrow [isPlus]="isPlus"></app-arrow>
+
+      <app-asset-input
+        [label]="label[1]"
+        [(selectedAsset)]="asset[1].asset"
+        [(assetUnit)]="amount[1]"
+        [disabledAssetSymbol]="asset[1].asset.symbol"
+        [disabledMarketSelect]="true"
+        [disableInput]="true"
+        [hideMax]="true"
+        [isSource]="true">
+      </app-asset-input>
+
+    </div>
+
+    <div *ngIf="isWithdraw && !isSending">
+      <div class="percent-container">
+        <span class="percent-label">Percentage</span>
+        <span class="unstake-percent">{{percentage}}%</span>
+        <mat-slider
+          class="slider"
+          [disabled]="true"
+          [max]="100"
+          [min]="0"
+          step="1"
+          [tickInterval]="25"
+          [value]="percentage">
+        </mat-slider>
+      </div>
+
+      <app-arrow></app-arrow>
+
+      <app-double-asset-field
+        [label]="label[0]"
+        [selectedAssets]="[asset[0].asset, asset[1].asset]"
+        [assetUnits]="[amount[0], amount[1]]"
+        [showPrice]="false"
+      ></app-double-asset-field>
+    </div>
 
 
-<div class="submitting">
+    <div class="bottom-actions">
+      <div style="width: 100%;">
+        <button [disabled]="true" class="next-btn" aria-label="TRANSACTION PROCESSING…" (click)="onCloseDialog()">
+          <span>PLEASE WAIT…</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+
+<!-- <div class="submitting">
 
   <div class="icon-container">
     <mat-progress-spinner mode="indeterminate" diameter="60"></mat-progress-spinner>
@@ -12,13 +108,19 @@
       <h1 mat-dialog-title class="text-2xl">Transaction Processing</h1>
     </div>
 
-    <!-- <span class="swap-details">Swapping {{this.swapData.inputValue}} {{this.swapData.sourceAsset.ticker}} for {{this.swapData.outputValue}} {{this.swapData.targetAsset.ticker}}</span> -->
+    <span class="swap-details">Swapping {{this.swapData.inputValue}} {{this.swapData.sourceAsset.ticker}} for {{this.swapData.outputValue}} {{this.swapData.targetAsset.ticker}}</span>
     <span *ngIf="transactionDetail" class="swap-details">{{transactionDetail}}</span>
 
     <span class="addendum">Confirm this transaction in your wallet</span>
 
   </div>
 
-</div>
+  <div mat-dialog-actions class="dialog-actions">
+    <button mat-icon-button aria-label="Close Markets Dialog" (click)="onCloseDialog()" mat-dialog-close>
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+</div> -->
 
 

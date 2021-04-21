@@ -1,32 +1,53 @@
-<app-modal-section-header
-  [sectionTitle]="chain ? 'Add ' + chain + ' Token' : 'Add ... Token'"
-  [displayBackBtn]="true"
-  (back)="back.emit()">
-</app-modal-section-header>
+<div class="container-wrapper">
+  <div class="container">
+    <!-- <app-modal-section-header
+      [sectionTitle]="chain ? 'Add ' + chain + ' Token' : 'Add ... Token'"
+      [displayBackBtn]="true"
+      (back)="back.emit()">
+    </app-modal-section-header> -->
 
-<div mat-dialog-content>
-
-  <div *ngIf="!error" class="p-4">
-
-    <div class="uni-input">
-      <label>Token Contract Address</label>
-      <input [(ngModel)]="tokenAddress" name="custom-token-address" placeholder="Enter {{chain}} Token Address" />
-    </div>
-
-    <div class="flex justify-end items-center" style="height: 38px">
-      <div>
-        <button *ngIf="!loading" mat-flat-button color="accent" [disabled]="tokenAddress.length < 40 || tokenAddress.length > 42 || !ethClient || !chainAddress || !chain" (click)="addToken()">
-          <span>Add Token</span>
-        </button>
-        <mat-progress-spinner mode="indeterminate" diameter="30" *ngIf="loading"></mat-progress-spinner>
+    <div class="content-top">
+      <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'wallet', call: 'wallet'}, {name: chain, call: 'chain'}, {name: 'Add token', disable: true}]" [isError]="error" [message]="message" (funcCaller)="navCaller($event)"></app-breadcrumb>
+      <div class="top-right">
       </div>
     </div>
 
-  </div>
+    <div mat-dialog-content>
 
-  <div *ngIf="error">
-    An error occurred <br />
-    {{error}}
-  </div>
+      <div>
 
+        <!-- <div class="uni-input">
+          <label>Token Contract Address</label>
+          <input [(ngModel)]="tokenAddress" name="custom-token-address" placeholder="Enter {{chain}} Token Address" />
+        </div> -->
+        <app-text-field [(textOfField)]="tokenAddress" label="Enter {{chain}} Token Address"></app-text-field>
+
+        <div class="swap-details">
+          <div class="flex justify-between">
+            <span class="tx-detail-label">This will add the {{chain}} contract address to your wallet.</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="bottom-actions two-btn">
+        <div class="right-btn">
+          <button class="close-btn" (click)="back.emit()">
+            <span>Cancel</span>
+          </button>
+        </div>
+        <div class="divider"></div>
+        <div class="left-btn">
+          <button class="next-btn" [disabled]="tokenAddress.length < 40 || tokenAddress.length > 42 || !ethClient || !chainAddress || !chain || loading" (click)="addToken()">
+            <span>Add Token</span>
+          </button>
+        </div>
+      </div>
+      <!-- <div *ngIf="error">
+        An error occurred <br />
+        {{error}}
+      </div> -->
+
+    </div>
+  </div>
 </div>

@@ -4,9 +4,13 @@ import { MarketsModalComponent } from '../markets-modal/markets-modal.component'
 import { MatDialog } from '@angular/material/dialog';
 import { UserService } from 'src/app/_services/user.service';
 import { AssetAndBalance } from 'src/app/_classes/asset-and-balance';
+import { MainViewsEnum, OverlaysService } from 'src/app/_services/overlays.service';
 import { EthUtilsService } from 'src/app/_services/eth-utils.service';
 import { User } from 'src/app/_classes/user';
 import { Subscription } from 'rxjs';
+import { baseToAsset } from '@xchainjs/xchain-util';
+import { MidgardService } from 'src/app/_services/midgard.service';
+import { ThorchainPricesService } from 'src/app/_services/thorchain-prices.service';
 
 @Component({
   selector: 'app-asset-input',
@@ -44,7 +48,9 @@ export class AssetInputComponent implements OnInit, OnDestroy {
 
   @Input() label: string;
   @Input() disableInput?: boolean;
+  @Input() disableUser?: boolean;
   @Input() disabledAssetSymbol: string;
+  @Input() isWallet: boolean = false;
 
   /**
    * Wallet balance
@@ -59,6 +65,11 @@ export class AssetInputComponent implements OnInit, OnDestroy {
   _balance: number;
 
   @Input() hideMax: boolean;
+  @Input() isSource: boolean;
+  @Input() showBalance: boolean = true;
+  @Input() showPrice: boolean = true;
+  @Input() isDeposit: boolean = false;
+  @Output() lunchMarket = new EventEmitter<null>();
 
   @Input() disabledMarketSelect: boolean;
   @Input() loading: boolean;
@@ -66,18 +77,20 @@ export class AssetInputComponent implements OnInit, OnDestroy {
   @Input() set selectableMarkets(markets: AssetAndBalance[]) {
     this._selectableMarkets = markets;
     this.checkUsdBalance();
+    this.setInputUsdValue();
   }
   get selectableMarkets() {
     return this._selectableMarkets;
   }
   _selectableMarkets: AssetAndBalance[];
 
+  @Input() priceInput: number;
   usdValue: number;
   user: User;
   subs: Subscription[];
   inputUsdValue: number;
 
-  constructor(private dialog: MatDialog, private userService: UserService, private ethUtilsService: EthUtilsService) {
+  constructor(private userService: UserService, private ethUtilsService: EthUtilsService, public overlayService: OverlaysService, private midgardService: MidgardService, private thorchainPricesService: ThorchainPricesService ) {
     const user$ = this.userService.user$.subscribe(
       (user) => this.user = user
     );
@@ -97,11 +110,17 @@ export class AssetInputComponent implements OnInit, OnDestroy {
     if (!targetPool || !targetPool.assetPriceUSD) {
       return;
     }
+
     this.usdValue = targetPool.assetPriceUSD * this.balance;
   }
 
-  setInputUsdValue(): void {
+  getMax() {
+    if (this.balance && this.selectedAsset) {
+      return this.userService.maximumSpendableBalance(this.selectedAsset, this.balance);
+    }
+  }
 
+  setInputUsdValue(): void {
     if (!this.selectedAsset || !this.selectableMarkets) {
       return;
     }
@@ -151,28 +170,57 @@ export class AssetInputComponent implements OnInit, OnDestroy {
   }
 
   launchMarketsModal(): void {
+    //TODO: change the data flow into the compoenent directly
+    // if(!this.isDeposit) {
+    //   if(this.isSource)
+    //     this.overlayService.setCurrentSwapView('SourceAsset')
+    //   else
+    //     this.overlayService.setCurrentSwapView('TargetAsset')
+    // } else if (this.isDeposit) {
+    //   this.overlayService.setCurrentDepositView('Asset');
+    // }
+    this.lunchMarket.emit();
+  }
 
-    const dialogRef = this.dialog.open(
-      MarketsModalComponent,
-      {
-        minWidth: '260px',
-        maxWidth: '420px',
-        width: '50vw',
-        data: {
-          disabledAssetSymbol: this.disabledAssetSymbol,
-          selectableMarkets: this.selectableMarkets
+  async gotoWallet() {
+
+    const userBalance$ = this.userService.userBalances$.subscribe(
+      (balances) => {
+        if (balances) {
+          const balance = balances.filter( (balance) => balance.asset.chain === this.selectedAsset.chain && balance.asset.ticker === this.selectedAsset.ticker )[0];
+
+          const assetString = `${balance.asset.chain}.${balance.asset.symbol}`;
+          const asset = new Asset(`${balance.asset.chain}.${balance.asset.symbol}`);
+          let assetBalance: AssetAndBalance;
+          this.midgardService.getPools().subscribe( async (pools) => {
+            if (asset.ticker === 'RUNE') {
+              assetBalance = {
+                asset,
+                assetPriceUSD: this.thorchainPricesService.estimateRunePrice(pools) ?? 0,
+                balance: baseToAsset(balance.amount)
+              };
+            } else {
+              const matchingPool = pools.find( (pool) => {
+                return pool.asset === assetString;
+              });
+
+              assetBalance = {
+                asset,
+                assetPriceUSD: matchingPool ? +matchingPool.assetPriceUSD : 0,
+                balance: baseToAsset(balance.amount)
+              };
+            }
+            const address = await this.userService.getAdrressChain(this.selectedAsset.chain);
+            this.overlayService.setCurrentUserView({ userView: 'Asset', address, chain: this.selectedAsset.chain, asset: assetBalance })
+            this.overlayService.setCurrentView(MainViewsEnum.UserSetting);
+          } );
+
         }
+
       }
     );
 
-    dialogRef.afterClosed().subscribe( (result: Asset) => {
-
-      if (result) {
-        this.selectedAssetChange.emit(result);
-      }
-
-    });
-
+    this.subs.push(userBalance$)
   }
 
   ngOnDestroy() {

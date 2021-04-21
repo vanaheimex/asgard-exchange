@@ -1,17 +1,56 @@
-.uni-input {
-  cursor: pointer;
-  border: solid transparent 1px;
-  text-decoration: none;
-  color: white;
+// .w-address {
+//   display: flex;
+//   justify-content: space-between;
+//   align-items: center;
+//   padding: 10px;
+//   border-radius: 3px;
+//   height: 49px;
+//   cursor: pointer;
 
-  &:hover {
-    border: solid white 1px;
-  }
+//   .icon-addr {
+//     display: flex;
+//     align-items: center;
+//     flex: 1 1 auto;
+//     width: 100%;
 
-  input {
+//     label {
+//       font-weight: 500;
+//       font-size: 22px;
+//       line-height: 30px;
+//     }
+//   }
 
-    cursor: pointer;
+//   .asset-icon-container {
+//     display: flex;
+//     align-content: center;
+//     margin-right: 8px;
+//   }
 
-  }
+//   .addr {
+//     width: 250px;
 
-}
+//     input {
+//       text-align: right;
+//       width: 100%;
+//       background-color: transparent;
+//       border: none;
+//       color: #414856;
+//       font-weight: 700;
+//       font-size: 22px;
+//       line-height: 30px;
+//       text-overflow: ellipsis;
+
+//       &:hover {
+//         color: var(--primary-dark-color);
+//       }
+//     }
+//   }
+
+//   &:hover {
+//     background: var(--primary-default);
+
+//     label, input {
+//       color: #000 !important;
+//     }
+//   }
+// }

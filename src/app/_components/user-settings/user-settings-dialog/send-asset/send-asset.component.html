@@ -1,39 +1,51 @@
-<app-modal-section-header
-  [sectionTitle]="asset && asset.asset && asset.asset.ticker ? 'Send ' + asset.asset.ticker : 'Send -'"
-  [displayBackBtn]="true"
-  (back)="back.emit()">
-</app-modal-section-header>
+<div class="container-wrapper">
+  <div class="container">
+    <div class="content-top">
+      <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'wallet', call: 'wallet'}, {name: asset.asset.chain, call: 'chain'}, {name: asset.asset.chain + '.' + asset.asset.ticker, call: 'asset'}, {name: 'send', disable: true}]" [isError]="isError()" [message]="mainButtonText()" (funcCaller)="navCaller($event)"></app-breadcrumb>
+      <div class="top-right">
+      </div>
+    </div>
+    <div mat-dialog-content *ngIf="asset">
 
-<div mat-dialog-content *ngIf="asset">
+      <div>
+        <div>
+          <app-asset-input
+            label="Send"
+            [isSource]="true"
+            [(selectedAsset)]="asset.asset"
+            [(assetUnit)]="amount"
+            [balance]="asset.balance.amount().toNumber()"
+            [disabledAssetSymbol]="asset.asset.symbol"
+            [disabledMarketSelect]="true"
+            [selectableMarkets]="[asset]">
+          </app-asset-input>
+        </div>
 
-  <div class="p-4">
-    <app-asset-input
-      label="Input"
-      [(selectedAsset)]="asset.asset"
-      [(assetUnit)]="amount"
-      [balance]="asset.balance.amount().toNumber()"
-      [disabledAssetSymbol]="asset.asset.symbol"
-      [disabledMarketSelect]="true"
-      [selectableMarkets]="[asset]">
-    </app-asset-input>
+        <app-arrow></app-arrow>
 
-    <div class="uni-input">
-      <label>Recipient Address</label>
-      <input [(ngModel)]="recipientAddress" name="recipient-address" placeholder="Enter Recipient {{asset.asset.ticker}} Address" autocomplete="off" />
+        <app-text-field  selectedType="Text" mode="Double" typeTwo="text" label="Recipient Address" labelTwo="Memo" [(textOfField)]="recipientAddress" [disableTwo]="true"></app-text-field>
+
+      </div>
+
     </div>
 
-    <div class="flex justify-end items-center">
-      <button
-        (click)="confirmSend.next({amount: amount, recipientAddress: recipientAddress})"
-        class="main-action-btn w-full"
-        mat-flat-button
-        color="primary"
-        [disabled]="nextDisabled()">
-        {{mainButtonText()}}
-      </button>
+    <div class="bottom-actions" style="display: flex; margin-top: 58px;">
+      <div style="width: 50%;">
+        <div style="margin-right: 6px;">
+          <button class="close-btn" (click)="back.emit()">
+            <span>CANCEL</span>
+          </button>
+        </div>
+      </div>
+      <div style="width: 50%;">
+        <div style="margin-left: 6px;">
+          <button class="next-btn graident-btn"
+          (click)="confirmSend.next({amount: amount, recipientAddress: recipientAddress})"
+          [disabled]="nextDisabled()">
+            <span>Send</span>
+          </button>
+        </div>
+      </div>
     </div>
-
   </div>
-
 </div>
-

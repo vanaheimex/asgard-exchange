@@ -25,6 +25,7 @@ export const CoinIconsFromTrustWallet: Record<string, string> = {
   BLINK: 'BLINK-9C6',
   BOLT: 'BOLT-4C6',
   BST2: 'BST2-2F2',
+  BTC: 'BTCB-1DE',
   BTCB: 'BTCB-1DE',
   BTTB: 'BTTB-D31',
   BULL: 'BULL-BE4',
@@ -136,6 +137,7 @@ export const CoinIconsFromTrustWallet: Record<string, string> = {
   UND: 'UND-EBC',
   UPX: 'UPX-F3E',
   USDH: 'USDH-5B5',
+  USDT: 'USDT-6D8',
   USDSB: 'USDSB-1AC',
   VDX: 'VDX-A17',
   VIDT: 'VIDT-F53',
@@ -153,4 +155,4 @@ export const CoinIconsFromTrustWallet: Record<string, string> = {
   XRPBULL: 'XRPBULL-E7C',
   XTZ: 'XTZ-F7A',
   ZEBI: 'ZEBI-84F',
-};
+}

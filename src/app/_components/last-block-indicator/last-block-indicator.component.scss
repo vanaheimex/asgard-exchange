@@ -1,0 +1,177 @@
+#indicator-container {
+
+  position: relative;
+
+  #last-block-indicator {
+    position: relative;
+    display: block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-left: 8px;
+    background-color: var(--primary-default);
+  }
+
+  .spin::before {
+    // animation: 1s linear infinite spinner;
+    animation: 1s cubic-bezier(0.455, 0.03, 0.515, 0.955) spinner;
+    animation-play-state: inherit;
+    border: solid 2px transparent;
+    border-bottom-color: var(--primary-default);
+    border-radius: 50%;
+    content: "";
+    height: 12px;
+    position: absolute;
+    top: 4px;
+    left: 12px;
+    transform: translate3d(-50%, -50%, 0);
+    width: 12px;
+    will-change: transform;
+  }
+
+}
+
+.header-social {
+  justify-content: space-between;
+
+  .header-logo {
+    background-color: white;
+    display: block;
+    width: 15px;
+    height: 13px;
+    // margin-left: 12px;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: var(--primary-graident-top-right);
+    }
+
+    &--twitter {
+      -webkit-mask: url(./../../../assets/icons/twitter-brands.svg) no-repeat center;
+      mask: url(./../../../assets/icons/twitter-brands.svg) no-repeat center;
+
+    }
+
+    &--telegram {
+      margin-left: 0;
+      -webkit-mask: url(./../../../assets/icons/social-telegram-icon.svg) no-repeat center;
+      mask: url(./../../../assets/icons/social-telegram-icon.svg) no-repeat center;
+    }
+
+    &--github {
+      -webkit-mask: url(https://raw.githubusercontent.com/Pusher-Labs/asgard-exchange/master/src/assets/icons/github-alt-brands.svg) no-repeat center;
+      mask: url(https://raw.githubusercontent.com/Pusher-Labs/asgard-exchange/master/src/assets/icons/github-alt-brands.svg) no-repeat center;
+    }
+
+  }
+
+}
+
+.nav-social {
+  display: flex;
+  align-items: center;
+  height: 21px;
+  //jsut to make look like thorchain.org header
+  margin-top: -2px;
+  padding-bottom: 2px;
+
+  .social-item {
+    padding: 0 12px;
+    &:first-of-type {
+      padding-left: 0;
+    }
+    .hover-pic {
+      display: none;
+    }
+    .icon-pic {
+      display: inline;
+    }
+    &:last-of-type {
+      padding-right: 0;
+    }
+    &:hover {
+      fill: var(--primary-default);
+      .icon-pic {
+        display: none;
+      }
+      .hover-pic {
+        display: inline;
+      }
+    }
+    &.github-icon {
+      // jsut to make it excatly look like the website
+      width: 39px;
+    }
+  }
+}
+
+span {
+  color: white;
+  font-size: 12px;
+}
+
+@keyframes spinner {
+  0% {
+    transform: translate3d(-50%, -50%, 0) rotate(0deg);
+  }
+  100% {
+    transform: translate3d(-50%, -50%, 0) rotate(360deg);
+  }
+}
+
+.no-style {
+  text-decoration: none;
+}
+.nav-rune-container {
+  cursor: pointer;
+
+  .no-style {
+    text-decoration: none;
+  }
+}
+.nav-rune {
+  display: flex;
+  padding: 2px 1.5px 1.5px 1.5px;
+  width: 96px;
+  border-radius: 2.5px;
+  margin-top: 5px;
+  background-color: white;
+  transition: 0.5s ease;
+
+  &:hover {
+    background-color: var(--primary-default);
+    transition: 0.1s ease;
+    .nav-rune-number {
+      color: var(--primary-default);
+    }
+  }
+
+  .nav-rune-logo {
+    padding: 0 5px;
+    display: flex;
+  }
+
+  .nav-rune-number {
+    font-family: "Roboto Mono", Roboto, monospace;
+    font-weight: 300;
+    text-align: center;
+    font-size: 11px;
+    line-height: 1.2;
+    color: #fff;
+    flex-grow: 3;
+    background-color: #000;
+    transition: color 0.5s ease;
+
+    span {
+      line-height: 12px;
+    }
+  }
+  .nav-rune-number-new-block {
+    color: var(--primary-default);
+    transition: color 0s ease;
+  }
+}
+.nav-rune-new-block {
+  background-color: var(--primary-default);
+  transition: 0s ease;
+}

@@ -1,0 +1,71 @@
+.notice-container {
+  background: var(--primary-default);
+  color: #000B12;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 6px;
+  height: 56px;
+
+  &.gray {
+    background: var(--primary-grey-background);
+    color: #fff;
+  }
+
+  &.center {
+    position: relative;
+  }
+
+  .text-content {
+    flex: 1 1 auto;
+    font-weight: 600;
+    font-size: 17px;
+    line-height: 32px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-transform: inherit;
+    font-family: 'Roboto';
+
+    user-select: none; /* supported by Chrome and Opera */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+
+    &.center {
+      text-align: center;
+    }
+
+    &.mono {
+      font-family: 'Roboto Mono';
+    }
+  }
+
+  .tags {
+    width: 20%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-left: 10px;
+
+    &.center {
+      position: absolute;
+      right:  20px;
+    }
+  }
+
+  &.double {
+    height: auto;
+    padding: 15px;
+
+    .tags {
+      flex-direction: column;
+
+      .left, .right {
+        align-self: flex-end;
+        margin: 5px 0;
+      }
+    }
+  }
+}

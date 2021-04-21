@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="266px" height="266px" viewBox="0 0 266 266" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>RUNE</title>
+    <defs>
+        <circle id="path-1" cx="133" cy="133" r="127.884615"></circle>
+        <linearGradient x1="0%" y1="100%" x2="100%" y2="0%" id="linearGradient-3">
+            <stop stop-color="#00CCFF" offset="0%"></stop>
+            <stop stop-color="#33FF99" offset="100%"></stop>
+            <stop stop-color="#33FF99" offset="100%"></stop>
+            <stop stop-color="#33FF99" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="⚡-Active---Miscellaneous" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="ASGARDEX-Icons" transform="translate(-153.000000, -153.000000)">
+            <g id="RUNE" transform="translate(153.000000, 153.000000)">
+                <mask id="mask-2" fill="white">
+                    <use xlink:href="#path-1"></use>
+                </mask>
+                <use id="Oval" fill="#000B12" xlink:href="#path-1"></use>
+                <path d="M133,0 C206.453872,0 266,59.5461283 266,133 C266,206.453872 206.453872,266 133,266 C59.5461283,266 0,206.453872 0,133 C0,59.5461283 59.5461283,0 133,0 Z M133,10.2307692 C65.1964261,10.2307692 10.2307692,65.1964261 10.2307692,133 C10.2307692,200.803574 65.1964261,255.769231 133,255.769231 C200.803574,255.769231 255.769231,200.803574 255.769231,133 C255.769231,65.1964261 200.803574,10.2307692 133,10.2307692 Z" id="Oval" fill="url(#linearGradient-3)" fill-rule="nonzero"></path>
+                <polygon id="Mask-Copy-11" fill="#28F4AE" points="119.552629 197.38323 102.851902 197.38323 102.851902 64.3832295 119.552629 64.3832295 162.302859 88.5815878 162.302859 106.866814 147.05437 133.06654 171.379341 197.38323 153.589437 197.38323 129.445995 132.156827 148.143547 99.5891118 119.552629 83.3962254"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>

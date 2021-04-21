@@ -1,0 +1,28 @@
+.text-field-input {
+  .field {
+    font-family: 'Roboto Mono';
+    color: var(--primary-default);
+    font-size: 22px;
+    line-height: 30px;
+    font-weight: 500;
+
+    &::placeholder {
+      color: var(--primary-default);
+    }
+
+    &[type="password"] {
+      letter-spacing: 1.5px;
+    }
+  }
+}
+
+.bottom-border {
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.no-top-border {
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
+  border-top: 0;
+}

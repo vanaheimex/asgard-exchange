@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MemberPool } from 'src/app/_classes/member';
 import { PoolDTO } from 'src/app/_classes/pool';
+import { PoolDetailService } from 'src/app/_services/pool-detail.service';
 
 @Component({
   selector: 'app-staked-pools-list',
@@ -9,6 +10,7 @@ import { PoolDTO } from 'src/app/_classes/pool';
 })
 export class StakedPoolsListComponent implements OnInit {
 
+  activePool: PoolDTO;
 
   @Input() set pools(pools: PoolDTO[]) {
     this._pools = pools;
@@ -34,7 +36,7 @@ export class StakedPoolsListComponent implements OnInit {
     memberData: MemberPool
   }[];
 
-  constructor() { }
+  constructor(private poolDetailService : PoolDetailService) { }
 
   ngOnInit(): void { }
 

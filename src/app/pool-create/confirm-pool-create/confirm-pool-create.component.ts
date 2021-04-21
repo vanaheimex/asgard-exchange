@@ -1,4 +1,4 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { assetAmount, assetToBase, baseAmount } from '@xchainjs/xchain-util';
 import { Subscription } from 'rxjs';
@@ -11,6 +11,8 @@ import { Client as BinanceClient } from '@xchainjs/xchain-binance';
 import { PoolAddressDTO } from 'src/app/_classes/pool-address';
 import { Client as EthereumClient, ETH_DECIMAL } from '@xchainjs/xchain-ethereum/lib';
 import { EthUtilsService } from 'src/app/_services/eth-utils.service';
+import { OverlaysService } from 'src/app/_services/overlays.service';
+import { Router } from '@angular/router';
 import { Client as LitecoinClient } from '@xchainjs/xchain-litecoin';
 import { Client as BchClient } from '@xchainjs/xchain-bitcoincash';
 import { Client as BitcoinClient } from '@xchainjs/xchain-bitcoin';
@@ -21,6 +23,8 @@ export interface ConfirmCreatePoolData {
   rune;
   assetAmount: number;
   runeAmount: number;
+  assetBalance: number;
+  runeBalance: number;
 }
 
 @Component({
@@ -41,13 +45,18 @@ export class ConfirmPoolCreateComponent implements OnInit, OnDestroy {
   bnbBalance: number;
   balances: Balances;
 
+
+  //reskin data import
+  @Input() data: ConfirmCreatePoolData;
+  @Output() close = new EventEmitter<boolean>();
+
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: ConfirmCreatePoolData,
-    public dialogRef: MatDialogRef<ConfirmPoolCreateComponent>,
     private userService: UserService,
     private midgardService: MidgardService,
     private txStatusService: TransactionStatusService,
-    private ethUtilsService: EthUtilsService
+    private ethUtilsService: EthUtilsService,
+    private overlaysService: OverlaysService,
+    private router: Router
   ) {
     this.loading = true;
 
@@ -400,8 +409,23 @@ export class ConfirmPoolCreateComponent implements OnInit, OnDestroy {
 
   }
 
+  goToNav(nav: string) {
+    if (nav === 'pool') {
+      this.router.navigate(['/', 'pool']);
+    }
+    else if (nav === 'swap') {
+      this.router.navigate(['/', 'swap']);
+    }
+    else if (nav === 'create') {
+      this.router.navigate(['/', 'create-pool'], {queryParams: {pool: `${this.data.asset.chain}.${this.data.asset.symbol}`}});
+    }
+    else if (nav === 'create-back') {
+      this.overlaysService.setCurrentCreatePoolView('Create');
+    }
+  }
+
   closeDialog(transactionSucess?: boolean) {
-    this.dialogRef.close(transactionSucess);
+    this.close.emit(transactionSucess);
   }
 
   ngOnDestroy() {

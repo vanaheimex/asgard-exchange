@@ -1,7 +1,7 @@
-<div *ngIf="!memberPools || (memberPools && memberPools.length < 1)" class="disabled-list">
+<!-- <div *ngIf="!memberPools || (memberPools && memberPools.length < 1)" class="disabled-list">
   No deposited pools found
-</div>
+</div> -->
 
-<div class="flex flex-col clear-both" *ngIf="mappedPools && mappedPools.length > 0">
-  <app-staked-pool-list-item *ngFor="let pool of mappedPools" [memberPoolData]="pool.memberData" [poolData]="pool.poolData" [depositsDisabled]="depositsDisabled"></app-staked-pool-list-item>
+<div class="flex lists pool-list" *ngIf="mappedPools && mappedPools.length > 0">
+  <app-staked-pool-list-item *ngFor="let pool of mappedPools" [memberPoolData]="pool.memberData" [poolData]="pool.poolData" [depositsDisabled]="depositsDisabled" (click)="activePool = pool"></app-staked-pool-list-item>
 </div>

@@ -1,13 +1,14 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, Inject, Input, OnDestroy, OnInit, Output, EventEmitter } from '@angular/core';
 import { Asset as xchainAsset, baseAmount, bn } from '@xchainjs/xchain-util';
 import { ethers } from 'ethers';
 import { Subscription, combineLatest } from 'rxjs';
 import { Asset } from 'src/app/_classes/asset';
 import { PoolAddressDTO } from 'src/app/_classes/pool-address';
 import { User } from 'src/app/_classes/user';
+import { CopyService } from 'src/app/_services/copy.service';
 import { EthUtilsService } from 'src/app/_services/eth-utils.service';
 import { MidgardService } from 'src/app/_services/midgard.service';
+import { OverlaysService } from 'src/app/_services/overlays.service';
 import { TransactionStatusService } from 'src/app/_services/transaction-status.service';
 import { UserService } from 'src/app/_services/user.service';
 
@@ -30,13 +31,19 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
   ethBalance: number;
   insufficientEthBalance: boolean;
 
+
+  //the new reskin data importing
+  copied: boolean = false;
+  @Input() data: ApproveEthContractModalParams;
+  @Output() approvedHash = new EventEmitter<string>();
+
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: ApproveEthContractModalParams,
-    public dialogRef: MatDialogRef<ApproveEthContractModalComponent>,
     private userService: UserService,
     private txStatusService: TransactionStatusService,
     private ethUtilsService: EthUtilsService,
-    private midgardService: MidgardService
+    private midgardService: MidgardService,
+    private overlaysService: OverlaysService,
+    private copySerivce: CopyService
   ) {
     this.loading = true;
     this.insufficientEthBalance = false;
@@ -110,8 +117,9 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
       });
 
       this.txStatusService.pollEthContractApproval(approve.hash);
-      this.dialogRef.close(approve.hash);
-
+      // this.dialogRef.close(approve.hash);
+      this.approvedHash.emit(approve.hash);
+      this.overlaysService.setCurrentCreatePoolView('Create');
     }
 
     this.loading = false;
@@ -119,7 +127,14 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
   }
 
   closeDialog() {
-    this.dialogRef.close();
+    this.overlaysService.setCurrentCreatePoolView('Create');
+    // this.dialogRef.close();
+  }
+
+  copyToClipboard() {
+    let res = this.copySerivce.copyToClipboard(this.data.contractAddress);
+    if (res)
+      this.copied = true;
   }
 
   ngOnDestroy() {

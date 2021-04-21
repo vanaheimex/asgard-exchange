@@ -1,0 +1,65 @@
+.overlay-container-wrapper {
+  //new boder style
+  width: 100%;
+  height: 632px;
+  border-radius: 20px;
+  padding: 2px;
+  background: linear-gradient(to top right,var(--primary-graident-bottom-left), var(--primary-graident-top-right));
+}
+
+.container {
+    border-radius: 20px;
+
+    &.pending {
+      border: 2px solid #F3BA2F;
+    }
+
+    &.submit {
+      border: 2px solid #00CCFF;
+    }
+
+    &.success {
+      border: 2px solid #FFF;
+    }
+}
+
+.processing {
+    color: #00CCFF;
+    border-color: #00CCFF;
+}
+
+.confirm-box {
+    flex-flow: column;
+    max-height: 113px;
+    min-height: 113px;
+    font-size: 14px;
+
+    .label-box {
+      display: flex;
+      width: 100%;
+      line-height: 24px;
+    }
+
+    .input-box {
+        display: flex;
+        padding: 2px 0;
+        width: 100%;
+
+        .priceInput {
+          font-size: 22px;
+          line-height: 30px;
+        }
+
+        .launch-markets-btn {
+            padding-right: 0;
+
+            .asset-selector {
+                padding-right: 0;
+
+                &:hover {
+                    background-color: transparent;
+                }
+            }
+        }
+    }
+}

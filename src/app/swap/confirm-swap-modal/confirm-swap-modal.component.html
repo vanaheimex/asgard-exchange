@@ -1,130 +1,144 @@
+<!-- <div class="container" *ngIf="swapData" [ngClass]="{'pending': txState === 'PENDING_CONFIRMATION', 'success': txState === 'SUCCESS', 'submit': txState === 'SUBMITTING'}"> -->
+<app-transaction-processing-modal
+  *ngIf="txState == 'SUBMITTING'"
+  [label]="['Sending', 'Receiving']"
+  [isSending]="false"
+  [asset]="[swapData.sourceAsset, swapData.targetAsset]"
+  [amount]="[swapData.inputValue, swapData.outputValue]"
+  >
+  <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'Swap', swapView: 'Swap', mainView: 'Swap'}]" message="TRANSACTION PROCESSING"></app-breadcrumb>
+</app-transaction-processing-modal>
 
-<div *ngIf="swapData">
+<app-transaction-success-modal
+  *ngIf="txState === 'SUCCESS'"
+  [label]="['Sent', 'Received']"
+  [asset]="[swapData.sourceAsset, swapData.targetAsset]"
+  [amount]="[swapData.inputValue, swapData.outputValue]"
+  [chain]="swapData.sourceAsset.asset.chain"
+  [hash]="hash"
+  [isSending]="false"
+  (closeDialog)="closeDialog(true)">
+  <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap', call: 'sucSwap'}, {name: 'Swap', swapView: 'Swap', mainView: 'Swap', call: 'sucSwap'}]" message="SUCCESS" (funcCaller)="navCaller($event)"></app-breadcrumb>
+</app-transaction-success-modal>
 
-  <div *ngIf="txState === 'PENDING_CONFIRMATION'">
-
-    <div class="p-4 confirm-modal-head">
-      <div class="flex justify-between items-center mb-4">
-        <h1 mat-dialog-title>Confirm Swap</h1>
-        <!-- close dialog -->
-        <div mat-dialog-actions>
-          <button mat-icon-button aria-label="Close Dialog" (click)="closeDialog()" mat-dialog-close>
-            <mat-icon>close</mat-icon>
-          </button>
+<div class="overlay-container-wrapper" *ngIf="txState === 'PENDING_CONFIRMATION' || txState === 'ERROR'">
+  <div class="container" *ngIf="swapData">
+    <div>
+      <div class="content-top">
+        <div
+          *ngIf="txState === 'PENDING_CONFIRMATION'"
+        >
+          <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'Swap', swapView: 'Swap', mainView: 'Swap'}]" message="confirm"></app-breadcrumb>
+        </div>
+        <div
+          *ngIf="txState === 'ERROR'"
+        >
+          <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap', call: 'sucSwap'}, {name: 'Swap', swapView: 'Swap', mainView: 'Swap', call: 'sucSwap'}]" [message]="error" [isError]="true" (funcCaller)="navCaller($event)"></app-breadcrumb>
         </div>
       </div>
 
-      <div class="flex justify-between transaction-detail">
+      <app-asset-input
+        label='Send'
+        [(selectedAsset)]="swapData.sourceAsset.asset"
+        [(assetUnit)]="swapData.inputValue"
+        [balance]="swapData.balance"
+        [disableInput]="true"
+        [disabledAssetSymbol]="swapData.sourceAsset.asset.symbol"
+        [priceInput]="swapData.sourceAsset.assetPriceUSD"
+        [disabledMarketSelect]="true"
+        [hideMax]="true"
+        [isSource]="true"
+      ></app-asset-input>
 
-        <div class="flex items-center">
-          <div class="asset-icon-container flex items-center mr-4">
-            <img *ngIf="swapData.sourceAsset.iconPath" [src]="swapData.sourceAsset.iconPath" appImgFallback />
-            <mat-icon *ngIf="!swapData.sourceAsset.iconPath">help_outline</mat-icon>
+      <app-arrow></app-arrow>
+
+      <app-asset-input
+          label='Receive'
+          [(selectedAsset)]="swapData.targetAsset.asset"
+          [(assetUnit)]="swapData.outputValue"
+          [disableInput]="true"
+          [disabledAssetSymbol]="swapData.targetAsset.asset.symbol"
+          [priceInput]="swapData.targetAsset.assetPriceUSD"
+          [disabledMarketSelect]="true"
+          [hideMax]="true"
+          [isSource]="false"
+          [showBalance]="false"
+      ></app-asset-input>
+
+
+    <div>
+        <div class="swap-details">
+          <div class="flex justify-between">
+            <span class="tx-detail-label">Price:</span>
+            <span
+              >{{ swapData.basePrice | number: "1.2-4" }}
+              {{ swapData.sourceAsset.asset.ticker }} per
+              {{ swapData.targetAsset.asset.ticker }}<span *ngIf="swapData.sourceAsset.assetPriceUSD" class="mono" style="margin-left: 5px;">(${{swapData.sourceAsset.assetPriceUSD * swapData.basePrice | number: '0.2-2'}})</span></span
+            >
           </div>
-          <span class="text-xl mr-2">{{swapData.inputValue}}</span>
-        </div>
 
-        <span>{{swapData.sourceAsset.ticker}}</span>
-      </div>
-
-      <div class="flex">
-        <mat-icon class="to-btn-icon text-sm disabled ml-1 mb-4">arrow_downward</mat-icon>
-      </div>
-
-      <div class="flex justify-between transaction-detail">
-
-        <div class="flex items-center">
-          <div class="asset-icon-container flex items-center mr-4">
-            <img *ngIf="swapData.targetAsset.iconPath" [src]="swapData.targetAsset.iconPath" appImgFallback />
-            <mat-icon *ngIf="!swapData.targetAsset.iconPath">help_outline</mat-icon>
+          <div *ngIf="swapData.sourceAsset.asset.chain === 'BNB'" class="flex justify-between">
+            <span class="tx-detail-label">Network Fees:</span>
+            <span>{{swapData.bnbFee | number:"0.0-6"}} BNB + {{swapData.outboundTransactionFee}} RUNE<span *ngIf="swapData.sourceAsset.assetPriceUSD && swapData.runePrice" class="mono" style="margin-left: 5px;">(${{(swapData.sourceAsset.assetPriceUSD * swapData.bnbFee)+(swapData.runePrice * swapData.outboundTransactionFee) | number: '0.2-2'}})</span></span>
           </div>
-          <span class="text-xl mr-2">{{swapData.outputValue}}</span>
-        </div>
 
-        <span>{{swapData.targetAsset.ticker}}</span>
+          <div *ngIf="swapData.sourceAsset.asset.chain === 'ETH'" class="flex justify-between">
+            <span class="tx-detail-label">Total Fee:</span>
+            <span *ngIf="ethNetworkFee">{{ (ethNetworkFee) | number:"0.0-6"}} ETH + {{swapData.outboundTransactionFee}} RUNE<span *ngIf="swapData.sourceAsset.assetPriceUSD && swapData.runePrice" class="mono" style="margin-left: 5px;">(${{(swapData.sourceAsset.assetPriceUSD * ethNetworkFee)+(swapData.runePrice * swapData.outboundTransactionFee) | number: '0.2-2'}})</span></span>
+            <span *ngIf="!ethNetworkFee"> - ETH + {{swapData.outboundTransactionFee}} RUNE</span>
+          </div>
 
-      </div>
-
-      <span class="italic text-gray-300 text-xs">Output is estimated</span>
-
-    </div>
-
-    <div class="clear-both">
-      <div mat-dialog-content class="confirm-modal-content">
-
-        <div>
-
-          <!-- <div class="flex justify-between" style="margin-bottom: 6px;">
-            <span class="tx-detail-label">Price</span>
-            <span>{{swapData.basePrice | number:"1.2-4"}} {{swapData.sourceAsset.ticker}} per {{swapData.targetAsset.ticker}}</span>
+          <!-- <div *ngIf="swapData.sourceAsset.asset.chain === 'THOR'" class="flex justify-between">
+            <span class="tx-detail-label">Total Fee:</span>
+            <span>{{swapData.outboundTransactionFee}} RUNE<span *ngIf="swapData.runePrice" class="mono" style="margin-left: 5px;">(${{swapData.runePrice * swapData.outboundTransactionFee | number: '0.2-2'}})</span></span>
           </div> -->
 
-          <div class="flex justify-between mb-2">
-            <div class="tx-detail-label flex items-end">
-              Estimated Tx Time
-              <mat-icon style="transform: scale(.6)" matTooltip="Estimated Confirmation Time is the time it will take for THORChain to process your transaction.">info</mat-icon>
-            </div>
-            <div class="flex items-end"><{{estimatedMinutes}} min</div>
+          <div class="flex justify-between">
+            <span class="tx-detail-label">Slip:</span>
+            <span [ngStyle]="{'color': (swapData.slip * 100) > slippageTolerance ? '#FF4954' : 'var(--primary-default)'}">{{ swapData.slip | percent: "0.2-4" }}<span *ngIf="swapData.sourceAsset.assetPriceUSD" class="mono" style="margin-left: 5px;">(${{(swapData.sourceAsset.assetPriceUSD * swapData.inputValue) * swapData.slip | number: '1.2-2'}})</span></span>
           </div>
 
-          <div *ngIf="swapData.sourceAsset.chain === 'BNB'" class="flex justify-between mb-2">
-            <span class="tx-detail-label">Total Fee</span>
-            <span>{{swapData.bnbFee | number:"0.0-6"}} BNB</span>
-          </div>
-
-          <div *ngIf="swapData.sourceAsset.chain === 'ETH'" class="flex justify-between mb-2">
-            <span class="tx-detail-label">Total Fee</span>
-            <span *ngIf="ethNetworkFee">{{ (ethNetworkFee) | number:"0.0-6"}} ETH</span>
-            <span *ngIf="!ethNetworkFee"> - ETH</span>
-          </div>
-
-          <div *ngIf="swapData.outboundTransactionFee" class="flex justify-between mb-2">
-            <span class="tx-detail-label">Total Fee</span>
-            <span>{{swapData.outboundTransactionFee}} Rune</span>
-          </div>
+          <!-- <div class="flex justify-between">
+            <span>Settings:</span>
+            <span>{{slippageTolerance}}% slip tolerance <span class="adjust" (click)="goToSettings()">(click to adjust)</span></span>
+          </div> -->
 
           <div class="flex justify-between">
-            <span class="tx-detail-label">Slip</span>
-            <span>{{swapData.slip | percent:"0.2-4"}}</span>
+            <div class="tx-detail-label">
+              Estimated Transaction Time:
+              <!-- <mat-icon style="transform: scale(.6)" matTooltip="Estimated Confirmation Time is the time it will take for THORChain to process your transaction.">info</mat-icon> -->
+            </div>
+            <span><{{estimatedMinutes}} min</span>
           </div>
         </div>
 
-        <div *ngIf="loading" style="height: 56px;" class="flex justify-center items-center w-full mt-4">
-          <mat-progress-spinner mode="indeterminate" diameter="30"></mat-progress-spinner>
-        </div>
-
-        <button *ngIf="!loading" (click)="submitTransaction()" mat-flat-button color="primary" class="main-action-btn w-full" [disabled]="insufficientChainBalance">
-          <span *ngIf="!insufficientChainBalance">Confirm Swap</span>
-          <span *ngIf="insufficientChainBalance">Insufficient {{swapData.sourceAsset.chain}}</span>
-        </button>
-
+      <div class="bottom-actions two-btn">
+        <ng-container>
+          <div class="left-btn">
+            <button
+              class="close-btn"
+              aria-label="Close Markets Dialog"
+              (click)="closeDialog(false)"
+            >
+              <span>close</span>
+            </button>
+          </div>
+          <div class="divider"></div>
+          <div class="right-btn">
+            <button
+              (click)="submitTransaction()"
+              class="next-btn"
+              [disabled]="insufficientChainBalance || loading"
+            >
+              <span *ngIf="!insufficientChainBalance && !loading">Confirm</span>
+              <span *ngIf="insufficientChainBalance && !loading">Insufficient {{swapData.sourceAsset.asset.chain}}</span>
+              <span *ngIf="loading">Loading...</span>
+            </button>
+          </div>
+        </ng-container>
       </div>
 
     </div>
-
-  </div>
-
-  <app-transaction-ledger-confirm-modal *ngIf="txState === 'PENDING_LEDGER_CONFIRMATION'"></app-transaction-ledger-confirm-modal>
-
-  <app-transaction-processing-modal
-    *ngIf="txState === 'SUBMITTING'"
-    (closeDialog)="closeDialog()"
-    transactionDetail="Swapping {{swapData.inputValue}} {{swapData.sourceAsset.ticker}} for {{swapData.outputValue}} {{swapData.targetAsset.ticker}}">
-  </app-transaction-processing-modal>
-
-  <app-transaction-success-modal
-    *ngIf="txState === 'SUCCESS'"
-    [chain]="swapData.sourceAsset.chain"
-    [hash]="hash"
-    (closeDialog)="closeDialog(true)">
-  </app-transaction-success-modal>
-
-  <div class="flex flex-col items-center p-8 text-sm" *ngIf="txState === 'ERROR'">
-    <mat-icon>warning</mat-icon>
-    <span class="mt-4">
-      {{error}}
-    </span>
   </div>
 
 </div>
-

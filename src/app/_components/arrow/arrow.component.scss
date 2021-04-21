@@ -1,0 +1,37 @@
+.arrow-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 38px;
+
+  .arrow-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 51px;
+    height: 28px;
+    margin: 5px auto;
+    border-radius: 6px;
+
+    .sign {
+      fill: var(--primary-default);
+    }
+
+    &:hover {
+      background: var(--primary-grey-background);
+    }
+
+    &:disabled {
+      background: none;
+    }
+
+    &.grey .sign {
+      fill: var(--primary-grey-color);
+    }
+  }
+
+  .not-btn {
+    cursor: initial;
+  }
+
+}

@@ -1,17 +1,25 @@
 
-<div *ngIf="memberPoolData && asset" class="pool-list-item">
+<div *ngIf="memberPoolData && asset" class="pool-list-item" [ngClass]="{'activate': activate, 'pending': isPending}" (click)="toggleExpanded()">
 
   <div class="flex justify-between items-center">
+    <app-icon-ticker [iconPath]="asset.iconPath" [chain]="asset.chain" [ticker]="asset.ticker"></app-icon-ticker>
 
-    <app-icon-ticker [iconPath]="asset.iconPath" [ticker]="asset.ticker"></app-icon-ticker>
-
-    <button (click)="toggleExpanded()" class="text-white" mat-icon-button>
+    <span class="pending" *ngIf="isPending">(PENDING {{isPending.action}})</span>
+    <!-- <button class="text-white" mat-icon-button>
       <mat-icon>expand_more</mat-icon>
-    </button>
-
+    </button> -->
+    <div class="flex justify-between" *ngIf="activate && !isPending">
+      <app-tag>
+        <a [routerLink]="['/', 'deposit', asset.chain + '.' + asset.symbol]">Deposit</a>
+      </app-tag>
+      <div style="width: 5px;"></div>
+      <app-tag>
+        <a [routerLink]="['/', 'withdraw', asset.chain + '.' +  asset.symbol]">Withdraw</a>
+      </app-tag>
+    </div>
   </div>
 
-  <div [hidden]="!expanded" class="staked-data-details">
+  <!-- <div [hidden]="!expanded" class="staked-data-details">
     <div *ngIf="pooledRune" class="flex justify-between pool-detail-row">
       <span>Pooled RUNE</span>
       <span>{{pooledRune | number:"0.0-6"}}</span>
@@ -31,7 +39,7 @@
       <span *ngIf="!depositsDisabled" class="w-2"></span>
       <a mat-flat-button [ngClass]="{'w-1/2' : !depositsDisabled, 'w-full' : depositsDisabled}" color="primary" [routerLink]="['/', 'withdraw', asset.chain + '.' +  asset.symbol]">Withdraw</a>
     </div>
-  </div>
+  </div> -->
 
 </div>
 

@@ -1,67 +1,90 @@
-<div *ngIf="assetPoolData && !poolNotFoundErr" class="container">
+<div class="container-wrapper" *ngIf="view === 'Asset' || view === 'Deposit'">
+  <div class="container">
+    <div *ngIf="view === 'Deposit'">
+      <div class="main-container">
+        <nav class="content-top">
+          <app-breadcrumb [path]="[{name: 'vanaheimex', call: 'swap'}, {name: 'Pools', call: 'pool'}, {name: 'Deposit', disable: true}]" [isError]="mainButtonText() !== 'Ready' && mainButtonText() !== 'Prepare'" [message]="mainButtonText()" (funcCaller)="goToNav($event)"></app-breadcrumb>
+        </nav>
+      </div>
 
-  <app-section-head sectionTitle="Add Liquidity" [displayBackBtn]="true" (back)="back()"></app-section-head>
+      <app-asset-input
+        label="Deposit"
+        [(selectedAsset)]="asset"
+        [(assetUnit)]="assetAmount"
+        [balance]="assetBalance"
+        [disabledAssetSymbol]="rune.symbol"
+        [selectableMarkets]="selectableMarkets"
+        [isSource]="true"
+        [isDeposit]="true"
+        (lunchMarket)="overlaysService.setCurrentDepositView('Asset')">
+      </app-asset-input>
 
-  <div class="relative">
+      <app-arrow [isPlus]="true"></app-arrow>
 
-    <app-asset-input
-      label="Input"
-      [(selectedAsset)]="asset"
-      [(assetUnit)]="assetAmount"
-      [balance]="assetBalance"
-      [disabledAssetSymbol]="rune.symbol"
-      [selectableMarkets]="selectableMarkets">
-    </app-asset-input>
+      <app-asset-input
+        label="Deposit"
+        [(selectedAsset)]="rune"
+        [(assetUnit)]="runeAmount"
+        [balance]="runeBalance"
+        [priceInput]="runePrice"
+        [hideMax]="true"
+        [disableInput]="true"
+        [disabledAssetSymbol]="rune.symbol"
+        [disabledMarketSelect]="true"
+        [isSource]="true"
+        [isDeposit]="true">
+      </app-asset-input>
 
-    <div class="flex items-center justify-center">
-      <mat-icon [class.disabled]="true" class="to-btn-icon text-sm">add</mat-icon>
+      <div class="swap-details">
+        <div class="flex justify-between">
+          <span class="tx-detail-label">Network Fee:</span>
+          <span *ngIf="networkFee">{{networkFee | number:"1.0-8"}} {{asset.ticker}}.{{asset.chain}}</span>
+          <span *ngIf="!networkFee">...</span>
+        </div>
+      </div>
+
+      <div class="bottom-actions two-btn">
+        <div class="left-btn">
+          <button class="close-btn" (click)="back()">
+            <span>Cancel</span>
+          </button>
+        </div>
+        <div class="divider"></div>
+        <div class="right-btn">
+          <button
+            (click)="openConfirmationDialog()"
+            class="next-btn graident-btn"
+            [disabled]="formDisabled() || !assetPoolData"
+          >
+            <span>Deposit</span>
+          </button>
+        </div>
+      </div>
     </div>
 
-    <app-asset-input
-      label="Input"
-      [(selectedAsset)]="rune"
-      [(assetUnit)]="runeAmount"
-      [balance]="runeBalance"
-      [hideMax]="true"
-      [disableInput]="true"
-      [disabledAssetSymbol]="rune.symbol"
-      [disabledMarketSelect]="true">
-    </app-asset-input>
-
-    <div class="flex justify-between swap-details">
-      <span class="tx-detail-label"></span>
-      <span *ngIf="networkFee">{{networkFee | number:"1.0-8"}} {{asset.ticker}}.{{asset.chain}}  Network Fee</span>
-      <span *ngIf="!networkFee">...</span>
+    <div class="overlay-container overlay-connect-wallet" *ngIf="view === 'Asset'">
+      <app-markets-modal
+        [(selectedAsset)]="asset"
+        [selectableMarkets]="selectableMarkets"
+        [disabledAssetSymbol]="rune.symbol"
+        (close)="overlaysService.setCurrentDepositView('Deposit')">
+        <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'Pools', call: 'pool'}, {name: 'Deposit', call: 'deposit-back'}, {name: 'SEARCH', disable: true}]" message="TYPE IN THE FIELD" (funcCaller)="goToNav($event)"></app-breadcrumb>
+      </app-markets-modal>
     </div>
-
-    <div class="flex">
-      <app-approve-eth-contract
-        *ngIf="ethContractApprovalRequired"
-        class="w-1/2 mr-2"
-        [contractAddress]="ethRouter"
-        [asset]="asset"
-        (approved)="contractApproved()">
-      </app-approve-eth-contract>
-
-      <button
-        (click)="openConfirmationDialog()"
-        class="main-action-btn"
-        [ngClass]="ethContractApprovalRequired ? 'w-1/2' : 'w-full'"
-        mat-flat-button
-        color="primary"
-        [disabled]="formDisabled()"
-      >
-        {{mainButtonText()}}
-      </button>
-
-    </div>
-
 
   </div>
 
 </div>
 
-<div *ngIf="poolNotFoundErr">
+<app-confirm-deposit-modal
+  *ngIf="view === 'Confirm' && depositData"
+  (close)="closeSuccess($event)"
+  [data]="depositData"
+>
+</app-confirm-deposit-modal>
+
+<!-- TODO: this should be checked -->
+<!-- <div *ngIf="poolNotFoundErr">
   <div class="container">
     <app-section-head sectionTitle="Add Liquidity" [displayBackBtn]="true" (back)="back()"></app-section-head>
     <div class="flex flex-col items-center justify-center p-8 text-sm flex-grow">
@@ -74,5 +97,5 @@
       </div>
     </div>
   </div>
-</div>
+</div> -->
 

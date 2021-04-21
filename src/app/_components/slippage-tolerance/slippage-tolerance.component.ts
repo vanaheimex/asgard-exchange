@@ -1,7 +1,6 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, EventEmitter, Output } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { SlippageToleranceService } from 'src/app/_services/slippage-tolerance.service';
-
 @Component({
   selector: 'app-slippage-tolerance',
   templateUrl: './slippage-tolerance.component.html',
@@ -9,14 +8,15 @@ import { SlippageToleranceService } from 'src/app/_services/slippage-tolerance.s
 })
 export class SlippageToleranceComponent implements OnInit, OnDestroy {
 
+  @Output() close: EventEmitter<null> = new EventEmitter<null>();
+
   slippageTolerance$: Subscription;
   tolerance: number;
+  message: string;
 
   set customTolerance(num: number) {
+    this.message = this.tolerance == this.customTolerance || !this.customTolerance ? 'adjust' : 'ready';
     this._customTolerance = num;
-    const tolerance = (num) ? num : 3;
-    this.setSlippageTolerance(tolerance);
-
   }
   get customTolerance() {
     return this._customTolerance;
@@ -27,23 +27,19 @@ export class SlippageToleranceComponent implements OnInit, OnDestroy {
     this.slippageTolerance$ = this.slippageToleranceService.slippageTolerance$.subscribe(
       (percent: number) => {
         this.tolerance = percent;
-        if (!this.customTolerance && percent !== 3 && percent !== 5 && percent !== 10) {
-          this.customTolerance = percent;
-        }
+        this.customTolerance = percent;
       }
     );
   }
 
   ngOnInit(): void {
+    this.message = 'adjust';
   }
 
-  selectSlippage(num: number) {
-    this.customTolerance = null;
-    this.setSlippageTolerance(num);
-  }
-
-  setSlippageTolerance(num: number) {
-    this.slippageToleranceService.setSlippageTolerance(num);
+  setSlippage() {
+    this.slippageToleranceService.setSlippageTolerance(this.customTolerance);
+    this.message = 'saved';
+    this.close.emit();
   }
 
   ngOnDestroy() {

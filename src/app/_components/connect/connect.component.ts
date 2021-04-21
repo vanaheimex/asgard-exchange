@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { environment } from 'src/environments/environment';
+import { OverlaysService } from 'src/app/_services/overlays.service';
 
 
 @Component({
@@ -10,21 +11,23 @@ import { environment } from 'src/environments/environment';
 })
 export class ConnectComponent implements OnInit {
 
-  modalDimensions = {
-    maxWidth: '520px',
-    width: '50vw',
-    minWidth: '260px'
-  };
+  // modalDimensions = {
+  //   maxWidth: '420px',
+  //   width: '50vw',
+  //   minWidth: '260px'
+  // };
 
-  constructor(private dialog: MatDialog) { }
+  constructor(private dialog: MatDialog, public overlaysService: OverlaysService) { }
 
   ngOnInit(): void {}
 
   openDialog() {
-    this.dialog.open(
-      ConnectModal,
-      this.modalDimensions
-    );
+    // this.dialog.open(
+    //   ConnectModal,
+    //   this.modalDimensions
+    // );
+    // this.overlayChange.emit(true);
+    this.overlaysService.setCurrentSwapView('Connect');
   }
 
 }
@@ -49,7 +52,7 @@ export class ConnectModal {
   phrase: string;
 
   constructor(
-    public dialogRef: MatDialogRef<ConnectModal>,
+    public overlaysService: OverlaysService
   ) {
     this.isTestnet = environment.network === 'testnet' ? true : false;
   }
@@ -77,8 +80,10 @@ export class ConnectModal {
   }
 
   close() {
+    // this.dialogRef.close();
+    // this.overlayChange.emit(false);
+    this.overlaysService.setCurrentSwapView('Swap')
     this.phrase = null;
-    this.dialogRef.close();
   }
 
 }

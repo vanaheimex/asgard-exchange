@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { UserService } from 'src/app/_services/user.service';
 import { ethers } from 'ethers';
 import { erc20ABI } from 'src/app/_abi/erc20.abi';
+import { OverlaysService } from 'src/app/_services/overlays.service';
 
 @Component({
   selector: 'app-user-address-add-token',
@@ -22,7 +23,9 @@ export class UserAddressAddTokenComponent implements OnInit, OnDestroy {
   subs: Subscription[];
   loading: boolean;
 
-  constructor(private userService: UserService) {
+  message: string;
+
+  constructor(private userService: UserService, private overlaysService: OverlaysService) {
     this.tokenAddress = '';
     this.back = new EventEmitter<null>();
 
@@ -38,7 +41,9 @@ export class UserAddressAddTokenComponent implements OnInit, OnDestroy {
 
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.message = `ENTER ${this.chain} TOKEN CONTRACT ADDRESS`
+  }
 
   async addToken() {
     this.loading = true;
@@ -66,9 +71,20 @@ export class UserAddressAddTokenComponent implements OnInit, OnDestroy {
 
       } catch (error) {
         this.error = error;
+        this.message = 'an ERROR occurred'
       }
 
     }
+
+  }
+
+  async navCaller(nav) {
+    const address = await this.userService.getAdrressChain(this.chain);
+
+    if (nav === 'wallet')
+      this.overlaysService.setCurrentUserView({userView: 'Addresses', address: null, chain: null, asset: null});
+    else if (nav === 'chain')
+      this.overlaysService.setCurrentUserView({userView: 'Address', address: address, chain: this.chain, asset: null})
 
   }
 

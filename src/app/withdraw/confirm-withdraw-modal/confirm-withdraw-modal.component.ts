@@ -1,5 +1,4 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, Inject, Input, OnDestroy, OnInit, Output, EventEmitter } from '@angular/core';
 import { Subject, Subscription } from 'rxjs';
 import { User } from '../../_classes/user';
 import { TransactionConfirmationState } from '../../_const/transaction-confirmation-state';
@@ -7,6 +6,8 @@ import { UserService } from '../../_services/user.service';
 import { environment } from 'src/environments/environment';
 import { assetAmount, assetToBase, assetToString } from '@xchainjs/xchain-util';
 import { TransactionStatusService, TxActions, TxStatus } from 'src/app/_services/transaction-status.service';
+import { Router } from '@angular/router';
+import { OverlaysService } from 'src/app/_services/overlays.service';
 import { EthUtilsService } from 'src/app/_services/eth-utils.service';
 
 // TODO: this is the same as ConfirmStakeData in confirm stake modal
@@ -20,6 +21,8 @@ export interface ConfirmWithdrawData {
   assetBasePrice: number;
   unstakePercent: number;
   outboundTransactionFee: number;
+  assetPrice: number;
+  runePrice: number;
 }
 
 @Component({
@@ -37,13 +40,18 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
   error: string;
   estimatedMinutes: number;
 
+  //new reskin data injection
+  @Input() data: ConfirmWithdrawData;
+  @Output() close: EventEmitter<boolean>;
+
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: ConfirmWithdrawData,
-    public dialogRef: MatDialogRef<ConfirmWithdrawModalComponent>,
     private txStatusService: TransactionStatusService,
     private userService: UserService,
+    private router: Router,
+    private overlaysService: OverlaysService,
     private ethUtilsService: EthUtilsService,
   ) {
+    this.close = new EventEmitter<boolean>();
     this.txState = TransactionConfirmationState.PENDING_CONFIRMATION;
     const user$ = this.userService.user$.subscribe(
       (user) => {
@@ -97,6 +105,15 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
 
   }
 
+  goToNav(nav: string) {
+    if (nav === 'pool') {
+      this.router.navigate(['/', 'pool']);
+    }
+    else if (nav === 'swap') {
+      this.router.navigate(['/', 'swap']);
+    }
+  }
+
   txSuccess(hash: string) {
     this.txState = TransactionConfirmationState.SUCCESS;
     this.hash = hash;
@@ -112,7 +129,11 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
   }
 
   closeDialog(transactionSucess?: boolean) {
-    this.dialogRef.close(transactionSucess);
+    this.close.emit(transactionSucess);
+  }
+
+  closeToPool() {
+    this.router.navigate(['/', 'pool']);
   }
 
   ngOnDestroy() {

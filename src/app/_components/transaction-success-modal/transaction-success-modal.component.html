@@ -1,4 +1,154 @@
-<div class="success">
+<div class="container-wrapper">
+  <div class="container">
+
+    <div class="content-top">
+      <ng-content></ng-content>
+      <div class="top-right">
+      </div>
+    </div>
+
+    <div mat-dialog-content>
+
+      <div class="modal-head confirm-modal-head" *ngIf="isSending && !isWithdraw">
+
+        <app-asset-input
+          [label]="label[0]"
+          [(selectedAsset)]="asset[0].asset"
+          [(assetUnit)]="amount[0]"
+          [balance]="sourceBalance"
+          [disabledAssetSymbol]="asset[0].asset.symbol"
+          [disabledMarketSelect]="true"
+          [disableInput]="true"
+          [hideMax]="true"
+          [isSource]="true"
+          [showPrice]="false"
+          [disableUser]="false"
+          [isWallet]="true">
+        </app-asset-input>
+
+        <app-arrow [isGrey]="true"></app-arrow>
+
+        <app-text-field selectedType="Text" mode="Single" label="Recipient Address" [(textOfField)]="recipientAddress" [disable]="true"></app-text-field>
+
+        <app-arrow></app-arrow>
+
+        <app-notice [tags]="['Copy', 'Explorer']" [isMono]="true">
+          <span text style="font-family: inherit;" *ngIf="hash">{{hash.substring(0, 16) + '...' + hash.substring(hash.length - 16, hash.length)}}</span>
+          <div tag_one (click)="copyToClipboard()">
+            <span *ngIf="!copied">COPY</span>
+            <span *ngIf="copied">COPIED</span>
+          </div>
+          <div tag_two>
+            <a target="_blank" style="text-decoration: none; color: inherit;" [href]="explorerPath()">Explore</a>
+          </div>
+        </app-notice>
+
+      </div>
+
+      <div *ngIf="!isSending && !isWithdraw">
+
+        <app-asset-input
+          [label]="label[0]"
+          [(selectedAsset)]="asset[0].asset"
+          [(assetUnit)]="amount[0]"
+          [balance]="sourceBalance"
+          [disabledAssetSymbol]="asset[0].asset.symbol"
+          [disabledMarketSelect]="true"
+          [disableInput]="true"
+          [hideMax]="true"
+          [isSource]="true"
+          [showPrice]="false"
+          [disableUser]="false"
+          [isWallet]="true">
+        </app-asset-input>
+
+        <app-arrow [isGrey]="true" [isPlus]="isPlus"></app-arrow>
+
+        <app-asset-input
+          [label]="label[1]"
+          [(selectedAsset)]="asset[1].asset"
+          [(assetUnit)]="amount[1]"
+          [balance]="targetBalance"
+          [disabledAssetSymbol]="asset[1].asset.symbol"
+          [disabledMarketSelect]="true"
+          [disableInput]="true"
+          [hideMax]="true"
+          [isSource]="true"
+          [showPrice]="false"
+          [disableUser]="false"
+          [isWallet]="true">
+        </app-asset-input>
+
+        <app-arrow></app-arrow>
+
+        <app-notice [tags]="['Copy', 'Explorer']" [isMono]="true">
+          <span text style="font-family: inherit;">{{hash.substring(0, 16) + '...' + hash.substring(hash.length - 16, hash.length)}}</span>
+          <div tag_one (click)="copyToClipboard()">
+            <span *ngIf="!copied">COPY</span>
+            <span *ngIf="copied">COPIED</span>
+          </div>
+          <div tag_two>
+            <a target="_blank" style="text-decoration: none; color: inherit;" [href]="explorerPath()">Explore</a>
+          </div>
+        </app-notice>
+
+      </div>
+
+      <div *ngIf="isWithdraw && !isSending">
+        <div class="percent-container">
+          <span class="percent-label">Percentage</span>
+          <span class="unstake-percent">{{percentage}}%</span>
+          <mat-slider
+            class="slider"
+            [disabled]="true"
+            [max]="100"
+            [min]="0"
+            step="1"
+            [tickInterval]="25"
+            [value]="percentage">
+          </mat-slider>
+        </div>
+
+        <app-arrow [isGrey]="true"></app-arrow>
+
+        <app-double-asset-field
+          [label]="label[0]"
+          [selectedAssets]="[asset[0].asset, asset[1].asset]"
+          [assetUnits]="[amount[0], amount[1]]"
+          [showPrice]="false"
+          [isWallet]="true"
+        ></app-double-asset-field>
+
+        <app-arrow></app-arrow>
+
+        <app-notice [tags]="['Copy', 'Explorer']" [isMono]="true">
+          <span text style="font-family: inherit;">{{hash.substring(0, 16) + '...' + hash.substring(hash.length - 16, hash.length)}}</span>
+          <div tag_one (click)="copyToClipboard()">
+            <span *ngIf="!copied">COPY</span>
+            <span *ngIf="copied">COPIED</span>
+          </div>
+          <div tag_two>
+            <a target="_blank" style="text-decoration: none; color: inherit;" [href]="explorerPath()">Explore</a>
+          </div>
+        </app-notice>
+
+      </div>
+
+    </div>
+
+    <div class="bottom-actions">
+      <div style="width: 100%;">
+        <button class="close-btn" aria-label="CLOSE" (click)="closeDialog.emit()">
+          <span>close</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- <div class="success">
   <div class="icon-container icon-container--sent">
     <mat-icon>arrow_circle_up</mat-icon>
   </div>
@@ -22,4 +172,4 @@
 
   </div>
 
-</div>
+</div> -->

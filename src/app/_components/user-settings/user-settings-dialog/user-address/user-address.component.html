@@ -1,59 +1,62 @@
-
-
-<div class="flex justify-between items-center float-left w-full pt-4 px-4 mb-4">
-  <button (click)="back.emit()" mat-icon-button>
-    <mat-icon>arrow_back</mat-icon>
-  </button>
-  <h1 class="flex items-center text-white text-lg font-medium m-0">
-    <div class="asset-icon-container">
-      <img *ngIf="iconPath" class="asset-icon" [src]="iconPath" />
+<div class="container-wrapper">
+  <div class="container">
+    <div class="content-top">
+      <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'wallet', call: 'wallet'}, {name: chain, disable: true}]" message="select" (funcCaller)="navCaller($event)"></app-breadcrumb>
+      <div class="top-right">
+      </div>
     </div>
-    {{chain}} Wallet
-  </h1>
-  <div style="width: 40px">
-    <button mat-icon-button (click)="refreshBalances()">
-      <mat-icon>refresh</mat-icon>
-    </button>
-  </div>
-</div>
+    <div class="content-middle">
+      <div class="modal-head" style="margin-bottom: 20px;">
+        <app-notice [tags]="['Copy', 'Explorer']" [isMono]="true" [isCenter]="true">
+          <span text style="font-family: inherit; text-align: center;">{{address.substring(0, 10) + '...' + address.substring(address.length - 10, address.length)}}</span>
+          <div tag_one (click)="copyToClipboard(address)">
+            <span *ngIf="!copied">COPY</span>
+            <span *ngIf="copied">COPIED</span>
+          </div>
+          <div tag_two>
+            <a target="_blank" style="text-decoration: none; color: inherit;" [href]="explorerPath">Explore</a>
+          </div>
+        </app-notice>
+      </div>
 
-<div class="p-4">
-  <div *ngIf="address && chain" class="uni-input user-address">
-    <label class="flex items-center">
-      {{chain}} Address
-
-      <a class="explorer-link" [href]="explorerPath" target="_blank">
-        <mat-icon>open_in_new</mat-icon>
-      </a>
-    </label>
-
-    <div class="flex w-full">
-      <textarea [value]="address" name="address" [disabled]="true"></textarea>
-      <button matSuffix mat-icon-button aria-label="Copy To Clipboard" (click)="copyToClipboard(address)">
-        <mat-icon matSuffix (click)="copyToClipboard(address)">content_copy</mat-icon>
-      </button>
+      <div class="expandable" mat-dialog-content>
+        <app-assets-list
+          *ngIf="!error"
+          [assetListItems]="assets"
+          [loading]="loading"
+          [displayAddTokenButton]="chain === 'ETH'"
+          (selectAsset)="selectAsset($event)"
+          (addToken)="navigateToAddToken.emit()"
+          expandable="semi">
+        </app-assets-list>
+        <div *ngIf="error" class="lists" style="height: 289px; justify-content: center; align-items: center;">
+          <div class="info">
+            <span>{{error}}</span>
+            <br />
+            <a *ngIf="explorerPath" class="adjust" [href]="explorerPath" target="_blank">Check funds safe.</a>
+          </div>
+          <br />
+        </div>
+      </div>
     </div>
 
-    <app-testnet-warning [chain]="chain"></app-testnet-warning>
-
+    <div class="bottom-actions two-btn" style="display: flex; margin-top: 30px;">
+      <div class="left-btn">
+        <button class="close-btn flex justify-center items-center" (click)="back.emit()">
+          <svg class="arrow-left" width="11" height="20" viewBox="0 0 11 20" fill="#000" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5.74609 19.4531L10.8086 14.3906H6.61328V0.65625H4.87891V14.3906H0.683594L5.74609 19.4531Z"/>
+          </svg>
+          <span>
+            WALLET
+          </span>
+        </button>
+      </div>
+      <div class="divider"></div>
+      <div class="right-btn">
+        <button class="next-btn" [disabled]="loadingBalance" aria-label="Close Connect Wallet Dialog" (click)="refreshBalances()">
+          <span>refresh</span>
+        </button>
+      </div>
+    </div>
   </div>
-</div>
-
-<div *ngIf="!error" mat-dialog-content>
-  <app-assets-list
-    [assetListItems]="assets"
-    [loading]="loading"
-    [disabledAssetSymbol]="''"
-    [displayAddTokenButton]="chain === 'ETH'"
-    (selectAsset)="selectAsset($event)"
-    (addToken)="navigateToAddToken.emit()">
-  </app-assets-list>
-</div>
-
-<div *ngIf="error" class="p-8">
-  <small>{{error}}</small>
-  <br />
-  <a *ngIf="explorerPath" class="explorer-link text-green-400" [href]="explorerPath" target="_blank">
-    <small>Check funds safe <mat-icon>open_in_new</mat-icon></small>
-  </a>
 </div>

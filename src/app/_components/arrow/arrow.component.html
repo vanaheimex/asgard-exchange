@@ -1,0 +1,14 @@
+<div class="arrow-container">
+  <button class="arrow-btn"
+          (click)="onClick.emit()"
+          [ngClass]="{'not-btn': seperator, 'grey': isGrey}"
+          [disabled]="seperator">
+    <!-- <span class="arrow-down">⭣</span> -->
+    <svg *ngIf="!isPlus" class="sign" width="11" height="20" viewBox="0 0 11 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5.74609 19.4531L10.8086 14.3906H6.61328V0.65625H4.87891V14.3906H0.683594L5.74609 19.4531Z"/>
+    </svg>
+    <svg *ngIf="isPlus" class="sign" width="15" height="14" viewBox="0 0 15 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8.40625 14V7.92969H14.4766V6.19531H8.40625V0.125H6.67188V6.19531H0.601562V7.92969H6.67188V14H8.40625Z"/>
+    </svg>
+  </button>
+</div>

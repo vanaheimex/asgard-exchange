@@ -1,6 +1,8 @@
 import { CoinIconsFromTrustWallet } from 'src/app/_const/icon-list';
 import { Chain } from '@xchainjs/xchain-util';
 import { ethers } from 'ethers';
+import { ethToken } from '../_const/eth-token';
+import { environment } from '../../environments/environment'
 
 export class Asset {
 
@@ -23,10 +25,6 @@ export class Asset {
       // Override token icons when not found in trustwallet
 
       switch (chain) {
-        case 'BTC':
-          this.iconPath = 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/binance/assets/BTCB-1DE/logo.png';
-          break;
-
         case 'LTC':
           this.iconPath = 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/litecoin/info/logo.png';
           break;
@@ -40,11 +38,16 @@ export class Asset {
         case 'ETH':
           if (this.symbol !== 'ETH') { // for ETH tokens
             this.iconPath = this._setEthIconPath(symbol, ticker);
+
+            // getter of icons for eth testnet
+            if(environment.network === 'testnet') {
+              this.iconPath = this.getTestnetTokeIconPath(this.symbol, this.ticker);
+            }
           }
           break;
 
         case 'THOR':
-          this.iconPath = 'assets/images/token-icons/thorchain-logo.png';
+          this.iconPath = '/assets/icons/logo-thor-rune.svg';
           break;
 
         case 'BCH':
@@ -57,6 +60,14 @@ export class Asset {
 
     }
 
+  }
+
+  //get tesnet token
+  private getTestnetTokeIconPath(assetSymbol: string, assetTicker: string): string {
+    let token = ethToken.tokens.find((token) => assetTicker === token.symbol);
+    if( token ) {
+      return token.logoURI;
+    }
   }
 
   private _setEthIconPath(assetSymbol: string, assetTicker: string): string {

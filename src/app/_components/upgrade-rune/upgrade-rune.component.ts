@@ -11,6 +11,7 @@ import { UserService } from 'src/app/_services/user.service';
 export class UpgradeRuneComponent implements OnInit {
 
   @Input() asset: AssetAndBalance;
+  @Input() nativeRune: AssetAndBalance;
   @Output() back: EventEmitter<null>;
   @Output() confirmUpgrade: EventEmitter<{amount: number}>;
   get amount() {
@@ -37,12 +38,16 @@ export class UpgradeRuneComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.asset) {
-
       const balances$ = this.userService.userBalances$.subscribe(
         (balances) => {
           this.balance = this.userService.findBalance(balances, this.asset.asset);
         }
       );
+
+
+      console.log(this.amount);
+      console.log(this.nativeRune);
+      console.log(this.nativeRune.balance.amount().toNumber());
 
       this.subs = [balances$];
 

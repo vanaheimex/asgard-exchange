@@ -1,4 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Asset } from '@xchainjs/xchain-util';
+import { AssetAndBalance } from 'src/app/_classes/asset-and-balance';
 
 @Component({
   selector: 'app-transaction-processing-modal',
@@ -9,6 +11,14 @@ export class TransactionProcessingModalComponent implements OnInit {
 
   @Input() transactionDetail: string;
   @Output() closeDialog: EventEmitter<null>;
+  @Input() isSending: boolean = false;
+  @Input() isWithdraw: boolean = false;
+  @Input() asset: Array<AssetAndBalance>;
+  @Input() label: Array<string>;
+  @Input() amount: Array<number>;
+  @Input() recipientAddress: string;
+  @Input() percentage: number;
+  @Input() isPlus: boolean = false;
 
   constructor() {
     this.closeDialog = new EventEmitter<null>();

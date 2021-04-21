@@ -1,15 +1,49 @@
-<div class="confirm-modal-head flex flex-col p-4">
+<div class="overlay-of-content">
 
-  <div class="flex justify-between items-center mb-2">
-    <h1 mat-dialog-title>Approve Contract</h1>
-    <div mat-dialog-actions>
-      <button mat-icon-button aria-label="Close Approve Contract Dialog" mat-dialog-close>
-        <mat-icon>close</mat-icon>
-      </button>
+  <div class="content-top">
+    <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'Pools', disable: true}, {name: 'Create', disable: true}, {name: 'Contract', disable: true}]" [isError]="insufficientEthBalance" [message]="insufficientEthBalance ? 'Insufficient ETH.ETH balance' : 'approve'"></app-breadcrumb>
+    <div class="top-right">
+      <div class="right-option">
+      </div>
     </div>
   </div>
 
-  <div>
+  <app-notice [tags]="['Copy', 'Explorer']" [isMono]="true">
+    <span text style="font-family: inherit;">{{data.contractAddress.substring(0, 16) + '...' + data.contractAddress.substring(data.contractAddress.length - 16, data.contractAddress.length)}}</span>
+    <div tag_one (click)="copyToClipboard()">
+      <span *ngIf="!copied">COPY</span>
+      <span *ngIf="copied">COPIED</span>
+    </div>
+  </app-notice>
+
+  <div class="swap-details">
+    <div class="flex justify-between">
+      <span class="tx-detail-label">Disclaimer:</span>
+      <span>Approve RUNE to be used by THORChain smart contract</span>
+    </div>
+    <div class="flex justify-between">
+      <span class="tx-detail-label">Estimated ETH Fee:</span>
+      <span *ngIf="fee">{{ (fee) | number:"0.0-6"}} ETH</span>
+      <span *ngIf="!fee">...</span>
+    </div>
+  </div>
+
+  <div class="bottom-actions two-btn">
+    <div class="left-btn">
+      <button class="close-btn" (click)="closeDialog()">
+        <span>cancel</span>
+      </button>
+    </div>
+    <div class="divider"></div>
+    <div class="right-btn">
+      <button class="next-btn" (click)="approve()" [disabled]="insufficientEthBalance || loading">
+        <span>Approve</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+  <!-- <div>
 
     <small>
       <span>Approve {{data.asset.ticker}} to be used by</span> <br />
@@ -43,5 +77,10 @@
 
     </div>
 
+    <div mat-dialog-actions class="dialog-actions">
+      <button mat-icon-button aria-label="Close Markets Dialog" (click)="closeDialog()" mat-dialog-close>
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
   </div>
-</div>
+</div> -->

@@ -2,7 +2,7 @@
 export const environment = {
    production: false,
    network: 'testnet',
-   etherscanKey: '',
-   infuraProjectId: '',
+   etherscanKey: 'undefined',
+   infuraProjectId: 'undefined',
    appLocked: false
 };

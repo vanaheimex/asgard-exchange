@@ -61,10 +61,20 @@ export class TransactionStatusService {
   ) {
     this._txs = [];
 
-    userService.user$.subscribe(
-      (user) => this.user = user
+    userService.user$.subscribe( (user) => {
+        this.user = user
+
+        if (!user) {
+          this.removeTransactions();
+          this._txs = [];
+        }
+      }
     );
 
+  }
+
+  removeTransactions() {
+    this.transactionSource.next([] as Tx[])
   }
 
   // this needs to be simplified and cleaned up
@@ -371,6 +381,18 @@ export class TransactionStatusService {
       return count;
 
     }, 0);
+  }
+
+  // a guard for deposit
+  getPoolPedingTx() {
+    return this._txs.filter( (tx) => {
+
+      if(tx.status === TxStatus.PENDING && (tx.action === TxActions.DEPOSIT || tx.action === TxActions.WITHDRAW)) {
+        return true
+      }
+      return false;
+
+    })
   }
 
 }

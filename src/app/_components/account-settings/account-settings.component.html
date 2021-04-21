@@ -1,0 +1,59 @@
+<div class="container-wrapper">
+  <div class="container" *ngIf="getSettingView() === 'ACCOUNT'">
+    <div class="content-top">
+      <app-breadcrumb
+        [path]="[
+          { name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap' },
+          { name: 'settings', disable: true }
+        ]"
+        message="select"
+      ></app-breadcrumb>
+      <div class="top-right"></div>
+    </div>
+    <div>
+      <div mat-dialog-content>
+        <div>
+          <div class="lists">
+            <div class="list-item" (click)="setSettingView('SLIP')">
+              <div class="left-sec">
+                <span>slippage tolerance</span>
+              </div>
+              <div class="right-sec">
+                <span class="p-0">{{slippageTolerance}}%</span>
+              </div>
+            </div>
+            <div class="list-item" (click)="setSettingView('PHRASE')">
+              <div class="left-sec">
+                <span>seed phrase</span>
+              </div>
+              <div class="right-sec"></div>
+            </div>
+            <!-- <div class="list-item">
+              <div class="left-sec">
+                <span>conversion currency</span>
+              </div>
+              <div class="right-sec">
+                <input class="p-0 uppercase" type="text" value="coming soon" disabled="{{true}}">
+              </div>
+            </div> -->
+          </div>
+        </div>
+      </div>
+
+      <!-- close dialog -->
+      <div class="bottom-actions">
+        <div>
+          <button class="close-btn" (click)="close()">
+            <span>close</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ng-container *ngIf="getSettingView() === 'PHRASE'">
+    <app-seed-phrase (close)="setSettingView('ACCOUNT')"></app-seed-phrase>
+  </ng-container>
+  <ng-container *ngIf="getSettingView() === 'SLIP'">
+    <app-slippage-tolerance (close)="setSettingView('ACCOUNT')"></app-slippage-tolerance>
+  </ng-container>
+</div>

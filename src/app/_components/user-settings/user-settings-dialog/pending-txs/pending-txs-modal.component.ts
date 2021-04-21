@@ -3,6 +3,8 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { ExplorerPathsService } from 'src/app/_services/explorer-paths.service';
 import { TransactionStatusService, Tx } from 'src/app/_services/transaction-status.service';
+import { OverlaysService, MainViewsEnum } from 'src/app/_services/overlays.service';
+import { Asset } from 'src/app/_classes/asset';
 
 @Component({
   selector: 'app-pending-txs-modal',
@@ -22,9 +24,10 @@ export class PendingTxsModalComponent implements OnInit, OnDestroy {
   @Output() back: EventEmitter<null>;
 
   constructor(
-    public dialogRef: MatDialogRef<PendingTxsModalComponent>,
+    // public dialogRef: MatDialogRef<PendingTxsModalComponent>,
     private explorerPathsService: ExplorerPathsService,
-    private txStatusService: TransactionStatusService
+    private txStatusService: TransactionStatusService,
+    private overlaysService: OverlaysService
   ) {
 
     this.back = new EventEmitter<null>();
@@ -47,6 +50,11 @@ export class PendingTxsModalComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
+  }
+
+  getIconPath(tx: Tx) {
+    const asset = new Asset(`${tx.chain}.${tx.symbol}`);
+    return asset.iconPath
   }
 
   explorerUrl(chain: string): string {
@@ -84,8 +92,14 @@ export class PendingTxsModalComponent implements OnInit, OnDestroy {
     }
   }
 
+  goToExternal(url: string) {
+    console.log(url)
+    window.open(url, '_blank');
+  }
+
   close(): void {
-    this.dialogRef.close();
+    // this.dialogRef.close();
+    this.overlaysService.setViews(MainViewsEnum.Swap, 'Swap');
   }
 
   ngOnDestroy() {

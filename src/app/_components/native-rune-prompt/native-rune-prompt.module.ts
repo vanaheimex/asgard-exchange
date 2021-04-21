@@ -7,12 +7,13 @@ import { AssetsListModule } from '../assets-list/assets-list.module';
 import { UpgradeRuneModule } from '../upgrade-rune/upgrade-rune.module';
 import { UpgradeRuneConfirmModule } from '../upgrade-rune-confirm/upgrade-rune-confirm.module';
 import { TransactionSuccessModalModule } from '../transaction-success-modal/transaction-success-modal.module';
-import { ModalSectionHeaderModule } from '../modal-section-header/modal-section-header.module';
+import { NotificationComponent } from '../notification/notification.component';
+import { BreadcrumbModule } from '../breadcrumb/breadcrumb.module';
 
 
 
 @NgModule({
-  declarations: [NativeRunePromptComponent, NativeRunePromptModalComponent],
+  declarations: [NativeRunePromptComponent, NativeRunePromptModalComponent, NotificationComponent],
   imports: [
     CommonModule,
     MatIconModule,
@@ -20,8 +21,8 @@ import { ModalSectionHeaderModule } from '../modal-section-header/modal-section-
     UpgradeRuneModule,
     UpgradeRuneConfirmModule,
     TransactionSuccessModalModule,
-    ModalSectionHeaderModule
+    BreadcrumbModule
   ],
-  exports: [NativeRunePromptComponent]
+  exports: [NativeRunePromptComponent, NativeRunePromptModalComponent]
 })
 export class NativeRunePromptModule { }

@@ -8,6 +8,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { IconTickerModule } from '../_components/icon-ticker/icon-ticker.module';
+import { BreadcrumbModule } from '../_components/breadcrumb/breadcrumb.module';
+import { RightOptionModule } from '../_components/right-option/right-option.module';
+import { NoticeModule } from '../_components/notice/notice.module';
+import { TagModule } from '../_components/tag/tag.module';
 
 
 @NgModule({
@@ -18,6 +22,10 @@ import { IconTickerModule } from '../_components/icon-ticker/icon-ticker.module'
     MatIconModule,
     MatProgressSpinnerModule,
     IconTickerModule,
+    BreadcrumbModule,
+    RightOptionModule,
+    NoticeModule,
+    TagModule,
     RouterModule.forChild([
       {
         path: '',

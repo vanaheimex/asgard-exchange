@@ -1,16 +1,32 @@
-<div *ngIf="mode === 'SELECT_ASSET'">
+<div class="container-wrapper upgrade" *ngIf="mode === 'SELECT_ASSET'">
+  <div class="container">
+    <div class="main-container">
+      <div class="content-top">
+        <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'Upgrade Rune', disable: true}]" message="Prepare"></app-breadcrumb>
+        <div class="top-right">
+        </div>
+      </div>
 
-  <app-modal-section-header sectionTitle="Non-native RUNE Assets" [displayCloseBtn]="true" (closeModal)="dialogRef.close()"></app-modal-section-header>
+      <div class="content-middle">
+        <div class="expandable">
+          <app-assets-list [assetListItems]="assets" [loading]="loading" (selectAsset)="selectAsset($event)" [showIcons]="false"></app-assets-list>
+        </div>
+      </div>
+    </div>
 
-  <div mat-dialog-content>
-    <app-assets-list [assetListItems]="assets" [loading]="loading" [disabledAssetSymbol]="''" (selectAsset)="selectAsset($event)"></app-assets-list>
+    <!-- close dialog -->
+    <div class="bottom-actions two-btn">
+      <button class="close-btn" aria-label="close the prompt" (click)="close()">
+        <span>close</span>
+      </button>
+    </div>
   </div>
-
 </div>
 
 <app-upgrade-rune
   *ngIf="mode === 'UPGRADE_ASSET'"
   [asset]="selectedAsset"
+  [nativeRune]="nativeRune"
   (confirmUpgrade)="confirmUpgradeRune($event)"
   (back)="mode = 'SELECT_ASSET'">
 </app-upgrade-rune>
@@ -19,14 +35,14 @@
   *ngIf="mode === 'CONFIRM'"
   [asset]="selectedAsset"
   [amount]="amountToSend"
-  (back)="mode = 'UPGRADE_ASSET'"
-  (transactionSuccessful)="transactionSuccessful($event)">
+  [nativeRune]="nativeRune"
+  (back)="mode = 'UPGRADE_ASSET'">
 </app-upgrade-rune-confirm>
 
-<app-transaction-success-modal
+<!-- <app-transaction-success-modal
   *ngIf="mode === 'SUCCESS'"
   [externalTx]="true"
   [chain]="selectedAsset.asset.chain"
   [hash]="successfulTxHash"
-  (closeDialog)="dialogRef.close()">
-</app-transaction-success-modal>
+  (closeDialog)="close()">
+</app-transaction-success-modal> -->

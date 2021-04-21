@@ -1,0 +1,55 @@
+<div class="container">
+  <div class="content-top">
+    <app-breadcrumb
+      [path]="[
+        { name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap' },
+        { name: 'settings',  backFunc: true},
+        { name: 'seed phrase', disable: true}
+      ]"
+      [message]="passwordAccepted ? 'store safely' : keystoreError ? 'incorrect password' : keystorePassword ? 'ready' : 'enter password'"
+      (backFunc)="close.emit()"
+      [isError]="keystoreError"
+    ></app-breadcrumb>
+    <div class="top-right"></div>
+  </div>
+  <div *ngIf="!passwordAccepted">
+    <div mat-dialog-content>
+      <app-text-field [(textOfField)]="keystorePassword" mode="Single" selectedType="Password" label="Password" name="keystore-password"></app-text-field>
+    </div>
+
+    <!-- close dialog -->
+    <div class="bottom-actions two-btn">
+      <div class="left-btn">
+        <button class="close-btn" [disabled]="keystoreConnecting" (click)="close.emit()">
+          <span>cancel</span>
+        </button>
+      </div>
+      <div class="divider"></div>
+      <div class="right-btn">
+        <button class="next-btn" [disabled]="!keystorePassword || keystoreConnecting" (click)="unlock()">
+          <span *ngIf="!keystoreConnecting">Show</span>
+          <span *ngIf="keystoreConnecting">Connecting...</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="passwordAccepted">
+    <div mat-dialog-content>
+      <app-phrase-words-list [phrase]="phrase"></app-phrase-words-list>
+    </div>
+
+    <div class="swap-details">
+      <div style="margin-bottom: 5px; font-size: 14px;">This phrase is your access to your wallet and funds. Write it down and store it in a safe place.</div>
+      <div style="margin-bottom: 5px; font-size: 14px;">Do not share it with anyone. VANAHEIMEX never stores your keystore or phrase anywhere.</div>
+      <div>This phrase is the only way to recover funds if your keystore file is lost.</div>
+    </div>
+
+    <div class="bottom-actions">
+      <div>
+        <button class="close-btn" (click)="close.emit()">
+          <span>close</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

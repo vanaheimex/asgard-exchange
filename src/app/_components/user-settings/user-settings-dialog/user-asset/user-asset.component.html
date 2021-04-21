@@ -1,61 +1,151 @@
-<app-modal-section-header [displayBackBtn]="true" (back)="back.emit()"></app-modal-section-header>
-
-<div class="p-4 flex flex-col">
-
-  <div class="flex flex-col justify-center items-center">
-    <div class="mb-4" style="width: 40px;">
-      <img *ngIf="asset && asset.asset && asset.asset.iconPath" class="asset-icon" [src]="asset && asset.asset && asset.asset.iconPath" appImgFallback style="max-width: 100%;" />
-    </div>
-
-    <div *ngIf="address" class="flex flex-col justify-center">
-      <qrcode class="flex justify-center mb-2" [qrdata]="address" [width]="256" [errorCorrectionLevel]="'M'" [elementType]="'svg'"></qrcode>
-      <span style="font-size: 0.8rem">{{address}}</span>
-    </div>
-
-    <span *ngIf="asset" class="asset-balance">{{asset.balance.amount().toNumber()}} {{asset.asset.ticker}}</span>
-    <div style="height: 17px">
-      <span class="usd-value" *ngIf="usdValue">approx ${{usdValue | number:"0.0-2"}}</span>
-    </div>
-
-  </div>
-
-  <ul class="actions flex justify-center">
-    <li class="action flex flex-col">
-      <button mat-mini-fab color="primary" aria-label="Send" (click)="send.emit()">
-        <mat-icon>upgrade</mat-icon>
-      </button>
-      Send
-    </li>
-
-    <li class="action flex flex-col items-center">
-      <button mat-mini-fab color="primary" aria-label="Copy" (click)="copyToClipboard()">
-        <mat-icon>content_copy</mat-icon>
-      </button>
-      Copy
-    </li>
-
-    <!-- NATIVE RUNE DEPOSIT -->
-    <li *ngIf="asset && asset.asset.chain === 'THOR' && asset.asset.ticker === 'RUNE'" class="action flex flex-col items-center">
-      <button mat-mini-fab color="primary" aria-label="Copy" (click)="deposit.emit()">
-        <mat-icon>flash_on</mat-icon>
-      </button>
-      Deposit
-    </li>
-
-    <!-- UPGRADE BNB/ETH RUNE TO NATIVE RUNE -->
-    <li *ngIf="asset && (asset.asset.chain === 'BNB' || asset.asset.chain === 'ETH') && asset.asset.ticker === 'RUNE'" class="action flex flex-col items-center">
-      <button mat-mini-fab color="primary" aria-label="Copy" (click)="upgradeRune.emit()">
-        <mat-icon>upgrade</mat-icon>
-      </button>
-      Native RUNE
-    </li>
-
-  </ul>
-
-  <app-testnet-warning *ngIf="asset && asset.asset && asset.asset.chain" [chain]="asset.asset.chain"></app-testnet-warning>
-
-</div>
-
-<!-- <div mat-dialog-content>
-  <p>txs here</p>
+<!-- <div style="padding: 1rem 1rem 0; margin-bottom: 0;" class="section-head-container">
+  <button (click)="back.emit()" mat-icon-button>
+    <mat-icon>arrow_back</mat-icon>
+  </button>
 </div> -->
+<div class="container-wrapper">
+  <div class="container">
+    <div class="content-top">
+      <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'wallet', call: 'wallet'}, {name: chain, call: 'chain'}, {name: chain + '.' + ticker, disable: true}]" message="select" (funcCaller)="navCaller($event)"></app-breadcrumb>
+      <div class="top-right">
+      </div>
+    </div>
+    <div class="modal-head" style="margin-bottom: 20px;">
+      <!-- <div *ngIf="address" class="uni-input user-address">
+        <label class="flxr flxr--align-center">
+          {{asset.asset.ticker}} Address
+
+
+        </label>
+
+        <div class="flxr" style="width: 100%; align-items: center;">
+          <input class="wallet-address" [value]="address" name="address" [disabled]="true" style="padding: 0;" />
+          <button matSuffix mat-icon-button aria-label="BNB Address" (click)="copyToClipboard()">
+            <mat-icon matSuffix (click)="copyToClipboard()">content_copy</mat-icon>
+          </button>
+          <a class="explorer-link" target="_blank">
+            <mat-icon style="font-size: 20px;">link</mat-icon>
+          </a>
+        </div>
+
+        <app-testnet-warning></app-testnet-warning>
+
+      </div> -->
+      <app-notice [tags]="['Copy', 'Explorer']" [isMono]="true" [isCenter]="true">
+        <span text style="font-family: inherit; text-align: center;">{{address.substring(0, 10) + '...' + address.substring(address.length - 10, address.length)}}</span>
+        <div tag_one (click)="copyToClipboard()">
+          <span *ngIf="!copied">COPY</span>
+          <span *ngIf="copied">COPIED</span>
+        </div>
+        <div tag_two>
+          <a target="_blank" style="text-decoration: none; color: inherit;" [href]="explorerPath">Explore</a>
+        </div>
+      </app-notice>
+    </div>
+
+    <div mat-dialog-content class="content-middle-lower">
+
+      <div class="left-content">
+        <div *ngIf="address" style="display: flex; background: #fff; justify-content: center; align-items: center; border-radius: 6px; overflow: hidden;">
+            <qrcode [qrdata]="address" [width]="288" [errorCorrectionLevel]="'M'" [elementType]="'svg'"></qrcode>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="right-content">
+        <div class="balance">
+          <img *ngIf="asset && asset.asset && asset.asset.iconPath" class="asset-icon" [src]="asset && asset.asset && asset.asset.iconPath" appImgFallback />
+          <div class="amount">
+            <span class="mono">{{ asset.balance.amount().toNumber() | number: '0.2-6' }}</span>
+            <div class="usd-val" *ngIf="usdValue"><span class="mono">~${{usdValue | number:"0.2-3"}}</span> USD</div>
+          </div>
+        </div>
+        <div class="tx-history">
+          <span>TRANSACTION LIST <br /> COMING SOON!</span>
+        </div>
+      </div>
+
+
+      <!-- <div class="flxr flxr--flow-col flxr--just-center flxr--align-center"> -->
+        <!-- <div style="width: 40px; margin-bottom: 1rem;">
+          <img *ngIf="asset && asset.asset && asset.asset.iconPath" class="asset-icon" [src]="asset && asset.asset && asset.asset.iconPath" style="max-width: 100%;" />
+        </div> -->
+
+        <!-- <div *ngIf="address" style="text-align: left"> -->
+          <!-- <qrcode [qrdata]="address" [width]="288" [errorCorrectionLevel]="'M'" [elementType]="'svg'"></qrcode> -->
+          <!-- <span style="font-size: 0.8rem">{{address}}</span> -->
+        <!-- </div> -->
+
+        <!-- <span *ngIf="asset" class="asset-balance">{{asset.balance.amount().toNumber()}} {{asset.asset.ticker}}</span>
+        <div style="height: 17px">
+          <span class="usd-value" *ngIf="usdValue">≈ ${{usdValue | number:"0.0-2"}}</span>
+        </div> -->
+
+      <!-- </div> -->
+
+      <!-- <ul class="actions flex justify-center">
+        <li class="action flex flex-col">
+          <button mat-mini-fab color="primary" aria-label="Send" (click)="send.emit()">
+            <mat-icon>upgrade</mat-icon>
+          </button>
+          Send
+        </li>
+
+        <li class="action flex flex-col items-center">
+          <button mat-mini-fab color="primary" aria-label="Copy" (click)="copyToClipboard()">
+            <mat-icon>content_copy</mat-icon>
+          </button>
+          Copy
+        </li>
+      </ul> -->
+
+      <!-- <ul  class="actions flex justify-center">   -->
+
+        <!-- NATIVE RUNE DEPOSIT -->
+        <!-- <li *ngIf="asset && asset.asset.chain === 'THOR' && asset.asset.ticker === 'RUNE'" class="action flex flex-col items-center">
+          <button mat-mini-fab color="primary" aria-label="Copy" (click)="deposit.emit()">
+            <mat-icon>flash_on</mat-icon>
+          </button>
+          Deposit
+        </li> -->
+
+        <!-- UPGRADE BNB/ETH RUNE TO NATIVE RUNE -->
+        <!-- <li *ngIf="asset && (asset.asset.chain === 'BNB' || asset.asset.chain === 'ETH') && asset.asset.ticker === 'RUNE'" class="action flex flex-col items-center">
+          <button mat-mini-fab color="primary" aria-label="Copy" (click)="upgradeRune.emit()">
+            <mat-icon>upgrade</mat-icon>
+          </button>
+          Native RUNE
+        </li> -->
+
+      <!-- </ul> -->
+
+      <!-- <app-testnet-warning *ngIf="asset && asset.asset && asset.asset.chain" [chain]="asset.asset.chain"></app-testnet-warning> -->
+
+    </div>
+
+    <!-- <div mat-dialog-content>
+      <p>txs here</p>
+    </div> -->
+
+    <div class="bottom-actions" style="display: flex; margin-top: 30px;">
+      <div style="width: 50%;">
+        <div style="margin-right: 6px;">
+          <button class="close-btn flex justify-center items-center" (click)="back.emit()">
+            <svg class="arrow-left" width="11" height="20" viewBox="0 0 11 20" fill="#000" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5.74609 19.4531L10.8086 14.3906H6.61328V0.65625H4.87891V14.3906H0.683594L5.74609 19.4531Z"/>
+            </svg>
+            <span>ASSETS</span>
+          </button>
+        </div>
+      </div>
+      <div style="width: 50%;">
+        <div style="margin-left: 6px;">
+          <button class="next-btn" aria-label="Close Connect Wallet Dialog" (click)="send.emit()">
+            <span>send</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

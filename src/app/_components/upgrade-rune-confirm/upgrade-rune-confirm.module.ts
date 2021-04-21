@@ -7,6 +7,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { DirectivesModule } from 'src/app/_directives/directives.module';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ModalSectionHeaderModule } from '../modal-section-header/modal-section-header.module';
+import { ArrowModule } from '../arrow/arrow.module';
+import { AssetInputModule } from '../asset-input/asset-input.module';
+import { BreadcrumbModule } from '../breadcrumb/breadcrumb.module';
+import { NoticeModule } from '../notice/notice.module';
+import { TransactionSuccessModalModule } from '../transaction-success-modal/transaction-success-modal.module';
 
 
 
@@ -17,8 +22,13 @@ import { ModalSectionHeaderModule } from '../modal-section-header/modal-section-
     MatIconModule,
     MatButtonModule,
     TransactionProcessingModalModule,
+    TransactionSuccessModalModule,
     DirectivesModule,
     MatProgressSpinnerModule,
+    ArrowModule,
+    AssetInputModule,
+    BreadcrumbModule,
+    NoticeModule,
     ModalSectionHeaderModule
   ],
   exports: [UpgradeRuneConfirmComponent]

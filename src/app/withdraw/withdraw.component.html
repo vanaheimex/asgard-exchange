@@ -1,87 +1,88 @@
-<div class="container">
+<div class="container-wrapper" *ngIf="view === 'Withdraw'">
+  <div class="container">
+    <div class="main-container">
+      <nav class="content-top">
+        <app-breadcrumb [path]="[{name: 'vanaheimex', call: 'swap'}, {name: 'Pools', call: 'pool'}, {name: 'Withdraw', disable: true}]" [isError]="isError" [message]="mainButtonText()" (funcCaller)="goToNav($event)"></app-breadcrumb>
+      </nav>
 
-  <app-section-head sectionTitle="Remove Liquidity" [displayBackBtn]="true" (back)="back()"></app-section-head>
+      <div class="percent-container">
+        <span class="percent-label">Percentage</span>
+        <span class="unstake-percent">{{withdrawPercent}}%</span>
+        <mat-slider
+          class="slider"
+          [disabled]="!user"
+          [max]="100"
+          [min]="0"
+          step="1"
+          [tickInterval]="25"
+          (input)="onInputChange($event)"
+          [(ngModel)]="withdrawPercent">
+        </mat-slider>
+      </div>
 
-  <div class="relative">
-    <div class="uni-input">
+      <app-arrow></app-arrow>
 
-      <span>Amount</span>
-
-      <span class="unstake-percent">{{withdrawPercent}}%</span>
-
-      <mat-slider
-        class="slider"
-        [disabled]="!user"
-        [max]="100"
-        [min]="0"
-        step="1"
-        [tickInterval]="25"
-        [(ngModel)]="withdrawPercent">
-      </mat-slider>
-
-    </div>
-
-    <div class="flex items-center justify-center">
-      <button [disabled]="true">
-        <mat-icon [class.disabled]="true" class="to-btn-icon text-sm">arrow_downward</mat-icon>
-      </button>
-    </div>
-
-    <div class="uni-input">
-
-      <div *ngIf="asset" class="unstake-calc flex justify-between">
+      <!-- <div *ngIf="asset" class="unstake-calc flex justify-between">
         <span *ngIf="removeAssetAmount">{{removeAssetAmount | number:"0.0-6"}}</span>
         <span *ngIf="!removeAssetAmount">-</span>
         <app-icon-ticker [iconPath]="asset.iconPath" [ticker]="asset.ticker"></app-icon-ticker>
-
       </div>
 
       <div class="unstake-calc flex justify-between">
         <span *ngIf="removeRuneAmount">{{removeRuneAmount | number:"0.0-6"}}</span>
         <span *ngIf="!removeRuneAmount">-</span>
         <app-icon-ticker [iconPath]="rune.iconPath" [ticker]="rune.ticker"></app-icon-ticker>
+      </div> -->
+      <app-double-asset-field
+        label="Withdrawal"
+        [selectedAssets]="[asset, rune]"
+        [assetUnits]="[removeAssetAmount, removeRuneAmount]"
+        [priceInputs]="[assetPrice, runePrice]"
+      ></app-double-asset-field>
 
+      <div class="swap-details">
+        <div class="flex justify-between items-center">
+          <span class="tx-detail-label">Prices:</span>
+          <span>1 {{rune.ticker}} = {{assetBasePrice | number:"1.2-4"}} {{asset.ticker}}</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span></span>
+          <span>1 {{asset.ticker}} = {{runeBasePrice | number:"1.2-4"}} {{rune.ticker}}</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="tx-detail-label">TX Fees:</span>
+          <!-- TODO: estimate this on the fly -->
+          <span *ngIf="outboundTransactionFee">{{outboundTransactionFee}} RUNE + {{asset.ticker}} Network gas</span>
+          <span *ngIf="!outboundTransactionFee">...</span>
+        </div>
       </div>
 
+      <div class="bottom-actions two-btn">
+        <div class="left-btn">
+          <button class="close-btn" (click)="back()">
+            <span>Cancel</span>
+          </button>
+        </div>
+        <div class="divider"></div>
+        <div class="right-btn">
+          <button
+            (click)="openConfirmationDialog()"
+            class="next-btn graident-btn"
+            [disabled]="formDisabled()"
+          >
+            <span>Withdraw</span>
+          </button>
+        </div>
+      </div>
     </div>
-
-    <div *ngIf="asset" class="prices py-2 px-4 text-sm">
-
-      <div class="flex justify-between pb-2 items-center">
-        <span class="tx-detail-label">Prices</span>
-        <span>1 {{rune.ticker}} = {{assetBasePrice | number:"1.2-4"}} {{asset.ticker}}</span>
-      </div>
-
-      <div class="flex justify-between pb-2 items-center">
-        <span></span>
-        <span>1 {{asset.ticker}} = {{runeBasePrice | number:"1.2-4"}} {{rune.ticker}}</span>
-      </div>
-
-      <div class="flex justify-between pb-2 items-center">
-        <span class="tx-detail-label">TX Fees</span>
-        <span *ngIf="outboundTransactionFee">{{outboundTransactionFee}} RUNE</span>
-        <span *ngIf="!outboundTransactionFee">...</span>
-      </div>
-
-      <div class="flex justify-between pb-2 items-center">
-        <span class="tx-detail-label"></span>
-        <span *ngIf="networkFee">{{networkFee | number:"1.0-8"}} {{asset.ticker}}.{{asset.chain}}  Network Fee</span>
-        <span *ngIf="!networkFee">...</span>
-      </div>
-
-    </div>
-
-    <button
-      (click)="openConfirmationDialog()"
-      class="main-action-btn w-full"
-      mat-flat-button
-      color="primary"
-      [disabled]="formDisabled()"
-    >
-      {{mainButtonText()}}
-    </button>
 
   </div>
-
 </div>
+
+<app-confirm-withdraw-modal
+  *ngIf="view === 'Confirm'"
+  [data]="data"
+  (close)="close($event)"
+>
+</app-confirm-withdraw-modal>
 

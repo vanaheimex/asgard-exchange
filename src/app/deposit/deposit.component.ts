@@ -5,17 +5,20 @@ import {
   baseAmount,
   assetToBase,
   assetAmount,
+  baseToAsset,
 } from '@xchainjs/xchain-util';
 import { combineLatest, Subscription } from 'rxjs';
 import { Asset, isNonNativeRuneToken } from '../_classes/asset';
 import { MidgardService } from '../_services/midgard.service';
 import { UserService } from '../_services/user.service';
 import { MatDialog } from '@angular/material/dialog';
-import { ConfirmDepositModalComponent } from './confirm-deposit-modal/confirm-deposit-modal.component';
+import { ConfirmDepositData } from './confirm-deposit-modal/confirm-deposit-modal.component';
 import { User } from '../_classes/user';
 import { Balances } from '@xchainjs/xchain-client';
 import { AssetAndBalance } from '../_classes/asset-and-balance';
 import { EthUtilsService } from '../_services/eth-utils.service';
+import { DepositViews, OverlaysService } from '../_services/overlays.service';
+import { ThorchainPricesService } from '../_services/thorchain-prices.service';
 import { TransactionUtilsService } from '../_services/transaction-utils.service';
 
 @Component({
@@ -54,6 +57,7 @@ export class DepositComponent implements OnInit, OnDestroy {
           this.router.navigate(['/', 'deposit', `${val.chain}.${val.symbol}`]);
           this._asset = val;
           this.assetBalance = this.userService.findBalance(this.balances, this.asset);
+          this.assetAmount = 0;
         }
 
       }
@@ -103,18 +107,26 @@ export class DepositComponent implements OnInit, OnDestroy {
   networkFee: number;
   depositsDisabled: boolean;
 
+  view: DepositViews;
+  // saving data of confirm in variable to pass it to the confirm
+  depositData: ConfirmDepositData;
+  //adding rune price for the input
+  runePrice: number;
+
   constructor(
-    private dialog: MatDialog,
     private userService: UserService,
     private router: Router,
     private route: ActivatedRoute,
     private midgardService: MidgardService,
     private ethUtilsService: EthUtilsService,
+    private thorchainPricesService : ThorchainPricesService,
+    public overlaysService: OverlaysService,
     private txUtilsService: TransactionUtilsService
   ) {
     this.poolNotFoundErr = false;
     this.ethContractApprovalRequired = false;
     this.rune = new Asset('THOR.RUNE');
+    this.overlaysService.setCurrentDepositView('Deposit');
     this.subs = [];
     this.depositsDisabled = false;
   }
@@ -132,6 +144,9 @@ export class DepositComponent implements OnInit, OnDestroy {
       this.user = user;
       if (this.asset && this.asset.chain === 'ETH' && this.asset.ticker !== 'ETH') {
         this.checkContractApproved(this.asset);
+      }
+      if (!this.user) {
+        this.router.navigate(['/', 'swap']);
       }
 
       // Balance
@@ -169,10 +184,16 @@ export class DepositComponent implements OnInit, OnDestroy {
 
     });
 
+    const depositView$ = this.overlaysService.depositView.subscribe(
+      (view) => {
+        this.view = view;
+      }
+    )
+
     this.getPools();
     this.getEthRouter();
     this.getPoolCap();
-    this.subs.push(sub);
+    this.subs.push(sub, depositView$);
   }
 
   getPoolCap() {
@@ -259,8 +280,12 @@ export class DepositComponent implements OnInit, OnDestroy {
           || pool.asset.chain === 'LTC'
           || pool.asset.chain === 'BCH')
 
-         // filter out non-native RUNE tokens
+        // filter out non-native RUNE tokens
         .filter( (pool) => !isNonNativeRuneToken(pool.asset));
+
+        //add rune price
+        const availablePools = res.filter( (pool) => pool.status === 'available' );
+        this.runePrice = this.thorchainPricesService.estimateRunePrice(availablePools);
       },
       (err) => console.error('error fetching pools:', err)
     );
@@ -294,8 +319,16 @@ export class DepositComponent implements OnInit, OnDestroy {
       return 'Please connect wallet';
     }
 
+    if (this.balances && (!this.runeAmount || !this.assetAmount)) {
+      return 'Prepare';
+    }
+
     if (this.depositsDisabled) {
       return 'Pool Cap > 90%';
+    }
+
+    if (!this.asset) {
+      return 'There is no asset here!'
     }
 
     /** User either lacks asset balance or RUNE balance */
@@ -332,7 +365,7 @@ export class DepositComponent implements OnInit, OnDestroy {
     /** Good to go */
     if (this.runeAmount && this.assetAmount
       && (this.runeAmount <= this.runeBalance) && (this.assetAmount <= this.assetBalance)) {
-      return 'Deposit';
+      return 'Ready';
     } else {
       console.warn('mismatch case for main button text');
       return;
@@ -343,37 +376,54 @@ export class DepositComponent implements OnInit, OnDestroy {
 
     const runeBasePrice = getValueOfAssetInRune(assetToBase(assetAmount(1)), this.assetPoolData).amount().div(10 ** 8).toNumber();
     const assetBasePrice = getValueOfRuneInAsset(assetToBase(assetAmount(1)), this.assetPoolData).amount().div(10 ** 8).toNumber();
+    const assetPrice = this.selectableMarkets.find( (asset) => this.asset.symbol === asset.asset.symbol).assetPriceUSD;
+    const assetData: AssetAndBalance = { asset: this.asset, balance: assetAmount(this.assetBalance, 8), assetPriceUSD: assetPrice };
+    const runeData: AssetAndBalance = { asset: this.rune, balance: assetAmount(this.runeBalance, 8), assetPriceUSD: this.runePrice };
 
-    const dialogRef = this.dialog.open(
-      ConfirmDepositModalComponent,
-      {
-        width: '50vw',
-        maxWidth: '420px',
-        minWidth: '260px',
-        data: {
-          asset: this.asset,
-          rune: this.rune,
-          assetAmount: this.assetAmount,
-          runeAmount: this.runeAmount,
-          user: this.user,
-          estimatedFee: this.networkFee,
-          runeBasePrice,
-          assetBasePrice
-        }
-      }
-    );
+    this.depositData = {
+      asset: assetData,
+      rune: runeData,
+      assetAmount: this.assetAmount,
+      runeAmount: this.runeAmount,
+      user: this.user,
+      runeBasePrice: runeBasePrice,
+      assetBasePrice: assetBasePrice,
+      assetBalance: this.assetBalance,
+      runeBalance: this.runeBalance,
+      runePrice: this.runePrice,
+      estimatedFee: this.networkFee,
+      assetPrice
+    }
 
-    dialogRef.afterClosed().subscribe( (transactionSuccess: boolean) => {
+    if (this.depositData)
+      this.overlaysService.setCurrentDepositView('Confirm');
+  }
 
-      if (transactionSuccess) {
-        this.assetAmount = 0;
-      }
+  closeSuccess(transactionSuccess: boolean): void {
+    if (transactionSuccess) {
+      this.assetAmount = 0;
+    }
 
-    });
+    this.overlaysService.setCurrentDepositView('Deposit');
   }
 
   back(): void {
     this.router.navigate(['/', 'pool']);
+  }
+
+  goToNav(nav: string) {
+    if (nav === 'pool') {
+      this.router.navigate(['/', 'pool']);
+    }
+    else if (nav === 'swap') {
+      this.router.navigate(['/', 'swap']);
+    }
+    else if (nav === 'deposit') {
+      this.router.navigate(['/', 'deposit', `${this.asset.chain}.${this.asset.symbol}`])
+    }
+    else if (nav === 'deposit-back') {
+      this.overlaysService.setCurrentDepositView('Deposit');
+    }
   }
 
   ngOnDestroy() {

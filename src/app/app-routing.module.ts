@@ -28,6 +28,11 @@ const routes: Routes = [
     path: 'withdraw',
     loadChildren: () => import('./withdraw/withdraw.module').then(m => m.WithdrawModule),
   },
+  {
+    path: '**',
+    redirectTo: 'swap',
+    pathMatch: 'full'
+  }
 ];
 
 @NgModule({

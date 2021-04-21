@@ -1,7 +1,8 @@
 <div class="flex items-center">
-  <div class="asset-icon-container flex items-center mr-3">
+  <div class="asset-icon-container flex items-center">
     <img *ngIf="iconPath" [src]="iconPath" appImgFallback />
-    <mat-icon *ngIf="!iconPath">help_outline</mat-icon>
+    <!-- <mat-icon *ngIf="!iconPath">help_outline</mat-icon> -->
+    <div *ngIf="!iconPath" class="no-icon">{{ticker.substring(0,3)}}</div>
   </div>
-  <span style="font-size: 20px">{{ticker}}</span>
+  <span style="font-size: 20px; margin-left: 10px; color: inherit;">{{chain}}.{{ticker}}</span>
 </div>

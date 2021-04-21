@@ -14,6 +14,7 @@ import { TransactionConfirmationState } from 'src/app/_const/transaction-confirm
 import { TransactionStatusService, TxActions, TxStatus } from 'src/app/_services/transaction-status.service';
 import { UserService } from 'src/app/_services/user.service';
 import { ethers } from 'ethers';
+import { OverlaysService } from 'src/app/_services/overlays.service';
 import { Asset as AsgrsxAsset } from 'src/app/_classes/asset';
 import { Balances } from '@xchainjs/xchain-client';
 import { EthUtilsService } from 'src/app/_services/eth-utils.service';
@@ -38,12 +39,41 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
   @Input() amount: number;
   @Input() recipientAddress: string;
   @Output() back: EventEmitter<null>;
+  @Output() close: EventEmitter<null>;
   @Output() transactionSuccessful: EventEmitter<null>;
+  @Output() messageChange: EventEmitter<string> = new EventEmitter<string>();
+
+  private _mode: 'ADDRESSES' | 'ADDRESS' | 'PENDING_TXS' | 'ASSET' | 'SEND' | 'CONFIRM_SEND'| 'PROCESSING' | 'SUCCESS' | 'ERROR';
+  @Input() get mode(){
+    return this._mode
+  }
+  set mode(val) {
+    this._mode = val;
+    if(this._mode == 'CONFIRM_SEND')
+      this.messageChange.emit('Confirm');
+    else if(this._mode == 'ERROR')
+      this.messageChange.emit(this.error);
+    else if(this._mode == "PROCESSING")
+      this.messageChange.emit('TRANSACTION PROCESSING')
+    else if(this._mode == 'SUCCESS')
+      this.messageChange.emit('Success')
+  }
+  @Output() modeChange = new EventEmitter();
 
   user: User;
   subs: Subscription[];
   txState: TransactionConfirmationState;
+  hash: string;
   error: string;
+  address: string;
+  get message(): string {
+    if (this.insufficientChainBalance)
+      return `insufficient balance in ${this.asset.asset.chain} chain`
+    else if (this.loading)
+      return 'checking balance'
+    else
+      return 'confirm'
+  }
   insufficientChainBalance: boolean;
   balances: Balances;
   loading: boolean;
@@ -51,11 +81,13 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
   constructor(
     private userService: UserService,
     private txStatusService: TransactionStatusService,
+    private overlaysService: OverlaysService,
     private ethUtilsService: EthUtilsService,
     private midgardService: MidgardService,
     private txUtilsService: TransactionUtilsService
   ) {
     this.back = new EventEmitter<null>();
+    this.close = new EventEmitter<null>();
     this.error = '';
     this.transactionSuccessful = new EventEmitter<null>();
     this.txState = TransactionConfirmationState.PENDING_CONFIRMATION;
@@ -106,8 +138,10 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
     this.loading = false;
   }
 
-  submitTransaction() {
 
+  submitTransaction() {
+    this.mode = 'PROCESSING';
+    this.modeChange.emit(this.mode)
     this.txState = TransactionConfirmationState.SUBMITTING;
 
     if (this.user.type === 'keystore') {
@@ -118,6 +152,17 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
 
     }
 
+  }
+
+  async navCaller(nav) {
+    this.address = await this.userService.getAdrressChain(this.asset.asset.chain);
+
+    if (nav === 'wallet')
+      this.overlaysService.setCurrentUserView({userView: 'Addresses', address: null, chain: null, asset: null});
+    else if (nav === 'chain')
+      this.overlaysService.setCurrentUserView({userView: 'Address', address: this.address, chain: this.asset.asset.chain, asset: null})
+    else if (nav === 'asset')
+      this.overlaysService.setCurrentUserView({userView: 'Address', address: this.address, chain: this.asset.asset.chain, asset: this.asset})
   }
 
   async submitKeystoreTransaction(inboundAddresses: PoolAddressDTO[]) {
@@ -146,12 +191,17 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
             amount: baseAmount(amount - fees.average.amount().toNumber()),
             recipient: this.recipientAddress,
           });
+          this.hash = hash;
           this.pushTxStatus(hash, this.asset.asset, true);
           this.transactionSuccessful.next();
+          this.mode = 'SUCCESS';
+          this.txState = TransactionConfirmationState.SUCCESS;
         } catch (error) {
           console.error('error making transfer: ', error);
           this.error = error;
           this.txState = TransactionConfirmationState.ERROR;
+          this.mode = 'ERROR';
+          this.modeChange.emit(this.mode)
         }
 
       } else if (this.asset.asset.chain === 'BNB') {
@@ -164,12 +214,17 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
             amount: assetToBase(assetAmount(this.amount)),
             recipient: this.recipientAddress,
           });
+          this.hash = hash;
           this.pushTxStatus(hash, this.asset.asset, false);
           this.transactionSuccessful.next();
+          this.mode = 'SUCCESS';
+          this.txState = TransactionConfirmationState.SUCCESS;
         } catch (error) {
           console.error('error making transfer: ', error);
           this.error = error;
           this.txState = TransactionConfirmationState.ERROR;
+          this.mode = 'ERROR';
+          this.modeChange.emit(this.mode)
         }
 
       } else if (this.asset.asset.chain === 'BTC') {
@@ -205,12 +260,17 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
             recipient: this.recipientAddress,
             feeRate: +matchingAddress.gas_rate
           });
+          this.hash = hash;
           this.pushTxStatus(hash, this.asset.asset, false);
           this.transactionSuccessful.next();
+          this.mode = 'SUCCESS';
+          this.txState = TransactionConfirmationState.SUCCESS;
         } catch (error) {
           console.error('error making transfer: ', error);
           this.error = error;
           this.txState = TransactionConfirmationState.ERROR;
+          this.mode = 'ERROR';
+          this.modeChange.emit(this.mode)
         }
 
       } else if (this.asset.asset.chain === 'BCH') {
@@ -246,12 +306,17 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
             recipient: this.recipientAddress,
             feeRate: +matchingAddress.gas_rate
           });
+          this.hash = hash;
           this.pushTxStatus(hash, this.asset.asset, false);
           this.transactionSuccessful.next();
+          this.mode = 'SUCCESS';
+          this.txState = TransactionConfirmationState.SUCCESS;
         } catch (error) {
           console.error('error making transfer: ', error);
           this.error = error;
           this.txState = TransactionConfirmationState.ERROR;
+          this.mode = 'ERROR';
+          this.modeChange.emit(this.mode)
         }
 
       } else if (this.asset.asset.chain === 'ETH') {
@@ -282,12 +347,17 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
             amount: assetToBase(assetAmount(this.amount, decimal)),
             recipient: this.recipientAddress,
           });
+          this.hash = hash;
           this.pushTxStatus(hash, this.asset.asset, false);
           this.transactionSuccessful.next();
+          this.mode = 'SUCCESS';
+          this.txState = TransactionConfirmationState.SUCCESS;
         } catch (error) {
           console.error('error making transfer: ', error);
           this.error = error;
           this.txState = TransactionConfirmationState.ERROR;
+          this.mode = 'ERROR';
+          this.modeChange.emit(this.mode)
         }
 
       } else if (this.asset.asset.chain === 'LTC') {
@@ -326,10 +396,14 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
           });
           this.pushTxStatus(hash, this.asset.asset, false);
           this.transactionSuccessful.next();
+          this.mode = 'SUCCESS';
+          this.txState = TransactionConfirmationState.SUCCESS;
         } catch (error) {
           console.error('error making transfer: ', error);
           this.error = error;
           this.txState = TransactionConfirmationState.ERROR;
+          this.mode = 'ERROR';
+          this.modeChange.emit(this.mode)
         }
       }
 

@@ -1,6 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Chain } from '@xchainjs/xchain-util';
 import { AssetAndBalance } from 'src/app/_classes/asset-and-balance';
 import { CopyService } from 'src/app/_services/copy.service';
+import { ExplorerPathsService } from 'src/app/_services/explorer-paths.service';
+import { OverlaysService } from 'src/app/_services/overlays.service';
 
 @Component({
   selector: 'app-user-asset',
@@ -24,8 +27,12 @@ export class UserAssetComponent implements OnInit {
   @Output() deposit: EventEmitter<null>;
 
   usdValue: number;
+  explorerPath: string;
+  chain: Chain;
+  ticker: string;
+  copied: boolean = false;
 
-  constructor(private copyService: CopyService) {
+  constructor(private copyService: CopyService, private explorerPathsService: ExplorerPathsService, private overlaysService: OverlaysService) {
     this.back = new EventEmitter();
     this.send = new EventEmitter();
     this.upgradeRune = new EventEmitter();
@@ -33,12 +40,69 @@ export class UserAssetComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.setExplorerPath();
+
+    this.chain = this.asset.asset.chain;
+    this.ticker = this.asset.asset.ticker;
   }
 
+  getIconPath(chain: Chain): string {
+    switch (chain) {
+      case 'BNB':
+        return 'assets/images/token-icons/bnb.png';
+
+      case 'BTC':
+        return 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/binance/assets/BTCB-1DE/logo.png';
+
+      case 'ETH':
+        return 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png';
+
+      case 'THOR':
+        return '/assets/icons/logo-thor-rune.svg';
+    }
+  }
+
+  setExplorerPath() {
+    switch (this.asset.asset.chain) {
+      case 'BTC':
+        this.explorerPath = `${this.explorerPathsService.bitcoinExplorerUrl}/address/${this.address}`;
+        break;
+
+      case 'BNB':
+        this.explorerPath = `${this.explorerPathsService.binanceExplorerUrl}/address/${this.address}`;
+        break;
+
+      case 'THOR':
+        this.explorerPath = `${this.explorerPathsService.thorchainExplorerUrl}/address/${this.address}`;
+        break;
+
+      case 'ETH':
+        this.explorerPath = `${this.explorerPathsService.ethereumExplorerUrl}/address/${this.address}`;
+        break;
+
+      case 'LTC':
+        this.explorerPath = `${this.explorerPathsService.litecoinExplorerUrl}/${this.address}`;
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  navCaller(nav) {
+    console.log(this.asset)
+    if (nav === 'wallet')
+      this.overlaysService.setCurrentUserView({userView: 'Addresses', address: null, chain: null, asset: null});
+    else if (nav === 'chain')
+      this.overlaysService.setCurrentUserView({userView: 'Address', address: this.address, chain: this.chain, asset: null})
+  }
 
   copyToClipboard() {
     if (this.address) {
-      this.copyService.copyToClipboard(this.address);
+      let result = this.copyService.copyToClipboard(this.address);
+
+      if (result)
+        this.copied = true;
     }
   }
 
