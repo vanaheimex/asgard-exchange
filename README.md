@@ -1,5 +1,6 @@
-# AsgardExchange
+# Vanaheimex Exchange
 
+This project is fork from asgard-exchange, and it's been deployed into vercel.
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli).
 For component styling we are using [Angular Material](https://material.angular.io/) and [Tailwind](https://tailwindcss.com/docs).
 
