@@ -82,7 +82,7 @@
       </div>
       <div class="divider"></div>
       <div class="right-btn">
-        <a [ngClass]="{'disabled': !user || loading || userPoolError}" [routerLink]="['/', 'deposit', 'BTC.BTC']" class="next-btn graident-btn">
+        <a [ngClass]="{'disabled': !user || loading || userPoolError || depositsDisabled}" [routerLink]="['/', 'deposit', 'BTC.BTC']" class="next-btn graident-btn">
           <span>Add liquidity</span>
         </a>
       </div>
