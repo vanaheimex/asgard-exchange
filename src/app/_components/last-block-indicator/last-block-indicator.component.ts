@@ -17,10 +17,12 @@ export class LastBlockIndicatorComponent implements OnInit, OnDestroy {
   isTestnet: boolean;
 
   gitHubUrl: string;
+  links: any;
 
   constructor(private lastBlockService: LastBlockService) {
     this.isTestnet = environment.network === 'testnet';
     this.gitHubUrl = links.github;
+    this.links = links;
 
     const lastBlock$ = this.lastBlockService.lastBlock$.subscribe(
       (block) => {
