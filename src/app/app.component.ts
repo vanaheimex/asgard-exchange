@@ -12,6 +12,7 @@ import { AssetAndBalance } from './_classes/asset-and-balance';
 import { Asset } from './_classes/asset';
 import { environment } from 'src/environments/environment';
 import { links } from 'src/app/_const/links';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -40,7 +41,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private midgardService: MidgardService,
     private lastBlockService: LastBlockService,
     private overlaysService: OverlaysService,
-    private userService: UserService
+    private userService: UserService,
+    private router: Router
   ) {
     this.isTestnet = (environment.network === 'testnet');
     this.appUrl = this.isTestnet ? links.appUrl : links.testnetUrl;
@@ -102,6 +104,11 @@ export class AppComponent implements OnInit, OnDestroy {
       document.documentElement.style.setProperty('--primary-default', '#F3BA2F');
       document.documentElement.style.setProperty('--primary-graident-bottom-left', '#F3BA2F');
       document.documentElement.style.setProperty('--primary-graident-top-right', '#F3BA2F');
+    }
+
+    if(this.appLocked) {
+      this.router.navigate(['/', 'swap']);
+      this.overlaysService.setViews(MainViewsEnum.Swap, 'Swap');
     }
 
     document.addEventListener("mousedown", (e) => {

@@ -36,6 +36,7 @@ import { ThorchainPricesService } from '../_services/thorchain-prices.service';
 import { TransactionUtilsService } from '../_services/transaction-utils.service';
 import { NetworkQueueService } from '../_services/network-queue.service';
 import { retry, switchMap } from 'rxjs/operators';
+import { environment } from 'src/environments/environment'; 
 
 export enum SwapType {
   DOUBLE_SWAP = 'double_swap',
@@ -195,6 +196,8 @@ export class SwapComponent implements OnInit, OnDestroy {
   outputNetworkFee: number;
   queue: ThorchainQueue;
 
+  appLocked: boolean;
+
   constructor(
     private dialog: MatDialog,
     private userService: UserService,
@@ -264,6 +267,7 @@ export class SwapComponent implements OnInit, OnDestroy {
 
     this.subs = [balances$, user$, slippageTolerange$, queue$];
 
+    this.appLocked = environment.appLocked;
   }
 
   ngOnInit(): void {

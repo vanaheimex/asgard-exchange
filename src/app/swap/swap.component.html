@@ -97,7 +97,14 @@
             <span>Swap</span>
           </button>
           
-          <app-connect *ngIf="!user"></app-connect>
+          <app-connect *ngIf="!user && !appLocked"></app-connect>
+
+          <button
+            *ngIf="appLocked"
+            class="next-btn"
+            [disabled]="true">
+            <span>FIXING BUGS. WE'LL BE BACK SOON.</span>
+          </button>
 
           <div *ngIf="ethContractApprovalRequired && ethInboundAddress && selectedSourceAsset">
             <app-approve-eth-contract

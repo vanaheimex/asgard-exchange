@@ -1,19 +1,7 @@
 <div class="background-container">
   <app-header></app-header>
 
-  <main *ngIf="appLocked" class="flex flex-col justify-center items-center clear-both px-4 sm:px-0">
-    <div class="container flex items-center justify-center">
-      <div class="py-4">
-        <mat-icon style="font-size: 48px; height: 48px; width: 48px;">construction</mat-icon>
-      </div>
-      <span>
-        THORChain is undergoing updates.<br />
-        Please try again later.
-      </span>
-    </div>
-  </main>
-
-  <main *ngIf="currentView == currentViewType.Swap && !appLocked">
+  <main *ngIf="currentView == currentViewType.Swap">
     <router-outlet></router-outlet>
   </main>
 
