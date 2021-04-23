@@ -96,7 +96,9 @@
               [disabled]="formInvalid() || !balances || ethContractApprovalRequired">
             <span>Swap</span>
           </button>
+          
           <app-connect *ngIf="!user"></app-connect>
+
           <div *ngIf="ethContractApprovalRequired && ethInboundAddress && selectedSourceAsset">
             <app-approve-eth-contract
               (approveClicked)="overlaysService.setCurrentSwapView('Approve')"
