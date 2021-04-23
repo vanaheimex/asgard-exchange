@@ -94,6 +94,7 @@ export class SendAssetComponent implements OnInit, OnDestroy {
 
     return !this.amountSpendable
       || !client.validateAddress(this.recipientAddress)
+      || client.getAddress() === this.recipientAddress
       || this.amount <= 0;
   }
 
@@ -112,11 +113,11 @@ export class SendAssetComponent implements OnInit, OnDestroy {
       return `No ${this.asset.asset.chain} Client Found`;
     }
 
-    if (this.amount <= 0 || (this.recipientAddress && this.recipientAddress.length <= 10) ) {
+    if (this.amount <= 0 || !this.amount || !this.recipientAddress || (this.recipientAddress && this.recipientAddress.length <= 10) ) {
       return 'Prepare';
     }
 
-    if (!client.validateAddress(this.recipientAddress) &&  client.getAddress() === this.recipientAddress) {
+    if (!client.validateAddress(this.recipientAddress) || client.getAddress() === this.recipientAddress) {
       return `Invalid ${this.asset.asset.chain} Address`;
     }
 
@@ -130,32 +131,15 @@ export class SendAssetComponent implements OnInit, OnDestroy {
 
   isError(): boolean {
 
-    if (!this.user) {
+    if (
+      this.mainButtonText() === 'Ready'
+      || this.mainButtonText() === 'Prepare'
+      || this.mainButtonText() === 'Connect Wallet'
+    ) {
       return false;
     }
 
-    if (!this.asset) {
-      return false;
-    }
-
-    const client = this.userService.getChainClient(this.user, this.asset.asset.chain);
-    if (!client) {
-      return true;
-    }
-
-    if (this.amount <= 0 || (this.recipientAddress && this.recipientAddress.length <= 10)) {
-      return false;
-    }
-
-    if (!client.validateAddress(this.recipientAddress) &&  client.getAddress() !== this.recipientAddress) {
-      return true;
-    }
-
-    if (!this.amountSpendable) {
-      return true;
-    }
-
-    return false;
+    return true;
 
   }
 

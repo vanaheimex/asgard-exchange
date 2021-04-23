@@ -67,8 +67,10 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
   error: string;
   address: string;
   get message(): string {
-    if (this.insufficientChainBalance)
-      return `insufficient balance in ${this.asset.asset.chain} chain`
+    if (this.insufficientChainBalance) {
+      this.mode = 'ERROR';
+      return `insufficient ${this.asset.asset.chain} to cover fees`
+    }
     else if (this.loading)
       return 'checking balance'
     else
