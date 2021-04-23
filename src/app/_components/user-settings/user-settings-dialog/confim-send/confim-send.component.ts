@@ -349,7 +349,7 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
             amount: assetToBase(assetAmount(this.amount, decimal)),
             recipient: this.recipientAddress,
           });
-          this.hash = hash;
+          this.hash = hash.substr(2);
           this.pushTxStatus(hash, this.asset.asset, false);
           this.transactionSuccessful.next();
           this.mode = 'SUCCESS';
