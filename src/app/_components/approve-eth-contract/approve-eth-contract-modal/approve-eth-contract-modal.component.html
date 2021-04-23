@@ -1,7 +1,7 @@
 <div class="overlay-of-content">
 
   <div class="content-top">
-    <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'Pools', disable: true}, {name: 'Create', disable: true}, {name: 'Contract', disable: true}]" [isError]="insufficientEthBalance" [message]="insufficientEthBalance ? 'Insufficient ETH.ETH balance' : 'approve'"></app-breadcrumb>
+    <app-breadcrumb [path]="path" [isError]="insufficientEthBalance" [message]="insufficientEthBalance ? 'Insufficient ETH.ETH balance' : 'approve'" (funcCaller)="back($event)" ></app-breadcrumb>
     <div class="top-right">
       <div class="right-option">
       </div>
@@ -14,6 +14,9 @@
       <span *ngIf="!copied">COPY</span>
       <span *ngIf="copied">COPIED</span>
     </div>
+    <div tag_two>
+      <a target="_blank" style="text-decoration: none; color: inherit;" [href]="explorerPath()">Explore</a>
+    </div>
   </app-notice>
 
   <div class="swap-details">
@@ -23,7 +26,7 @@
     </div>
     <div class="flex justify-between">
       <span class="tx-detail-label">Estimated ETH Fee:</span>
-      <span *ngIf="fee">{{ (fee) | number:"0.0-6"}} ETH</span>
+      <span *ngIf="fee">{{ (fee) }} ETH</span>
       <span *ngIf="!fee">...</span>
     </div>
   </div>

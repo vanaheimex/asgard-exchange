@@ -16,12 +16,13 @@ import { DirectivesModule } from '../_directives/directives.module';
 import { BreadcrumbModule } from '../_components/breadcrumb/breadcrumb.module';
 import { ArrowModule } from '../_components/arrow/arrow.module';
 import { MarketsModalModule } from '../_components/markets-modal/markets-modal.module';
-import { ApproveEthContractModalComponent } from '../_components/approve-eth-contract/approve-eth-contract-modal/approve-eth-contract-modal.component';
+// import { ApproveEthContractModalComponent } from '../_components/approve-eth-contract/approve-eth-contract-modal/approve-eth-contract-modal.component';
 import { NoticeModule } from '../_components/notice/notice.module';
+import { ApproveEthContractModalModule } from '../_components/approve-eth-contract/approve-eth-contract-modal/approve-eth-contract-modal.module';
 
 
 @NgModule({
-  declarations: [PoolCreateComponent, ConfirmPoolCreateComponent, ApproveEthContractModalComponent],
+  declarations: [PoolCreateComponent, ConfirmPoolCreateComponent],
   imports: [
     CommonModule,
     AssetInputModule,
@@ -33,6 +34,7 @@ import { NoticeModule } from '../_components/notice/notice.module';
     TransactionSuccessModalModule,
     TransactionProcessingModalModule,
     ApproveEthContractModule,
+    ApproveEthContractModalModule,
     DirectivesModule,
     BreadcrumbModule,
     ArrowModule,

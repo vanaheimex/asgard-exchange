@@ -1,4 +1,5 @@
 import { Component, Input, OnDestroy, OnInit, Output, EventEmitter } from '@angular/core';
+import { Router } from '@angular/router';
 import { Asset } from '@xchainjs/xchain-util';
 import { Subscription } from 'rxjs';
 import { User } from 'src/app/_classes/user';
@@ -17,15 +18,18 @@ export class ApproveEthContractComponent implements OnInit, OnDestroy {
   @Input() contractAddress: string;
   @Input() asset: Asset;
   @Output() approved: EventEmitter<null>;
+  @Output() approveClicked: EventEmitter<null>;
+
 
   user: User;
   subs: Subscription[];
   isApprovedTxHash: string;
   approving: boolean;
 
-  constructor(private userService: UserService, private txStatusService: TransactionStatusService, private overlaysService: OverlaysService) {
+  constructor(private userService: UserService, private txStatusService: TransactionStatusService, private overlaysService: OverlaysService, private router: Router) {
 
     this.approved = new EventEmitter<null>();
+    this.approveClicked = new EventEmitter<null>();
     this.approving = false;
 
     const user$ = this.userService.user$.subscribe(
@@ -48,7 +52,7 @@ export class ApproveEthContractComponent implements OnInit, OnDestroy {
 
   openConfirmationDialog() {
 
-    this.overlaysService.setCurrentCreatePoolView('Approve');
+    this.approveClicked.emit();
     // const dialogRef = this.dialog.open(
     //   ApproveEthContractModalComponent,
     //   {

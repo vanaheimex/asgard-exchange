@@ -60,9 +60,11 @@
           <div class="divider"></div>
           <div class="right-btn">
             <app-approve-eth-contract
+              (approveClicked)="overlaysService.setCurrentCreatePoolView('Approve')"
               *ngIf="ethContractApprovalRequired"
               [contractAddress]="ethRouter"
-              [asset]="asset">
+              [asset]="asset"
+              (approved)="contractApproved()">
             </app-approve-eth-contract>
             <button
               *ngIf="!ethContractApprovalRequired"
@@ -91,6 +93,8 @@
       <app-approve-eth-contract-modal
         [data]="{asset: asset, contractAddress: ethRouter}"
         (approvedHash)="contractApproved()"
+        (close)="overlaysService.setCurrentCreatePoolView('Create')"
+        mode="create pool"
       >
       </app-approve-eth-contract-modal>
     </div>

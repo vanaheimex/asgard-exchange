@@ -39,6 +39,7 @@ import { TagModule } from '../_components/tag/tag.module';
 import { NoticeModule } from '../_components/notice/notice.module';
 import { RightOptionModule } from '../_components/right-option/right-option.module';
 import { PhraseWordsListModule } from '../_components/phrase-words-list/phrase-words-list.module';
+import { ApproveEthContractModalModule } from '../_components/approve-eth-contract/approve-eth-contract-modal/approve-eth-contract-modal.module';
 @NgModule({
   declarations: [
     SwapComponent,
@@ -68,6 +69,7 @@ import { PhraseWordsListModule } from '../_components/phrase-words-list/phrase-w
     TransactionLedgerConfirmModalModule,
     DirectivesModule,
     ApproveEthContractModule,
+    ApproveEthContractModalModule,
     ArrowModule,
     BreadcrumbModule,
     TagModule,
