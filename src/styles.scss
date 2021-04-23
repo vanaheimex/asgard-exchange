@@ -794,6 +794,10 @@ input[type=number] {
     background: linear-gradient(to right, #FFFD00 0%, #F625F0 49.98%, #01F6EE 100%);
   }
 
+  &.bug-btn {
+    cursor: initial;
+  }
+
   &.spinner {
     display: flex;
     justify-content: center;

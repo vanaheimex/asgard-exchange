@@ -459,6 +459,7 @@ export class SwapComponent implements OnInit, OnDestroy {
       || this.mainButtonText() == 'Enter an amount'
       || this.mainButtonText() == 'Swap'
       || this.mainButtonText() == 'LOADING BALANCE'
+      || this.mainButtonText() == 'Maintenance Enabled'
     ) {
       return false;
     }
@@ -467,6 +468,11 @@ export class SwapComponent implements OnInit, OnDestroy {
   }
 
   mainButtonText(): string {
+
+    /** App Lock situation */
+    if (this.appLocked) {
+      return 'Maintenance Enabled';
+    }
 
     /** User Not connected */
     if (!this.user || !this.balances) {
