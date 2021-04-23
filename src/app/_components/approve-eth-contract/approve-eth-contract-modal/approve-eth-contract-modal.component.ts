@@ -7,10 +7,12 @@ import { PoolAddressDTO } from 'src/app/_classes/pool-address';
 import { User } from 'src/app/_classes/user';
 import { CopyService } from 'src/app/_services/copy.service';
 import { EthUtilsService } from 'src/app/_services/eth-utils.service';
+import { ExplorerPathsService } from 'src/app/_services/explorer-paths.service';
 import { MidgardService } from 'src/app/_services/midgard.service';
 import { OverlaysService } from 'src/app/_services/overlays.service';
 import { TransactionStatusService } from 'src/app/_services/transaction-status.service';
 import { UserService } from 'src/app/_services/user.service';
+import { Path } from '../../breadcrumb/breadcrumb.component';
 
 export type ApproveEthContractModalParams = {
   contractAddress: string;
@@ -36,6 +38,11 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
   copied: boolean = false;
   @Input() data: ApproveEthContractModalParams;
   @Output() approvedHash = new EventEmitter<string>();
+  @Output() close = new EventEmitter<null>();
+
+  //breadcurmb path
+  path: Path[];
+  @Input() mode: 'deposit' | 'swap' | 'create pool' = 'swap';
 
   constructor(
     private userService: UserService,
@@ -43,7 +50,8 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
     private ethUtilsService: EthUtilsService,
     private midgardService: MidgardService,
     private overlaysService: OverlaysService,
-    private copySerivce: CopyService
+    private copySerivce: CopyService,
+    private explorerPathsService : ExplorerPathsService
   ) {
     this.loading = true;
     this.insufficientEthBalance = false;
@@ -51,10 +59,20 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-
     const user$ = this.userService.user$;
     const balances$ = this.userService.userBalances$;
     const inboundAddresses$ = this.midgardService.getInboundAddresses();
+
+    this.path = [{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}]
+    if (this.mode == 'swap') {
+      this.path.push({name: 'Swap', disable: false, call: 'back'}, {name: 'Contract', disable: true})
+    }
+    else if(this.mode == 'create pool') {
+      this.path.push({name: 'Pools', disable: false, call: 'back'}, {name: 'Create', disable: true}, {name: 'Contract', disable: true})
+    }
+    else if(this.mode == 'deposit') {
+      this.path.push({name: 'Deposit', disable: false, call: 'back'}, {name: 'Contract', disable: true})
+    }
 
     const combined = combineLatest([user$, balances$, inboundAddresses$]);
 
@@ -66,6 +84,11 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
 
 
     this.subs.push(sub);
+  }
+
+  back(val): void {
+    if (val == 'back')
+      this.closeDialog();
   }
 
   async estimateApprovalFee(addresses: PoolAddressDTO[]) {
@@ -119,7 +142,7 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
       this.txStatusService.pollEthContractApproval(approve.hash);
       // this.dialogRef.close(approve.hash);
       this.approvedHash.emit(approve.hash);
-      this.overlaysService.setCurrentCreatePoolView('Create');
+      this.closeDialog();
     }
 
     this.loading = false;
@@ -127,8 +150,11 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
   }
 
   closeDialog() {
-    this.overlaysService.setCurrentCreatePoolView('Create');
-    // this.dialogRef.close();
+    this.close.emit();
+  }
+
+  explorerPath(): string {
+    return `${this.explorerPathsService.ethereumExplorerUrl}/address/${this.data.contractAddress}`
   }
 
   copyToClipboard() {

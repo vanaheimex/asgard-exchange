@@ -19,6 +19,7 @@ import { RightOptionModule } from '../_components/right-option/right-option.modu
 import { ArrowModule } from '../_components/arrow/arrow.module';
 import { MarketsModalModule } from '../_components/markets-modal/markets-modal.module';
 import { RetryRuneDepositComponent } from './retry-rune-deposit/retry-rune-deposit.component';
+import { ApproveEthContractModalModule } from '../_components/approve-eth-contract/approve-eth-contract-modal/approve-eth-contract-modal.module';
 
 
 
@@ -34,6 +35,7 @@ import { RetryRuneDepositComponent } from './retry-rune-deposit/retry-rune-depos
     TransactionProcessingModalModule,
     TransactionLedgerConfirmModalModule,
     ApproveEthContractModule,
+    ApproveEthContractModalModule,
     DirectivesModule,
     SectionHeadModule,
     BreadcrumbModule,

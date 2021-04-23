@@ -4,11 +4,11 @@ import { Chain } from '@xchainjs/xchain-util';
 import { BehaviorSubject } from 'rxjs';
 import { AssetAndBalance } from '../_classes/asset-and-balance';
 
-export type DepositViews = 'Deposit' | 'Confirm' | 'Asset';
+export type DepositViews = 'Deposit' | 'Confirm' | 'Asset' | 'Approve';
 export type WithdrawViews = 'Withdraw' | 'Confirm' | 'Asset';
 export type CreatePoolViews = 'Create' | 'Approve' | 'Asset' | 'Confirm';
 export type MainViews = 'Reconnect' | 'User Setting' | 'Swap' | 'Account Setting';
-export type SwapViews = 'Swap' | 'TargetAsset' | 'SourceAsset' | 'Connect' | 'Confirm';
+export type SwapViews = 'Swap' | 'TargetAsset' | 'SourceAsset' | 'Connect' | 'Confirm' | 'Approve';
 export type UserViews = 'Addresses' | 'Address' | 'Asset' | 'Send' | 'Confirm' | 'ADDRESS_ADD_TOKEN';
 export type SettingViews = 'ACCOUNT' | 'PHRASE' | 'SLIP';
 export type UserOverlay = {

@@ -43,7 +43,7 @@
           [error]="poolDetailTargetError || poolDetailSourceError"
           [selectableMarkets]="selectableMarkets"
           [showBalance]="false"
-          [disableInput]="user ? false : true"
+          [disableInput]="true"
           [disableUser]="user ? false : true"
           (lunchMarket)="overlaysService.setCurrentSwapView('TargetAsset')">
         </app-asset-input>
@@ -89,15 +89,25 @@
         </div>
 
         <!-- please connect button -->
-        <div class="bottom-actions">
-          <button *ngIf="user"
-              (click)="openConfirmationDialog()"
-              class="next-btn graident-btn"
-              [disabled]="formInvalid() || !balances">
-            <span>Swap</span>
-            <!-- <span *ngIf="!balances">Swap (Loading balance...)</span> -->
-          </button>
-          <app-connect *ngIf="!user"></app-connect>
+        <div class="bottom-actions" [ngClass]="{'two-btn': ethContractApprovalRequired && ethInboundAddress && selectedSourceAsset}">
+          <div [ngClass]="{'left-btn': ethContractApprovalRequired && ethInboundAddress && selectedSourceAsset}" >
+            <button *ngIf="user"
+                (click)="openConfirmationDialog()"
+                class="next-btn graident-btn"
+                [disabled]="formInvalid() || !balances">
+              <span>Swap</span>
+            </button>
+            <app-connect *ngIf="!user"></app-connect>
+          </div>
+          <div *ngIf="ethContractApprovalRequired && ethInboundAddress && selectedSourceAsset" class="divider"></div>
+          <div class="right-btn" *ngIf="ethContractApprovalRequired && ethInboundAddress && selectedSourceAsset">
+            <app-approve-eth-contract
+              (approveClicked)="overlaysService.setCurrentSwapView('Approve')"
+              [contractAddress]="ethInboundAddress.router"
+              [asset]="selectedSourceAsset"
+              (approved)="contractApproved()">
+            </app-approve-eth-contract>
+          </div>
         </div>
 
       </div>
@@ -128,6 +138,15 @@
     <div class="overlay-container" *ngIf="overlaysService.getCurrentSwapView() == 'Confirm'">
       <app-confirm-swap-modal *ngIf="swapData" [swapData]="swapData" (closeTransaction)="transactionSuccess()">
       </app-confirm-swap-modal>
+    </div>
+
+    <div class="overlay-container overlay-connect-wallet" *ngIf="overlaysService.getCurrentSwapView() == 'Approve'">
+      <app-approve-eth-contract-modal
+        [data]="{asset: selectedSourceAsset, contractAddress: ethInboundAddress.router}"
+        (approvedHash)="contractApproved()"
+        (close)="overlaysService.setCurrentSwapView('Swap')"
+      >
+      </app-approve-eth-contract-modal>
     </div>
   </div>
 </div>

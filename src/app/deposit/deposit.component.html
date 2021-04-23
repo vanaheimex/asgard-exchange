@@ -1,4 +1,4 @@
-<div class="container-wrapper" *ngIf="view === 'Asset' || view === 'Deposit'">
+<div class="container-wrapper" *ngIf="view === 'Asset' || view === 'Deposit' || view === 'Approve'">
   <div class="container">
     <div *ngIf="view === 'Deposit'">
       <div class="main-container">
@@ -52,12 +52,20 @@
         <div class="divider"></div>
         <div class="right-btn">
           <button
+            *ngIf="!ethContractApprovalRequired"
             (click)="openConfirmationDialog()"
             class="next-btn graident-btn"
             [disabled]="formDisabled() || !assetPoolData"
           >
             <span>Deposit</span>
           </button>
+          <app-approve-eth-contract
+            *ngIf="ethContractApprovalRequired"
+            [contractAddress]="ethRouter"
+            [asset]="asset"
+            (approveClicked)="overlaysService.setCurrentDepositView('Approve')"
+            (approved)="contractApproved()">
+          </app-approve-eth-contract>
         </div>
       </div>
     </div>
@@ -70,6 +78,15 @@
         (close)="overlaysService.setCurrentDepositView('Deposit')">
         <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'Pools', call: 'pool'}, {name: 'Deposit', call: 'deposit-back'}, {name: 'SEARCH', disable: true}]" message="TYPE IN THE FIELD" (funcCaller)="goToNav($event)"></app-breadcrumb>
       </app-markets-modal>
+    </div>
+
+    <div class="overlay-container overlay-connect-wallet" *ngIf="view === 'Approve'">
+      <app-approve-eth-contract-modal
+        [data]="{asset: asset, contractAddress: ethRouter}"
+        (approvedHash)="contractApproved()"
+        (close)="overlaysService.setCurrentDepositView('Deposit')"
+        mode='deposit'
+      ></app-approve-eth-contract-modal>
     </div>
 
   </div>

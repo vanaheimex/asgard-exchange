@@ -449,58 +449,17 @@ export class SwapComponent implements OnInit, OnDestroy {
   // }
 
   isError(): boolean {
-    /** User Not connected */
-    if (!this.user || !this.balances) {
+
+    if (this.mainButtonText() == 'Select'
+      || this.mainButtonText() == 'Connect wallet'
+      || this.mainButtonText() == 'Enter an amount'
+      || this.mainButtonText() == 'Swap'
+      || this.mainButtonText() == 'LOADING BALANCE'
+    ) {
       return false;
     }
 
-    /** Loading balance from the user */
-    if (this.user && !this.balances) {
-      return false;
-    }
-
-    /** THORChain is backed up */
-    if (this.queue && this.queue.outbound >= 12) {
-      return true;
-    }
-
-    /** No target asset selected */
-    if (!this.selectedTargetAsset) {
-      return false;
-    }
-
-    /** No source amount set */
-    if (!this.sourceAssetUnit || !this.selectedTargetAsset) {
-      return false;
-    }
-
-    /** Source amount is higher than user spendable amount */
-    if (this.sourceAssetUnit > this.userService.maximumSpendableBalance(this.selectedSourceAsset, this.sourceBalance)) {
-      return true;
-    }
-
-    /** BNB chain tx and user doesn't have enough BNB  */
-    if (this.selectedSourceAsset.chain === 'BNB' && this.insufficientBnb) {
-      return true;
-    }
-
-    /** Amount is too low, considered "dusting" */
-    if ( (this.sourceAssetUnit <= this.userService.minimumSpendable(this.selectedSourceAsset))
-      || (this.targetAssetUnitDisplay <= this.userService.minimumSpendable(this.selectedTargetAsset))) {
-        return true;
-    }
-
-    /** Exceeds slip tolerance set in user settings */
-    if ((this.slip * 100) > this.slippageTolerance) {
-      return true;
-    }
-
-    /** Good to go */
-    if (this.user && this.sourceAssetUnit && this.sourceAssetUnit <= this.sourceBalance && this.selectedTargetAsset) {
-      return false;
-    } else {
-      console.warn('error creating main button text');
-    }
+    return true;
   }
 
   mainButtonText(): string {
