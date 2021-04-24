@@ -45,10 +45,6 @@ export class UpgradeRuneComponent implements OnInit {
       );
 
 
-      console.log(this.amount);
-      console.log(this.nativeRune);
-      console.log(this.nativeRune.balance.amount().toNumber());
-
       this.subs = [balances$];
 
     }
