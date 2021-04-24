@@ -19,6 +19,11 @@ export class Asset {
 
     const trustWalletMatch = CoinIconsFromTrustWallet[this.ticker];
 
+    if (ticker == 'RUNE') {
+      this.iconPath = '/assets/icons/logo-thor-rune.svg';
+      return
+    }
+
     if (trustWalletMatch && chain !== 'THOR') {
       this.iconPath = `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/binance/assets/${trustWalletMatch}/logo.png`;
     } else {
