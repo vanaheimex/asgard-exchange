@@ -520,6 +520,26 @@ button {
   }
 }
 
+.lists-wrapper {
+  .short {
+    height: 304px;
+    border-radius: 6px 6px 0 0;
+
+    &--pool {
+      height: 201px !important;
+    }
+  }
+
+  .scroll-for-more {
+    display: flex;
+    justify-content: center;
+
+    //borders and color
+    background: var(--primary-grey-background);
+    border-radius: 0 0 6px 6px;
+  }
+}
+
 .wallets, .transactions, .lists {
   display: flex;
   flex-direction: column;
@@ -527,6 +547,9 @@ button {
   background-color: #0D1B23;
   border-radius: 6px;
   padding: 10px;
+  overflow: auto;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 
   &.disable {
     flex-direction: row;

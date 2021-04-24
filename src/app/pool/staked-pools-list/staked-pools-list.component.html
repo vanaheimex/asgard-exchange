@@ -1,7 +1,11 @@
 <!-- <div *ngIf="!memberPools || (memberPools && memberPools.length < 1)" class="disabled-list">
   No deposited pools found
 </div> -->
-
-<div class="flex lists pool-list" *ngIf="mappedPools && mappedPools.length > 0">
-  <app-staked-pool-list-item *ngFor="let pool of mappedPools" [memberPoolData]="pool.memberData" [poolData]="pool.poolData" [depositsDisabled]="depositsDisabled" (click)="activePool = pool"></app-staked-pool-list-item>
+<div class="lists-wrapper">
+  <div class="flex lists pool-list" *ngIf="mappedPools && mappedPools.length > 0" [ngClass]="{'short short--pool': mappedPools && mappedPools.length > 5}">
+    <app-staked-pool-list-item *ngFor="let pool of mappedPools" [memberPoolData]="pool.memberData" [poolData]="pool.poolData" [depositsDisabled]="depositsDisabled" (click)="activePool = pool"></app-staked-pool-list-item>
+  </div>
+  <div class="scroll-for-more" *ngIf="(mappedPools && mappedPools.length > 5)">
+    <img style="padding: 19px 0;" src="assets/images/mouse-scroll.svg" alt="scroll for more">
+  </div>
 </div>
