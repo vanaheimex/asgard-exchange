@@ -125,7 +125,7 @@ export class SendAssetComponent implements OnInit, OnDestroy {
     }
 
     if (!this.amountSpendable) {
-      return 'Amount not spendable';
+      return `INSUFFICIENT ${this.asset.asset.ticker}`;
     }
 
     return 'Ready';
