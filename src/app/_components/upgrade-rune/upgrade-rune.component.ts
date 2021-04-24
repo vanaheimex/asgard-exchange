@@ -53,6 +53,11 @@ export class UpgradeRuneComponent implements OnInit {
 
     }
   }
+  
+  backCall(val: string): void {
+    if (val == 'back')
+      this.back.emit()
+  }
 
   checkSpendable(): void {
     const maximumSpendableBalance = this.userService.maximumSpendableBalance(this.asset.asset, this.balance);
