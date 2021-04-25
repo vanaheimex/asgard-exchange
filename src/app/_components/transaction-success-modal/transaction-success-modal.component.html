@@ -81,7 +81,7 @@
 
         <app-arrow></app-arrow>
 
-        <ng-container *ngClass="!hasOutbound">
+        <ng-container *ngIf="!hasOutbound">
           <app-notice [tags]="['Copy', 'Explorer']" [isMono]="true">
           <span text style="font-family: inherit;">{{hash.substring(0, 16) + '...' + hash.substring(hash.length - 16, hash.length)}}</span>
             <div tag_one (click)="copyToClipboard()">
