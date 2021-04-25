@@ -109,7 +109,7 @@
   
             <div style="width: 10px;"></div>
   
-            <app-notice style="width: calc( 50% - 5px);" [tags]="['Copy', 'Explorer']" [isMono]="true">
+            <app-notice [isGray]="!hashOutbound" [isTag]="hashOutbound" style="width: calc( 50% - 5px);" [tags]="['Copy', 'Explorer']" [isMono]="true">
               <span *ngIf="hashOutbound" text style="font-family: inherit;">{{hashOutbound.substring(0, 3) + '...' + hashOutbound.substring(hashOutbound.length - 3, hashOutbound.length)}}</span>
               <span *ngIf="!hashOutbound" text style="font-family: inherit;">Pending</span>
               <div tag_one (click)="copyToClipboard(hashOutbound || 'Pending', true)">
@@ -117,7 +117,7 @@
                 <span *ngIf="copiedOutbound">COPIED</span>
               </div>
               <div tag_two>
-                <a target="_blank" style="text-decoration: none; color: inherit;" [href]="explorerPath(hashOutbound)">Explore</a>
+                <a target="_blank" style="text-decoration: none; color: inherit;" [href]="explorerPath(hashOutbound, asset[1].asset.chain)">Explore</a>
               </div>
               </app-notice>
           </div>

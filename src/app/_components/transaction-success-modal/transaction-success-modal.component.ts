@@ -75,7 +75,7 @@ export class TransactionSuccessModalComponent implements OnInit {
           () => {
             this.copiedOutbound = false;
           }
-        , 5000)
+        , 3000)
       }
       else {
         this.copied = true;
@@ -83,21 +83,21 @@ export class TransactionSuccessModalComponent implements OnInit {
           () => {
             this.copied = false;
           }
-        , 5000)
+        , 3000)
       }
     }
   }
 
-  explorerPath(hash: string = this.hash): string {
+  explorerPath(hash: string = this.hash, chain: Chain = this.chain): string {
     if (this.externalTx)
-      this.chain = 'THOR';
+      chain = 'THOR';
 
-    if (this.chain === 'THOR') {
+    if (chain === 'THOR') {
       return this.thorchainExplorerUrl + '/' + hash;
-    } else if (this.chain === 'ETH') {
+    } else if (chain === 'ETH') {
       return `${this.ethereumExplorerUrl}/0x${hash}`;
     } else {
-      return this.explorerUrl(this.chain) + '/' + hash;
+      return this.explorerUrl(chain) + '/' + hash;
     }
   }
 
