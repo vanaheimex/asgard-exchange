@@ -17,6 +17,8 @@
   [chain]="swapData.sourceAsset.asset.chain"
   [hash]="hash"
   [isSending]="false"
+  [hasOutbound]="true"
+  [hashOutbound]="outboundHash"
   (closeDialog)="closeDialog(true)">
   <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap', call: 'sucSwap'}, {name: 'Swap', swapView: 'Swap', mainView: 'Swap', call: 'sucSwap'}]" message="SUCCESS" (funcCaller)="navCaller($event)"></app-breadcrumb>
 </app-transaction-success-modal>

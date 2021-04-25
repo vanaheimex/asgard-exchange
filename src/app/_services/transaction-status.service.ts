@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Chain } from '@xchainjs/xchain-util';
-import { BehaviorSubject, of, ReplaySubject, Subject, timer } from 'rxjs';
+import { BehaviorSubject, Observable, of, ReplaySubject, Subject, timer } from 'rxjs';
 import { catchError, switchMap, takeUntil, retryWhen, delay, take } from 'rxjs/operators';
-import { TransactionDTO } from '../_classes/transaction';
+import { Transaction, TransactionDTO } from '../_classes/transaction';
 import { User } from '../_classes/user';
 import { BinanceService } from './binance.service';
 import { MidgardService, ThornodeTx } from './midgard.service';
@@ -222,6 +222,33 @@ export class TransactionStatusService {
       }
 
     });
+  }
+
+  getOutboundHash(hash: string) {
+    return new Observable(
+      sub => {
+        timer(0, 2000)
+        .pipe(
+          // This kills the request if the user closes the component
+          takeUntil(this.killTxPolling[hash]),
+          // switchMap cancels the last request, if no response have been received since last tick
+          switchMap(() => this.midgardService.getTransaction(hash)),
+          // catchError handles http throws
+          catchError(error => of(error))
+        ).subscribe( async (res: TransactionDTO) => {
+
+          if (res.count > 0) {
+            for (const resTx of res.actions) {
+
+              sub.next(resTx);
+
+            }
+          }
+
+        });
+      }
+    )
+    
   }
 
   /**

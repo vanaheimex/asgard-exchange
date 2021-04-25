@@ -32,6 +32,8 @@ export class TransactionSuccessModalComponent implements OnInit {
   @Input() recipientAddress: string;
   @Input() percentage: number;
   @Input() isPlus: boolean = false;
+  @Input() hasOutbound: boolean = false;
+  @Input() hashOutbound: string = '';
 
   binanceExplorerUrl: string;
   bitcoinExplorerUrl: string;
@@ -44,6 +46,7 @@ export class TransactionSuccessModalComponent implements OnInit {
   targetBalance: number;
   subs: Subscription[];
   copied: boolean = false;
+  copiedOutbound: boolean = false;
 
 
   constructor(private explorerPathsService: ExplorerPathsService, private copyService: CopyService, private userService: UserService) {
@@ -58,23 +61,43 @@ export class TransactionSuccessModalComponent implements OnInit {
 
   }
 
-  copyToClipboard() {
-    let result = this.copyService.copyToClipboard(this.hash);
+  copyToClipboard(val?: string, copyOutbound?: boolean) {
+    let result
+    if (val)
+      result = this.copyService.copyToClipboard(val);
+    else
+      result = this.copyService.copyToClipboard(this.hash);
 
-    if (result)
-      this.copied = true;
+    if (result) {
+      if(copyOutbound) {
+        this.copiedOutbound = true;
+        setTimeout(
+          () => {
+            this.copiedOutbound = false;
+          }
+        , 5000)
+      }
+      else {
+        this.copied = true;
+        setTimeout(
+          () => {
+            this.copied = false;
+          }
+        , 5000)
+      }
+    }
   }
 
-  explorerPath(): string {
+  explorerPath(hash: string = this.hash): string {
     if (this.externalTx)
       this.chain = 'THOR';
 
     if (this.chain === 'THOR') {
-      return this.thorchainExplorerUrl + '/' + this.hash;
+      return this.thorchainExplorerUrl + '/' + hash;
     } else if (this.chain === 'ETH') {
-      return `${this.ethereumExplorerUrl}/0x${this.hash}`;
+      return `${this.ethereumExplorerUrl}/0x${hash}`;
     } else {
-      return this.explorerUrl(this.chain) + '/' + this.hash;
+      return this.explorerUrl(this.chain) + '/' + hash;
     }
   }
 

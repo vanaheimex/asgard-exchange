@@ -81,16 +81,47 @@
 
         <app-arrow></app-arrow>
 
-        <app-notice [tags]="['Copy', 'Explorer']" [isMono]="true">
+        <ng-container *ngClass="!hasOutbound">
+          <app-notice [tags]="['Copy', 'Explorer']" [isMono]="true">
           <span text style="font-family: inherit;">{{hash.substring(0, 16) + '...' + hash.substring(hash.length - 16, hash.length)}}</span>
-          <div tag_one (click)="copyToClipboard()">
-            <span *ngIf="!copied">COPY</span>
-            <span *ngIf="copied">COPIED</span>
+            <div tag_one (click)="copyToClipboard()">
+              <span *ngIf="!copied">COPY</span>
+              <span *ngIf="copied">COPIED</span>
+            </div>
+            <div tag_two>
+              <a target="_blank" style="text-decoration: none; color: inherit;" [href]="explorerPath()">Explore</a>
+            </div>
+          </app-notice>
+        </ng-container>
+
+        <ng-container *ngIf="hasOutbound">
+          <div style="display: flex;">
+            <app-notice style="width: calc( 50% - 5px);" [tags]="['Copy', 'Explorer']" [isMono]="true">
+            <span text style="font-family: inherit;">{{hash.substring(0, 3) + '...' + hash.substring(hash.length - 3, hash.length)}}</span>
+            <div tag_one (click)="copyToClipboard(hash)">
+              <span *ngIf="!copied">COPY</span>
+              <span *ngIf="copied">COPIED</span>
+            </div>
+            <div tag_two>
+              <a target="_blank" style="text-decoration: none; color: inherit;" [href]="explorerPath()">Explore</a>
+            </div>
+            </app-notice>
+  
+            <div style="width: 10px;"></div>
+  
+            <app-notice style="width: calc( 50% - 5px);" [tags]="['Copy', 'Explorer']" [isMono]="true">
+              <span *ngIf="hashOutbound" text style="font-family: inherit;">{{hashOutbound.substring(0, 3) + '...' + hashOutbound.substring(hashOutbound.length - 3, hashOutbound.length)}}</span>
+              <span *ngIf="!hashOutbound" text style="font-family: inherit;">Pending</span>
+              <div tag_one (click)="copyToClipboard(hashOutbound || 'Pending', true)">
+                <span *ngIf="!copiedOutbound">COPY</span>
+                <span *ngIf="copiedOutbound">COPIED</span>
+              </div>
+              <div tag_two>
+                <a target="_blank" style="text-decoration: none; color: inherit;" [href]="explorerPath(hashOutbound)">Explore</a>
+              </div>
+              </app-notice>
           </div>
-          <div tag_two>
-            <a target="_blank" style="text-decoration: none; color: inherit;" [href]="explorerPath()">Explore</a>
-          </div>
-        </app-notice>
+        </ng-container>
 
       </div>
 
