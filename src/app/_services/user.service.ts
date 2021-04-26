@@ -372,6 +372,7 @@ export class UserService {
       else {
         return {
           asset: mItem.asset,
+          balance: assetAmount(0)
         };
       }
 
