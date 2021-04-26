@@ -1,7 +1,7 @@
 <div class="swap-input uni-input" [ngClass]="{'disable': disableUser}">
   <div class="swap-input--inner">
     <div class="flex justify-between label-wrapper">
-      <label class="label-title" for="{{label}}Input">{{label}}<span style="color: #474E5D;" *ngIf="selectedAsset && balance && !disableUser && showBalance"> (<span class="mono">{{balance | number:"1.0-2"}}</span> balance)</span><span *ngIf="!isSource" style="color: #474E5D;"> (estimated)</span></label>
+      <label class="label-title" for="{{label}}Input">{{label}}<span style="color: #474E5D;" *ngIf="selectedAsset && balance && !disableUser && showBalance"> (<span class="mono">{{balance}}</span> balance)</span><span *ngIf="!isSource" style="color: #474E5D;"> (estimated)</span></label>
     </div>
     <!-- <label style="color: #fff; font-size: 14px; font-weight: 500; text-align: right; margin-right: 8px;" *ngIf="selectedAsset && balance && !disableInput">
       Balance: {{balance | number:"1.0-8"}} <br />
