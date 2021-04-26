@@ -97,7 +97,7 @@
         <ng-container *ngIf="hasOutbound">
           <div style="display: flex;">
             <app-notice style="width: calc( 50% - 5px);" [tags]="['Copy', 'Explorer']" [isMono]="true">
-            <span text style="font-family: inherit;">{{hash.substring(0, 3) + '...' + hash.substring(hash.length - 3, hash.length)}}</span>
+            <span text style="font-family: inherit;"><span style="font-family: 'Roboto';">{{asset[0].asset.ticker}}: </span>{{hash.substring(0, 3) + '...' + hash.substring(hash.length - 3, hash.length)}}</span>
             <div tag_one (click)="copyToClipboard(hash)">
               <span *ngIf="!copied">COPY</span>
               <span *ngIf="copied">COPIED</span>
@@ -109,9 +109,9 @@
   
             <div style="width: 10px;"></div>
   
-            <app-notice [isGray]="!hashOutbound" [isTag]="hashOutbound" style="width: calc( 50% - 5px);" [tags]="['Copy', 'Explorer']" [isMono]="true">
-              <span *ngIf="hashOutbound" text style="font-family: inherit;">{{hashOutbound.substring(0, 3) + '...' + hashOutbound.substring(hashOutbound.length - 3, hashOutbound.length)}}</span>
-              <span *ngIf="!hashOutbound" text style="font-family: inherit;">Pending</span>
+            <app-notice [isDisabled]="!hashOutbound" [isTag]="hashOutbound" style="width: calc( 50% - 5px);" [tags]="['Copy', 'Explorer']" [isMono]="true">
+              <span *ngIf="hashOutbound" text style="font-family: inherit;"><span style="font-family: 'Roboto';">{{asset[1].asset.ticker}}: </span>{{hashOutbound.substring(0, 3) + '...' + hashOutbound.substring(hashOutbound.length - 3, hashOutbound.length)}}</span>
+              <span *ngIf="!hashOutbound" text style="font-family: 'Roboto'; color: #fff;">WAITING FOR {{asset[1].asset.ticker}} TX...</span>
               <div tag_one (click)="copyToClipboard(hashOutbound || 'Pending', true)">
                 <span *ngIf="!copiedOutbound">COPY</span>
                 <span *ngIf="copiedOutbound">COPIED</span>

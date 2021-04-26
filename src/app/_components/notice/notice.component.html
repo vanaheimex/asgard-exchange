@@ -1,4 +1,4 @@
-<div class="notice-container" [ngClass]="{'double': isDouble, 'center': isCenter, 'gray': isGray}">
+<div class="notice-container" [ngClass]="{'double': isDouble, 'center': isCenter, 'gray': isGray, 'disabled': isDisabled}">
   <div class="text-content" [ngClass]="{'center': isCenter, 'mono': isMono}">
     <ng-content select="[text]"></ng-content>
   </div>

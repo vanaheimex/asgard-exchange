@@ -13,6 +13,11 @@
     color: #fff;
   }
 
+  &.disabled {
+    background: var(--primary-grey-background);
+    color: #fff;
+  }
+
   &.center {
     position: relative;
   }
