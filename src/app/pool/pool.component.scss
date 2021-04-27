@@ -14,3 +14,7 @@
   margin: 0;
   line-height: 0;
 }
+
+.disabled {
+  pointer-events: none;
+}
