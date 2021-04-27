@@ -38,6 +38,7 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
   _asset: AssetAndBalance;
   @Input() amount: number;
   @Input() recipientAddress: string;
+  @Input() memo: string;
   @Output() back: EventEmitter<null>;
   @Output() close: EventEmitter<null>;
   @Output() transactionSuccessful: EventEmitter<null>;
@@ -214,6 +215,7 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
           const hash = await binanceClient.transfer({
             asset: this.asset.asset,
             amount: assetToBase(assetAmount(this.amount)),
+            memo: this.memo,
             recipient: this.recipientAddress,
           });
           this.hash = hash;

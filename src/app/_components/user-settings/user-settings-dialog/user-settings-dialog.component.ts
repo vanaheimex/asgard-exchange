@@ -36,6 +36,7 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
   selectedAsset: AssetAndBalance;
   amountToSend: number;
   recipient: string;
+  memo: string;
   path: Array<any>;
   message: string = "select";
 
@@ -146,9 +147,10 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
     console.log(this.message)
   }
 
-  confirmSend(p: {amount: number, recipientAddress: string}) {
+  confirmSend(p: {amount: number, recipientAddress: string, memo: string}) {
     this.amountToSend = p.amount;
     this.recipient = p.recipientAddress;
+    this.memo = p.memo;
     this.mode = 'CONFIRM_SEND';
     this.setMode('Confirm');
   }

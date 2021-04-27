@@ -28,6 +28,7 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
   @Input() amount: number;
   @Output() back: EventEmitter<null>;
   @Output() transactionSuccessful: EventEmitter<string>;
+  @Output() upgradeRune: EventEmitter<null>;
 
   txState: TransactionConfirmationState;
   binanceExplorerUrl: string;
@@ -56,6 +57,7 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
     this.insufficientChainBalance = false;
     this.back = new EventEmitter<null>();
     this.transactionSuccessful = new EventEmitter<string>();
+    this.upgradeRune = new EventEmitter<null>();
     this.txState = TransactionConfirmationState.PENDING_CONFIRMATION;
 
 
@@ -290,6 +292,11 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
 
   close(): void {
     this.oveylaysService.setViews(MainViewsEnum.Swap, 'Swap');
+  }
+
+  backCall(val: string): void {
+    if (val == 'back')
+      this.upgradeRune.emit();
   }
 
   ngOnDestroy() {

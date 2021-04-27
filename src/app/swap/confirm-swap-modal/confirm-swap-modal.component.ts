@@ -23,6 +23,7 @@ import { ExplorerPathsService } from 'src/app/_services/explorer-paths.service';
 import { CopyService } from 'src/app/_services/copy.service';
 import { AssetAndBalance } from 'src/app/_classes/asset-and-balance';
 import { Balances } from '@xchainjs/xchain-client';
+import { Transaction } from 'src/app/_classes/transaction';
 
 
 export interface SwapData {
@@ -71,6 +72,7 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
   thorchainExplorerUrl: string;
   estimatedMinutes: number;
   balances: Balances;
+  outboundHash: string;
 
   constructor(
     // @Inject(MAT_DIALOG_DATA) public swapData: SwapData,
@@ -460,6 +462,13 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
 
     }
 
+    this.txStatusService.getOutboundHash(this.hash).subscribe(
+      (res: Transaction) => {
+        this.outboundHash = res.out[0]?.txID;
+        console.log(res);
+      }
+    );
+    
   }
 
   pushTxStatus(hash: string, asset: Asset) {

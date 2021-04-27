@@ -7,7 +7,7 @@
     [asset]="[asset, nativeRune]"
     [amount]="[amount, amount]"
   >
-    <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'upgrade rune', disable: true}]" message="TRANSACTION PROCESSING"></app-breadcrumb>
+    <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'upgrade rune', disable: true}, {name:  asset.asset.chain + '.' + asset.asset.ticker, disable: true}]" message="TRANSACTION PROCESSING"></app-breadcrumb>
   </app-transaction-processing-modal>
 
   <app-transaction-success-modal
@@ -19,7 +19,7 @@
     [hash]="hash"
     [isSending]="false"
     (closeDialog)="close()">
-    <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'upgrade rune', disable: true}]" message="SUCCESS"></app-breadcrumb>
+    <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'upgrade rune', disable: false, call: 'back'}, {name:  asset.asset.chain + '.' + asset.asset.ticker, disable: true}]" (funcCaller)="backCall($event)" message="SUCCESS"></app-breadcrumb>
   </app-transaction-success-modal>
 
   <div class="container-wrapper upgrade" *ngIf="txState === 'PENDING_CONFIRMATION' || txState === 'ERROR'">
@@ -27,7 +27,7 @@
     <div class="container">
       <div class="main-container" *ngIf="asset">
         <div class="content-top">
-            <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'upgrade rune', disable: true}]" [isError]="txState === 'ERROR'" [message]="message"></app-breadcrumb>
+            <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'},  {name: 'upgrade rune', disable: false, call: 'back'}, {name:  asset.asset.chain + '.' + asset.asset.ticker, disable: true}]" (funcCaller)="backCall($event)" [isError]="txState === 'ERROR'" [message]="message"></app-breadcrumb>
             <div class="top-right">
             </div>
         </div>

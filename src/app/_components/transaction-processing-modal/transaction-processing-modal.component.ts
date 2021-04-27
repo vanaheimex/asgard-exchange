@@ -19,6 +19,7 @@ export class TransactionProcessingModalComponent implements OnInit {
   @Input() recipientAddress: string;
   @Input() percentage: number;
   @Input() isPlus: boolean = false;
+  @Input() memo: string;
 
   constructor() {
     this.closeDialog = new EventEmitter<null>();

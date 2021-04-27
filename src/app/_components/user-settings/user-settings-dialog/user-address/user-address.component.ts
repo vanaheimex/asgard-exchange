@@ -107,7 +107,7 @@ export class UserAddressComponent implements OnInit {
           };
         } else {
           const matchingPool = this.pools.find( (pool) => {
-            return pool.asset === assetString;
+            return pool.asset.localeCompare(assetString, undefined, { sensitivity: 'accent' }) === 0;
           });
 
           assetBalance = {

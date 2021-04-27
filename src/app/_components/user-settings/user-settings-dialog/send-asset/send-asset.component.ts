@@ -14,7 +14,7 @@ import { UserService } from 'src/app/_services/user.service';
 export class SendAssetComponent implements OnInit, OnDestroy {
 
   @Output() back: EventEmitter<null>;
-  @Output() confirmSend: EventEmitter<{amount: number, recipientAddress: string}>;
+  @Output() confirmSend: EventEmitter<{amount: number, recipientAddress: string, memo: string}>;
   @Input() asset: AssetAndBalance;
 
   message: string;
@@ -37,6 +37,8 @@ export class SendAssetComponent implements OnInit, OnDestroy {
   explorerPath: string;
   address: string;
 
+  memo: string;
+
   get recipientAddress() {
     return this._recipientAddress;
   }
@@ -48,8 +50,9 @@ export class SendAssetComponent implements OnInit, OnDestroy {
 
   constructor(private userService: UserService, private overlaysService: OverlaysService) {
     this.recipientAddress = '';
+    this.memo = ''
     this.back = new EventEmitter<null>();
-    this.confirmSend = new EventEmitter<{amount: number, recipientAddress: string}>();
+    this.confirmSend = new EventEmitter<{amount: number, recipientAddress: string, memo: string}>();
     this.amountSpendable = false;
     this.message = 'prepare';
   }
@@ -122,7 +125,7 @@ export class SendAssetComponent implements OnInit, OnDestroy {
     }
 
     if (!this.amountSpendable) {
-      return 'Amount not spendable';
+      return `INSUFFICIENT ${this.asset.asset.ticker}`;
     }
 
     return 'Ready';

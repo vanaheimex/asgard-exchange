@@ -14,6 +14,7 @@ export class NoticeComponent implements OnInit {
   @Input() isCenter: boolean = false;
   @Input() isMono: boolean = false;
   @Input() isGray: boolean = false;
+  @Input() isDisabled: boolean = false;
 
 
   constructor() { }

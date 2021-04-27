@@ -25,7 +25,9 @@
 
         <app-arrow></app-arrow>
 
-        <app-text-field selectedType="Text" mode="Double" typeTwo="text" label="Recipient Address" labelTwo="Memo" [(textOfField)]="recipientAddress" [disable]="true" [disableTwo]="true"></app-text-field>
+        <app-text-field *ngIf="asset.asset.chain !== 'BNB'" selectedType="Text" mode="Single" label="Recipient Address" [(textOfField)]="recipientAddress" [disable]="true"></app-text-field>
+        <app-text-field *ngIf="asset.asset.chain === 'BNB'" selectedType="Text" mode="Double" typeTwo="text" label="Recipient Address" labelTwo="Memo" [(textOfField)]="recipientAddress" [(textOfFieldTwo)]="memo" [disable]="true" [disableTwo]="true"></app-text-field>
+        
         <!-- <app-text-field *ngIf="mode === 'SUCCESS'"  selectedType="Text" mode="Single" label="Recipient Address" [(textOfField)]="recipientAddress" [disable]="true"></app-text-field> -->
         <!-- <div *ngIf="mode === 'SUCCESS'">
           <app-arrow></app-arrow>
@@ -84,6 +86,7 @@
   [label]="['Sending']"
   [asset]="[asset]"
   [amount]="[amount]"
+  [memo]="memo"
   [recipientAddress]="recipientAddress">
   <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'wallet', call: 'wallet'}, {name: asset.asset.chain, call: 'chain'}, {name: asset.asset.chain + '.' + asset.asset.ticker, call: 'asset'}, {name: 'send', disable: true}]" message="TRANSACTION PROCESSING" (funcCaller)="navCaller($event)"></app-breadcrumb>
 </app-transaction-processing-modal>

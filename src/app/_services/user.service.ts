@@ -301,7 +301,7 @@ export class UserService {
       const max = balance - 0.01 - 0.000375;
       return (max >= 0) ? max : 0;
     } else if (asset.chain === 'THOR' && asset.symbol === 'RUNE') {
-      const max = balance - 0.2;
+      const max = balance - 3;
       return (max >= 0) ? max : 0;
     } else {
       return balance;
@@ -372,6 +372,7 @@ export class UserService {
       else {
         return {
           asset: mItem.asset,
+          balance: assetAmount(0)
         };
       }
 

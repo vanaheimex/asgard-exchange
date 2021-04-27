@@ -5,7 +5,7 @@
   <div class="container">
     <div class="main-container" *ngIf="asset">
       <div class="content-top">
-        <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'upgrade rune', disable: true}]" [message]="amountSpendable ? 'ready' : 'prepare'"></app-breadcrumb>
+        <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'upgrade rune', disable: false, call: 'back'}, {name:  asset.asset.chain + '.' + asset.asset.ticker, disable: true}]" (funcCaller)="backCall($event)" [message]="amountSpendable ? 'ready' : 'prepare'"></app-breadcrumb>
           <div class="top-right">
           </div>
       </div>

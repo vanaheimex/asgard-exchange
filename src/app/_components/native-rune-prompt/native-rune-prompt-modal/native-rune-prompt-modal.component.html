@@ -2,7 +2,7 @@
   <div class="container">
     <div class="main-container">
       <div class="content-top">
-        <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'Upgrade Rune', disable: true}]" message="Prepare"></app-breadcrumb>
+        <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'Upgrade Rune', disable: true}]" message="SELECT ASSET TO UPGRADE"></app-breadcrumb>
         <div class="top-right">
         </div>
       </div>
@@ -36,7 +36,8 @@
   [asset]="selectedAsset"
   [amount]="amountToSend"
   [nativeRune]="nativeRune"
-  (back)="mode = 'UPGRADE_ASSET'">
+  (back)="mode = 'UPGRADE_ASSET'"
+  (upgradeRune)="mode = 'SELECT_ASSET'">
 </app-upgrade-rune-confirm>
 
 <!-- <app-transaction-success-modal
