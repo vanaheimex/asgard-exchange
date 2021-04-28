@@ -9,6 +9,7 @@ import { TextFieldModule } from '../text-field/text-field.module';
 import { NoticeModule } from '../notice/notice.module';
 import { DoubleAssetFieldModule } from '../double-asset-field/double-asset-field.module';
 import { MatSliderModule } from '@angular/material/slider';
+import { TagModule } from '../tag/tag.module';
 
 
 
@@ -22,6 +23,7 @@ import { MatSliderModule } from '@angular/material/slider';
     ArrowModule,
     TextFieldModule,
     NoticeModule,
+    TagModule,
     DoubleAssetFieldModule,
     MatSliderModule
   ],

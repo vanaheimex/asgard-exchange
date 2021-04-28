@@ -7,8 +7,6 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 })
 export class NoticeComponent implements OnInit {
 
-  @Input() tags: Array<string> = ['Text', 'Text'];
-  @Output() tagClicked = new EventEmitter();
   @Input() isDouble: boolean = false;
   @Input() isTag: boolean = true;
   @Input() isCenter: boolean = false;
@@ -22,7 +20,4 @@ export class NoticeComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  onTagClicked(index: number) {
-    this.tagClicked.next(index);
-  }
 }

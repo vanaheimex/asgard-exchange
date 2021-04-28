@@ -31,15 +31,22 @@
         <app-testnet-warning></app-testnet-warning>
 
       </div> -->
-      <app-notice [tags]="['Copy', 'Explorer']" [isMono]="true" [isCenter]="true">
+      <app-notice [isMono]="true" [isCenter]="true">
         <span text style="font-family: inherit; text-align: center;">{{address.substring(0, 10) + '...' + address.substring(address.length - 10, address.length)}}</span>
-        <div tag_one (click)="copyToClipboard()">
-          <span *ngIf="!copied">COPY</span>
-          <span *ngIf="copied">COPIED</span>
-        </div>
-        <div tag_two>
-          <a target="_blank" style="text-decoration: none; color: inherit;" [href]="explorerPath">Explore</a>
-        </div>
+        <ng-container tags>
+          <app-tag>
+            <div (click)="copyToClipboard()">
+              <span *ngIf="!copied">COPY</span>
+              <span *ngIf="copied">COPIED</span>
+            </div>
+          </app-tag>
+          <div style="width: 5px;"></div>
+          <app-tag>
+            <div>
+              <a target="_blank" style="text-decoration: none; color: inherit;" [href]="explorerPath">Explore</a>
+            </div>
+          </app-tag>
+        </ng-container>
       </app-notice>
     </div>
 

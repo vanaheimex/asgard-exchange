@@ -8,15 +8,18 @@
     </div>
   </div>
 
-  <app-notice [tags]="['Copy', 'Explorer']" [isMono]="true">
+  <app-notice [isMono]="true">
     <span text style="font-family: inherit;">{{data.contractAddress.substring(0, 16) + '...' + data.contractAddress.substring(data.contractAddress.length - 16, data.contractAddress.length)}}</span>
-    <div tag_one (click)="copyToClipboard()">
-      <span *ngIf="!copied">COPY</span>
-      <span *ngIf="copied">COPIED</span>
-    </div>
-    <div tag_two>
-      <a target="_blank" style="text-decoration: none; color: inherit;" [href]="explorerPath()">Explore</a>
-    </div>
+    <ng-container tags>
+      <div (click)="copyToClipboard()">
+        <span *ngIf="!copied">COPY</span>
+        <span *ngIf="copied">COPIED</span>
+      </div>
+      <div style="width: 5px;"></div>
+      <div>
+        <a target="_blank" style="text-decoration: none; color: inherit;" [href]="explorerPath()">Explore</a>
+      </div>
+    </ng-container>
   </app-notice>
 
   <div class="swap-details">

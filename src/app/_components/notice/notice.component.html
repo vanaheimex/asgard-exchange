@@ -1,10 +1,11 @@
-<div class="notice-container" [ngClass]="{'double': isDouble, 'center': isCenter, 'gray': isGray, 'disabled': isDisabled}">
+<div class="notice-container" [ngClass]="{'center': isCenter, 'gray': isGray, 'disabled': isDisabled}">
   <div class="text-content" [ngClass]="{'center': isCenter, 'mono': isMono}">
     <ng-content select="[text]"></ng-content>
   </div>
   <div class="tags" *ngIf="isTag" [ngClass]="{'center': isCenter}">
-    <app-tag class="left" (click)="onTagClicked(0)"><ng-content select="[tag_one]"></ng-content></app-tag>
+    <!-- <app-tag class="left"><ng-content select="[tag_one]"></ng-content></app-tag>
     <div style="width: 5px;"></div>
-    <app-tag class="right" (click)="onTagClicked(1)"><ng-content select="[tag_two]"></ng-content></app-tag>
+    <app-tag class="right"><ng-content select="[tag_two]"></ng-content></app-tag> -->
+    <ng-content select="[tags]"></ng-content>
   </div>
 </div>
