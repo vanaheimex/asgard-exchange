@@ -145,9 +145,6 @@ export class DepositComponent implements OnInit, OnDestroy {
       if (this.asset && this.asset.chain === 'ETH' && this.asset.ticker !== 'ETH') {
         this.checkContractApproved(this.asset);
       }
-      if (!this.user) {
-        this.router.navigate(['/', 'swap']);
-      }
 
       // Balance
       this.balances = balances;

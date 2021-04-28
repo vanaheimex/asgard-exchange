@@ -47,8 +47,6 @@ export class PoolComponent implements OnInit, OnDestroy {
     const user$ = this.userService.user$.subscribe(
       (user) => {
         this.user = user;
-        if (!this.user)
-          this.router.navigate(['/', 'swap']);
         this.getAccountPools();
       }
     );
