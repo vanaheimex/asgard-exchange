@@ -7,6 +7,7 @@ import BigNumber from 'bignumber.js';
 import { UserService } from 'src/app/_services/user.service';
 import { Balances } from '@xchainjs/xchain-client';
 import { Subscription } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 
 @Component({
@@ -64,9 +65,9 @@ export class TransactionSuccessModalComponent implements OnInit {
   copyToClipboard(val?: string, copyOutbound?: boolean) {
     let result
     if (val)
-      result = this.copyService.copyToClipboard(val);
+      result = this.copyService.copyToClipboard(this.asset[1].asset.chain === 'ETH' ? '0x' + val : val);
     else
-      result = this.copyService.copyToClipboard(this.hash);
+      result = this.copyService.copyToClipboard(this.chain === 'ETH' ? '0x' + this.hash : this.hash);
 
     if (result) {
       if(copyOutbound) {
@@ -99,6 +100,14 @@ export class TransactionSuccessModalComponent implements OnInit {
     } else {
       return this.explorerUrl(chain) + '/' + hash;
     }
+  }
+
+  viewBlockPath(hash: string): string {
+    let path = `https://viewblock.io/thorchain/tx/${hash}`;
+    if (environment.network === 'testnet') {
+      path += '?network=testnet';
+    }
+    return path;
   }
 
   explorerUrl(chain: string): string {

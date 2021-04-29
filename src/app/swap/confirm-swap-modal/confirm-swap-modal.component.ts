@@ -465,6 +465,11 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
     this.txStatusService.getOutboundHash(this.hash).subscribe(
       (res: Transaction) => {
         this.outboundHash = res.out[0]?.txID;
+
+        if (!this.outboundHash && res.status == 'success') {
+          this.outboundHash = 'success';
+        }
+
         console.log(res);
       }
     );

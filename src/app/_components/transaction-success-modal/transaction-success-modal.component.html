@@ -114,7 +114,7 @@
             <span text style="font-family: inherit;"><span style="font-family: 'Roboto';">{{asset[0].asset.ticker}}: </span>{{hash.substring(0, 3) + '...' + hash.substring(hash.length - 3, hash.length)}}</span>
             <ng-container tags>
               <app-tag>
-                <div (click)="copyToClipboard(hash)">
+                <div (click)="copyToClipboard()">
                   <span *ngIf="!copied">COPY</span>
                   <span *ngIf="copied">COPIED</span>
                 </div>
@@ -131,11 +131,18 @@
             <div style="width: 10px;"></div>
   
             <app-notice [isDisabled]="!hashOutbound" [isTag]="hashOutbound" style="width: calc( 50% - 5px);" [isMono]="true">
-              <span *ngIf="hashOutbound" text style="font-family: inherit;"><span style="font-family: 'Roboto';">{{asset[1].asset.ticker}}: </span>{{hashOutbound.substring(0, 3) + '...' + hashOutbound.substring(hashOutbound.length - 3, hashOutbound.length)}}</span>
+              <span *ngIf="hashOutbound" text style="font-family: inherit;">
+                <ng-container *ngIf="hashOutbound !== 'success'">
+                  <span style="font-family: 'Roboto';">{{asset[1].asset.ticker}}: </span>{{hashOutbound.substring(0, 3) + '...' + hashOutbound.substring(hashOutbound.length - 3, hashOutbound.length)}}
+                </ng-container>
+                <ng-container *ngIf="hashOutbound === 'success'">
+                  <span style="font-family: 'Roboto';">{{asset[1].asset.ticker}}: </span>NO TXID!
+                </ng-container>
+              </span>
               <span *ngIf="!hashOutbound" text style="font-family: 'Roboto'; color: #fff;">WAITING FOR {{asset[1].asset.ticker}} TX...</span>
               <ng-container tags>
-                <app-tag>
-                  <div (click)="copyToClipboard(hashOutbound || 'Pending', true)">
+                <app-tag *ngIf="hashOutbound && hashOutbound !== 'success'">
+                  <div (click)="copyToClipboard(hashOutbound, true)">
                     <span *ngIf="!copiedOutbound">COPY</span>
                     <span *ngIf="copiedOutbound">COPIED</span>
                   </div>
@@ -143,7 +150,7 @@
                 <div style="width: 5px;"></div>
                 <app-tag>
                   <div>
-                    <a target="_blank" style="text-decoration: none; color: inherit;" [href]="explorerPath(hashOutbound, asset[1].asset.chain)">Explore</a>
+                    <a target="_blank" style="text-decoration: none; color: inherit;" [href]="hashOutbound !== 'success' ? explorerPath(hashOutbound, asset[1].asset.chain) : viewBlockPath(hash)">Explore</a>
                   </div>
                 </app-tag>
               </ng-container>
