@@ -14,7 +14,6 @@
         <!-- SOURCE -->
         <app-asset-input
           label="Send"
-          [isSource]="true"
           [(selectedAsset)]="selectedSourceAsset"
           [(assetUnit)]="sourceAssetUnit"
           [balance]="sourceBalance"
@@ -32,7 +31,7 @@
         <!-- TARGET -->
         <app-asset-input
           label="Receive"
-          [isSource]="false"
+          extraLabel="(estimated)"
           [(selectedAsset)]="selectedTargetAsset"
           [(assetUnit)]="targetAssetUnitDisplay"
           [balance]="targetBalance"

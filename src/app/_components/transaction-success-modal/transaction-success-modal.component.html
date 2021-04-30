@@ -20,7 +20,7 @@
           [disabledMarketSelect]="true"
           [disableInput]="true"
           [hideMax]="true"
-          [isSource]="true"
+          
           [showPrice]="false"
           [disableUser]="false"
           [isWallet]="true">
@@ -63,7 +63,6 @@
           [disabledMarketSelect]="true"
           [disableInput]="true"
           [hideMax]="true"
-          [isSource]="true"
           [showPrice]="false"
           [disableUser]="false"
           [isWallet]="true">
@@ -75,12 +74,12 @@
           [label]="label[1]"
           [(selectedAsset)]="asset[1].asset"
           [(assetUnit)]="amount[1]"
-          [balance]="targetBalance"
+          [extraLabel]="(hasOutbound && hashOutbound) || !hasOutbound ? undefined : '(Pending)'"
+          [balance]="(hasOutbound && hashOutbound) || !hasOutbound ? targetBalance : undefined"
           [disabledAssetSymbol]="asset[1].asset.symbol"
           [disabledMarketSelect]="true"
           [disableInput]="true"
           [hideMax]="true"
-          [isSource]="true"
           [showPrice]="false"
           [disableUser]="false"
           [isWallet]="true">

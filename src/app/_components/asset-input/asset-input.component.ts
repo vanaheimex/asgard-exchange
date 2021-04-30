@@ -65,7 +65,7 @@ export class AssetInputComponent implements OnInit, OnDestroy {
   _balance: number;
 
   @Input() hideMax: boolean;
-  @Input() isSource: boolean;
+  @Input() extraLabel: string;
   @Input() showBalance: boolean = true;
   @Input() showPrice: boolean = true;
   @Input() isDeposit: boolean = false;

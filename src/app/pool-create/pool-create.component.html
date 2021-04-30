@@ -19,7 +19,7 @@
           [disabledAssetSymbol]="rune.symbol"
           [selectableMarkets]="selectableMarkets"
           (lunchMarket)="overlaysService.setCurrentCreatePoolView('Asset')"
-          [isSource]="true">
+          >
         </app-asset-input>
 
         <app-arrow [isPlus]="true"></app-arrow>
@@ -32,7 +32,7 @@
           [hideMax]="true"
           [disabledMarketSelect]="true"
           [disabledAssetSymbol]="rune.symbol"
-          [isSource]="true">
+          >
         </app-asset-input>
 
         <div class="swap-details">
