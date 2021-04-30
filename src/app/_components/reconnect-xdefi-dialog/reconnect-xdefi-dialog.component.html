@@ -1,0 +1,97 @@
+<div class="container-wrapper">
+  <div class="container">
+    <!-- <app-modal-section-header
+      sectionTitle="XDEFI Found"
+    ></app-modal-section-header> -->
+  
+    <div class="dialog-content">
+      <div class="content-top">
+        <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'connect', swapView: 'Connect', mainView: 'Swap'}, {name: 'xdefi found', disable: true}]" [message]="getBreadcrumbText()"></app-breadcrumb>
+      </div>
+  
+      <div mat-dialog-content>
+
+        <app-notice style="text-transform: uppercase;" [isTag]="false" [isCenter]="true">
+          <div text>Reconnect from previous session?</div>
+        </app-notice>
+
+        <div>
+          <app-arrow ></app-arrow>
+        </div>
+
+        <div *ngIf="listProviders" class="grid grid-cols-3" style="margin: 0 -5px;">
+          <app-notice *ngFor="let providerInfo of listProviders; let i = index" style="margin: 5px;" [isTag]="false" [isMono]="true" [isGray]="true">
+            <span text>{{ providerInfo.title.split(" ")[0] }}</span>
+          </app-notice>
+        </div>
+  
+        <!-- <div class="swap-details" style="color: #fff">
+          <div style="margin-bottom: 5px; font-size: 14px;">In XDEFI, go to: <span style="color: var(--primary-default)">Settings > dApps</span> to verify if the above dApps injection Providers are enabled before connection below.</div>
+          <div style="margin-bottom: 5px; font-size: 14px; color: var(--primary-red);">If you enabled them all now, reload this page in your browser before checking connect.</div>
+          <div style="margin-bottom: 5px; font-size: 14px; color: var(--primary-default);">If they were already enabled, you may click the connect button below.</div>
+        </div> -->
+      </div>
+  
+      <div class="bottom-actions two-btn">
+        <div class="left-btn">
+          <button class="close-btn" (click)="forget()">
+            <span>Forget</span>
+          </button>
+        </div>
+        <div class="divider"></div>
+        <div class="right-btn">
+          <div>
+            <button class="next-btn" (click)="initConnect()" [disabled]="connecting || !isValidNetwork">
+              <span>Connect</span>
+            </button>
+          </div>
+        </div>
+      </div> 
+    </div> 
+    
+    <!-- <div class="dialog-content">
+      <div mat-dialog-content>
+        <ul>
+          <li *ngFor="let providerInfo of listProviders" class="flex align-item">
+            <span>- {{ providerInfo.title }}</span>
+            <mat-icon
+              [ngStyle]="{ color: providerInfo.enabled ? 'green' : 'red' }"
+            >
+              {{ providerInfo.enabled ? "check" : "close" }}
+            </mat-icon>
+          </li>
+        </ul>
+        <button
+          style="cursor: auto; font-size: 12px"
+          class="uni-input uni-input--file"
+          [disabled]="true"
+        >
+          <span>Reconnect XDEFI from previous session</span>
+          <mat-icon [ngStyle]="{ color: 'green' }">check</mat-icon>
+        </button>
+      </div>
+      <div *ngIf="!isValidNetwork" class="uni-input uni-input--file">
+        <span style="font-size: 0.8rem; color: red">Incorrect network!</span>
+      </div>
+      <div class="flex justify-between items-center" style="height: 38px">
+        <button class="mb-2" mat-flat-button (click)="forget()">
+          <span>Forget XDEFI</span>
+        </button>
+        <button
+          class="flex flex-row"
+          mat-flat-button
+          color="accent"
+          (click)="initConnect()"
+          [disabled]="!isValidNetwork"
+        >
+          <span>Re-connect to XDEFI</span>
+          <mat-progress-spinner
+            mode="indeterminate"
+            diameter="30"
+            *ngIf="connecting"
+          ></mat-progress-spinner>
+        </button>
+      </div>
+    </div> -->
+  </div>
+</div>

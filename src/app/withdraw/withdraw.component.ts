@@ -10,7 +10,6 @@ import {
   bn,
 } from '@xchainjs/xchain-util';
 import { Subscription } from 'rxjs';
-import { environment } from 'src/environments/environment';
 import { Asset } from '../_classes/asset';
 import { MemberPool } from '../_classes/member';
 import { User } from '../_classes/user';
@@ -28,8 +27,6 @@ import { ConfirmWithdrawData } from './confirm-withdraw-modal/confirm-withdraw-m
 })
 export class WithdrawComponent implements OnInit {
 
-  runeSymbol = environment.network === 'chaosnet' ? 'RUNE-B1A' : 'RUNE-67C';
-
   get withdrawPercent() {
     return this._withdrawPercent;
   }
@@ -41,7 +38,7 @@ export class WithdrawComponent implements OnInit {
 
   subs: Subscription[];
   asset: Asset;
-  rune: Asset;
+  rune = new Asset('THOR.RUNE');
   assetPoolData: PoolData;
   poolUnits: number;
   user: User;
@@ -64,7 +61,7 @@ export class WithdrawComponent implements OnInit {
   assetBasePrice: number;
 
   insufficientBnb: boolean;
-  outboundTransactionFee: number;
+  runeFee: number;
 
   networkFee: number;
   queue: ThorchainQueue;
@@ -81,8 +78,6 @@ export class WithdrawComponent implements OnInit {
     private router: Router,
     private txUtilsService: TransactionUtilsService
   ) {
-
-    this.rune = new Asset(`THOR.${this.runeSymbol}`);
 
     this.withdrawPercent = 0;
 
@@ -198,7 +193,7 @@ export class WithdrawComponent implements OnInit {
     this.midgardService.getConstants().subscribe(
       (res) => {
         this.lockBlocks = res.int_64_values.LiquidityLockUpBlocks;
-        this.outboundTransactionFee = bn(res.int_64_values.OutboundTransactionFee).div(10 ** 8).toNumber();
+        this.runeFee = bn(res.int_64_values.OutboundTransactionFee).div(10 ** 8).toNumber();
         this.checkCooldown();
       },
       (err) => console.error('error fetching constants: ', err)
@@ -295,6 +290,7 @@ export class WithdrawComponent implements OnInit {
     this.data = {
       asset: this.asset,
       rune: this.rune,
+      runeFee: this.runeFee,
       assetAmount: this.removeAssetAmount,
       runeAmount: this.removeRuneAmount,
       user: this.user,
@@ -303,7 +299,7 @@ export class WithdrawComponent implements OnInit {
       assetBasePrice,
       assetPrice: this.assetPrice,
       runePrice: this.runePrice,
-      outboundTransactionFee: this.outboundTransactionFee
+      networkFee: this.networkFee
     }
 
     this.overlaysService.setCurrentWithdrawView('Confirm');
@@ -351,7 +347,7 @@ export class WithdrawComponent implements OnInit {
           this.runeBasePrice = getValueOfAssetInRune(assetToBase(assetAmount(1)), this.assetPoolData).amount().div(10 ** 8).toNumber();
           this.assetBasePrice = getValueOfRuneInAsset(assetToBase(assetAmount(1)), this.assetPoolData).amount().div(10 ** 8).toNumber();
 
-          this.networkFee = this.txUtilsService.calculateNetworkFee(this.asset, inboundAddresses, res);
+          this.networkFee = this.txUtilsService.calculateNetworkFee(this.asset, inboundAddresses, 'OUTBOUND', res);
 
           this.calculate();
 

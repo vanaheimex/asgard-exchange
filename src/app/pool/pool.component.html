@@ -64,6 +64,13 @@
             [queryParams]="{pool: createablePools[0]}">
             Create a new pool
           </span>
+          <span class="text-gray-600 ml-2 text-xs" *ngIf="createablePools && createablePools.length > 0"> | </span>
+          <a
+            [routerLink]="['/', 'deposit-sym-recovery']"
+            class="pool"
+          >
+            Pending Deposits
+          </a>
           <ng-template #noPool>
             <span>...</span>
           </ng-template>

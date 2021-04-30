@@ -9,6 +9,7 @@ import { TransactionStatusService, TxActions, TxStatus } from 'src/app/_services
 import { Router } from '@angular/router';
 import { OverlaysService } from 'src/app/_services/overlays.service';
 import { EthUtilsService } from 'src/app/_services/eth-utils.service';
+import { Asset } from 'src/app/_classes/asset';
 
 // TODO: this is the same as ConfirmStakeData in confirm stake modal
 export interface ConfirmWithdrawData {
@@ -20,9 +21,10 @@ export interface ConfirmWithdrawData {
   runeBasePrice: number;
   assetBasePrice: number;
   unstakePercent: number;
-  outboundTransactionFee: number;
   assetPrice: number;
   runePrice: number;
+  runeFee: number;
+  networkFee: number;
 }
 
 @Component({
@@ -39,6 +41,7 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
   killPolling: Subject<void> = new Subject();
   error: string;
   estimatedMinutes: number;
+  rune = new Asset('THOR.RUNE');
 
   //new reskin data injection
   @Input() data: ConfirmWithdrawData;

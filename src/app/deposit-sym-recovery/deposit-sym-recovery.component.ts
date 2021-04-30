@@ -195,7 +195,7 @@ export class DepositSymRecoveryComponent implements OnInit, OnDestroy {
         this.getMaximumSpendableEth(this.missingAsset, this.missingAssetBalance);
       }
 
-      this.networkFee = this.txUtilsService.calculateNetworkFee(this.missingAsset, this.inboundAddresses, pool);
+      this.networkFee = this.txUtilsService.calculateNetworkFee(this.missingAsset, this.inboundAddresses, 'OUTBOUND', pool);
 
       this.updateRuneAmount(matches[0].pending_asset, poolData);
 
@@ -223,8 +223,8 @@ export class DepositSymRecoveryComponent implements OnInit, OnDestroy {
 
       const totalPooledRune = +network.totalPooledRune / (10 ** 8);
 
-      if (mimir && mimir['mimir//MAXLIQUIDITYRUNE']) {
-        const maxLiquidityRune = mimir['mimir//MAXLIQUIDITYRUNE'] / (10 ** 8);
+      if (mimir && mimir['mimir//MAXIMUMLIQUIDITYRUNE']) {
+        const maxLiquidityRune = mimir['mimir//MAXIMUMLIQUIDITYRUNE'] / (10 ** 8);
         this.depositsDisabled = (totalPooledRune / maxLiquidityRune >= .9);
       }
 
@@ -462,7 +462,7 @@ export class DepositSymRecoveryComponent implements OnInit, OnDestroy {
     const txCost = assetToBase(assetAmount(0.00000001));
 
     // withdraw 100%
-    const memo = `WITHDRAW:${this.searchingAsset.chain}.${this.searchingAsset.symbol}:100`;
+    const memo = `WITHDRAW:${this.searchingAsset.chain}.${this.searchingAsset.symbol}:10000`;
 
     // withdraw RUNE
     try {
