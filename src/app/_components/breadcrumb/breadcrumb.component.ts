@@ -10,11 +10,6 @@ export type Path = {
   call?: string
 }
 
-export type message = {
-  text: string;
-  mode?: string;
-}
-
 @Component({
   selector: 'app-breadcrumb',
   templateUrl: './breadcrumb.component.html',
