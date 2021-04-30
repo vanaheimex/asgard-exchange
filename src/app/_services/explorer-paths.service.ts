@@ -36,7 +36,7 @@ export class ExplorerPathsService {
       : 'https://ltc.bitaps.com';
 
     this.bchExplorerUrl = environment.network === 'testnet'
-      ? 'https://explorer.bitcoin.com/tbch'
+      ? 'https://blockchain.com/bch-testnet'
       : 'https://explorer.bitcoin.com/bch';
 
   }
