@@ -249,6 +249,24 @@ button {
 
 }
 
+/** XDEFI checkmarks */
+.notice-check {
+  display: flex;
+
+  img {
+      margin-right: 10px;
+  }
+
+  .not-checked {
+      width: 24px;
+      height: 24px;
+      background: var(--primary-dark-color);
+      border-radius: 50%;
+      align-self: center;
+      margin-right: 10px;
+  }
+}
+
 .overlay-container {
   position: absolute;
   width: 730px;
