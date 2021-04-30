@@ -248,7 +248,7 @@ export class TransactionStatusService {
   getOutboundHash(hash: string) {
     return new Observable(
       sub => {
-        timer(0, 2000)
+        timer(0, 10000)
         .pipe(
           // This kills the request if the user closes the component
           takeUntil(this.killTxPolling[hash]),
