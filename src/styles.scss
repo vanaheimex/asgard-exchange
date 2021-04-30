@@ -569,6 +569,10 @@ button {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
   &.disable {
     flex-direction: row;
     justify-content: center;
