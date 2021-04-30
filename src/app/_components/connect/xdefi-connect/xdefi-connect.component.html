@@ -1,0 +1,92 @@
+<div class="inner-container">
+  <!-- <app-modal-section-header
+    sectionTitle="XDEFI Connect"
+    [displayBackBtn]="true"
+  ></app-modal-section-header> -->
+
+  <div class="dialog-content">
+    <div class="content-top">
+      <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'connect', backFunc: true}, {name: 'connect with xdefi', disable: true}]" (backFunc)="back.emit()" [message]="getBreadcrumbText()"></app-breadcrumb>
+    </div>
+
+    <div mat-dialog-content>
+      <div *ngIf="listProviders" class="grid grid-cols-3" style="margin: 0 -5px;">
+        <app-notice *ngFor="let providerInfo of listProviders; let i = index" style="margin: 5px;" [isTag]="false" [isMono]="true" [isGray]="true">
+          <span text>{{ providerInfo.title.split(" ")[0] }}</span>
+        </app-notice>
+      </div>
+
+      <div class="swap-details" style="color: #fff">
+        <div style="margin-bottom: 5px; font-size: 14px;">In XDEFI, go to: <span style="color: var(--primary-default)">Settings > dApps</span> to verify if the above dApps injection Providers are enabled before connection below.</div>
+        <div style="margin-bottom: 5px; font-size: 14px; color: var(--primary-red);">If you enabled them all now, reload this page in your browser before checking connect.</div>
+        <div style="margin-bottom: 5px; font-size: 14px; color: var(--primary-default);">If they were already enabled, you may click the connect button below.</div>
+      </div>
+    </div>
+
+    <div class="bottom-actions two-btn">
+      <div class="left-btn">
+        <button class="close-btn" (click)="back.emit()">
+          <span>Cancel</span>
+        </button>
+      </div>
+      <div class="divider"></div>
+      <div class="right-btn">
+        <div>
+          <button class="next-btn" (click)="initUnlock()" [disabled]="xdefiConnecting || !isValidNetwork">
+            <span>Connect</span>
+          </button>
+        </div>
+      </div>
+    </div>  
+
+  <!--
+    <div class="dialog-content">
+      <div mat-dialog-content>
+        <ul>
+          <li *ngFor="let providerInfo of listProviders" class="flex align-item">
+            <span>- {{ providerInfo.title }}</span>
+            <mat-icon
+              [ngStyle]="{ color: providerInfo.enabled ? 'green' : 'red' }"
+            >
+              {{ providerInfo.enabled ? "check" : "close" }}
+            </mat-icon>
+          </li>
+        </ul>
+        <br />
+        <small
+          >You need to enable all dApps Injection Providers in
+          <b>Settings > dApps Settings </b> then reload the page.</small
+        >
+        <br />
+      </div>
+
+      <div class="flex justify-between items-center" style="height: 38px">
+        <div>
+          <span *ngIf="xdefiError" style="font-size: 0.8rem; color: #2172e5"
+            >XDEFI Login Incorrect</span
+          >
+          <span *ngIf="!isValidNetwork" style="font-size: 0.8rem; color: #2172e5"
+            >Incorrect network!</span
+          >
+        </div>
+        <br />
+        <div>
+          <button
+            *ngIf="!xdefiConnecting"
+            mat-flat-button
+            color="accent"
+            (click)="initUnlock()"
+            [disabled]="xdefiConnecting || !isValidNetwork"
+          >
+            <span>Connect</span>
+          </button>
+          <mat-progress-spinner
+            mode="indeterminate"
+            diameter="30"
+            *ngIf="xdefiConnecting"
+          ></mat-progress-spinner>
+        </div>
+      </div>
+    </div>
+  -->
+</div>

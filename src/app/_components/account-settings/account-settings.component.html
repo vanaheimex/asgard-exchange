@@ -22,7 +22,7 @@
                 <span class="p-0">{{slippageTolerance}}%</span>
               </div>
             </div>
-            <div class="list-item" (click)="setSettingView('PHRASE')">
+            <div *ngIf="user?.type == 'keystore'" class="list-item" (click)="setSettingView('PHRASE')">
               <div class="left-sec">
                 <span>seed phrase</span>
               </div>

@@ -16,7 +16,7 @@ style="margin-right: 19px; position: absolute; top: 0; right: 96px;"
     <div *ngIf="showMenu" class="menu" (click)="openAccountSetting()">
       <span>Settings</span>
     </div>
-    <div *ngIf="showMenu" class="menu red" (click)="disconnect()">
+    <div *ngIf="showMenu && user?.type === 'keystore'" class="menu red" (click)="disconnect()">
       <span>Disconnect</span>
     </div>
   </div>

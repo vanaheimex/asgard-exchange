@@ -22,9 +22,8 @@ import {
 } from '@xchainjs/xchain-util';
 import { PoolDetail } from '../_classes/pool-detail';
 import { MidgardService, ThorchainQueue } from '../_services/midgard.service';
-import { BinanceService } from '../_services/binance.service';
 import { MatDialog } from '@angular/material/dialog';
-import { ConfirmSwapModalComponent } from './confirm-swap-modal/confirm-swap-modal.component';
+import { ConfirmSwapModalComponent, SwapData } from './confirm-swap-modal/confirm-swap-modal.component';
 import { User } from '../_classes/user';
 import { Balances } from '@xchainjs/xchain-client';
 import { AssetAndBalance } from '../_classes/asset-and-balance';
@@ -41,20 +40,6 @@ import { environment } from 'src/environments/environment';
 export enum SwapType {
   DOUBLE_SWAP = 'double_swap',
   SINGLE_SWAP = 'single_swap',
-}
-
-export interface SwapData {
-  sourceAsset: AssetAndBalance;
-  targetAsset: AssetAndBalance;
-  bnbFee: number;
-  basePrice: number;
-  inputValue: number;
-  outputValue: BigNumber;
-  user: User;
-  slip: number;
-  balance: number;
-  runePrice: number;
-  outboundTransactionFee: number;
 }
 
 @Component({
@@ -154,12 +139,8 @@ export class SwapComponent implements OnInit, OnDestroy {
 
   slip: number;
   slippageTolerance: number;
-  outboundTransactionFee: number;
   user: User;
   basePrice: number;
-
-  binanceTransferFee: BigNumber;
-  binanceTransferFeeDisplay: number;
 
   balances: Balances;
   sourceBalance: number;
@@ -179,7 +160,11 @@ export class SwapComponent implements OnInit, OnDestroy {
 
   runePrice: number;
 
-  networkFees: {
+  inboundFees: {
+    [key: string]: number
+  } = {};
+
+  outboundFees: {
     [key: string]: number
   } = {};
 
@@ -197,12 +182,12 @@ export class SwapComponent implements OnInit, OnDestroy {
   queue: ThorchainQueue;
 
   appLocked: boolean;
+  networkFeeInSource: number;
 
   constructor(
     private dialog: MatDialog,
     private userService: UserService,
     private midgardService: MidgardService,
-    private binanceService: BinanceService,
     private slipLimitService: SlippageToleranceService,
     private thorchainPricesService: ThorchainPricesService,
     public overlaysService: OverlaysService,  
@@ -271,8 +256,6 @@ export class SwapComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.getConstants();
-    this.getBinanceFees();
     this.getEthRouter();
 
     const inboundAddresses$ = this.midgardService.getInboundAddresses();
@@ -323,15 +306,36 @@ export class SwapComponent implements OnInit, OnDestroy {
     for (const pool of this.availablePools) {
       const asset = new Asset(pool.asset);
 
-      const assetNetworkFee = this.txUtilsService.calculateNetworkFee(
+      const assetOutboundFee = this.txUtilsService.calculateNetworkFee(
         asset,
         this.inboundAddresses,
+        'OUTBOUND',
         pool
       );
 
-      this.networkFees[pool.asset] = assetNetworkFee;
+      const assetInboundFee = this.txUtilsService.calculateNetworkFee(
+        asset,
+        this.inboundAddresses,
+        'INBOUND',
+        pool
+      );
 
+      this.outboundFees[pool.asset] = assetOutboundFee;
+      this.inboundFees[pool.asset] = assetInboundFee;
     }
+
+    // set THOR.RUNE network fees
+    this.outboundFees['THOR.RUNE'] = this.txUtilsService.calculateNetworkFee(
+      new Asset('THOR.RUNE'),
+      this.inboundAddresses,
+      'OUTBOUND',
+    );
+
+    this.inboundFees['THOR.RUNE'] = this.txUtilsService.calculateNetworkFee(
+      new Asset('THOR.RUNE'),
+      this.inboundAddresses,
+      'INBOUND',
+    );
 
   }
 
@@ -424,9 +428,9 @@ export class SwapComponent implements OnInit, OnDestroy {
       || (this.slip * 100) > this.slippageTolerance
 
       // check source asset amount is greater than network fee
-      || this.sourceAssetUnit < this.networkFees[assetToString(this.selectedSourceAsset)]
+      || this.sourceAssetUnit < (1.5 * this.inboundFees[assetToString(this.selectedSourceAsset)])
       // check target asset amount is greater than outbound network fee * 3
-      || this.targetAssetUnitDisplay < (this.networkFees[assetToString(this.selectedTargetAsset)] * 3)
+      || this.targetAssetUnitDisplay < (this.outboundFees[assetToString(this.selectedTargetAsset)])
 
       || (this.selectedSourceAsset.chain === 'BNB' && this.insufficientBnb) // source is BNB and not enough funds to cover fee
       || (this.selectedSourceAsset.chain === 'THOR') && (this.sourceBalance - this.sourceAssetUnit < 3)
@@ -510,12 +514,12 @@ export class SwapComponent implements OnInit, OnDestroy {
     }
 
     /** Input Amount is less than network fees */
-    if (this.sourceAssetUnit < this.networkFees[assetToString(this.selectedSourceAsset)]) {
+    if (this.sourceAssetUnit < (1.5 * this.inboundFees[assetToString(this.selectedSourceAsset)])) {
       return 'Input Amount Less Than Fees';
     }
 
     /** Output Amount is less than network fees */
-    if (this.targetAssetUnitDisplay < (this.networkFees[assetToString(this.selectedTargetAsset)] * 3)) {
+    if (this.targetAssetUnitDisplay < (this.outboundFees[assetToString(this.selectedTargetAsset)])) {
       return 'Output Amount Less Than Fees';
     }
 
@@ -563,42 +567,18 @@ export class SwapComponent implements OnInit, OnDestroy {
     this.swapData = {
       sourceAsset: sourceAsset,
       targetAsset: targetAsset,
-      bnbFee: this.binanceTransferFeeDisplay,
       basePrice: this.basePrice,
       inputValue: this.sourceAssetUnit,
       outputValue: output,
       user: this.user,
       slip: this.slip,
       balance: this.sourceBalance,
-      outboundTransactionFee: this.outboundTransactionFee,
-      runePrice: this.runePrice
+      runePrice: this.runePrice,
+      networkFeeInSource: this.networkFeeInSource
     }
 
 
     this.overlaysService.setCurrentSwapView('Confirm')
-  }
-
-  getConstants() {
-    this.midgardService.getConstants().subscribe(
-      (res) => {
-        this.outboundTransactionFee = bn(res.int_64_values.OutboundTransactionFee).div(10 ** 8).toNumber();
-      },
-      (err) => {
-        this.errorMessage = "Can't Fetch Constants"
-        console.error('error fetching constants: ', err)
-      }
-    );
-  }
-
-  getBinanceFees() {
-    this.binanceService.getBinanceFees().subscribe(
-      (res) => {
-        const binanceFees = res;
-        const binanceTransferFees = this.binanceService.getTransferFees(binanceFees);
-        this.binanceTransferFee = binanceTransferFees.single.amount();
-        this.binanceTransferFeeDisplay = this.binanceTransferFee.div(10 ** 8).toNumber();
-      }
-    );
   }
 
   updateSwapDetails() {
@@ -628,7 +608,6 @@ export class SwapComponent implements OnInit, OnDestroy {
 
     if (this._sourceAssetTokenValue) {
 
-      // const swapType = this.selectedSourceAsset.symbol === this.runeSymbol || this.selectedTargetAsset.symbol === this.runeSymbol
       const swapType = this.isRune(this.selectedSourceAsset) || this.isRune(this.selectedTargetAsset)
         ? SwapType.SINGLE_SWAP
         : SwapType.DOUBLE_SWAP;
@@ -714,49 +693,22 @@ export class SwapComponent implements OnInit, OnDestroy {
       const slip = getSwapSlip(this._sourceAssetTokenValue, pool, toRune);
       this.slip = slip.toNumber();
 
-      /** Network Fee */
-      // const networkFee = this.calculateNetworkFee(this.selectedTargetAsset, poolDetail);
-      const nonRuneNetworkFee = this.txUtilsService.calculateNetworkFee(
-        (toRune)
-          ? this.selectedSourceAsset
-          : this.selectedTargetAsset,
-        this.inboundAddresses,
-        poolDetail
-      );
+      const inboundFee = this.inboundFees[assetToString(this.selectedSourceAsset)];
+      const outboundFee = this.outboundFees[assetToString(this.selectedTargetAsset)];
+      const outboundFeeInSourceVal = this.basePrice * outboundFee;
 
-      const runeFee = this.outboundTransactionFee ?? 0.2;
-
-      if (toRune) {
-        this.inputNetworkFee = nonRuneNetworkFee;
-      } else {
-        this.outputNetworkFee = nonRuneNetworkFee;
-        this.inputNetworkFee = runeFee;
-      }
+      this.networkFeeInSource = inboundFee + outboundFeeInSourceVal;
 
       /**
        * Total output amount in target units minus 1 RUNE
        */
-      // const totalAmount = getSwapOutput(baseAmount(this._sourceAssetTokenValue.amount()), pool, toRune);
-      let totalAmount = getSwapOutput(baseAmount(this._sourceAssetTokenValue.amount()
-        .minus( // subtract RUNE network fee
-          toRune
-            ? valueOfRuneInAsset.amount().multipliedBy(this.outboundTransactionFee ?? 0.2)
-            : assetToBase(assetAmount(this.outboundTransactionFee ?? 0.2)).amount()
-          )
-        // if TO RUNE, subtract network fee from source nonRune asset
-        .minus(
-          toRune
-            ? assetToBase(assetAmount(nonRuneNetworkFee)).amount()
-            : 0
-        )
-        ), pool, toRune);
+      const swapOutput = getSwapOutput(baseAmount(this._sourceAssetTokenValue.amount()
+        .minus(assetToBase(assetAmount(inboundFee)).amount())
+      ), pool, toRune);
 
-
-      // otherwise, subtract the network fee from the nonRune target asset output
-      if (!toRune) {
-        totalAmount = baseAmount(totalAmount.amount().minus(
-          assetToBase(assetAmount(nonRuneNetworkFee)).amount()));
-      }
+      // sub
+      const totalAmount = baseAmount(swapOutput.amount().minus(
+        assetToBase(assetAmount(outboundFee)).amount()));
 
       if (this.sourceAssetUnit) {
         this.targetAssetUnit = (totalAmount.amount().isLessThan(0)) ? bn(0) : totalAmount.amount();
@@ -790,21 +742,29 @@ export class SwapComponent implements OnInit, OnDestroy {
         runeBalance: baseAmount(targetPool.runeDepth),
       };
 
-      this.inputNetworkFee = this.txUtilsService.calculateNetworkFee(this.selectedSourceAsset, this.inboundAddresses, sourcePool);
-      this.outputNetworkFee = this.txUtilsService.calculateNetworkFee(this.selectedTargetAsset, this.inboundAddresses, targetPool);
+      this.inputNetworkFee = this.txUtilsService.calculateNetworkFee(
+        this.selectedSourceAsset,
+        this.inboundAddresses,
+        'INBOUND',
+        sourcePool
+      );
+      this.outputNetworkFee = this.txUtilsService.calculateNetworkFee(
+        this.selectedTargetAsset,
+        this.inboundAddresses,
+        'OUTBOUND',
+        targetPool
+      );
 
       const basePrice = getDoubleSwapOutput(assetToBase(assetAmount(1)), pool2, pool1);
       this.basePrice = basePrice.amount().div(10 ** 8).toNumber();
 
+      const outboundFeeInSourceVal = this.basePrice * this.outputNetworkFee;
+      this.networkFeeInSource = this.inputNetworkFee + outboundFeeInSourceVal;
+
       const slip = getDoubleSwapSlip(this._sourceAssetTokenValue, pool1, pool2);
       this.slip = slip.toNumber();
 
-      const valueOfRuneInAsset = getValueOfRuneInAsset(assetToBase(assetAmount(this.outboundTransactionFee ?? 0.2)), pool1);
-
       const total = getDoubleSwapOutput(baseAmount(this._sourceAssetTokenValue.amount()
-        .minus( // subtract RUNE network fee
-          valueOfRuneInAsset.amount().multipliedBy(this.outboundTransactionFee ?? 0.2)
-        )
         .minus(assetToBase(assetAmount(this.inputNetworkFee)).amount())
       ), pool1, pool2).amount().minus(assetToBase(assetAmount(this.outputNetworkFee)).amount());
 

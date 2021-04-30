@@ -23,7 +23,8 @@ export enum MainViewsEnum {
   UserSetting = 'User Setting',
   AccountSetting = 'Account Setting',
   Upgrade = 'Upgrade',
-  Transaction = 'Transaction'
+  Transaction = 'Transaction',
+  ReconnectXDEFI = 'ReconnectXDEFI'
 }
 @Injectable({
   providedIn: 'root'

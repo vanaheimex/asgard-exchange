@@ -40,6 +40,7 @@ import { NoticeModule } from '../_components/notice/notice.module';
 import { RightOptionModule } from '../_components/right-option/right-option.module';
 import { PhraseWordsListModule } from '../_components/phrase-words-list/phrase-words-list.module';
 import { ApproveEthContractModalModule } from '../_components/approve-eth-contract/approve-eth-contract-modal/approve-eth-contract-modal.module';
+import { XDEFIConnectComponent } from '../_components/connect/xdefi-connect/xdefi-connect.component';
 @NgModule({
   declarations: [
     SwapComponent,
@@ -50,7 +51,9 @@ import { ApproveEthContractModalModule } from '../_components/approve-eth-contra
     ConnectErrorComponent,
     // LedgerConnectComponent,
     KeystoreCreateComponent,
+    XDEFIConnectComponent,
     KeystoreCreateStorePhraseComponent,
+    XDEFIConnectComponent,
     // UserSettingsDialogComponent,
     // RightOptionComponent
   ],
