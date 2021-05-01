@@ -12,7 +12,7 @@
         <div class="wallets" *ngIf="txs && txs.length > 0" [ngClass]="{'short': txs && txs.length > 6}">
   
           <!-- TODO: Refund tx might need to be added to the txs -->
-          <div class="w-address non-hover" *ngFor="let tx of txs; let i = index" (click)="activeitem(i)" [ngClass]="{'active': i == activeIndex}">
+          <div class="w-address" *ngFor="let tx of txs; let i = index" (click)="activeitem(i)" [ngClass]="{'active': i == activeIndex}">
             <div class="icon-addr flex-grow flex-shrink-0">
               <div *ngIf="tx.outbound" class="asset-icon-container two-icons">
                 <img class="asset-icon"

@@ -925,17 +925,14 @@ input[type=number] {
   }
 
   &.two-icons {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    
+    width: 42px;
+
     img {
-      width: 13.71px;
-      height: 13.71px;
+      width: 24px;
     }
 
     img:last-of-type {
-      margin-left: -3px;
+      margin-left: -6px;
     }
   }
 }
