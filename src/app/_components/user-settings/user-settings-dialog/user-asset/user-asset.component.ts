@@ -84,6 +84,10 @@ export class UserAssetComponent implements OnInit {
         this.explorerPath = `${this.explorerPathsService.litecoinExplorerUrl}/${this.address}`;
         break;
 
+      case 'BCH':
+        this.explorerPath = `${this.explorerPathsService.bchExplorerUrl}/address/${this.address}`;
+        break;
+
       default:
         break;
     }

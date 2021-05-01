@@ -49,7 +49,7 @@
         [priceInput]="swapData.sourceAsset.assetPriceUSD"
         [disabledMarketSelect]="true"
         [hideMax]="true"
-        [isSource]="true"
+        
       ></app-asset-input>
 
       <app-arrow></app-arrow>
@@ -63,7 +63,7 @@
           [priceInput]="swapData.targetAsset.assetPriceUSD"
           [disabledMarketSelect]="true"
           [hideMax]="true"
-          [isSource]="false"
+          extraLabel="(estimated)"
           [showBalance]="false"
       ></app-asset-input>
 
@@ -79,16 +79,10 @@
             >
           </div>
 
-          <div *ngIf="swapData.sourceAsset.asset.chain === 'BNB'" class="flex justify-between">
-            <span class="tx-detail-label">Network Fees:</span>
-            <span>{{swapData.bnbFee | number:"0.0-6"}} BNB + {{swapData.outboundTransactionFee}} RUNE<span *ngIf="swapData.sourceAsset.assetPriceUSD && swapData.runePrice" class="mono" style="margin-left: 5px;">(${{(swapData.sourceAsset.assetPriceUSD * swapData.bnbFee)+(swapData.runePrice * swapData.outboundTransactionFee) | number: '0.2-2'}})</span></span>
-          </div>
-
-          <div *ngIf="swapData.sourceAsset.asset.chain === 'ETH'" class="flex justify-between">
-            <span class="tx-detail-label">Total Fee:</span>
-            <span *ngIf="ethNetworkFee">{{ (ethNetworkFee) | number:"0.0-6"}} ETH + {{swapData.outboundTransactionFee}} RUNE<span *ngIf="swapData.sourceAsset.assetPriceUSD && swapData.runePrice" class="mono" style="margin-left: 5px;">(${{(swapData.sourceAsset.assetPriceUSD * ethNetworkFee)+(swapData.runePrice * swapData.outboundTransactionFee) | number: '0.2-2'}})</span></span>
-            <span *ngIf="!ethNetworkFee"> - ETH + {{swapData.outboundTransactionFee}} RUNE</span>
-          </div>
+          <div *ngIf="swapData.networkFeeInSource" class="flex justify-between">
+            <span class="tx-detail-label">Total Fee</span>
+            <span>{{swapData.networkFeeInSource | number:"1.0-8"}} {{swapData.sourceAsset.asset.chain}}.{{swapData.sourceAsset.asset.ticker}}<span *ngIf="swapData.sourceAsset.assetPriceUSD" class="mono" style="margin-left: 5px;">(${{swapData.sourceAsset.assetPriceUSD * swapData.networkFeeInSource | number: '0.2-2'}})</span></span>
+          </div> 
 
           <!-- <div *ngIf="swapData.sourceAsset.asset.chain === 'THOR'" class="flex justify-between">
             <span class="tx-detail-label">Total Fee:</span>
@@ -130,11 +124,10 @@
             <button
               (click)="submitTransaction()"
               class="next-btn"
-              [disabled]="insufficientChainBalance || loading"
+              [disabled]="insufficientChainBalance"
             >
-              <span *ngIf="!insufficientChainBalance && !loading">Confirm</span>
-              <span *ngIf="insufficientChainBalance && !loading">Insufficient {{swapData.sourceAsset.asset.chain}}</span>
-              <span *ngIf="loading">Loading...</span>
+              <span *ngIf="!insufficientChainBalance">Confirm</span>
+              <span *ngIf="insufficientChainBalance">Insufficient {{swapData.sourceAsset.asset.chain}}</span>
             </button>
           </div>
         </ng-container>

@@ -94,3 +94,11 @@ header {
     font-size: 0.8rem;
   }
 }
+
+.gradient {
+  background: linear-gradient(to top right,var(--primary-graident-bottom-left), var(--primary-graident-top-right));
+  
+  &.special-gradient {
+    background: linear-gradient(to right, #FFFD00 0%, #F625F0 49.98%, #01F6EE 100%);
+  }
+}

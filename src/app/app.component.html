@@ -13,6 +13,10 @@
     <app-reconnect-dialog [keystore]="keystore"></app-reconnect-dialog>
   </main>
 
+  <main *ngIf="currentView == currentViewType.ReconnectXDEFI && !appLocked">
+    <app-reconnect-xdefi-dialog></app-reconnect-xdefi-dialog>
+  </main>
+  
   <main *ngIf="currentView == currentViewType.AccountSetting && !appLocked">
     <app-account-settings></app-account-settings>
   </main>

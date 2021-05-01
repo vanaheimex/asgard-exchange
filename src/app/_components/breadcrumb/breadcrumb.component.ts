@@ -19,8 +19,8 @@ export class BreadcrumbComponent implements OnInit {
 
   @ViewChild('cursor') cursor;
   @Input() path: Array<Object> = [{'name': 'TEXT', 'mainView': 'Swap', 'swapView': 'Swap', disable: false}];
-  @Input() message: string = "TEXT";
-  @Input() isError: boolean = false;
+  @Input() message;
+  @Input() isError;
   @Input() backName?: string = null;
   @Output() backFunc: EventEmitter<null>;
   @Output() funcCaller: EventEmitter<string>;

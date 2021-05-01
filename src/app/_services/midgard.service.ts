@@ -89,6 +89,11 @@ export class MidgardService {
     return this.http.get<TransactionDTO>(`${this.v2BasePath}/actions`, {params});
   }
 
+  getAddrTransactions(address: string): Observable<TransactionDTO> {
+    const params = new HttpParams().set('offset', '0').set('limit', '10').set('address', address);
+    return this.http.get<TransactionDTO>(`${this.v2BasePath}/actions`, {params});
+  }
+
   getThornodeTransaction(hash: string): Observable<ThornodeTx> {
     return this.http.get<ThornodeTx>(`${this._thornodeBasePath}/thorchain/tx/${hash}`);
   }

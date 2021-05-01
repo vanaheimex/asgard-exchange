@@ -46,7 +46,7 @@
   background: linear-gradient(45deg, var(--primary-graident-bottom-left) 0%, var(--primary-graident-top-right) 100%);
 
   &.expanded {
-    height: 170px;
+    height: auto;
   }
 
   .address {

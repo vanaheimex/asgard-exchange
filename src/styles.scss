@@ -249,6 +249,24 @@ button {
 
 }
 
+/** XDEFI checkmarks */
+.notice-check {
+  display: flex;
+
+  img {
+      margin-right: 10px;
+  }
+
+  .not-checked {
+      width: 24px;
+      height: 24px;
+      background: var(--primary-dark-color);
+      border-radius: 50%;
+      align-self: center;
+      margin-right: 10px;
+  }
+}
+
 .overlay-container {
   position: absolute;
   width: 730px;
@@ -551,6 +569,10 @@ button {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
   &.disable {
     flex-direction: row;
     justify-content: center;
@@ -646,11 +668,15 @@ button {
       margin-right: 8px;
     }
 
+    .tag-container {
+      margin: 0 5px;
+    }
+
     .addr {
+      display: flex;
       min-width: 300px;
       margin-left: 45px;
       cursor: pointer;
-      text-align: right;
 
       span {
         text-align: right;
@@ -665,16 +691,34 @@ button {
         cursor: pointer;
         font-family: 'Roboto Mono';
 
-        &:hover {
-          color: var(--primary-dark-color);
-        }
       }
     }
 
-    &:hover {
+    svg {
+      display: inline-block;
+      fill: #414856;
+      margin-bottom: 3px;
+    }
+
+    &:not(.non-hover):hover {
       background: var(--primary-default);
       span, input, label {
         color: var(--primary-dark-color);
+      }
+
+      svg {
+        fill: var(--primary-dark-color);
+      }
+    }
+
+    &.active {
+      background: var(--primary-default);
+      span, input, label {
+        color: var(--primary-dark-color);
+      }
+
+      svg {
+        fill: var(--primary-dark-color);
       }
     }
   }
@@ -892,6 +936,18 @@ input[type=number] {
   img {
     width: 100%;
     border-radius: 50%;
+  }
+
+  &.two-icons {
+    width: 42px;
+
+    img {
+      width: 24px;
+    }
+
+    img:last-of-type {
+      margin-left: -6px;
+    }
   }
 }
 

@@ -6,14 +6,17 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 /** COMPONENTS */
 import { AppComponent } from './app.component';
-// import { ConnectComponent, ConnectModal } from './_components/connect/connect.component';
+import {
+  ConnectComponent,
+  ConnectModal,
+} from './_components/connect/connect.component';
 import { ConfimSendComponent } from './_components/user-settings/user-settings-dialog/confim-send/confim-send.component';
 // import { ConnectErrorComponent } from './_components/connect/connect-error/connect-error.component';
 import { HeaderComponent } from './_components/header/header.component';
 // import { KeystoreConnectComponent } from './_components/connect/keystore-connect/keystore-connect.component';
 import { LastBlockIndicatorComponent } from './_components/last-block-indicator/last-block-indicator.component';
 // import { LedgerConnectComponent } from './_components/connect/ledger-connect/ledger-connect.component';
-// import { KeystoreCreateComponent } from './_components/connect/keystore-create/keystore-create.component';
+import { KeystoreCreateComponent } from './_components/connect/keystore-create/keystore-create.component';
 import { PendingTxsModalComponent } from './_components/user-settings/user-settings-dialog/pending-txs/pending-txs-modal.component';
 import { UserAddressComponent } from './_components/user-settings/user-settings-dialog/user-address/user-address.component';
 import { UserSettingsComponent } from './_components/user-settings/user-settings.component';
@@ -52,6 +55,8 @@ import { CopyService } from './_services/copy.service';
 import { EthUtilsService } from './_services/eth-utils.service';
 import { TransactionUtilsService } from './_services/transaction-utils.service';
 import { KeystoreDepositService } from './_services/keystore-deposit.service';
+import { NetworkQueueService } from './_services/network-queue.service';
+import { ThorchainRpcService } from './_services/thorchain-rpc.service';
 
 /** MATERIAL */
 import { MatButtonModule } from '@angular/material/button';
@@ -84,8 +89,8 @@ import { SeedPhraseComponent } from './_components/account-settings/seed-phrase/
 import { ThorchainPricesService } from './_services/thorchain-prices.service';
 import { HaskoinService } from './_services/haskoin.service';
 import { ModalSectionHeaderModule } from './_components/modal-section-header/modal-section-header.module';
+import { ReconnectXDEFIDialogComponent } from './_components/reconnect-xdefi-dialog/reconnect-xdefi-dialog.component';
 import { KeystoreCreateStorePhraseComponent } from './_components/connect/keystore-create-store-phrase/keystore-create-store-phrase.component';
-import { NetworkQueueService } from './_services/network-queue.service';
 
 
 @NgModule({
@@ -97,7 +102,6 @@ import { NetworkQueueService } from './_services/network-queue.service';
     // KeystoreConnectComponent,
     // ConnectErrorComponent,
     LastBlockIndicatorComponent,
-    // LedgerConnectComponent,
     // KeystoreCreateComponent,
     UserSettingsComponent,
     UserSettingsDialogComponent,
@@ -107,6 +111,7 @@ import { NetworkQueueService } from './_services/network-queue.service';
     SendAssetComponent,
     ConfimSendComponent,
     ReconnectDialogComponent,
+    ReconnectXDEFIDialogComponent,
     SlippageToleranceComponent,
     TestnetWarningComponent,
     ViewPhraseComponent,
@@ -168,8 +173,9 @@ import { NetworkQueueService } from './_services/network-queue.service';
     HaskoinService,
     TransactionUtilsService,
     KeystoreDepositService,
-    NetworkQueueService
+    NetworkQueueService,
+    ThorchainRpcService
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

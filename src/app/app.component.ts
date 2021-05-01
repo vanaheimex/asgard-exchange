@@ -10,6 +10,7 @@ import { UserService } from './_services/user.service';
 import { Chain } from '@xchainjs/xchain-util';
 import { AssetAndBalance } from './_classes/asset-and-balance';
 import { Asset } from './_classes/asset';
+import { ReconnectXDEFIDialogComponent } from './_components/reconnect-xdefi-dialog/reconnect-xdefi-dialog.component';
 import { environment } from 'src/environments/environment';
 import { links } from 'src/app/_const/links';
 import { Router } from '@angular/router';
@@ -41,8 +42,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private midgardService: MidgardService,
     private lastBlockService: LastBlockService,
     private overlaysService: OverlaysService,
+    private router: Router,
     private userService: UserService,
-    private router: Router
   ) {
     this.isTestnet = (environment.network === 'testnet');
     this.appUrl = this.isTestnet ? links.appUrl : links.testnetUrl;
@@ -90,14 +91,18 @@ export class AppComponent implements OnInit, OnDestroy {
     this.subs = [chainBalanceErrors$, balances$];
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.pollLastBlock();
 
     const keystoreString = localStorage.getItem('keystore');
+    const XDEFIConnected = localStorage.getItem('XDEFI_CONNECTED');
+
     const keystore = JSON.parse(keystoreString);
     if (keystore) {
       this.keystore = keystore;
       this.openReconnectDialog();
+    } else if (XDEFIConnected) {
+      this.openReconnectXDEFIDialog();
     }
 
     if (this.isTestnet) {
@@ -114,11 +119,12 @@ export class AppComponent implements OnInit, OnDestroy {
     document.addEventListener("mousedown", (e) => {
       if (document.querySelector('.expandable') && (e.target as HTMLTextAreaElement).compareDocumentPosition(document.querySelector(".expandable")) !== 10) {
         this.overlaysService.setMenu(false);
+
       }
     })
   }
 
-  openReconnectDialog() {
+  openReconnectDialog(keystore?) {
     //TODO: this needs to be shown every time keystroke has been find
     // this.showReconnect = true;
     // this.overlaysService.setCurrentView('Reconnect')
@@ -132,6 +138,18 @@ export class AppComponent implements OnInit, OnDestroy {
     //     data: {
     //       keystore
     //     }
+    //   }
+    // );
+  }
+
+  openReconnectXDEFIDialog() {
+    this.overlaysService.setCurrentView(MainViewsEnum.ReconnectXDEFI)
+    // this.dialog.open(
+    //   ReconnectXDEFIDialogComponent,
+    //   {
+    //     maxWidth: '420px',
+    //     width: '50vw',
+    //     minWidth: '260px',
     //   }
     // );
   }

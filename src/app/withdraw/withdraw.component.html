@@ -52,8 +52,10 @@
         <div class="flex justify-between items-center">
           <span class="tx-detail-label">TX Fees:</span>
           <!-- TODO: estimate this on the fly -->
-          <span *ngIf="outboundTransactionFee">{{outboundTransactionFee}} RUNE + {{asset.ticker}} Network gas</span>
-          <span *ngIf="!outboundTransactionFee">...</span>
+          <span>
+            <span *ngIf="runeFee">{{runeFee}} RUNE</span><span *ngIf="runeFee && networkFee"> + </span><span *ngIf="networkFee">{{networkFee | number:"1.0-8"}} {{asset.ticker}}.{{asset.chain}}</span>
+          </span>
+          <span *ngIf="!runeFee && !networkFee">...</span>
         </div>
       </div>
 

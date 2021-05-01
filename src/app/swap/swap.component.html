@@ -14,7 +14,6 @@
         <!-- SOURCE -->
         <app-asset-input
           label="Send"
-          [isSource]="true"
           [(selectedAsset)]="selectedSourceAsset"
           [(assetUnit)]="sourceAssetUnit"
           [balance]="sourceBalance"
@@ -32,7 +31,7 @@
         <!-- TARGET -->
         <app-asset-input
           label="Receive"
-          [isSource]="false"
+          extraLabel="(estimated)"
           [(selectedAsset)]="selectedTargetAsset"
           [(assetUnit)]="targetAssetUnitDisplay"
           [balance]="targetBalance"
@@ -69,10 +68,16 @@
               <span *ngIf="outboundTransactionFee && runePrice"> (${{ (outboundTransactionFee * runePrice) + (inputNetworkFee ? inputNetworkFee * sourceAssetPrice : 0) + (outputNetworkFee ? outputNetworkFee * targetAssetPrice : 0) | number: "0.2-4"}})</span>
             </span>
           </div> -->
-          <div *ngIf="selectedSourceAsset" class="flex justify-between">
+          <!-- <div *ngIf="selectedSourceAsset" class="flex justify-between">
             <span class="tx-detail-label">Network Fee:</span>
             <span *ngIf="inputNetworkFee">{{inputNetworkFee | number:"1.0-8"}} {{selectedSourceAsset.chain}}.{{selectedSourceAsset.ticker}}</span>
             <span *ngIf="!inputNetworkFee">...</span>
+          </div> -->
+
+          <div *ngIf="selectedSourceAsset" class="flex justify-between">
+            <span class="tx-detail-label">Network Fee</span>
+            <span *ngIf="networkFeeInSource">{{networkFeeInSource | number:"1.0-8"}} {{selectedSourceAsset.chain}}.{{selectedSourceAsset.ticker}}<span *ngIf="sourceAssetPrice" class="mono" style="margin-left: 5px;">(${{sourceAssetPrice * networkFeeInSource | number: '0.2-2'}})</span></span>
+            <span *ngIf="!networkFeeInSource">...</span>
           </div>
 
           <div class="flex justify-between">

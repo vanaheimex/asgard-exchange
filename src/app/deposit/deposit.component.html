@@ -14,7 +14,7 @@
         [balance]="assetBalance"
         [disabledAssetSymbol]="rune.symbol"
         [selectableMarkets]="selectableMarkets"
-        [isSource]="true"
+        
         [isDeposit]="true"
         (lunchMarket)="overlaysService.setCurrentDepositView('Asset')">
       </app-asset-input>
@@ -31,7 +31,7 @@
         [disableInput]="true"
         [disabledAssetSymbol]="rune.symbol"
         [disabledMarketSelect]="true"
-        [isSource]="true"
+        
         [isDeposit]="true">
       </app-asset-input>
 
@@ -40,6 +40,12 @@
           <span class="tx-detail-label">Network Fee:</span>
           <span *ngIf="networkFee">{{networkFee | number:"1.0-8"}} {{asset.ticker}}.{{asset.chain}}</span>
           <span *ngIf="!networkFee">...</span>
+        </div>
+
+        <div class="flex justify-between">
+          <span class="tx-detail-label">RUNE Fee:</span>
+          <span *ngIf="runeFee">{{runeFee | number:"1.0-4"}} RUNE</span>
+          <span *ngIf="!runeFee">...</span>
         </div>
       </div>
 

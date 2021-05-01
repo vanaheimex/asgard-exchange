@@ -1,5 +1,6 @@
 <div class="top-bar">
-  <a href="https://thorchain.org" target="_blank">VISIT THE BRAND NEW THORCHAIN.ORG WEBSITE</a>
+  <a *ngIf="isTestnet" href="https://thorchain.org" target="_blank">VISIT THE BRAND NEW THORCHAIN.ORG WEBSITE</a>
+  <a href="https://viewblock.io/thorchain/pools" target="_blank" class="gradient" [ngClass]="{'special-gradient': depositsDisabled}" *ngIf="!isTestnet">{{topbar}} <span *ngIf="depositsDisabled">(CAP REACHED)</span></a>
 </div>
 <header>
   <h1>
