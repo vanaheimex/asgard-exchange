@@ -454,7 +454,7 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
 
     }
 
-    this.txStatusService.getOutboundHash(this.hash).subscribe(
+    const outbound$ = this.txStatusService.getOutboundHash(this.hash).subscribe(
       (res: Transaction) => {
         this.outboundHash = res.out[0]?.txID;
 
@@ -465,7 +465,8 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
         console.log(res);
       }
     );
-    
+
+    this.subs.push(outbound$);
   }
 
   pushTxStatus(hash: string, asset: Asset) {

@@ -2,10 +2,14 @@ import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/cor
 import { MatDialogRef } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { ExplorerPathsService } from 'src/app/_services/explorer-paths.service';
-import { TransactionStatusService, Tx } from 'src/app/_services/transaction-status.service';
+import { TransactionStatusService, Tx, TxActions, TxStatus } from 'src/app/_services/transaction-status.service';
 import { OverlaysService, MainViewsEnum } from 'src/app/_services/overlays.service';
 import { Asset } from 'src/app/_classes/asset';
 import { environment } from 'src/environments/environment';
+import { User } from 'src/app/_classes/user';
+import { UserService } from 'src/app/_services/user.service';
+import { MidgardService } from 'src/app/_services/midgard.service';
+import { TransactionDTO } from 'src/app/_classes/transaction';
 
 @Component({
   selector: 'app-pending-txs-modal',
@@ -23,12 +27,16 @@ export class PendingTxsModalComponent implements OnInit, OnDestroy {
   ethereumExplorerUrl: string;
   litecoinExplorerUrl: string;
   @Output() back: EventEmitter<null>;
+  user: User;
+  transactions: TransactionDTO;
 
   constructor(
     // public dialogRef: MatDialogRef<PendingTxsModalComponent>,
     private explorerPathsService: ExplorerPathsService,
     private txStatusService: TransactionStatusService,
-    private overlaysService: OverlaysService
+    private overlaysService: OverlaysService,
+    private userService: UserService,
+    private midgardService: MidgardService
   ) {
 
     this.back = new EventEmitter<null>();
@@ -42,15 +50,118 @@ export class PendingTxsModalComponent implements OnInit, OnDestroy {
     this.bchExplorerUrl = `${this.explorerPathsService.bchExplorerUrl}/tx`;
 
     const pendingTxs$ = this.txStatusService.txs$.subscribe( (txs) => {
-      this.txs = txs;
+      this.txs = txs
     });
 
-    this.subs = [pendingTxs$];
+    const user$ = this.userService.user$.subscribe(
+      async (user) => {
+        this.user = user;
+      }
+    );
+
+    this.subs = [pendingTxs$, user$];
 
   }
 
+  
   ngOnInit(): void {
+    this.getThorchainTxs();
+  }
 
+  getStatus(status: string): TxStatus {
+    switch (status) {
+      case "success":
+        return TxStatus.COMPLETE
+        break;
+      case "refunded":
+        return TxStatus.REFUNDED
+        break;
+      default:
+        return TxStatus.PENDING
+        break;
+    }
+  }
+
+  getAction(action: string): TxActions {
+    switch (action) {
+      case "swap":
+        return TxActions.SWAP;
+        break;
+      case "withdraw":
+        return TxActions.WITHDRAW;
+        break;
+      case "addLiquidity":
+        return TxActions.DEPOSIT;
+        break;
+      case "switch":
+        return TxActions.UPGRADE_RUNE;
+        break;
+      case "refund":
+        return TxActions.REFUND;
+        break;
+      default:
+        TxActions.SWAP;
+        break;
+    }
+  }
+
+  transactionToTx(transactions: TransactionDTO): Tx[] {
+    let txs: Tx[] = [];
+
+    transactions.actions.forEach(transaction => {
+      let inboundAsset = new Asset(transaction.in[0].coins[0].asset);
+      let status = this.getStatus(transaction.status);
+      let action = this.getAction(transaction.type);
+
+      // ignore upgarde txs because of midgard bug (temp)
+      if (action == TxActions.UPGRADE_RUNE) {
+        return
+      }
+      
+      txs.unshift(
+        {
+          chain: inboundAsset.chain,
+          hash: transaction.in[0].txID,
+          ticker: inboundAsset.ticker,
+          status,
+          action,
+          isThorchainTx: inboundAsset.chain === 'THOR' ? true : false,
+          symbol: inboundAsset.symbol,
+        }
+      )
+    });
+
+    return txs;
+  }
+
+  async getThorchainTxs() {
+    if (!this.user && !this.user.clients && !this.user.clients.thorchain)
+      return
+
+    // this.transactions = await this.user.clients.thorchain.getTransactions({
+    //   address: this.user.clients.thorchain.getAddress(),
+    //   limit: 10,
+    // })
+
+    this.transactions = await this.midgardService.getAddrTransactions(this.user.clients.thorchain.getAddress()).toPromise();
+
+    this.transactionToTx(this.transactions).forEach(
+      (tx) => {
+        if (this.txs.find(ptx => ptx.hash === tx.hash)) {
+          return
+        }
+        this.txStatusService.addHistoryTransaction(tx)
+      }
+    );
+
+    // this.txs = this.txs.filter((thing, index) => {
+    //   const _thing = JSON.stringify(thing);
+    //   return index === this.txs.findIndex(obj => {
+    //     return JSON.stringify(obj) === _thing;
+    //   });
+    // });
+
+    console.log(this.transactions);
   }
 
   getIconPath(tx: Tx) {

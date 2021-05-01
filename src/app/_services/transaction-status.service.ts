@@ -146,6 +146,12 @@ export class TransactionStatusService {
     this.transactionSource.next(this._txs);
   }
 
+  addHistoryTransaction(pendingTx: Tx) {
+
+    this._txs.unshift(pendingTx);
+    this.transactionSource.next(this._txs);
+  }
+
   clearPendingTransactions() {
     this.transactionSource.next([]);
     this._txs = [];
