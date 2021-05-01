@@ -668,11 +668,15 @@ button {
       margin-right: 8px;
     }
 
+    .tag-container {
+      margin: 0 5px;
+    }
+
     .addr {
+      display: flex;
       min-width: 300px;
       margin-left: 45px;
       cursor: pointer;
-      text-align: right;
 
       span {
         text-align: right;
@@ -687,13 +691,17 @@ button {
         cursor: pointer;
         font-family: 'Roboto Mono';
 
-        &:hover {
-          color: var(--primary-dark-color);
-        }
       }
     }
 
-    &:hover {
+    &:not(.non-hover):hover {
+      background: var(--primary-default);
+      span, input, label {
+        color: var(--primary-dark-color);
+      }
+    }
+
+    &.active {
       background: var(--primary-default);
       span, input, label {
         color: var(--primary-dark-color);
@@ -914,6 +922,21 @@ input[type=number] {
   img {
     width: 100%;
     border-radius: 50%;
+  }
+
+  &.two-icons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    img {
+      width: 13.71px;
+      height: 13.71px;
+    }
+
+    img:last-of-type {
+      margin-left: -3px;
+    }
   }
 }
 

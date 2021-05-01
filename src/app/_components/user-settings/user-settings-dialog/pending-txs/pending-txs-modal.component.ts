@@ -10,6 +10,7 @@ import { User } from 'src/app/_classes/user';
 import { UserService } from 'src/app/_services/user.service';
 import { MidgardService } from 'src/app/_services/midgard.service';
 import { TransactionDTO } from 'src/app/_classes/transaction';
+import { Chain } from '@xchainjs/xchain-util';
 
 @Component({
   selector: 'app-pending-txs-modal',
@@ -29,6 +30,7 @@ export class PendingTxsModalComponent implements OnInit, OnDestroy {
   @Output() back: EventEmitter<null>;
   user: User;
   transactions: TransactionDTO;
+  activeIndex: number;
 
   constructor(
     // public dialogRef: MatDialogRef<PendingTxsModalComponent>,
@@ -105,20 +107,35 @@ export class PendingTxsModalComponent implements OnInit, OnDestroy {
     }
   }
 
+  activeitem(index: number) {
+    this.activeIndex = index;
+  }
+
   transactionToTx(transactions: TransactionDTO): Tx[] {
     let txs: Tx[] = [];
 
     transactions.actions.forEach(transaction => {
       let inboundAsset = new Asset(transaction.in[0].coins[0].asset);
+      let outbound = undefined;
       let status = this.getStatus(transaction.status);
       let action = this.getAction(transaction.type);
+
+
+      if (transaction.out.length > 0 && transaction.type == 'swap') {
+        const outboundAsset = new Asset(transaction.out[0].coins[0].asset);
+
+        outbound = {
+          hash: transaction.out[0].txID,
+          asset: outboundAsset
+        }
+      }
 
       // ignore upgarde txs because of midgard bug (temp)
       if (action == TxActions.UPGRADE_RUNE) {
         return
       }
       
-      txs.unshift(
+      txs.push(
         {
           chain: inboundAsset.chain,
           hash: transaction.in[0].txID,
@@ -127,6 +144,7 @@ export class PendingTxsModalComponent implements OnInit, OnDestroy {
           action,
           isThorchainTx: inboundAsset.chain === 'THOR' ? true : false,
           symbol: inboundAsset.symbol,
+          outbound
         }
       )
     });
@@ -212,6 +230,19 @@ export class PendingTxsModalComponent implements OnInit, OnDestroy {
       return `${this.ethereumExplorerUrl}/0x${tx.hash}`;
     } else {
       return this.explorerUrl(tx.chain) + '/' + tx.hash;
+    }
+  }
+
+  explorerPathAlt(hash: string, chain: Chain, externalTx?: boolean): string {
+    if (externalTx)
+      chain = 'THOR';
+
+    if (chain === 'THOR') {
+      return this.thorchainExplorerUrl + '/' + hash;
+    } else if (chain === 'ETH') {
+      return `${this.ethereumExplorerUrl}/0x${hash}`;
+    } else {
+      return this.explorerUrl(chain) + '/' + hash;
     }
   }
 

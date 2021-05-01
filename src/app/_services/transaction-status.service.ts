@@ -12,6 +12,7 @@ import { environment } from 'src/environments/environment';
 import { SochainService, SochainTxResponse } from './sochain.service';
 import { HaskoinService, HaskoinTxResponse } from './haskoin.service';
 import { RpcTxSearchRes, ThorchainRpcService } from './thorchain-rpc.service';
+import { Asset } from '../_classes/asset';
 
 export const enum TxStatus {
   PENDING = 'PENDING',
@@ -28,6 +29,11 @@ export enum TxActions {
   UPGRADE_RUNE    = 'Upgrade'
 }
 
+export interface OutboundTx {
+  hash: string;
+  asset: Asset;
+}
+
 export interface Tx {
   chain: Chain;
   ticker: string;
@@ -36,6 +42,8 @@ export interface Tx {
   status: TxStatus;
   action: TxActions;
   isThorchainTx: boolean;
+
+  outbound?: OutboundTx;
 
   /**
    * This is a temporary patch because midgard is not picking up withdraw of pending assets
@@ -148,7 +156,7 @@ export class TransactionStatusService {
 
   addHistoryTransaction(pendingTx: Tx) {
 
-    this._txs.unshift(pendingTx);
+    this._txs.push(pendingTx);
     this.transactionSource.next(this._txs);
   }
 
@@ -266,6 +274,19 @@ export class TransactionStatusService {
 
           if (res.count > 0) {
             for (const resTx of res.actions) {
+
+              if (resTx.out.length > 0 && resTx.type === 'swap') {
+                
+                let tx_number = this._txs.findIndex(
+                  tx => tx.hash.toUpperCase() == resTx.in[0].txID.toUpperCase()
+                )
+
+                console.log(tx_number)
+
+                this._txs[tx_number].outbound.hash = resTx.out[0].txID;
+
+                this.transactionSource.next(this._txs);
+              }
 
               sub.next(resTx);
 

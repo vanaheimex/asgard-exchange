@@ -257,6 +257,10 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
           action: TxActions.SWAP,
           isThorchainTx: true,
           symbol: sourceAsset.symbol,
+          outbound: {
+            asset: this.swapData.targetAsset.asset,
+            hash: undefined
+          }
         });
         this.txState = TransactionConfirmationState.SUCCESS;
       } catch (error) {
@@ -478,6 +482,10 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
       isThorchainTx: true,
       symbol: asset.symbol,
       hash,
+      outbound: {
+        asset: this.swapData.targetAsset.asset,
+        hash: undefined
+      }
     });
   }
 
