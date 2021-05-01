@@ -694,10 +694,20 @@ button {
       }
     }
 
+    svg {
+      display: inline-block;
+      fill: #414856;
+      margin-bottom: 3px;
+    }
+
     &:not(.non-hover):hover {
       background: var(--primary-default);
       span, input, label {
         color: var(--primary-dark-color);
+      }
+
+      svg {
+        fill: var(--primary-dark-color);
       }
     }
 
@@ -705,6 +715,10 @@ button {
       background: var(--primary-default);
       span, input, label {
         color: var(--primary-dark-color);
+      }
+
+      svg {
+        fill: var(--primary-dark-color);
       }
     }
   }

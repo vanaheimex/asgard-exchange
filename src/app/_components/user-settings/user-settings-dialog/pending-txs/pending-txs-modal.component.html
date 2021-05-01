@@ -24,7 +24,25 @@
                 <img class="asset-icon"
                   [src]="getIconPath(tx)" />
               </div>
-              <label style="text-transform: uppercase;">{{tx.action}} <span class="grey-text">({{tx.chain}}.{{tx.ticker}}<span *ngIf="tx.outbound"><span style="display: inline-flex; padding-bottom: 12px; padding-left: 5px; line-height: 12px; vertical-align: middle;"> &#8594;</span> {{tx.outbound.asset.chain}}.{{tx.outbound.asset.ticker}}</span>)</span></label>
+              <label style="text-transform: uppercase;">{{tx.action}} 
+                <span class="grey-text">({{tx.chain}}.{{tx.ticker}}
+                  <span *ngIf="tx.outbound">
+                    <svg width="18px" height="10px" viewBox="0 0 18 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#414856">
+                        <g transform="translate(-641.000000, -269.000000)" >
+                            <g transform="translate(52.000000, -34.000000)">
+                                <g transform="translate(301.000000, 140.000000)">
+                                    <g transform="translate(51.000000, 130.000000)">
+                                        <g transform="translate(20.000000, 22.000000)">
+                                            <polygon id="Path" points="229.921875 20.6914062 234.5625 16.0507812 229.921875 11.4101562 229.921875 15.2558594 217.332031 15.2558594 217.332031 16.8457031 229.921875 16.8457031"></polygon>
+                                        </g>
+                                    </g>
+                                </g>
+                            </g>
+                        </g>
+                    </svg>
+                    {{tx.outbound.asset.chain}}.{{tx.outbound.asset.ticker}}</span>)
+                </span>
+              </label>
             </div>
             <div *ngIf="i !== activeIndex" class="addr" style="min-width: initial; margin-left: 0; overflow: hidden;">
               <span *ngIf="tx.status === 'PENDING'">PENDING</span>
