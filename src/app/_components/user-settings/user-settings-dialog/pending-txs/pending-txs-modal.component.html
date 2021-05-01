@@ -24,7 +24,7 @@
                 <img class="asset-icon"
                   [src]="getIconPath(tx)" />
               </div>
-              <label style="text-transform: uppercase;">{{tx.action}} <span class="grey-text">({{tx.chain}}.{{tx.ticker}}<span *ngIf="tx.outbound"> -> {{tx.outbound.asset.chain}}.{{tx.outbound.asset.ticker}}</span>)</span></label>
+              <label style="text-transform: uppercase;">{{tx.action}} <span class="grey-text">({{tx.chain}}.{{tx.ticker}}<span *ngIf="tx.outbound"><span style="display: inline-flex; padding-bottom: 12px; padding-left: 5px; line-height: 12px; vertical-align: middle;"> &#8594;</span> {{tx.outbound.asset.chain}}.{{tx.outbound.asset.ticker}}</span>)</span></label>
             </div>
             <div *ngIf="i !== activeIndex" class="addr" style="min-width: initial; margin-left: 0; overflow: hidden;">
               <span *ngIf="tx.status === 'PENDING'">PENDING</span>
