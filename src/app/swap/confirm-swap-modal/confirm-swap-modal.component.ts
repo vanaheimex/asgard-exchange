@@ -23,6 +23,8 @@ import { CopyService } from 'src/app/_services/copy.service';
 import { AssetAndBalance } from 'src/app/_classes/asset-and-balance';
 import { Balances } from '@xchainjs/xchain-client';
 import { Transaction } from 'src/app/_classes/transaction';
+import { CurrencyService } from 'src/app/_services/currency.service';
+import { Currency } from 'src/app/_components/account-settings/currency-converter/currency-converter.component';
 
 
 export interface SwapData {
@@ -69,6 +71,7 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
   estimatedMinutes: number;
   balances: Balances;
   outboundHash: string;
+  currency: Currency;
 
   constructor(
     // @Inject(MAT_DIALOG_DATA) public swapData: SwapData,
@@ -80,7 +83,8 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
     private ethUtilsService: EthUtilsService,
     public overlaysService: OverlaysService,
     private explorerPathsService: ExplorerPathsService,
-    private copyService: CopyService
+    private copyService: CopyService,
+    private currencyService: CurrencyService
   ) {
     this.txState = TransactionConfirmationState.PENDING_CONFIRMATION;
     this.insufficientChainBalance = false;
@@ -101,7 +105,13 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
       (balances) => this.balances = balances
     );
 
-    this.subs = [user$, slippageTolerange$, balances$];
+    const curs$ = this.currencyService.cur$.subscribe(
+      (cur) => {
+        this.currency = cur;
+      }
+    )
+
+    this.subs = [user$, slippageTolerange$, balances$, curs$];
 
     //Adding explorer URL here
     this.binanceExplorerUrl = `${this.explorerPathsService.binanceExplorerUrl}/tx`;
