@@ -37,7 +37,7 @@ export class ExplorerPathsService {
 
     this.bchExplorerUrl = environment.network === 'testnet'
       ? 'https://blockchain.com/bch-testnet'
-      : 'https://explorer.bitcoin.com/bch';
+      : 'https://blockchain.com/bch';
 
   }
 }
