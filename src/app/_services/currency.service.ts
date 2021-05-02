@@ -21,13 +21,26 @@ export class CurrencyService {
 
   constructor(private http: HttpClient) { 
     this.currencyApi = 'https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest';
-
-    this._activeCurrency = {
+    
+    console.log(JSON.parse(localStorage.getItem(`active_currency`)))
+    this._activeCurrency = JSON.parse(localStorage.getItem(`active_currency`)) ?? {
       symbol: '$',
       value: 1,
       name: 'US Dollar',
       code: 'USD'
     }
+    this.activeCurrencySource.next(this._activeCurrency);
+
+    if (localStorage.getItem(`active_currency`)) {
+      this.getDailyCurrencyValue().subscribe(
+        (curs) => {
+          let usdBased = curs['usd'];
+          console.log('new value is:', parseFloat(usdBased[this._activeCurrency.code.toLocaleLowerCase()]));
+          this._activeCurrency.value = parseFloat(usdBased[this._activeCurrency.code.toLocaleLowerCase()]);
+        }
+      )
+    }
+    
   }
 
   getDailyCurrencyValue(): Observable<any>{
