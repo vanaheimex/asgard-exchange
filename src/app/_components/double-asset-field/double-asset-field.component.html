@@ -61,8 +61,8 @@
       </div>
     </div>
 
-    <span class="usd-est" *ngIf="showPrice && priceInputs && assetUnits[0] && assetUnits[1]">${{ (priceInputs[0] * assetUnits[0]) + (priceInputs[1] * assetUnits[1]) | number: '.2-3' }} USD CUMULATIVE</span>
-    <span class="usd-est" *ngIf="showPrice && (!assetUnits[0] || !assetUnits[1])">${{ 0 | number: '.2-3' }} USD CUMULATIVE</span>
+    <span class="usd-est" *ngIf="showPrice && priceInputs && assetUnits[0] && assetUnits[1]">{{currency.symbol}}{{ ((priceInputs[0] * assetUnits[0]) + (priceInputs[1] * assetUnits[1])) * currency.value| number: '.2-3' }} {{currency.code}} CUMULATIVE</span>
+    <span class="usd-est" *ngIf="showPrice && (!assetUnits[0] || !assetUnits[1])">{{currency.symbol}}{{ 0 | number: '.2-3' }} {{currency.code}} CUMULATIVE</span>
 
   </div>
 
