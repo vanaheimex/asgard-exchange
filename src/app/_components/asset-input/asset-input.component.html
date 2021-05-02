@@ -65,9 +65,9 @@
 
     </div>
 
-    <span class="usd-est" *ngIf="showPrice && inputUsdValue">${{ inputUsdValue | number: '.2-3' }} USD</span>
-    <span class="usd-est" *ngIf="showPrice && !inputUsdValue && priceInput && assetUnit">${{ priceInput * assetUnit | number: '.2-3' }} USD</span>
-    <span class="usd-est" *ngIf="showPrice && !inputUsdValue && (assetUnit == 0 || !assetUnit)">${{ 0 | number: '.2-3' }} USD</span>
+    <span class="usd-est" *ngIf="showPrice && inputUsdValue">{{currency.symbol || '$'}} {{ inputUsdValue * currency.value | number: '.2-3' }} {{currency.code}}</span>
+    <span class="usd-est" *ngIf="showPrice && !inputUsdValue && priceInput && assetUnit">{{currency.symbol || '$'}} {{ priceInput * currency.value * assetUnit | number: '.2-3' }} {{currency.code}}</span>
+    <span class="usd-est" *ngIf="showPrice && !inputUsdValue && (assetUnit == 0 || !assetUnit)">{{currency.symbol || '$'}} {{ 0 | number: '.2-3' }} {{currency.code}}</span>
 
   </div>
 
