@@ -57,6 +57,7 @@ import { TransactionUtilsService } from './_services/transaction-utils.service';
 import { KeystoreDepositService } from './_services/keystore-deposit.service';
 import { NetworkQueueService } from './_services/network-queue.service';
 import { ThorchainRpcService } from './_services/thorchain-rpc.service';
+import { CurrencyService } from './_services/currency.service';
 
 /** MATERIAL */
 import { MatButtonModule } from '@angular/material/button';
@@ -91,6 +92,8 @@ import { HaskoinService } from './_services/haskoin.service';
 import { ModalSectionHeaderModule } from './_components/modal-section-header/modal-section-header.module';
 import { ReconnectXDEFIDialogComponent } from './_components/reconnect-xdefi-dialog/reconnect-xdefi-dialog.component';
 import { KeystoreCreateStorePhraseComponent } from './_components/connect/keystore-create-store-phrase/keystore-create-store-phrase.component';
+import { from } from 'rxjs';
+import { CurrencyConverterComponent } from './_components/account-settings/currency-converter/currency-converter.component';
 
 
 @NgModule({
@@ -121,6 +124,7 @@ import { KeystoreCreateStorePhraseComponent } from './_components/connect/keysto
     UserAddressAddTokenComponent,
     AccountSettingsComponent,
     SeedPhraseComponent,
+    CurrencyConverterComponent,
     // KeystoreCreateStorePhraseComponent,
   ],
   imports: [
@@ -174,7 +178,8 @@ import { KeystoreCreateStorePhraseComponent } from './_components/connect/keysto
     TransactionUtilsService,
     KeystoreDepositService,
     NetworkQueueService,
-    ThorchainRpcService
+    ThorchainRpcService,
+    CurrencyService
   ],
   bootstrap: [AppComponent],
 })
