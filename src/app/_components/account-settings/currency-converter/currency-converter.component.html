@@ -3,7 +3,7 @@
     <!-- <app-modal-section-header sectionTitle="Transactions" [displayBackBtn]="true" [displayCloseBtn]="true" (back)="back.emit()" (closeModal)="close()"></app-modal-section-header> -->
 
     <div class="content-top">
-        <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'SETTINGS', disable: true}, {name: 'CURRENCY', disable: true}]" [message]="message"></app-breadcrumb>
+        <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'SETTINGS', disable: false, backFunc: true }, {name: 'CURRENCY', disable: true}]" (backFunc)="close.emit()" [message]="message"></app-breadcrumb>
         <div class="top-right">
         </div>
     </div>

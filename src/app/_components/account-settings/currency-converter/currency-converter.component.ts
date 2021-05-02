@@ -30,7 +30,7 @@ export class CurrencyConverterComponent implements OnInit {
       (curs) => {
         let usdBased = curs['usd'];
         for (const key in usdBased) {
-          if (key === 'usd' || key === 'cad' || key === 'eur' || key === 'gbp' || key === 'rub') {
+          if (currenciesName[key.toUpperCase()]) {
             this.currencies.push({
               symbol: currenciesName[key.toUpperCase()]['symbol'],
               name: currenciesName[key.toUpperCase()]['name'],
