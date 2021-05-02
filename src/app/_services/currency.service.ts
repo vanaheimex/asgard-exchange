@@ -11,9 +11,10 @@ export class CurrencyService {
 
   private currencyApi: string;
   private activeCurrencySource = new BehaviorSubject<Currency>({
-    symbol: 'usd',
+    symbol: '$',
     value: 1,
-    name: 'USD'
+    name: 'US Dollar',
+    code: 'USD'
   });
   private _activeCurrency: Currency;
   cur$ = this.activeCurrencySource.asObservable();
@@ -22,9 +23,10 @@ export class CurrencyService {
     this.currencyApi = 'https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest';
 
     this._activeCurrency = {
-      symbol: 'usd',
+      symbol: '$',
       value: 1,
-      name: 'USD'
+      name: 'US Dollar',
+      code: 'USD'
     }
   }
 
