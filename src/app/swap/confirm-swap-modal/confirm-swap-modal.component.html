@@ -75,13 +75,13 @@
             <span
               >{{ swapData.basePrice | number: "1.2-4" }}
               {{ swapData.sourceAsset.asset.ticker }} per
-              {{ swapData.targetAsset.asset.ticker }}<span *ngIf="swapData.sourceAsset.assetPriceUSD" class="mono" style="margin-left: 5px;">({{currency.symbol}}{{swapData.sourceAsset.assetPriceUSD * currency.value * swapData.basePrice | number: '0.2-2'}})</span></span
+              {{ swapData.targetAsset.asset.ticker }}<span *ngIf="swapData.sourceAsset.assetPriceUSD" class="mono" style="margin-left: 5px;">({{swapData.sourceAsset.assetPriceUSD * currency.value * swapData.basePrice | number: '0.2-2'}} {{currency.code}})</span></span
             >
           </div>
 
           <div *ngIf="swapData.networkFeeInSource" class="flex justify-between">
             <span class="tx-detail-label">Total Fee</span>
-            <span>{{swapData.networkFeeInSource | number:"1.0-8"}} {{swapData.sourceAsset.asset.chain}}.{{swapData.sourceAsset.asset.ticker}}<span *ngIf="swapData.sourceAsset.assetPriceUSD" class="mono" style="margin-left: 5px;">({{currency.symbol}}{{swapData.sourceAsset.assetPriceUSD * currency.value * swapData.networkFeeInSource | number: '0.2-2'}})</span></span>
+            <span>{{swapData.networkFeeInSource | number:"1.0-8"}} {{swapData.sourceAsset.asset.chain}}.{{swapData.sourceAsset.asset.ticker}}<span *ngIf="swapData.sourceAsset.assetPriceUSD" class="mono" style="margin-left: 5px;">({{swapData.sourceAsset.assetPriceUSD * currency.value * swapData.networkFeeInSource | number: '0.2-2'}} {{currency.code}})</span></span>
           </div> 
 
           <!-- <div *ngIf="swapData.sourceAsset.asset.chain === 'THOR'" class="flex justify-between">
@@ -91,7 +91,7 @@
 
           <div class="flex justify-between">
             <span class="tx-detail-label">Slip:</span>
-            <span [ngStyle]="{'color': (swapData.slip * 100) > slippageTolerance ? '#FF4954' : 'var(--primary-default)'}">{{ swapData.slip | percent: "0.2-4" }}<span *ngIf="swapData.sourceAsset.assetPriceUSD" class="mono" style="margin-left: 5px;">({{currency.symbol}}{{(swapData.sourceAsset.assetPriceUSD * currency.value * swapData.inputValue) * swapData.slip | number: '1.2-2'}})</span></span>
+            <span [ngStyle]="{'color': (swapData.slip * 100) > slippageTolerance ? '#FF4954' : 'var(--primary-default)'}">{{ swapData.slip | percent: "0.2-4" }}<span *ngIf="swapData.sourceAsset.assetPriceUSD" class="mono" style="margin-left: 5px;">({{(swapData.sourceAsset.assetPriceUSD * currency.value * swapData.inputValue) * swapData.slip | number: '1.2-2'}} {{currency.code}})</span></span>
           </div>
 
           <!-- <div class="flex justify-between">

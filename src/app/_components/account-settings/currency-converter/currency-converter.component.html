@@ -13,10 +13,10 @@
         <!-- TODO: Refund tx might need to be added to the txs -->
         <div class="w-address" *ngFor="let currency of currencies; let i = index" (click)="activeIndex = i" [ngClass]="{'active': i == activeIndex}">
             <div class="icon-addr flex-grow flex-shrink-0">
-            <label style="text-transform: uppercase;">{{currency.name}}</label>
+            <label style="text-transform: uppercase;">{{currency.code}}</label>
             </div>
             <div class="addr" style="min-width: initial; margin-left: 0; overflow: hidden;">
-            <span style="text-transform: uppercase;">{{currency.code}}</span>
+            <span style="text-transform: uppercase;">{{currency.name}}</span>
             </div>
         </div>
         </div>
