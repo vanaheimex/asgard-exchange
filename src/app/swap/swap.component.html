@@ -52,7 +52,7 @@
             <span class="tx-detail-label">Price:</span>
             <span
               *ngIf="basePrice && selectedTargetAsset && selectedSourceAsset, else noPrice">{{basePrice | number:"1.2-4"}}
-              {{selectedSourceAsset.ticker}} per {{selectedTargetAsset.ticker}}<span *ngIf="sourceAssetPrice" class="mono" style="margin-left: 5px">({{sourceAssetPrice * currency.value * basePrice | number: '0.2-2'}} {{currency.symbol === currency.code ? currency.symbol : ''}})</span></span>
+              {{selectedSourceAsset.ticker}} per {{selectedTargetAsset.ticker}}<span *ngIf="sourceAssetPrice" class="mono" style="margin-left: 5px">({{sourceAssetPrice * currency.value * basePrice | number: '0.2-2'}} {{currency.code}})</span></span>
             <ng-template #noPrice>
               <span>...</span>
             </ng-template>
