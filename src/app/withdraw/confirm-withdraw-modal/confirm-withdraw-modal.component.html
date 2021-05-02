@@ -45,7 +45,7 @@
         <span class="tx-detail-label">TX Fees:</span>
         <!-- TODO: calculate this -->
         <span>
-          <span>{{data.runeFee}} RUNE + {{data.asset.ticker}} Network gas</span><span *ngIf="data.runeFee && data.networkFee"> + </span><span *ngIf="data.networkFee">{{data.networkFee | number:"1.0-4"}} {{data.asset.chain}}.{{data.asset.ticker}}</span>
+          <span>{{data.runeFee}} RUNE</span><span *ngIf="data.runeFee && data.networkFee"> + </span><span *ngIf="data.networkFee">{{data.networkFee | number:"1.0-8"}} {{data.asset.chain}}.{{data.asset.ticker}}</span>
         </span>
         <span *ngI="!data.runeFee && !data.networkFee">...</span>
       </div>
