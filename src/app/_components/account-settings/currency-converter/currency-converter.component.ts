@@ -20,6 +20,7 @@ export class CurrencyConverterComponent implements OnInit {
   currencies: Currency[];
   @Output() close: EventEmitter<null> = new EventEmitter<null>();
   activeIndex: number;
+  message: string;
 
   constructor(private currencyService: CurrencyService) { 
     this.currencies = [] as Currency[];
@@ -44,9 +45,12 @@ export class CurrencyConverterComponent implements OnInit {
 
   saveCurrency() {
     this.currencyService.setActiveCurrency(this.currencies[this.activeIndex]);
+    this.message = "saved";
+    this.close.emit();
   }
 
   ngOnInit(): void {
+    this.message = "select";
   }
 
   ngOnDestroy(): void {
