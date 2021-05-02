@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { User } from 'src/app/_classes/user';
+import { CurrencyService } from 'src/app/_services/currency.service';
 import { MainViewsEnum, OverlaysService, SettingViews } from 'src/app/_services/overlays.service';
 import { SlippageToleranceService } from 'src/app/_services/slippage-tolerance.service';
 import { UserService } from 'src/app/_services/user.service';
+import { Currency } from './currency-converter/currency-converter.component';
 
 @Component({
   selector: 'app-account-settings',
@@ -17,11 +19,13 @@ export class AccountSettingsComponent implements OnInit {
   subs: Subscription[];
   user: User;
 
+  currency: Currency;
 
   constructor(
     private overlaysService: OverlaysService,
     private slipLimitService: SlippageToleranceService,
-    private userService: UserService) {
+    private userService: UserService,
+    private currencyService: CurrencyService) {
 
     const slippageTolerange$ = this.slipLimitService.slippageTolerance$.subscribe(
       (limit) => this.slippageTolerance = limit
@@ -37,7 +41,13 @@ export class AccountSettingsComponent implements OnInit {
       }
     );
 
-    this.subs = [slippageTolerange$, user$];
+    const cur$ = currencyService.cur$.subscribe(
+      (cur) => {
+        this.currency = cur
+      }
+    )
+
+    this.subs = [slippageTolerange$, user$, cur$];
 
   }
 

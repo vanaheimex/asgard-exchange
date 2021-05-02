@@ -1,0 +1,44 @@
+<div class="container">
+    <div class="main-container">
+    <!-- <app-modal-section-header sectionTitle="Transactions" [displayBackBtn]="true" [displayCloseBtn]="true" (back)="back.emit()" (closeModal)="close()"></app-modal-section-header> -->
+
+    <div class="content-top">
+        <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'SETTINGS', disable: false, backFunc: true }, {name: 'CURRENCY', disable: true}]" (backFunc)="close.emit()" [message]="message"></app-breadcrumb>
+        <div class="top-right">
+        </div>
+    </div>
+    <div class="lists-wrapper">
+        <div class="wallets" *ngIf="currencies && currencies.length > 0" [ngClass]="{'short': currencies && currencies.length > 6}">
+
+        <!-- TODO: Refund tx might need to be added to the txs -->
+        <div class="w-address" *ngFor="let currency of currencies; let i = index" (click)="activeIndex = i" [ngClass]="{'active': i == activeIndex}">
+            <div class="icon-addr flex-grow flex-shrink-0">
+            <label style="text-transform: uppercase;">{{currency.code}}</label>
+            </div>
+            <div class="addr" style="min-width: initial; margin-left: 0; overflow: hidden;">
+            <span style="text-transform: uppercase;">{{currency.name}}</span>
+            </div>
+        </div>
+        </div>
+        <div class="scroll-for-more" *ngIf="(currencies && currencies.length > 6)">
+        <img style="padding: 19px 0;" src="assets/images/mouse-scroll.svg" alt="scroll for more">
+        </div>
+    </div>
+
+    <div class="wallets disable" *ngIf="currencies.length == 0">
+        <span class="no-item" style="text-transform: uppercase; text-align: center;">NO CURRENCIES</span>
+    </div>
+
+    <div class="bottom-actions two-btn">
+        <button class="left-btn close-btn" (click)="close.emit()">
+        <span>close</span>
+        </button>
+        <div class="divider"></div>
+        <button class="right-btn next-btn" (click)="saveCurrency()">
+        <span>Save</span>
+        </button>
+    </div>
+
+    </div>
+</div>
+  

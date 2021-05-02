@@ -13,6 +13,8 @@ import { Balance } from '@xchainjs/xchain-client';
 import { baseToAsset } from '@xchainjs/xchain-util';
 import { MidgardService } from 'src/app/_services/midgard.service';
 import { ThorchainPricesService } from 'src/app/_services/thorchain-prices.service';
+import { CurrencyService } from 'src/app/_services/currency.service';
+import { Currency } from '../account-settings/currency-converter/currency-converter.component';
 
 @Component({
   selector: 'app-double-asset-field',
@@ -61,18 +63,25 @@ export class DoubleAssetFieldComponent implements OnInit {
   user: User;
   subs: Subscription[];
   inputUsdValue: number;
+  currency: Currency;
 
   constructor(
     private userService: UserService,
     private ethUtilsService: EthUtilsService,
     public overlayService: OverlaysService,
     private midgardService: MidgardService,
-    private thorchainPricesService: ThorchainPricesService
+    private thorchainPricesService: ThorchainPricesService,
+    private currencyService: CurrencyService
   ) {
     const user$ = this.userService.user$.subscribe(
       (user) => this.user = user
     );
-    this.subs = [user$];
+    const curs$ = this.currencyService.cur$.subscribe(
+      (cur) => {
+        this.currency = cur;
+      }
+    )
+    this.subs = [user$, curs$];
   }
 
   ngOnInit(): void {

@@ -10,7 +10,7 @@ export type CreatePoolViews = 'Create' | 'Approve' | 'Asset' | 'Confirm';
 export type MainViews = 'Reconnect' | 'User Setting' | 'Swap' | 'Account Setting';
 export type SwapViews = 'Swap' | 'TargetAsset' | 'SourceAsset' | 'Connect' | 'Confirm' | 'Approve';
 export type UserViews = 'Addresses' | 'Address' | 'Asset' | 'Send' | 'Confirm' | 'ADDRESS_ADD_TOKEN';
-export type SettingViews = 'ACCOUNT' | 'PHRASE' | 'SLIP';
+export type SettingViews = 'ACCOUNT' | 'PHRASE' | 'SLIP' | 'CURRENCY';
 export type UserOverlay = {
   userView: UserViews,
   address?: string,

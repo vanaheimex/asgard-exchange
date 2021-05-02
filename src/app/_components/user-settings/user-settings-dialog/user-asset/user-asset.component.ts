@@ -1,7 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Chain } from '@xchainjs/xchain-util';
+import { Subscription } from 'rxjs';
 import { AssetAndBalance } from 'src/app/_classes/asset-and-balance';
+import { Currency } from 'src/app/_components/account-settings/currency-converter/currency-converter.component';
 import { CopyService } from 'src/app/_services/copy.service';
+import { CurrencyService } from 'src/app/_services/currency.service';
 import { ExplorerPathsService } from 'src/app/_services/explorer-paths.service';
 import { OverlaysService } from 'src/app/_services/overlays.service';
 
@@ -32,11 +35,22 @@ export class UserAssetComponent implements OnInit {
   ticker: string;
   copied: boolean = false;
 
-  constructor(private copyService: CopyService, private explorerPathsService: ExplorerPathsService, private overlaysService: OverlaysService) {
+  subs: Subscription[];
+  currency: Currency;
+
+  constructor(private copyService: CopyService, private explorerPathsService: ExplorerPathsService, private overlaysService: OverlaysService, private currencyService: CurrencyService) {
     this.back = new EventEmitter();
     this.send = new EventEmitter();
     this.upgradeRune = new EventEmitter();
     this.deposit = new EventEmitter();
+
+    const curs$ = this.currencyService.cur$.subscribe(
+      (cur) => {
+        this.currency = cur;
+      }
+    )
+
+    this.subs = [curs$];
   }
 
   ngOnInit(): void {
@@ -108,6 +122,14 @@ export class UserAssetComponent implements OnInit {
       if (result)
         this.copied = true;
     }
+  }
+
+  ngOnDestroy(): void {
+    this.subs.forEach(
+      (sub) => {
+        sub.unsubscribe();
+      }
+    )
   }
 
 }

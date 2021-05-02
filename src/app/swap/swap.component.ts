@@ -36,6 +36,8 @@ import { TransactionUtilsService } from '../_services/transaction-utils.service'
 import { NetworkQueueService } from '../_services/network-queue.service';
 import { retry, switchMap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment'; 
+import { CurrencyService } from '../_services/currency.service';
+import { Currency } from '../_components/account-settings/currency-converter/currency-converter.component';
 
 export enum SwapType {
   DOUBLE_SWAP = 'double_swap',
@@ -183,6 +185,7 @@ export class SwapComponent implements OnInit, OnDestroy {
 
   appLocked: boolean;
   networkFeeInSource: number;
+  currency: Currency;
 
   constructor(
     private dialog: MatDialog,
@@ -192,7 +195,8 @@ export class SwapComponent implements OnInit, OnDestroy {
     private thorchainPricesService: ThorchainPricesService,
     public overlaysService: OverlaysService,  
     private txUtilsService: TransactionUtilsService,
-    private networkQueueService: NetworkQueueService) {
+    private networkQueueService: NetworkQueueService,
+    private currencyService: CurrencyService) {
 
     this.selectedSourceAsset = new Asset('THOR.RUNE');
     this.ethContractApprovalRequired = false;
@@ -250,7 +254,13 @@ export class SwapComponent implements OnInit, OnDestroy {
       (limit) => this.slippageTolerance = limit
     );
 
-    this.subs = [balances$, user$, slippageTolerange$, queue$];
+    const curs$ = this.currencyService.cur$.subscribe(
+      (cur) => {
+        this.currency = cur;
+      }
+    )
+
+    this.subs = [balances$, user$, slippageTolerange$, queue$, curs$];
 
     this.appLocked = environment.appLocked;
   }
