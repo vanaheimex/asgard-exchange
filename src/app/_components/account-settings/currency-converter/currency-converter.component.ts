@@ -6,7 +6,8 @@ import { CurrencyService } from 'src/app/_services/currency.service';
 export interface Currency {
   symbol: string,
   name: string,
-  value: number
+  value: number,
+  code?: string
 }
 
 @Component({
@@ -29,10 +30,11 @@ export class CurrencyConverterComponent implements OnInit {
       (curs) => {
         let usdBased = curs['usd'];
         for (const key in usdBased) {
-          if (key === 'usd' || key === 'cad' || key === 'eur' || key === 'gbp') {
+          if (key === 'usd' || key === 'cad' || key === 'eur' || key === 'gbp' || key === 'rub') {
             this.currencies.push({
-              symbol: key,
-              name: currenciesName[key],
+              symbol: currenciesName[key.toUpperCase()]['symbol'],
+              name: currenciesName[key.toUpperCase()]['name'],
+              code: currenciesName[key.toUpperCase()]['code'],
               value: parseFloat(usdBased[key])
             })
           }
@@ -45,6 +47,7 @@ export class CurrencyConverterComponent implements OnInit {
 
   saveCurrency() {
     this.currencyService.setActiveCurrency(this.currencies[this.activeIndex]);
+    localStorage.setItem(`active_currency`, JSON.stringify(this.currencies[this.activeIndex]));
     this.message = "saved";
     this.close.emit();
   }
