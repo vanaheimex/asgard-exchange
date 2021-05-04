@@ -17,6 +17,7 @@ export class RetryRuneDepositComponent implements OnInit, OnDestroy {
   @Input() asset: Asset;
   @Input() assetAmount: number;
   @Input() runeAmount: number;
+  @Input() assetBalance: number;
   @Input() user: User;
   @Input() errorMessage: string;
   @Output() retrySuccess: EventEmitter<string>;
@@ -51,6 +52,15 @@ export class RetryRuneDepositComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.userService.fetchBalances();
+  }
+
+  goToNav(nav: string) {
+    if (nav === 'pool') {
+      this.router.navigate(['/', 'pool']);
+    }
+    else if (nav === 'swap') {
+      this.router.navigate(['/', 'swap']);
+    }
   }
 
   async resubmitRuneDeposit() {
