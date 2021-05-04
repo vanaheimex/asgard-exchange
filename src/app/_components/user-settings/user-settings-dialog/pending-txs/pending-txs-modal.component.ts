@@ -165,7 +165,7 @@ export class PendingTxsModalComponent implements OnInit, OnDestroy {
 
     this.transactionToTx(this.transactions).forEach(
       (tx) => {
-        if (this.txs.find(ptx => ptx.hash === tx.hash)) {
+        if (this.txs.find(ptx => ptx.hash.toUpperCase() === tx.hash.toUpperCase())) {
           return
         }
         this.txStatusService.addHistoryTransaction(tx)
