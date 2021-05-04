@@ -13,7 +13,7 @@
     </nav> -->
     <div class="main-container">
       <nav class="content-top">
-        <app-breadcrumb [path]="[{name: 'vanaheimex', call: 'swap'}, {name: 'Pools', disable: true}]" [isError]="userPoolError" [message]="userPoolError? 'Cannot fetch user pools' : 'select'" (funcCaller)="goToNav($event)"></app-breadcrumb>
+        <app-breadcrumb [path]="[{name: 'vanaheimex', call: 'swap'}, {name: 'Pools', disable: true}]" [message]="getBreadcrumbText()" (funcCaller)="goToNav($event)"></app-breadcrumb>
         <div class="top-right">
           <app-right-option *ngIf="user" [switchField]="{right: {text: 'Pool', tag: '', disable: false}, left: {text: 'Swap', tag: '', disable: false}}"></app-right-option>
           <app-right-option *ngIf="!user" [switchField]="{right: {text: 'Pool', tag: '', disable: true}, left: {text: 'Swap', tag: '', disable: true}}"></app-right-option>
@@ -59,7 +59,7 @@
         <div class="flex justify-between">
           <span class="tx-detail-label">Feeling Adventurous:</span>
           <span class="pool"
-            *ngIf="createablePools && createablePools.length > 0, else noPool"
+            *ngIf="createablePools && createablePools.length > 0 && !depositsDisabled, else noPool"
             [routerLink]="['/', 'create-pool']"
             [queryParams]="{pool: createablePools[0]}">
             Create a new pool

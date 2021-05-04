@@ -331,7 +331,7 @@ export class DepositComponent implements OnInit, OnDestroy {
     }
 
     if (this.depositsDisabled) {
-      return 'Pool Cap > 90%';
+      return 'CAPS REACHED';
     }
 
     if (!this.asset) {

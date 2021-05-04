@@ -297,7 +297,7 @@ export class PoolCreateComponent implements OnInit, OnDestroy {
       return 'Ready';
     }
     else if (this.depositsDisabled) {
-      return 'Pool Cap > 90%';
+      return 'CAPS REACHED';
     }
     else if (this.ethContractApprovalRequired) {
       return 'Create Pool';

@@ -9,7 +9,7 @@
       <mat-icon>expand_more</mat-icon>
     </button> -->
     <div class="flex justify-between" *ngIf="activate && !isPending">
-      <app-tag>
+      <app-tag *ngIf="!depositsDisabled">
         <a [routerLink]="['/', 'deposit', asset.chain + '.' + asset.symbol]">Deposit</a>
       </app-tag>
       <div style="width: 5px;"></div>

@@ -103,6 +103,18 @@ export class PoolComponent implements OnInit, OnDestroy {
 
   }
 
+  getBreadcrumbText() {
+    if (this.userPoolError) {
+      return {text: 'Cannot fetch user Pools', isError: true};
+    }
+
+    if (this.depositsDisabled) {
+      return {text: 'CAPS REACHED', isError: true}
+    }
+
+    return 'SELECT';
+  }
+
   clearPoolDetail() {
     this.pooledRune = null;
     this.pooledAsset = null;
