@@ -34,7 +34,7 @@
         [inputColor]="'var(--primary-red)'">
       </app-asset-input>
 
-      <div *ngIf="!loading && retryCount >= 3" class="swap-details">
+      <div *ngIf="asset && !resubmitError" class="swap-details">
         <span style="color: var(--primary-red);">
           It looks like the {{asset.chain}}.{{asset.ticker}} deposit succeeded, but there was an error depositing {{rune.chain}}.{{rune.ticker}}. <br />
           The error is “. We use symmetrical deposits, which means THORChain is waiting for the <br />
@@ -44,20 +44,18 @@
       </div>
 
       <!-- close dialog -->
-      <div class="bottom-actions two-btn">
-        <div class="left-btn">
-          <button class="close-btn" (click)="closeModal.emit()">
-            <span>Cancel</span>
-          </button>
-        </div>
-        <div class="divider"></div>
-        <div class="right-btn">
+      <div class="bottom-actions">
+        <div>
           <button
             (click)="resubmitRuneDeposit()"
             class="next-btn graident-btn"
-            [disabled]="loading && retryCount >= 3"
+            *ngIf="retryCount < 3"
+            [disabled]="loading"
           >
             <span>Retry {{rune.chain}}.{{rune.ticker}}</span>
+          </button>
+          <button *ngIf="retryCount >= 3" [disabled]="loading" (click)="closeModal.emit()" class="close-btn">
+            <span>Close</span>
           </button>
           <!-- TODO: Need to be added -->
           <!-- <button *ngIf="!loading && retryCount >= 3" (click)="navigateDepositSymRecovery()" mat-flat-button color="primary" class="main-action-btn w-full">
