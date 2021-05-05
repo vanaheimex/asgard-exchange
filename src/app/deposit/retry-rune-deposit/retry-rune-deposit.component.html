@@ -1,66 +1,142 @@
-<div *ngIf="!loading">
-
-  <div class="confirm-modal-head p-4">
-
-    <div class="flex justify-between items-center mb-4">
-      <h1 mat-dialog-title class="mb-0">RUNE Deposit Failed</h1>
+<div *ngIf="!loading" class="container-wrapper">
+  <div class="container">
+  
+    <div class="main-container">
+      <nav class="content-top">
+        <app-breadcrumb [path]="[{name: 'vanaheimex', call: 'swap'}, {name: 'Pools', call: 'pool'}, {name: 'Deposit', disable: true}]" [isError]="true" [message]="'THOR.RUNE DEPOSIT FAILED'" (funcCaller)="goToNav($event)"></app-breadcrumb>
+      </nav>
     </div>
-
-    <div class="flex justify-between transaction-detail">
-
-      <div class="flex items-center">
-        <div class="asset-icon-container flex items-center mr-4">
-          <img *ngIf="rune && rune.iconPath" [src]="rune.iconPath" appImgFallback />
-          <mat-icon *ngIf="!rune || !rune.iconPath">help_outline</mat-icon>
-        </div>
-        <span class="text-xl mr-2">{{runeAmount}}</span>
-      </div>
-
-      <span>{{rune.ticker}}</span>
-
-    </div>
-
-  </div>
-
-  <div class="clear-both">
-    <div mat-dialog-content class="confirm-modal-content">
-      <span *ngIf="asset && !resubmitError" class="flex py-2">
-        It looks like the {{asset.ticker}} deposit suceeded, but there was an error depositing the RUNE.
-        The error is: "{{errorMessage}}".
-        We use symmetrical deposits, which means THORChain is waiting for the RUNE deposit to register you as a pool member.<br />
-        Let's try depositing your RUNE again...
-      </span>
-
-      <span *ngIf="resubmitError">It looks like resubmitting RUNE failed. The error is: "{{resubmitError}}"</span>
-
+    
       <app-asset-input
-        label="Input"
-        [(selectedAsset)]="rune"
-        [(assetUnit)]="runeAmount"
-        [balance]="runeBalance"
+        label="Deposited"
+        [(selectedAsset)]="asset"
+        [(assetUnit)]="assetAmount"
+        [disabledAssetSymbol]="asset.symbol"
+        [balance]="assetBalance"
         [hideMax]="true"
-        [disabledMarketSelect]="true">
+        [disableInput]="true"
+        [disabledMarketSelect]="true"
+        [isDeposit]="true">
       </app-asset-input>
 
-      <div class="clear-both">
-        <div mat-dialog-content class="confirm-modal-content flex">
+      <app-arrow [isPlus]="true" [isGrey]="true"></app-arrow>
 
-          <button *ngIf="!loading && retryCount < 3" (click)="resubmitRuneDeposit()" mat-flat-button color="primary" class="main-action-btn w-full">
-            <span>Resubmit RUNE</span>
+      <app-asset-input
+        label="Deposit"
+        [(selectedAsset)]="rune"
+        [(assetUnit)]="runeAmount"
+        [disabledAssetSymbol]="rune.symbol"
+        [balance]="runeBalance"
+        [hideMax]="true"
+        [disableInput]="true"
+        [disabledMarketSelect]="true"
+        [isDeposit]="true"
+        [inputColor]="'var(--primary-red)'">
+      </app-asset-input>
+
+      <div *ngIf="!loading && retryCount >= 3" class="swap-details">
+        <span style="color: var(--primary-red);">
+          It looks like the {{asset.chain}}.{{asset.ticker}} deposit succeeded, but there was an error depositing {{rune.chain}}.{{rune.ticker}}. <br />
+          The error is “. We use symmetrical deposits, which means THORChain is waiting for the <br />
+          {{rune.chain}}.{{rune.ticker}} deopsit to register you as a pool member.
+        </span>
+        <span *ngIf="resubmitError">It looks like resubmitting RUNE failed. The error is: <br /> "{{resubmitError}}"</span>
+      </div>
+
+      <!-- close dialog -->
+      <div class="bottom-actions two-btn">
+        <div class="left-btn">
+          <button class="close-btn" (click)="closeModal.emit()">
+            <span>Cancel</span>
           </button>
-
-          <button *ngIf="!loading && retryCount >= 3" (click)="navigateDepositSymRecovery()" mat-flat-button color="primary" class="main-action-btn w-full">
+        </div>
+        <div class="divider"></div>
+        <div class="right-btn">
+          <button
+            (click)="resubmitRuneDeposit()"
+            class="next-btn graident-btn"
+            [disabled]="loading && retryCount >= 3"
+          >
+            <span>Retry {{rune.chain}}.{{rune.ticker}}</span>
+          </button>
+          <!-- TODO: Need to be added -->
+          <!-- <button *ngIf="!loading && retryCount >= 3" (click)="navigateDepositSymRecovery()" mat-flat-button color="primary" class="main-action-btn w-full">
             <span>Navigate Sym Deposit Recovery</span>
-          </button>
-
+          </button> -->
         </div>
       </div>
     </div>
-  </div>
+    <!-- <div class="confirm-modal-head p-4">
+  
+      <div class="flex justify-between items-center mb-4">
+        <h1 mat-dialog-title class="mb-0">RUNE Deposit Failed</h1>
+      </div>
+  
+      <div class="flex justify-between transaction-detail">
+  
+        <div class="flex items-center">
+          <div class="asset-icon-container flex items-center mr-4">
+            <img *ngIf="rune && rune.iconPath" [src]="rune.iconPath" appImgFallback />
+            <mat-icon *ngIf="!rune || !rune.iconPath">help_outline</mat-icon>
+          </div>
+          <span class="text-xl mr-2">{{runeAmount}}</span>
+        </div>
+  
+        <span>{{rune.ticker}}</span>
+  
+      </div>
+  
+    </div>
+  
+    <div class="clear-both">
+      <div mat-dialog-content class="confirm-modal-content">
+        <span *ngIf="asset && !resubmitError" class="flex py-2">
+          It looks like the {{asset.ticker}} deposit suceeded, but there was an error depositing the RUNE.
+          The error is: "{{errorMessage}}".
+          We use symmetrical deposits, which means THORChain is waiting for the RUNE deposit to register you as a pool member.<br />
+          Let's try depositing your RUNE again...
+        </span>
+  
+        <span *ngIf="resubmitError">It looks like resubmitting RUNE failed. The error is: "{{resubmitError}}"</span>
+  
+        <app-asset-input
+          label="Input"
+          [(selectedAsset)]="rune"
+          [(assetUnit)]="runeAmount"
+          [balance]="runeBalance"
+          [hideMax]="true"
+          [disabledMarketSelect]="true">
+        </app-asset-input>
+  
+        <div class="clear-both">
+          <div mat-dialog-content class="confirm-modal-content flex">
+  
+            <button *ngIf="!loading && retryCount < 3" (click)="resubmitRuneDeposit()" mat-flat-button color="primary" class="main-action-btn w-full">
+              <span>Resubmit RUNE</span>
+            </button>
+  
 
+  
+          </div>
+        </div>
+      </div>
+    </div> 
+  
+  </div> -->
 </div>
 
 <app-transaction-processing-modal
   *ngIf="loading"
-  [transactionDetail]="processingMessage">
+  [asset]="[{asset: asset, balance: assetBalance, assetPriceUSD: 0}, {asset: rune, balance: runeBalance, assetPriceUSD: 0}]"
+  [label]="['Deposited', 'Depositing']"
+  [amount]="[assetAmount, runeAmount]"
+  [transactionDetail]="processingMessage"
+  (closeDialog)="closeModal.emit()"
+  [isPlus]="true">
+  <app-breadcrumb [path]="[{name: 'vanaheimex', call: 'swap'}, {name: 'Pools', disable: true}, {name: 'Deposit', disable: true}]" message="Resubmitting RUNE Deposit" (funcCaller)="goToNav($event)"></app-breadcrumb>
 </app-transaction-processing-modal>
+
+<!-- <app-transaction-processing-modal
+  *ngIf="loading"
+  [transactionDetail]="processingMessage">
+</app-transaction-processing-modal> -->

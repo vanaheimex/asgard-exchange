@@ -29,7 +29,8 @@
         placeholder="0.0"
         type="number"
         [disabled]="disableInput"
-        [ngClass]="{'disable': disableUser}" />
+        [ngClass]="{'disable': disableUser}"
+        [ngStyle]="{'color': inputColor}" />
 
       <button *ngIf="!selectedAsset" class="launch-markets-btn focus:outline-none" [disabled]="disabledMarketSelect || disableUser || !selectableMarkets" [ngClass]="{'disabled': disabledMarketSelect || disableUser}" (click)="launchMarketsModal()">
         <div class="flex items-center asset-selector select-token" [ngClass]="{'disabled': disabledMarketSelect || disableUser}">
