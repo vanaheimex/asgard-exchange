@@ -1,10 +1,12 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import { getPoolShare, PoolData, UnitData } from '@thorchain/asgardex-util';
 import { baseAmount } from '@xchainjs/xchain-util';
+import BigNumber from 'bignumber.js';
 import { Subscription } from 'rxjs';
 import { Asset } from 'src/app/_classes/asset';
 import { MemberPool } from 'src/app/_classes/member';
 import { PoolDTO } from 'src/app/_classes/pool';
+import { Currency } from 'src/app/_components/account-settings/currency-converter/currency-converter.component';
 import { PoolDetailService } from 'src/app/_services/pool-detail.service';
 import { TransactionStatusService, Tx } from 'src/app/_services/transaction-status.service';
 import { environment } from 'src/environments/environment';
@@ -19,6 +21,7 @@ export class PoolListItemComponent implements OnChanges {
   expanded: boolean;
 
   @Input() activate: boolean;
+  @Input() currency: Currency;
 
   /**
    * Pool Data
@@ -44,6 +47,8 @@ export class PoolListItemComponent implements OnChanges {
 
   isPending: Tx;
   isTestnet: boolean;
+  assetDepth: number;
+
 
   constructor(private poolDetailService : PoolDetailService, private txStatusService: TransactionStatusService) {
     this.expanded = false;
@@ -72,6 +77,8 @@ export class PoolListItemComponent implements OnChanges {
           });
         }
       );
+
+      this.assetDepth = (new BigNumber(+this.poolData.assetDepth).div(10 ** 8).toNumber()) * +this.poolData.assetPriceUSD * this.currency.value
 
       this.subs = [poolDetail$, pendingTx$]
   }

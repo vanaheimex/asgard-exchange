@@ -4,6 +4,17 @@
     border-radius: 3px;
     padding: 10px 15px;
     cursor: pointer;
+
+    .left-section {
+      display: flex;
+      align-items: center;
+  
+      .extra-info {
+        margin-left: 10px;
+        font-size: 20px;
+        color: var(--primary-grey-color);
+      }
+    }
   
     &.activate {
       color: var(--primary-dark-color);
@@ -24,6 +35,10 @@
   
       .pending {
         color: var(--primary-dark-color);
+      }
+
+      .extra-info {
+        color: #000 !important;
       }
       
       .hover-actions {
