@@ -85,7 +85,7 @@
         [disabledAssetSymbol]="rune.symbol"
         (close)="overlaysService.setCurrentCreatePoolView('Create')"
         >
-        <app-breadcrumb [path]="[{name: 'vanaheimex', call: 'swap'}, {name: 'Pools', call: 'pool'}, {name: 'Create', call: 'create-back'}, {name: 'SEARCH', disable: true}]" message="TYPE IN THE FIELD" (funcCaller)="goToNav($event)"></app-breadcrumb>
+        <app-breadcrumb [path]="[{name: 'vanaheimex', call: 'swap'}, {name: 'Pools', call: 'pool'}, {name: 'Create', call: 'create-back'}, {name: 'SEARCH', disable: true}]" message="SELECT" (funcCaller)="goToNav($event)"></app-breadcrumb>
       </app-markets-modal>
     </div>
 

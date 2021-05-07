@@ -82,7 +82,7 @@
         [selectableMarkets]="selectableMarkets"
         [disabledAssetSymbol]="rune.symbol"
         (close)="overlaysService.setCurrentDepositView('Deposit')">
-        <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'Pools', call: 'pool'}, {name: 'Deposit', call: 'deposit-back'}, {name: 'SEARCH', disable: true}]" message="TYPE IN THE FIELD" (funcCaller)="goToNav($event)"></app-breadcrumb>
+        <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'Pools', call: 'pool'}, {name: 'Deposit', call: 'deposit-back'}, {name: 'SEARCH', disable: true}]" message="SELECT" (funcCaller)="goToNav($event)"></app-breadcrumb>
       </app-markets-modal>
     </div>
 

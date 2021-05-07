@@ -129,7 +129,7 @@
         [(selectedAsset)]="selectedTargetAsset" [selectableMarkets]="selectableMarkets"
         [disabledAssetSymbol]="selectedSourceAsset ? selectedSourceAsset.symbol : null"
         (close)="overlaysService.setCurrentSwapView('Swap')">
-        <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'swap', swapView: 'Swap', mainView: 'Swap'}, {name: 'SEARCH', disable: true}]" message="TYPE IN THE FIELD"></app-breadcrumb>
+        <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'swap', swapView: 'Swap', mainView: 'Swap'}, {name: 'SEARCH', disable: true}]" message="SELECT"></app-breadcrumb>
       </app-markets-modal>
     </div>
 
@@ -138,7 +138,7 @@
         [(selectedAsset)]="selectedSourceAsset" [selectableMarkets]="selectableMarkets"
         [disabledAssetSymbol]="selectedTargetAsset ? selectedTargetAsset.symbol : null"
         (close)="overlaysService.setCurrentSwapView('Swap')">
-        <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'swap', swapView: 'Swap', mainView: 'Swap'}, {name: 'SEARCH', disable: true}]" message="TYPE IN THE FIELD"></app-breadcrumb>
+        <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'swap', swapView: 'Swap', mainView: 'Swap'}, {name: 'SEARCH', disable: true}]" message="SELECT"></app-breadcrumb>
       </app-markets-modal>
     </div>
 
