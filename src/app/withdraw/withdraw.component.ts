@@ -266,8 +266,14 @@ export class WithdrawComponent implements OnInit {
       return 'THORChain Network Latency. Try Later';
     }
 
+    /** When amount is only zero */
+    if (!this.removeAssetAmount) {
+      this.isError = false;
+      return 'PICK PERCENTAGE WITH SLIDER';
+    }
+
     /** No asset amount set */
-    if (!this.removeAssetAmount || (this.removeAssetAmount && this.removeAssetAmount <= 0)) {
+    if (this.removeAssetAmount && this.removeAssetAmount <= 0) {
       this.isError = true;
       return 'Enter an Amount';
     }
@@ -279,7 +285,7 @@ export class WithdrawComponent implements OnInit {
 
     /** Good to go */
     this.isError = false;
-    return 'Withdraw';
+    return 'Ready';
   }
 
   openConfirmationDialog(): void {
