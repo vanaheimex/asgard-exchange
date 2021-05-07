@@ -94,6 +94,7 @@ import { ReconnectXDEFIDialogComponent } from './_components/reconnect-xdefi-dia
 import { KeystoreCreateStorePhraseComponent } from './_components/connect/keystore-create-store-phrase/keystore-create-store-phrase.component';
 import { from } from 'rxjs';
 import { CurrencyConverterComponent } from './_components/account-settings/currency-converter/currency-converter.component';
+import { AnalyticsService } from './_services/analytics.service';
 
 
 @NgModule({
@@ -179,7 +180,8 @@ import { CurrencyConverterComponent } from './_components/account-settings/curre
     KeystoreDepositService,
     NetworkQueueService,
     ThorchainRpcService,
-    CurrencyService
+    CurrencyService,
+    AnalyticsService
   ],
   bootstrap: [AppComponent],
 })

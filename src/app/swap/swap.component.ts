@@ -38,6 +38,7 @@ import { retry, switchMap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment'; 
 import { CurrencyService } from '../_services/currency.service';
 import { Currency } from '../_components/account-settings/currency-converter/currency-converter.component';
+import { AnalyticsService } from '../_services/analytics.service';
 
 export enum SwapType {
   DOUBLE_SWAP = 'double_swap',
@@ -196,7 +197,8 @@ export class SwapComponent implements OnInit, OnDestroy {
     public overlaysService: OverlaysService,  
     private txUtilsService: TransactionUtilsService,
     private networkQueueService: NetworkQueueService,
-    private currencyService: CurrencyService) {
+    private currencyService: CurrencyService,
+    private analyticsService: AnalyticsService) {
 
     this.selectedSourceAsset = new Asset('THOR.RUNE');
     this.ethContractApprovalRequired = false;
@@ -588,7 +590,8 @@ export class SwapComponent implements OnInit, OnDestroy {
     }
 
 
-    this.overlaysService.setCurrentSwapView('Confirm')
+    this.overlaysService.setCurrentSwapView('Confirm');
+    this.analyticsService.eventEmitter('swap', 'swap', 'swap-open-confirm', 'click');
   }
 
   updateSwapDetails() {

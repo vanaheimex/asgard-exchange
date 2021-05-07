@@ -25,6 +25,7 @@ import { Balances } from '@xchainjs/xchain-client';
 import { Transaction } from 'src/app/_classes/transaction';
 import { CurrencyService } from 'src/app/_services/currency.service';
 import { Currency } from 'src/app/_components/account-settings/currency-converter/currency-converter.component';
+import { AnalyticsService } from 'src/app/_services/analytics.service';
 
 
 export interface SwapData {
@@ -84,7 +85,8 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
     public overlaysService: OverlaysService,
     private explorerPathsService: ExplorerPathsService,
     private copyService: CopyService,
-    private currencyService: CurrencyService
+    private currencyService: CurrencyService,
+    private analyticsService: AnalyticsService
   ) {
     this.txState = TransactionConfirmationState.PENDING_CONFIRMATION;
     this.insufficientChainBalance = false;
@@ -176,6 +178,8 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
   submitTransaction() {
 
     this.txState = TransactionConfirmationState.SUBMITTING;
+    this.analyticsService.eventEmitter('swap', 'swap-confirm', 'click', `${this.swapData.sourceAsset.asset.chain}.${this.swapData.sourceAsset.asset.ticker}/${this.swapData.targetAsset.asset.chain}.${this.swapData.targetAsset.asset.ticker}`);
+    this.analyticsService.eventEmitter('swap', 'swap-confirm', 'click',  `${this.swapData.sourceAsset.asset.chain}.${this.swapData.sourceAsset.asset.ticker}/${this.swapData.targetAsset.asset.chain}.${this.swapData.targetAsset.asset.ticker}`);
 
     // Source asset is not RUNE
     if (this.swapData.sourceAsset.asset.chain === 'BNB'
