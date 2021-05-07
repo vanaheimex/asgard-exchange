@@ -18,7 +18,7 @@
         </app-tag>
         <div style="width: 5px;"></div>
         <app-tag>
-          <a [href]="'https://thorchain.delphidigital.io/thorchain/' + isTestnet ? 'testnet/' : 'chaosnet/'" target="_blank">POOL STATS</a>
+          <a [href]="'https://thorchain.delphidigital.io/thorchain/' + (isTestnet ? 'testnet/' : 'chaosnet/')" target="_blank">POOL STATS</a>
         </app-tag>
         <div style="width: 5px;"></div>
         <app-tag *ngIf="!depositsDisabled">
@@ -31,7 +31,7 @@
       </ng-container>
       <ng-container *ngIf="!activate && !isPending">
         <app-tag type="color" [active]="hover" [color]="+poolData.poolAPY > 0 ? '#28F4AE' : '#FF4954'">
-          <span style="color: inherit;">Joined <span *ngIf="poolData.poolAPY">{{+poolData.poolAPY > 0 ? '+' + (+poolData.poolAPY * 100 | number: '0.0-2') : '-' + (+poolData.poolAPY * 100 | number: '0.0-2')}}%</span></span>
+          <span style="color: inherit;">Joined</span>
         </app-tag>
       </ng-container>
     </div>

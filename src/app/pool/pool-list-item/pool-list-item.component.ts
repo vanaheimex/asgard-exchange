@@ -78,7 +78,7 @@ export class PoolListItemComponent implements OnChanges {
         }
       );
 
-      this.assetDepth = (new BigNumber(+this.poolData.assetDepth).div(10 ** 8).toNumber()) * +this.poolData.assetPriceUSD * this.currency.value
+      this.assetDepth = ((new BigNumber(+this.poolData.assetDepth).div(10 ** 8).toNumber()) * +this.poolData.assetPriceUSD + (new BigNumber(+this.poolData.runeDepth).div(10 ** 8).toNumber()) * +this.poolData.runePrice) * this.currency.value
 
       this.subs = [poolDetail$, pendingTx$]
   }
@@ -98,7 +98,7 @@ export class PoolListItemComponent implements OnChanges {
     if (this.poolData) {
       this.pooledRune = (new BigNumber(+this.poolData.volume24h).div(10 ** 8).toNumber()) * this.poolData?.runePrice * this.currency.value;
       console.log(this.pooledRune);
-      
+
       this.pooledAsset = this.assetDepth;
     
       if (this.activate) {

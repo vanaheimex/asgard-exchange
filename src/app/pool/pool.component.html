@@ -94,7 +94,12 @@
       </div>
       <div class="divider"></div>
       <div class="right-btn">
-        <a [ngClass]="{'disabled': !user || loading || userPoolError || depositsDisabled || (createablePools && createablePools.length > 0)}" [routerLink]="['/', 'create-pool']" class="next-btn graident-btn">
+        <a 
+          [ngClass]="{'disabled': !user || loading || userPoolError || depositsDisabled || (createablePools && createablePools.length == 0)}" 
+          [routerLink]="['/', 'create-pool']" 
+          [queryParams]="{pool: createablePools ? createablePools[0] : ''}" 
+          class="next-btn graident-btn"
+        >
           <span>Create a new pool</span>
         </a>
       </div>
