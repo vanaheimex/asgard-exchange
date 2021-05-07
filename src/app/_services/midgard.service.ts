@@ -112,4 +112,9 @@ export class MidgardService {
     );
   }
 
+  getPoolStat(): Observable<any> {
+    let requestBody = {"operationName":null,"variables":{},"query":"query {\n  __typename\n  pools {\n    __typename\n    asset\n    status\n    volume24h\n    poolAPY\n    price\n  }\n}"}
+    return this.http.post<any>(`${this.v2BasePath}`, requestBody);
+  }
+
 }

@@ -3,6 +3,7 @@ import { BehaviorSubject } from 'rxjs';
 import { Asset } from '../_classes/asset';
 
 type poolDetail = {
+  poolType?: 'member' | 'notMember',
   pooledRune?: number,
   pooledAsset?: number,
   pooledShare?: number,
@@ -34,8 +35,8 @@ export class PoolDetailService {
     return this.pooledDetails;
   }
 
-  setPooledDetails(pooledRune?: number, pooledAsset?: number, pooledShare?: number, pooledAssetTicker?: string, pooledAssetChain?: string) {
-    this.pooledDetails.next({pooledRune, pooledAsset, pooledShare , pooledAssetTicker, pooledAssetChain});
+  setPooledDetails(poolType?: 'member' | 'notMember', pooledRune?: number, pooledAsset?: number, pooledShare?: number, pooledAssetTicker?: string, pooledAssetChain?: string) {
+    this.pooledDetails.next({poolType, pooledRune, pooledAsset, pooledShare , pooledAssetTicker, pooledAssetChain});
   }
 
 }

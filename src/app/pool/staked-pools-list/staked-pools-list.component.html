@@ -2,10 +2,11 @@
   No deposited pools found
 </div> -->
 <div class="lists-wrapper">
-  <div class="flex lists pool-list" *ngIf="mappedPools && mappedPools.length > 0" [ngClass]="{'short short--pool': mappedPools && mappedPools.length > 5}">
-    <app-staked-pool-list-item *ngFor="let pool of mappedPools" [memberPoolData]="pool.memberData" [poolData]="pool.poolData" [depositsDisabled]="depositsDisabled" (click)="activePool = pool"></app-staked-pool-list-item>
+  <div class="flex lists pool-list" *ngIf="pools && pools.length > 0" [ngClass]="{'short short--pool': pools && pools.length > 5}">
+    <app-staked-pool-list-item *ngFor="let pool of mappedPools" [memberPoolData]="pool.memberData" [poolData]="pool.poolData" [currency]="currency" [depositsDisabled]="depositsDisabled" (click)="activePool = pool"></app-staked-pool-list-item>
+    <app-pool-list-item *ngFor="let pool of notMamberPools"  [poolData]="pool" [depositsDisabled]="depositsDisabled" [currency]="currency" (click)="activePool = pool"></app-pool-list-item>
   </div>
-  <div class="scroll-for-more" *ngIf="(mappedPools && mappedPools.length > 5)">
+  <div class="scroll-for-more" *ngIf="(pools && pools.length > 5)">
     <img style="padding: 19px 0;" src="assets/images/mouse-scroll.svg" alt="scroll for more">
   </div>
 </div>

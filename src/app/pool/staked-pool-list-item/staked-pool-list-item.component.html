@@ -1,21 +1,39 @@
 
-<div *ngIf="memberPoolData && asset" class="pool-list-item" [ngClass]="{'activate': activate, 'pending': isPending}" (click)="toggleExpanded()">
+<div *ngIf="memberPoolData && asset" class="pool-list-item" [ngClass]="{'activate': activate, 'pending': isPending}" (click)="toggleExpanded()" (mouseover)="hover=true" (mouseout)="hover=false">
 
   <div class="flex justify-between items-center">
-    <app-icon-ticker [iconPath]="asset.iconPath" [chain]="asset.chain" [ticker]="asset.ticker"></app-icon-ticker>
+    <div class="left-section">
+      <app-icon-ticker [iconPath]="asset.iconPath" [chain]="asset.chain" [ticker]="asset.ticker"></app-icon-ticker>
+      <span class="extra-info" *ngIf="poolData && !activate"> / {{+poolData.poolAPY * 100 | number: '0.0-2'}}% APY / {{assetDepth | shortNumber}} {{currency.code}} D</span>
+    </div>
 
     <span class="pending" *ngIf="isPending">(PENDING {{isPending.action}})</span>
     <!-- <button class="text-white" mat-icon-button>
       <mat-icon>expand_more</mat-icon>
     </button> -->
-    <div class="flex justify-between" *ngIf="activate && !isPending">
-      <app-tag *ngIf="!depositsDisabled">
-        <a [routerLink]="['/', 'deposit', asset.chain + '.' + asset.symbol]">Deposit</a>
-      </app-tag>
-      <div style="width: 5px;"></div>
-      <app-tag>
-        <a [routerLink]="['/', 'withdraw', asset.chain + '.' +  asset.symbol]">Withdraw</a>
-      </app-tag>
+    <div class="flex justify-between">
+      <ng-container *ngIf="activate && !isPending">
+        <app-tag *ngIf="!isTestnet">
+          <a [href]="'https://app.runeyield.info/dashboard?thor=' + memberPoolData.runeAddress" target="_blank">YIELD STATS</a>
+        </app-tag>
+        <div style="width: 5px;"></div>
+        <app-tag>
+          <a [href]="'https://thorchain.delphidigital.io/thorchain/' + (isTestnet ? 'testnet/' : 'chaosnet/')" target="_blank">POOL STATS</a>
+        </app-tag>
+        <div style="width: 5px;"></div>
+        <app-tag *ngIf="!depositsDisabled">
+          <a [routerLink]="['/', 'deposit', asset.chain + '.' + asset.symbol]">Deposit</a>
+        </app-tag>
+        <div style="width: 5px;"></div>
+        <app-tag>
+          <a [routerLink]="['/', 'withdraw', asset.chain + '.' +  asset.symbol]">Withdraw</a>
+        </app-tag>
+      </ng-container>
+      <ng-container *ngIf="!activate && !isPending">
+        <app-tag type="color" [active]="hover" [color]="+poolData.poolAPY > 0 ? '#28F4AE' : '#FF4954'">
+          <span style="color: inherit;">Joined</span>
+        </app-tag>
+      </ng-container>
     </div>
   </div>
 

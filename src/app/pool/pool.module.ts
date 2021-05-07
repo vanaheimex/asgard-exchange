@@ -12,10 +12,12 @@ import { BreadcrumbModule } from '../_components/breadcrumb/breadcrumb.module';
 import { RightOptionModule } from '../_components/right-option/right-option.module';
 import { NoticeModule } from '../_components/notice/notice.module';
 import { TagModule } from '../_components/tag/tag.module';
+import { PoolListItemComponent } from './pool-list-item/pool-list-item.component';
+import { ShortNumberPipe } from '../_pipes/short-number.pipe';
 
 
 @NgModule({
-  declarations: [PoolComponent, StakedPoolsListComponent, StakedPoolListItemComponent],
+  declarations: [PoolComponent, StakedPoolsListComponent, StakedPoolListItemComponent, PoolListItemComponent, ShortNumberPipe],
   imports: [
     CommonModule,
     MatButtonModule,

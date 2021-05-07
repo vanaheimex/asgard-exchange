@@ -1,0 +1,61 @@
+.pool-list-item {
+    float: left;
+    width: 100%;
+    border-radius: 3px;
+    padding: 10px 15px;
+    cursor: pointer;
+
+    .left-section {
+      display: flex;
+      align-items: center;
+  
+      .extra-info {
+        margin-left: 10px;
+        font-size: 20px;
+        color: var(--primary-grey-color);
+      }
+    }
+  
+    &.activate {
+      color: var(--primary-dark-color);
+      background: var(--primary-default);
+  
+      .pending {
+        color: var(--primary-dark-color);
+      }
+    }
+  
+    &.pending > div {
+      justify-content: initial;
+    }
+
+    &:hover {
+      color: var(--primary-dark-color);
+      background: var(--primary-default);
+  
+      .pending {
+        color: var(--primary-dark-color);
+      }
+
+      .extra-info {
+        color: #000 !important;
+      }
+      
+      .hover-actions {
+        display: block;
+      }
+    }
+  
+    .pending {
+      color: var(--primary-grey-color);
+      text-transform: uppercase;
+      font-size: 20px;
+      margin-left: 5px;
+    }
+  }
+  
+  .pool-detail-row {
+    margin: 6px 0;
+    font-weight: 500;
+  }
+  
