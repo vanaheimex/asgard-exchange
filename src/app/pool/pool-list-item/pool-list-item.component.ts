@@ -95,28 +95,16 @@ export class PoolListItemComponent implements OnChanges {
   }
 
   getPoolShare(): void {
-    // if (this.poolData) {
-
-    //   const unitData: UnitData = {
-    //     stakeUnits: baseAmount(this.memberPoolData.liquidityUnits),
-    //     totalUnits: baseAmount(this.poolData.units)
-    //   };
-
-    //   const poolData: PoolData = {
-    //     assetBalance: baseAmount(this.poolData.assetDepth),
-    //     runeBalance: baseAmount(this.poolData.runeDepth)
-    //   };
-
-    //   const poolShare = getPoolShare(unitData, poolData);
-
-    //   this.pooledRune = poolShare.rune.amount().div(10 ** 8).toNumber();
-    //   this.pooledAsset = poolShare.asset.amount().div(10 ** 8).toNumber();
-    //   this.poolShare = Number(this.memberPoolData.liquidityUnits) / Number(this.poolData.units);
-
-    //   if (this.activate) {
-    //     this.poolDetailService.setPooledDetails(this.pooledRune, this.pooledAsset, this.poolShare, this.asset.ticker, this.asset.chain);
-    //   }
-    // }
+    if (this.poolData) {
+      this.pooledRune = (new BigNumber(+this.poolData.volume24h).div(10 ** 8).toNumber()) * this.poolData?.runePrice * this.currency.value;
+      console.log(this.pooledRune);
+      
+      this.pooledAsset = this.assetDepth;
+    
+      if (this.activate) {
+        this.poolDetailService.setPooledDetails('notMember', this.pooledRune, this.pooledAsset, 0, this.asset.ticker, this.asset.chain);
+      }
+    }
 
   }
 

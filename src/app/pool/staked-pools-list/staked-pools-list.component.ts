@@ -14,6 +14,7 @@ export class StakedPoolsListComponent implements OnInit {
 
   activePool: PoolDTO;
 
+  @Input() runePrice: number;
   @Input() set pools(pools: PoolDTO[]) {
     this._pools = pools;
     this.mapPools();
@@ -70,16 +71,18 @@ export class StakedPoolsListComponent implements OnInit {
     if(this.pools && this.memberPools) {
       this.notMamberPools = [] as PoolDTO[];
       console.log(this.memberPools)
+      console.log(this.pools)
       this.pools.forEach(
         (pool) => {
           if (this.memberPools.find( (p) => p.pool === pool.asset )) {
             return;
           }
-          this.notMamberPools.push(pool)
+          this.notMamberPools.push({...pool, runePrice: this.runePrice})
         }
       )
 
-      this.notMamberPools.sort((a,b) => (a.asset > b.asset) ? 1 : ((b.asset > a.asset) ? -1 : 0))
+      this.notMamberPools.sort((a,b) => (a.asset > b.asset) ? 1 : ((b.asset > a.asset) ? -1 : 0));
+
     }
 
   }

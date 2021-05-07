@@ -132,7 +132,7 @@ export class StakedPoolListItemComponent implements OnChanges {
       this.poolShare = Number(this.memberPoolData.liquidityUnits) / Number(this.poolData.units);
 
       if (this.activate) {
-        this.poolDetailService.setPooledDetails(this.pooledRune, this.pooledAsset, this.poolShare, this.asset.ticker, this.asset.chain);
+        this.poolDetailService.setPooledDetails('member', this.pooledRune, this.pooledAsset, this.poolShare, this.asset.ticker, this.asset.chain);
       }
     }
 

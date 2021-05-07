@@ -32,14 +32,14 @@
       <!-- <button *ngIf="depositsDisabled" class="main-action-btn w-full" mat-flat-button color="primary" disabled>Pool Cap > 90%</button> -->
 
 
-      <app-staked-pools-list *ngIf="user && pools && memberPools && !userPoolError" [pools]="pools" [memberPools]="memberPools"></app-staked-pools-list>
+      <app-staked-pools-list *ngIf="user && pools && memberPools && !userPoolError" [pools]="pools" [runePrice]="runePrice" [memberPools]="memberPools"></app-staked-pools-list>
       <div *ngIf="userPoolError || !user || !pools" class="lists flex justify-center items-center" style="height: 262px;">
         <span style="color: var(--primary-grey-color); font-size: 22px;" *ngIf="(!memberPools || !pools) && !userPoolError">FETCHING POOLS</span>
         <span style="color: var(--primary-grey-color); font-size: 22px;" *ngIf="!user">PLEASE CONNECT YOUR WALLET</span>
         <span style="color: var(--primary-grey-color); font-size: 22px;" *ngIf="userPoolError">ERROR OCCURRED</span>
       </div>
 
-      <div class="swap-details">
+      <div class="swap-details" *ngIf="poolType !== 'notMember'">
         <div class="flex justify-between">
           <span class="tx-detail-label">Pooled RUNE:</span>
           <span *ngIf="pooledRune">{{pooledRune | number:"0.0-6"}}</span>
@@ -51,11 +51,11 @@
           <span *ngIf="!pooledAsset">...</span>
         </div>
         <div class="flex justify-between">
-          <span class="tx-detail-label">Pooled Share:</span>
+          <span class="tx-detail-label">Pool Share:</span>
           <span *ngIf="pooledShare">{{pooledShare * 100 | number:"0.0-6" }}%</span>
           <span *ngIf="!pooledShare">...</span>
         </div>
-        <div class="flex justify-between">
+        <!-- <div class="flex justify-between">
           <span class="tx-detail-label">Feeling Adventurous:</span>
           <span class="pool"
             *ngIf="createablePools && createablePools.length > 0 && !depositsDisabled, else noPool"
@@ -63,17 +63,23 @@
             [queryParams]="{pool: createablePools[0]}">
             Create a new pool
           </span>
-          <!-- <span class="text-gray-600 ml-2 text-xs" *ngIf="createablePools && createablePools.length > 0"> | </span>
-          <a
-            [routerLink]="['/', 'deposit-sym-recovery']"
-            class="pool"
-          >
-            Pending Deposits
-          </a> -->
           <ng-template #noPool>
             <span>...</span>
           </ng-template>
-        </div>
+        </div> -->
+      </div>
+    </div>
+
+    <div class="swap-details" *ngIf="poolType === 'notMember'">
+      <div class="flex justify-between">
+        <span class="tx-detail-label">Average 24H Volume:</span>
+        <span *ngIf="pooledRune !== undefined && pooledRune !== null">{{pooledRune | shortNumber}} {{currency.code}}</span>
+        <span *ngIf="pooledRune === undefined || pooledRune === null">...</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="tx-detail-label">Depth:</span>
+        <span *ngIf="pooledAsset">{{pooledAsset | shortNumber}} {{currency.code}}</span>
+        <span *ngIf="!pooledAsset">...</span>
       </div>
     </div>
 
@@ -88,8 +94,8 @@
       </div>
       <div class="divider"></div>
       <div class="right-btn">
-        <a [ngClass]="{'disabled': !user || loading || userPoolError || depositsDisabled}" [routerLink]="['/', 'deposit', 'BTC.BTC']" class="next-btn graident-btn">
-          <span>Add liquidity</span>
+        <a [ngClass]="{'disabled': !user || loading || userPoolError || depositsDisabled || (createablePools && createablePools.length > 0)}" [routerLink]="['/', 'create-pool']" class="next-btn graident-btn">
+          <span>Create a new pool</span>
         </a>
       </div>
     </div>

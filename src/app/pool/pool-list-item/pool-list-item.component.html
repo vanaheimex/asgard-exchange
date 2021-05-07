@@ -9,7 +9,7 @@
       <span class="pending" *ngIf="">(STAGED {{isPending.action}})</span>
       <div class="flex justify-between" *ngIf="activate && !isPending">
         <app-tag>
-          <a [href]="'https://viewblock.io/thorchain/pool/' + poolData.asset + (isTestnet ? '?network=testnet' : '')" target="_blank">POOL STATS</a>
+          <a [href]="'https://thorchain.delphidigital.io/thorchain/' + isTestnet ? 'testnet/' : 'chaosnet/'" target="_blank">POOL STATS</a>
         </app-tag>
         <div style="width: 5px;"></div>
         <app-tag *ngIf="!depositsDisabled">

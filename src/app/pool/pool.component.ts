@@ -10,6 +10,9 @@ import { TransactionStatusService, Tx } from '../_services/transaction-status.se
 import { PoolDetailService } from '../_services/pool-detail.service';
 import { Router } from '@angular/router';
 import { isNonNativeRuneToken } from '../_classes/asset';
+import { ThorchainPricesService } from '../_services/thorchain-prices.service';
+import { CurrencyService } from '../_services/currency.service';
+import { Currency } from '../_components/account-settings/currency-converter/currency-converter.component';
 
 @Component({
   selector: 'app-pool',
@@ -26,6 +29,9 @@ export class PoolComponent implements OnInit, OnDestroy {
   balances: Balances;
   createablePools: string[];
   memberPools: MemberPool[];
+  poolType: 'member' | 'notMember';
+  runePrice: number;
+  currency: Currency;
   pooledRune: number;
   pooledAsset: number;
   pooledShare: number;
@@ -38,7 +44,7 @@ export class PoolComponent implements OnInit, OnDestroy {
   depositsDisabled: boolean;
   txStreamInitSuccess: boolean;
 
-  constructor( private userService: UserService, private midgardService: MidgardService, private txStatusService: TransactionStatusService, private poolDetailService: PoolDetailService, private router: Router ) {
+  constructor( private userService: UserService, private midgardService: MidgardService, private txStatusService: TransactionStatusService, private poolDetailService: PoolDetailService, private router: Router, private thorchainPricesService: ThorchainPricesService, private currencyService: CurrencyService ) {
 
     this.subs = [];
     this.memberPools = [];
@@ -78,6 +84,8 @@ export class PoolComponent implements OnInit, OnDestroy {
 
     const poolDeatil$ = this.poolDetailService.pooledDetails$.subscribe(
       (poolDetails) => {
+        console.log(poolDetails.pooledRune)
+        this.poolType = poolDetails.poolType;
         this.pooledRune = poolDetails.pooledRune;
         this.pooledAsset = poolDetails.pooledAsset;
         this.pooledShare = poolDetails.pooledShare;
@@ -99,7 +107,13 @@ export class PoolComponent implements OnInit, OnDestroy {
       }
     )
 
-    this.subs.push(user$, balances$, pendingTx$, poolDeatil$, activePool$);
+    const cur$ = this.currencyService.cur$.subscribe(
+      (cur) => {
+        this.currency = cur;
+      }
+    )
+
+    this.subs.push(user$, balances$, pendingTx$, poolDeatil$, activePool$, cur$);
 
   }
 
@@ -137,6 +151,8 @@ export class PoolComponent implements OnInit, OnDestroy {
           }
         )
         this.pools = res;
+        let availablePools = this.pools.filter( (pool) => pool.status === 'available' );
+        this.runePrice = this.thorchainPricesService.estimateRunePrice(availablePools);
         this.checkCreateableMarkets();
       }
     );

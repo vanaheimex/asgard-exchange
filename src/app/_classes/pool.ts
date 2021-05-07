@@ -9,5 +9,6 @@ export interface PoolDTO {
   poolAPY: string;
   status: string;
   units: string;
+  runePrice?: number;
 }
 
