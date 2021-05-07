@@ -60,7 +60,7 @@ export class StakedPoolsListComponent implements OnInit {
     if (this.pools && this.memberPools) {
       this.mappedPools = this.memberPools.map( (memberPool) => {
         return {
-          poolData: this.pools.find( (pool) => pool.asset === memberPool.pool ),
+          poolData: {...this.pools.find( (pool) => pool.asset === memberPool.pool ), runePrice: this.runePrice},
           memberData: memberPool
         };
       });
