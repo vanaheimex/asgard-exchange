@@ -80,7 +80,7 @@
           </div>
 
           <div *ngIf="swapData.networkFeeInSource" class="flex justify-between">
-            <span class="tx-detail-label">Total Fee</span>
+            <span class="tx-detail-label">Total Fee:</span>
             <span>{{swapData.networkFeeInSource | number:"1.0-8"}} {{swapData.sourceAsset.asset.chain}}.{{swapData.sourceAsset.asset.ticker}}<span *ngIf="swapData.sourceAsset.assetPriceUSD" class="mono" style="margin-left: 5px;">({{swapData.sourceAsset.assetPriceUSD * currency.value * swapData.networkFeeInSource | number: '0.2-2'}} {{currency.code}})</span></span>
           </div> 
 

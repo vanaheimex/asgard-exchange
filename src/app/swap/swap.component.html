@@ -75,7 +75,7 @@
           </div> -->
 
           <div *ngIf="selectedSourceAsset" class="flex justify-between">
-            <span class="tx-detail-label">Network Fee</span>
+            <span class="tx-detail-label">Network Fee:</span>
             <span *ngIf="networkFeeInSource">{{networkFeeInSource | number:"1.0-8"}} {{selectedSourceAsset.chain}}.{{selectedSourceAsset.ticker}}<span *ngIf="sourceAssetPrice" class="mono" style="margin-left: 5px;">({{sourceAssetPrice * currency.value * networkFeeInSource | number: '0.2-2'}} {{currency.code}})</span></span>
             <span *ngIf="!networkFeeInSource">...</span>
           </div>
