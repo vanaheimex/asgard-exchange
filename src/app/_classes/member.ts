@@ -7,6 +7,7 @@ export interface MemberPool {
   liquidityUnits: string;
   runeAdded: string;
   runeWithdrawn: string;
+  runeAddress: string;
 }
 
 export interface MemberDTO {

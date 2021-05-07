@@ -131,6 +131,11 @@ export class PoolComponent implements OnInit, OnDestroy {
   getPools() {
     this.midgardService.getPools().subscribe(
       (res) => {
+        this.midgardService.getPoolStat().subscribe(
+          (stats) => {
+            console.log(stats.data.pools)
+          }
+        )
         this.pools = res;
         this.checkCreateableMarkets();
       }

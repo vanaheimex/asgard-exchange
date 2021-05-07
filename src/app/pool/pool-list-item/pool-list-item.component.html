@@ -1,0 +1,18 @@
+<div *ngIf="asset" class="pool-list-item" [ngClass]="{'activate': activate, 'pending': isPending}" (click)="toggleExpanded()">
+
+    <div class="flex justify-between items-center">
+      <app-icon-ticker [iconPath]="asset.iconPath" [chain]="asset.chain" [ticker]="asset.ticker"></app-icon-ticker>
+  
+      <span class="pending" *ngIf="">(STAGED {{isPending.action}})</span>
+      <div class="flex justify-between" *ngIf="activate && !isPending">
+        <app-tag>
+          <a [href]="'https://viewblock.io/thorchain/pool/' + poolData.asset + (isTestnet ? '?network=testnet' : '')" target="_blank">POOL STATS</a>
+        </app-tag>
+        <div style="width: 5px;"></div>
+        <app-tag *ngIf="!depositsDisabled">
+          <a [routerLink]="['/', 'deposit', asset.chain + '.' + asset.symbol]">Deposit</a>
+        </app-tag>
+      </div>
+    </div>
+  
+</div>

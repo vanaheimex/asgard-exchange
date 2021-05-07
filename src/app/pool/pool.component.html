@@ -33,9 +33,8 @@
 
 
       <app-staked-pools-list *ngIf="user && pools && memberPools && !userPoolError" [pools]="pools" [memberPools]="memberPools"></app-staked-pools-list>
-      <div *ngIf="userPoolError || !user || !pools || (memberPools && memberPools.length < 1)" class="lists flex justify-center items-center" style="height: 262px;">
-        <span style="color: var(--primary-grey-color); font-size: 22px;" *ngIf="memberPools && !userPoolError">NO POOLS</span>
-        <span style="color: var(--primary-grey-color); font-size: 22px;" *ngIf="!memberPools && !pools && !userPoolError">FETCHING POOLS</span>
+      <div *ngIf="userPoolError || !user || !pools" class="lists flex justify-center items-center" style="height: 262px;">
+        <span style="color: var(--primary-grey-color); font-size: 22px;" *ngIf="(!memberPools || !pools) && !userPoolError">FETCHING POOLS</span>
         <span style="color: var(--primary-grey-color); font-size: 22px;" *ngIf="!user">PLEASE CONNECT YOUR WALLET</span>
         <span style="color: var(--primary-grey-color); font-size: 22px;" *ngIf="userPoolError">ERROR OCCURRED</span>
       </div>

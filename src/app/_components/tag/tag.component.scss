@@ -38,6 +38,14 @@
     }
   }
 
+  &.color {
+    background: var(--primary-default);
+
+    .tag-field {
+      color: var(--primary-dark-color);
+    }
+  }
+
   &.dark {
     background: var(--primary-dark-color);
 

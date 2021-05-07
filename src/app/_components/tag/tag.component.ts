@@ -8,6 +8,8 @@ import { Component, Input, OnInit } from '@angular/core';
 export class TagComponent implements OnInit {
 
   @Input() type: 'dark' | 'green' | 'outline' | 'outline-green' = 'outline';
+  @Input() color: string;
+  @Input() active: boolean;
 
   constructor() { }
 

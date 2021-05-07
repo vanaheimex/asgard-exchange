@@ -94,6 +94,7 @@ import { ReconnectXDEFIDialogComponent } from './_components/reconnect-xdefi-dia
 import { KeystoreCreateStorePhraseComponent } from './_components/connect/keystore-create-store-phrase/keystore-create-store-phrase.component';
 import { from } from 'rxjs';
 import { CurrencyConverterComponent } from './_components/account-settings/currency-converter/currency-converter.component';
+import { ShortNumberPipe } from './_pipes/short-number.pipe';
 
 
 @NgModule({
