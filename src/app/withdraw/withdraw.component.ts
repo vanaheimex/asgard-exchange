@@ -178,11 +178,11 @@ export class WithdrawComponent implements OnInit {
 
       const poolShare = getPoolShare(unitData, this.assetPoolData);
 
-      const runeAmountAfterFee = poolShare.rune.amount().div(10 ** 8 ).multipliedBy(this.withdrawPercent / 100).toNumber();
+      const runeAmountAfterFee = poolShare.rune.amount().div(10 ** 8 ).multipliedBy(this.withdrawPercent / 100).minus(this.networkFee).toNumber();
       this.removeRuneAmount = (runeAmountAfterFee <= 0) ? 0 : runeAmountAfterFee;
 
       const assetAmountAfterFee = poolShare.asset.amount()
-        .div(10 ** 8 ).multipliedBy(this.withdrawPercent / 100).toNumber();
+        .div(10 ** 8 ).multipliedBy(this.withdrawPercent / 100).minus(this.runeFee).toNumber();
       this.removeAssetAmount = (assetAmountAfterFee <= 0) ? 0 : assetAmountAfterFee;
 
     }

@@ -30,8 +30,8 @@
         </app-tag>
       </ng-container>
       <ng-container *ngIf="!activate && !isPending">
-        <app-tag type="color" [active]="hover" [color]="+poolData.poolAPY > 0 ? '#28F4AE' : '#FF4954'">
-          <span style="color: inherit;">Joined</span>
+        <app-tag type="color" [active]="hover" [color]="gainLoss >= 0 ? '#28F4AE' : '#FF4954'">
+          <span style="color: inherit;">Joined <span *ngIf="gainLoss && !isTestnet" style="color: inherit;">{{gainLoss | number: '0.0-2'}}</span></span>
         </app-tag>
       </ng-container>
     </div>

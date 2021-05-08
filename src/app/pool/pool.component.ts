@@ -84,7 +84,6 @@ export class PoolComponent implements OnInit, OnDestroy {
 
     const poolDeatil$ = this.poolDetailService.pooledDetails$.subscribe(
       (poolDetails) => {
-        console.log(poolDetails.pooledRune)
         this.poolType = poolDetails.poolType;
         this.pooledRune = poolDetails.pooledRune;
         this.pooledAsset = poolDetails.pooledAsset;
@@ -145,11 +144,6 @@ export class PoolComponent implements OnInit, OnDestroy {
   getPools() {
     this.midgardService.getPools().subscribe(
       (res) => {
-        this.midgardService.getPoolStat().subscribe(
-          (stats) => {
-            console.log(stats.data.pools)
-          }
-        )
         this.pools = res;
         let availablePools = this.pools.filter( (pool) => pool.status === 'available' );
         this.runePrice = this.thorchainPricesService.estimateRunePrice(availablePools);
