@@ -37,11 +37,6 @@ const routes: Routes = [
     path: 'withdraw',
     loadChildren: () => import('./withdraw/withdraw.module').then(m => m.WithdrawModule),
     canActivate: [HasUserGuard],
-  },
-  {
-    path: '**',
-    redirectTo: 'swap',
-    pathMatch: 'full'
   }
 ];
 

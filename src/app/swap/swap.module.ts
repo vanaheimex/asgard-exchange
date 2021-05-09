@@ -81,8 +81,20 @@ import { XDEFIConnectComponent } from '../_components/connect/xdefi-connect/xdef
     PhraseWordsListModule,
     RouterModule.forChild([
       {
+        path: ':sourceAsset/:targetAsset',
+        component: SwapComponent
+      },
+      {
+        path: ':sourceAsset',
+        component: SwapComponent
+      },
+      {
         path: '',
         component: SwapComponent
+      },
+      {
+        path: '',
+        redirectTo: '/swap'
       }
     ])
   ],
