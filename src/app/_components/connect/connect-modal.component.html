@@ -45,17 +45,32 @@
           <span>Ledger</span>
         </button> -->
         <button class="connect-option" (click)="createKeystore()">
-          <span>Create New Keystore</span>
+          <div class="flex item items-center">
+            <div class="add-icon">
+              <img [src]="isTestnet ?  '/assets/icons/plus-yellow.svg' : '/assets/icons/plus-green.svg'" alt="add icon">
+            </div>
+            <span class="item-text">Create New Keystore</span>
+          </div>
         </button>
 
         <button class="connect-option" (click)="connectKeystore()">
-          <span>Connect To Existing Keystore</span>
+          <div class="flex item items-center">
+            <div class="add-icon">
+              <img [src]="isTestnet ?  '/assets/icons/folder-icon-testnet.svg' : '/assets/icons/folder-icon.svg'" alt="folder icon">
+            </div>
+            <span class="item-text">Connect To Existing Keystore</span>
+          </div>
         </button>
         
         <button class="connect-option focus:outline-none justify-between" (click)="connectXDEFI()">
-          <span *ngIf="isXDEFIConnected">Connect with XDEFI</span>
-          <span *ngIf="!isXDEFIConnected">Install XDEFI in Chrome/Brave</span>
-          <!-- <img width="24px" src="https://www.xdefi.io/favicon.svg" lass="connect-option__logo"/> -->
+          <div class="flex item items-center">
+            <div class="add-icon">
+              <img [src]="isTestnet ?  '/assets/icons/xdefi-icon-testnet.svg' : '/assets/icons/xdefi-icon.svg'" alt="xdefi icon">
+            </div>
+            <span class="item-text" *ngIf="isXDEFIConnected">Connect with XDEFI</span>
+            <span class="item-text" *ngIf="!isXDEFIConnected">Install XDEFI in Chrome/Brave</span>
+          </div>
+          
         </button>
 
         <!-- close dialog -->

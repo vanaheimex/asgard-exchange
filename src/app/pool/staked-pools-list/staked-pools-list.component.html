@@ -3,7 +3,7 @@
 </div> -->
 <div class="lists-wrapper">
   <div class="flex lists pool-list" *ngIf="pools && pools.length > 0" [ngClass]="{'short short--pool': pools && pools.length > 5}">
-    <app-staked-pool-list-item *ngFor="let pool of mappedPools" [memberPoolData]="pool.memberData" [poolData]="pool.poolData" [currency]="currency" [depositsDisabled]="depositsDisabled" (click)="activePool = pool"></app-staked-pool-list-item>
+    <app-staked-pool-list-item *ngFor="let pool of mappedPools" [memberPoolData]="pool.memberData" [poolData]="pool.poolData" [runeYieldPool]="runeYieldPools" [currency]="currency" [depositsDisabled]="depositsDisabled" (click)="activePool = pool"></app-staked-pool-list-item>
     <app-pool-list-item *ngFor="let pool of notMamberPools"  [poolData]="pool" [depositsDisabled]="depositsDisabled" [currency]="currency" (click)="activePool = pool"></app-pool-list-item>
   </div>
   <div class="scroll-for-more" *ngIf="(pools && pools.length > 5)">

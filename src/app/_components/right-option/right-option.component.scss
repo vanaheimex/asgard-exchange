@@ -49,6 +49,7 @@ $default-font-size: 14px;
       border: $default-border solid #0d1b23;
       color: #474E5D;
       cursor: initial;
+      pointer-events: none;
     }
 
     &.active.disable {

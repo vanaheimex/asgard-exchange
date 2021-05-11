@@ -1232,6 +1232,25 @@ button:focus, input:focus {
   top: auto !important;
 }
 
+.add-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 24px;
+  height: 24px;
+
+  background-color: var(--primary-dark-color);
+  border-radius: 50%;
+
+  margin-right: 10px;
+
+  svg {
+    width: 14px;
+    height: 14px;
+    fill: var(--primary-default);
+  }
+}
 // .swap-details {
 //   padding: 6px 1rem 0;
 //   font-weight: 500;

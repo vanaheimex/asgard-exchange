@@ -41,19 +41,17 @@
         <span>1 {{data.asset.ticker}} = {{data.runeBasePrice | number:"1.2-4"}} {{data.rune.ticker}}</span>
       </div>
 
-      <div class="flex justify-between">
-        <span class="tx-detail-label">TX Fees:</span>
-        <!-- TODO: calculate this -->
-        <span>
-          <span>{{data.runeFee}} RUNE</span><span *ngIf="data.runeFee && data.networkFee"> + </span><span *ngIf="data.networkFee">{{data.networkFee | number:"1.0-8"}} {{data.asset.chain}}.{{data.asset.ticker}}</span>
-        </span>
-        <span *ngI="!data.runeFee && !data.networkFee">...</span>
+      <div *ngIf="data.withdrawType !== 'ASYM_ASSET'" class="flex justify-between">
+        <span class="tx-detail-label">Fees:</span>
+        <span *ngIf="data.runeFee">{{data.runeFee}} RUNE</span>
+        <span *ngIf="!data.runeFee">...</span>
       </div>
 
-      <!-- <div class="flex justify-between">
-        <span class="tx-detail-label">Disclaimer:</span>
-        <span>Output is estimated</span>
-      </div> -->
+      <div *ngIf="data.withdrawType === 'ASYM_ASSET'" class="flex justify-between items-center">
+        <span class="tx-detail-label">Fees:</span>
+        <span *ngIf="data.networkFee">{{data.networkFee | number:"1.0-4"}} {{data.asset.ticker}}</span>
+        <span *ngIf="!data.networkFee">...</span>
+      </div>
 
       <div class="flex justify-between">
         <div class="tx-detail-label">

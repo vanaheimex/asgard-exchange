@@ -4,6 +4,8 @@ import { MemberPool } from 'src/app/_classes/member';
 import { PoolDTO } from 'src/app/_classes/pool';
 import { Currency } from 'src/app/_components/account-settings/currency-converter/currency-converter.component';
 import { CurrencyService } from 'src/app/_services/currency.service';
+import { RuneYieldPoolResponse, RuneYieldService } from 'src/app/_services/rune-yield.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-staked-pools-list',
@@ -42,8 +44,9 @@ export class StakedPoolsListComponent implements OnInit {
   notMamberPools: PoolDTO[];
   currency: Currency;
   subs: Subscription[];
+  runeYieldPools: RuneYieldPoolResponse[];
 
-  constructor(private currencyService: CurrencyService) { 
+  constructor(private currencyService: CurrencyService, private runeYieldService: RuneYieldService) { 
     const cur$ = this.currencyService.cur$.subscribe(
       (cur) => {
         this.currency = cur;
@@ -70,8 +73,6 @@ export class StakedPoolsListComponent implements OnInit {
 
     if(this.pools && this.memberPools) {
       this.notMamberPools = [] as PoolDTO[];
-      console.log(this.memberPools)
-      console.log(this.pools)
       this.pools.forEach(
         (pool) => {
           if (this.memberPools.find( (p) => p.pool === pool.asset )) {
@@ -83,6 +84,14 @@ export class StakedPoolsListComponent implements OnInit {
 
       this.notMamberPools.sort((a,b) => (a.asset > b.asset) ? 1 : ((b.asset > a.asset) ? -1 : 0));
 
+      if (environment.network !== 'testnet') {
+        this.runeYieldService.getCurrentValueOfPool(this.memberPools[0].runeAddress).subscribe(
+          (pools) => {
+            this.runeYieldPools = pools;
+          }
+        );
+      }
+      
     }
 
   }

@@ -215,8 +215,8 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
           const hash = await binanceClient.transfer({
             asset: this.asset.asset,
             amount: assetToBase(assetAmount(this.amount)),
-            memo: this.memo,
             recipient: this.recipientAddress,
+            memo: this.memo ?? ''
           });
           this.hash = hash;
           this.pushTxStatus(hash, this.asset.asset, false);
@@ -341,6 +341,8 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
           decimal = decimals.toNumber();
         }
 
+        const gasPrice = baseAmount(ethers.utils.parseUnits(matchingAddress.gas_rate, 'gwei').toString(), ETH_DECIMAL);
+
         try {
           const hash = await ethClient.transfer({
             asset: {
@@ -350,6 +352,7 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
             },
             amount: assetToBase(assetAmount(this.amount, decimal)),
             recipient: this.recipientAddress,
+            gasPrice
           });
           this.hash = hash.substr(2);
           this.pushTxStatus(hash, this.asset.asset, false);

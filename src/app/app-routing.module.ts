@@ -16,7 +16,6 @@ const routes: Routes = [
   {
     path: 'pool',
     loadChildren: () => import('./pool/pool.module').then(m => m.PoolModule),
-    canActivate: [HasUserGuard],
   },
   {
     path: 'create-pool',
@@ -26,7 +25,6 @@ const routes: Routes = [
   {
     path: 'deposit',
     loadChildren: () => import('./deposit/deposit.module').then(m => m.DepositModule),
-    canActivate: [HasUserGuard],
   },
   {
     path: 'deposit-sym-recovery',
@@ -37,11 +35,6 @@ const routes: Routes = [
     path: 'withdraw',
     loadChildren: () => import('./withdraw/withdraw.module').then(m => m.WithdrawModule),
     canActivate: [HasUserGuard],
-  },
-  {
-    path: '**',
-    redirectTo: 'swap',
-    pathMatch: 'full'
   }
 ];
 

@@ -68,8 +68,35 @@
             <div class="usd-val" *ngIf="usdValue"><span class="mono">~{{usdValue * currency.value | number:"0.2-3"}}</span> {{currency.code}}</div>
           </div>
         </div>
-        <div class="tx-history">
-          <span>TRANSACTION LIST <br /> COMING SOON!</span>
+        <div class="tx-history lists-wrapper" style="height: 202px;">
+          <div *ngIf="!txs" style="justify-content: center; display: flex; align-items: center; height: 100%;">
+            <span style="color: var(--primary-grey-color); font-size: 18px">LOADING</span>
+          </div>
+          <div *ngIf="txs && txs.length === 0" style="justify-content: center; display: flex; align-items: center; height: 100%;">
+            <span style="color: var(--primary-grey-color); font-size: 18px">NO TRANSACTIONS</span>
+          </div>
+          <div class="wallets" *ngIf="txs && txs.length > 0" [ngClass]="{'short': txs && txs.length > 3}" style="height: 157px;">
+            <div class="w-address" *ngFor="let tx of txs; let i = index" (click)="activeIndex = i" [ngClass]="{'active': i == activeIndex}">
+              <div class="icon-addr flex-grow flex-shrink-0">
+                <!-- <div class="asset-icon-container">
+                  <img class="asset-icon"
+                    [src]="getIconPath(tx.asset)" />
+                </div> -->
+                <label style="text-transform: uppercase;">{{tx.date | date: 'dd/MM/yy'}}</label>
+              </div>
+              <div *ngIf="i !== activeIndex" class="addr" style="min-width: initial; margin-left: 0; overflow: hidden;">
+                <span>{{tx.date | date: 'hh:mm a'}}</span>
+              </div>
+              <div *ngIf="i === activeIndex" class="addr" style="min-width: initial; margin-left: 0; overflow: hidden;">
+                <app-tag *ngIf="tx.hash" type="dark">
+                  <a style="text-decoration: none; color: #fff;" target="_blank" [href]="getExplorerUrl(tx.hash)">Explorer</a>
+                </app-tag>
+              </div>
+            </div>
+          </div>
+          <div class="scroll-for-more" style="height: 45px;" *ngIf="(txs && txs.length > 3)">
+            <img style="padding:12px 0;" src="assets/images/mouse-scroll.svg" alt="scroll for more">
+          </div>
         </div>
       </div>
 

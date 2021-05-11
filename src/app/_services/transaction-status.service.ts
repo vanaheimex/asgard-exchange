@@ -42,7 +42,8 @@ export interface Tx {
   status: TxStatus;
   action: TxActions;
   isThorchainTx: boolean;
-
+  
+  date?: Date;
   outbound?: OutboundTx;
 
   /**
@@ -215,7 +216,7 @@ export class TransactionStatusService {
         catchError(error => of(error))
       ).subscribe( async (res: ethers.providers.TransactionResponse) => {
 
-        if (res.confirmations > 0) {
+        if (res && res.confirmations > 0) {
           this.ethContractApprovalSource.next(txHash);
           this.killTxPolling[txHash].next();
         }

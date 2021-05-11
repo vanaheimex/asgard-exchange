@@ -13,7 +13,7 @@
       <div *ngIf="listProviders" class="grid grid-cols-3" style="margin: 0 -5px;">
         <app-notice *ngFor="let providerInfo of listProviders; let i = index" style="margin: 5px;" [isTag]="false" [isMono]="true" [isGray]="true">
           <div class="notice-check" text>
-            <img *ngIf="providerInfo.enabled" src="/assets/icons/checkmark.svg" alt="checkmark">
+            <img *ngIf="providerInfo.enabled" [src]="isTestnet ? '/assets/icons/checkmark-tesnet.svg' : '/assets/icons/checkmark.svg'" alt="checkmark">
             <div *ngIf="!providerInfo.enabled" class="not-checked"></div>
             <span>{{ providerInfo.title.split(" ")[0] }}</span>
           </div>

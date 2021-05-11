@@ -119,7 +119,8 @@ export class PendingTxsModalComponent implements OnInit, OnDestroy {
       let outbound = undefined;
       let status = this.getStatus(transaction.status);
       let action = this.getAction(transaction.type);
-
+      let date = new Date(+transaction.date / 1000000);
+      console.log(date);
 
       if (transaction.out.length > 0 && transaction.type == 'swap') {
         const outboundAsset = new Asset(transaction.out[0].coins[0].asset);
@@ -142,6 +143,7 @@ export class PendingTxsModalComponent implements OnInit, OnDestroy {
           ticker: inboundAsset.ticker,
           status,
           action,
+          date,
           isThorchainTx: inboundAsset.chain === 'THOR' ? true : false,
           symbol: inboundAsset.symbol,
           outbound

@@ -27,7 +27,6 @@ export class PoolListItemComponent implements OnChanges {
    * Pool Data
    */
   @Input() set poolData(data: PoolDTO) {
-    console.log(data)
     this._poolData = data;
     this.setAsset();
   }
@@ -97,7 +96,6 @@ export class PoolListItemComponent implements OnChanges {
   getPoolShare(): void {
     if (this.poolData) {
       this.pooledRune = (new BigNumber(+this.poolData.volume24h).div(10 ** 8).toNumber()) * this.poolData?.runePrice * this.currency.value;
-      console.log(this.pooledRune);
 
       this.pooledAsset = this.assetDepth;
     

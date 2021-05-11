@@ -3,6 +3,7 @@ import { MainViewsEnum, OverlaysService } from 'src/app/_services/overlays.servi
 // import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UserService } from 'src/app/_services/user.service';
 import { XDEFIService } from 'src/app/_services/xdefi.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-reconnect-xdefi-dialog',
@@ -14,13 +15,16 @@ export class ReconnectXDEFIDialogComponent implements OnInit {
   connectingError: boolean;
   listProviders: typeof XDEFIService.listProvider;
   isValidNetwork: boolean;
+  isTestnet: boolean;
   constructor(
     // @Inject(MAT_DIALOG_DATA) public data,
     // private dialogRef: MatDialogRef<ReconnectXDEFIDialogComponent>,
     private userService: UserService,
     private xdefiService: XDEFIService,
     private overlaysService: OverlaysService
-  ) {}
+  ) {
+    this.isTestnet = environment.network === 'testnet';
+  }
 
   ngOnInit(): void {
     setTimeout(() => {

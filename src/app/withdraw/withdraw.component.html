@@ -5,6 +5,22 @@
         <app-breadcrumb [path]="[{name: 'vanaheimex', call: 'swap'}, {name: 'Pools', call: 'pool'}, {name: 'Withdraw', disable: true}]" [isError]="isError" [message]="mainButtonText()" (funcCaller)="goToNav($event)"></app-breadcrumb>
       </nav>
 
+      <!-- <div class="px-4 h-12 flex items-center">
+        <div *ngIf="withdrawOptions.sym && asset">
+          <button (click)="setSelectedWithdrawOption('SYM')" class="mr-2 text-sm" [ngClass]="{'underline': withdrawType === 'SYM'}">{{asset.ticker}} + RUNE</button>
+          <span *ngIf="withdrawOptions.asymAsset || withdrawOptions.asymRune" class="text-xs text-gray-500 mr-2">/</span>
+        </div>
+  
+        <div *ngIf="withdrawOptions.asymAsset && asset">
+          <button (click)="setSelectedWithdrawOption('ASYM_ASSET')" class="mr-2 text-sm" [ngClass]="{'underline': withdrawType === 'ASYM_ASSET'}">{{asset.ticker}}</button>
+          <span *ngIf="withdrawOptions.asymRune" class="text-xs text-gray-500 mr-2">/</span>
+        </div>
+  
+        <div>
+          <button (click)="setSelectedWithdrawOption('ASYM_RUNE')" *ngIf="withdrawOptions.asymRune" class="text-sm" [ngClass]="{'underline': withdrawType === 'ASYM_RUNE'}">RUNE</button>
+        </div>
+      </div> -->
+
       <div class="percent-container">
         <span class="percent-label">Percentage</span>
         <span class="unstake-percent">{{withdrawPercent}}%</span>
@@ -24,13 +40,13 @@
 
       <!-- <div *ngIf="asset" class="unstake-calc flex justify-between">
         <span *ngIf="removeAssetAmount">{{removeAssetAmount | number:"0.0-6"}}</span>
-        <span *ngIf="!removeAssetAmount">-</span>
+        <span *ngIf="!removeAssetAmount">0</span>
         <app-icon-ticker [iconPath]="asset.iconPath" [ticker]="asset.ticker"></app-icon-ticker>
       </div>
 
       <div class="unstake-calc flex justify-between">
         <span *ngIf="removeRuneAmount">{{removeRuneAmount | number:"0.0-6"}}</span>
-        <span *ngIf="!removeRuneAmount">-</span>
+        <span *ngIf="!removeRuneAmount">0</span>
         <app-icon-ticker [iconPath]="rune.iconPath" [ticker]="rune.ticker"></app-icon-ticker>
       </div> -->
       <app-double-asset-field
@@ -43,19 +59,23 @@
       <div class="swap-details">
         <div class="flex justify-between items-center">
           <span class="tx-detail-label">Prices:</span>
-          <span>1 {{rune.ticker}} = {{assetBasePrice | number:"1.2-4"}} {{asset.ticker}}</span>
+          <span *ngIf="asset && assetBasePrice">1 {{rune.ticker}} = {{assetBasePrice | number:"1.2-4"}} {{asset.ticker}}</span>
+          <span *ngIf="!asset || !assetBasePrice">...</span>
         </div>
         <div class="flex justify-between items-center">
           <span></span>
-          <span>1 {{asset.ticker}} = {{runeBasePrice | number:"1.2-4"}} {{rune.ticker}}</span>
+          <span *ngIf="asset && runeBasePrice">1 {{asset.ticker}} = {{runeBasePrice | number:"1.2-4"}} {{rune.ticker}}</span>
+          <span *ngIf="!asset || !runeBasePrice">...</span>
         </div>
-        <div class="flex justify-between items-center">
-          <span class="tx-detail-label">TX Fees:</span>
-          <!-- TODO: estimate this on the fly -->
-          <span>
-            <span *ngIf="runeFee">{{runeFee}} RUNE</span><span *ngIf="runeFee && networkFee"> + </span><span *ngIf="networkFee">{{networkFee | number:"1.0-8"}} {{asset.ticker}}.{{asset.chain}}</span>
-          </span>
+        <div *ngIf="withdrawType !== 'ASYM_ASSET'" class="flex justify-between items-center">
+          <span class="tx-detail-label">Fees:</span>
+          <span *ngIf="runeFee">{{runeFee}} RUNE</span>
           <span *ngIf="!runeFee && !networkFee">...</span>
+        </div>
+        <div *ngIf="withdrawType === 'ASYM_ASSET'" class="flex justify-between items-center">
+          <span class="tx-detail-label">Fees:</span>
+          <span *ngIf="networkFee">{{networkFee | number:"1.0-4"}} {{asset.ticker}}</span>
+          <span *ngIf="!networkFee && !networkFee">...</span>
         </div>
       </div>
 
