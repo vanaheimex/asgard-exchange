@@ -1,12 +1,16 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Tx, TxsPage } from '@xchainjs/xchain-client';
 import { Chain } from '@xchainjs/xchain-util';
 import { Subscription } from 'rxjs';
+import { Asset } from 'src/app/_classes/asset';
 import { AssetAndBalance } from 'src/app/_classes/asset-and-balance';
+import { User } from 'src/app/_classes/user';
 import { Currency } from 'src/app/_components/account-settings/currency-converter/currency-converter.component';
 import { CopyService } from 'src/app/_services/copy.service';
 import { CurrencyService } from 'src/app/_services/currency.service';
 import { ExplorerPathsService } from 'src/app/_services/explorer-paths.service';
 import { OverlaysService } from 'src/app/_services/overlays.service';
+import { UserService } from 'src/app/_services/user.service';
 
 @Component({
   selector: 'app-user-asset',
@@ -37,8 +41,11 @@ export class UserAssetComponent implements OnInit {
 
   subs: Subscription[];
   currency: Currency;
+  txs: Tx[];
+  activeIndex: number;
+  user: User;
 
-  constructor(private copyService: CopyService, private explorerPathsService: ExplorerPathsService, private overlaysService: OverlaysService, private currencyService: CurrencyService) {
+  constructor(private copyService: CopyService, private explorerPathsService: ExplorerPathsService, private overlaysService: OverlaysService, private currencyService: CurrencyService, private userService: UserService) {
     this.back = new EventEmitter();
     this.send = new EventEmitter();
     this.upgradeRune = new EventEmitter();
@@ -58,22 +65,52 @@ export class UserAssetComponent implements OnInit {
 
     this.chain = this.asset.asset.chain;
     this.ticker = this.asset.asset.ticker;
+
+    this.getTransactions();
   }
 
-  getIconPath(chain: Chain): string {
-    switch (chain) {
-      case 'BNB':
-        return 'assets/images/token-icons/bnb.png';
+  async getTransactions() {
+    /**Get transaction of the asset/chain */
+    const user$ = this.userService.user$.subscribe(
+      (user) => {
+        this.user = user;
+      }
+    )
 
-      case 'BTC':
-        return 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/binance/assets/BTCB-1DE/logo.png';
+    let client = this.userService.getChainClient(this.user, this.asset.asset.chain);
 
-      case 'ETH':
-        return 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png';
+    let txsPage: TxsPage = await client.getTransactions({address: client.getAddress()});
+    this.txs = txsPage.txs.filter((el) => {
+      return el.asset.chain === this.asset.asset.chain && el.asset.ticker === this.asset.asset.ticker
+    })
 
-      case 'THOR':
-        return '/assets/icons/logo-thor-rune.svg';
-    }
+    console.log(txsPage);
+
+    this.subs.push(user$)
+  }
+
+  getIconPath(asset_name: Asset): string {
+    let asset = new Asset(`${asset_name.chain}.${asset_name.ticker}`);
+    return asset.iconPath;
+  }
+
+  getExplorerUrl(hash: string) {
+    let client = this.userService.getChainClient(this.user, this.asset.asset.chain);
+    return client.getExplorerTxUrl(hash);
+  }
+
+  formatDate(date) {
+    var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear() % 100;
+
+    if (month.length < 2) 
+        month = '0' + month;
+    if (day.length < 2) 
+        day = '0' + day;
+
+    return [day, month, year].join('/');
   }
 
   setExplorerPath() {

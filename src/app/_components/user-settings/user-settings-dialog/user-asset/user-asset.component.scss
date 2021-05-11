@@ -87,13 +87,6 @@
   background: #0D1B23;
   border-radius: 6px;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-
-  span {
-    color: var(--primary-grey-color);
-    font-size: 18px;
-  }
+  flex-direction: column;
 }
 
