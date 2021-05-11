@@ -26,7 +26,6 @@ const routes: Routes = [
   {
     path: 'deposit',
     loadChildren: () => import('./deposit/deposit.module').then(m => m.DepositModule),
-    canActivate: [HasUserGuard],
   },
   {
     path: 'deposit-sym-recovery',
