@@ -5,6 +5,7 @@ import { PoolDTO } from 'src/app/_classes/pool';
 import { Currency } from 'src/app/_components/account-settings/currency-converter/currency-converter.component';
 import { CurrencyService } from 'src/app/_services/currency.service';
 import { RuneYieldPoolResponse, RuneYieldService } from 'src/app/_services/rune-yield.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-staked-pools-list',
@@ -83,12 +84,14 @@ export class StakedPoolsListComponent implements OnInit {
 
       this.notMamberPools.sort((a,b) => (a.asset > b.asset) ? 1 : ((b.asset > a.asset) ? -1 : 0));
 
-      this.runeYieldService.getCurrentValueOfPool(this.memberPools[0].runeAddress).subscribe(
-        (pools) => {
-          this.runeYieldPools = pools;
-          console.log(this.runeYieldPools)
-        }
-      );
+      if (environment.network !== 'testnet') {
+        this.runeYieldService.getCurrentValueOfPool(this.memberPools[0].runeAddress).subscribe(
+          (pools) => {
+            this.runeYieldPools = pools;
+          }
+        );
+      }
+      
     }
 
   }

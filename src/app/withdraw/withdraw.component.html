@@ -59,11 +59,13 @@
       <div class="swap-details">
         <div class="flex justify-between items-center">
           <span class="tx-detail-label">Prices:</span>
-          <span>1 {{rune.ticker}} = {{assetBasePrice | number:"1.2-4"}} {{asset.ticker}}</span>
+          <span *ngIf="asset && assetBasePrice">1 {{rune.ticker}} = {{assetBasePrice | number:"1.2-4"}} {{asset.ticker}}</span>
+          <span *ngIf="!asset || !assetBasePrice">...</span>
         </div>
         <div class="flex justify-between items-center">
           <span></span>
-          <span>1 {{asset.ticker}} = {{runeBasePrice | number:"1.2-4"}} {{rune.ticker}}</span>
+          <span *ngIf="asset && runeBasePrice">1 {{asset.ticker}} = {{runeBasePrice | number:"1.2-4"}} {{rune.ticker}}</span>
+          <span *ngIf="!asset || !runeBasePrice">...</span>
         </div>
         <div *ngIf="withdrawType !== 'ASYM_ASSET'" class="flex justify-between items-center">
           <span class="tx-detail-label">Fees:</span>

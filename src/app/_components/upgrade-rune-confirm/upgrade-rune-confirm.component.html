@@ -27,7 +27,7 @@
     <div class="container">
       <div class="main-container" *ngIf="asset">
         <div class="content-top">
-            <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'},  {name: 'upgrade rune', disable: false, call: 'back'}, {name:  asset.asset.chain + '.' + asset.asset.ticker, disable: true}]" (funcCaller)="backCall($event)" [isError]="txState === 'ERROR'" [message]="message"></app-breadcrumb>
+            <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'},  {name: 'upgrade rune', disable: false, call: 'back'}, {name:  asset.asset.chain + '.' + asset.asset.ticker, disable: true}]" (funcCaller)="backCall($event)" [isError]="txState === 'ERROR' || isError" [message]="message"></app-breadcrumb>
             <div class="top-right">
             </div>
         </div>
@@ -62,16 +62,18 @@
           [disabledMarketSelect]="true">
         </app-asset-input>
 
-        <div class="disclaimer p-3">
-          Some of your RUNE is currently a {{asset.asset.chain}} token.<br />
-          <span style="color: var(--primary-red)">By upgrading the confirm button, you will be upgrading it off of the {{asset.asset.chain}} chain to native RUNE.</span> <br />
-          Your native THOR.RUNE will show up in your wallet. <br />
-          <span *ngIf="txState === 'ERROR'" style="color: var(--primary-red)">Be sure you have gas in your {{asset.asset.chain}} chain to upgrade.</span>
-        </div>
-        <div class="flex justify-between mt-4 mb-2">
-          <span class="tx-detail-label">Fees</span>
-          <span class="text-sm" *ngIf="networkFee && asset">{{networkFee | number:"0.0-4"}} {{asset.asset.chain}}</span>
-          <span class="text-sm" *ngIf="!networkFee || !asset">-</span>
+        <div class="swap-details">
+          <div class="flex justify-between">
+            <span class="tx-detail-label">Fees:</span>
+            <span class="text-sm" *ngIf="networkFee && asset">{{networkFee | number:"0.0-8"}} {{asset.asset.chain}}</span>
+            <span class="text-sm" *ngIf="!networkFee || !asset">...</span>
+          </div>
+          <div class="disclaimer">
+            Some of your RUNE is currently a {{asset.asset.chain}} token.<br />
+            <span style="color: var(--primary-red)">By upgrading the confirm button, you will be upgrading it off of the {{asset.asset.chain}} chain to native RUNE.</span> <br />
+            Your native THOR.RUNE will show up in your wallet. <br />
+            <span *ngIf="txState === 'ERROR'" style="color: var(--primary-red)">Be sure you have gas in your {{asset.asset.chain}} chain to upgrade.</span>
+          </div>
         </div>
 
         <div>

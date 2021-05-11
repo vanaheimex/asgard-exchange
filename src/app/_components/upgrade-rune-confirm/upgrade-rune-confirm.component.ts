@@ -43,6 +43,7 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
   networkFee: number;
 
   message: string;
+  isError: boolean = false;
 
   constructor(
     private midgardService: MidgardService,
@@ -107,7 +108,10 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
         : this.userService.findBalance(this.balances, new Asset('ETH.ETH'));
 
       this.insufficientChainBalance = balance < this.networkFee;
-      this.message = `Insufficient ${this.asset.asset.chain} to Cover Fees`
+      if (this.insufficientChainBalance) {
+        this.message = `Insufficient ${this.asset.asset.chain} to Cover Fees`
+        this.isError = true;
+      }
     }
   }
 
