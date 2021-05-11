@@ -304,8 +304,6 @@ export class SwapComponent implements OnInit, OnDestroy {
       // on init, set target asset
       const sourceAssetName = params.get('sourceAsset');
       const targetAssetName = params.get('targetAsset');
-      console.log(sourceAssetName)
-      console.log(targetAssetName)
 
       if (sourceAssetName && targetAssetName  && sourceAssetName == targetAssetName) {
         this.router.navigate(['/', 'swap', 'THOR.RUNE', 'BTC.BTC'])
@@ -623,8 +621,9 @@ export class SwapComponent implements OnInit, OnDestroy {
     }
 
     // Getting the source asset price from selected pools
-    if (this.selectableMarkets && this.balances && this._selectedSourceAsset) {
+    if (this.selectableMarkets && this._selectedSourceAsset) {
       this.sourceAssetPrice = this.selectableMarkets.find( (pool) => `${pool.asset.chain}.${pool.asset.ticker}` === `${this._selectedSourceAsset.chain}.${this._selectedSourceAsset.ticker}`).assetPriceUSD;
+      console.log(this.sourceAssetPrice)
     }
 
     // Getting the source asset price from selected pools

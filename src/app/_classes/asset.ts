@@ -12,7 +12,7 @@ export class Asset {
   iconPath: string;
 
   constructor(poolName: string) {
-    const { chain, symbol, ticker } = this._getAssetFromString(poolName);
+    const { chain, symbol, ticker } = this._getAssetFromString(poolName.toUpperCase());
     this.chain = chain;
     this.symbol = symbol;
     this.ticker = ticker;

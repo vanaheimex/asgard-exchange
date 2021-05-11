@@ -17,8 +17,6 @@
           [(selectedAsset)]="selectedSourceAsset"
           [(assetUnit)]="sourceAssetUnit"
           [balance]="sourceBalance"
-          [disableInput]="user ? false : true"
-          [disableUser]="user ? false : true"
           [disabledAssetSymbol]="selectedTargetAsset ? selectedTargetAsset.symbol : null"
           [selectableMarkets]="selectableMarkets"
           (lunchMarket)="overlaysService.setCurrentSwapView('SourceAsset')">
@@ -43,11 +41,10 @@
           [selectableMarkets]="selectableMarkets"
           [showBalance]="false"
           [disableInput]="true"
-          [disableUser]="user ? false : true"
           (lunchMarket)="overlaysService.setCurrentSwapView('TargetAsset')">
         </app-asset-input>
 
-        <div class="swap-details" *ngIf="user">
+        <div class="swap-details">
           <div class="flex justify-between">
             <span class="tx-detail-label">Price:</span>
             <span
@@ -57,35 +54,16 @@
               <span>...</span>
             </ng-template>
           </div>
-          <!-- total fee and slip -->
-          <!-- <div class="flex justify-between">
-            <span class="tx-detail-label">Network Fees:</span>
-            <span *ngIf="!outboundTransactionFee && !inputNetworkFee && !outputNetworkFee">Shown on confirmation</span>
-            <span *ngIf="outboundTransactionFee">
-              <span>{{outboundTransactionFee}} RUNE</span>
-              <span *ngIf="selectedSourceAsset && !isNativeRune(selectedSourceAsset) && inputNetworkFee"> + {{inputNetworkFee | number:"1.0-8"}} {{selectedSourceAsset.ticker}}.{{selectedSourceAsset.chain}}</span>
-              <span *ngIf="selectedTargetAsset && !isNativeRune(selectedTargetAsset) && outputNetworkFee"> + {{outputNetworkFee | number:"1.0-8"}} {{selectedTargetAsset.ticker}}.{{selectedTargetAsset.chain}}</span>
-              <span *ngIf="outboundTransactionFee && runePrice"> (${{ (outboundTransactionFee * runePrice) + (inputNetworkFee ? inputNetworkFee * sourceAssetPrice : 0) + (outputNetworkFee ? outputNetworkFee * targetAssetPrice : 0) | number: "0.2-4"}})</span>
-            </span>
-          </div> -->
-          <!-- <div *ngIf="selectedSourceAsset" class="flex justify-between">
-            <span class="tx-detail-label">Network Fee:</span>
-            <span *ngIf="inputNetworkFee">{{inputNetworkFee | number:"1.0-8"}} {{selectedSourceAsset.chain}}.{{selectedSourceAsset.ticker}}</span>
-            <span *ngIf="!inputNetworkFee">...</span>
-          </div> -->
-
           <div *ngIf="selectedSourceAsset" class="flex justify-between">
             <span class="tx-detail-label">Network Fee:</span>
             <span *ngIf="networkFeeInSource">{{networkFeeInSource | number:"1.0-8"}} {{selectedSourceAsset.chain}}.{{selectedSourceAsset.ticker}}<span *ngIf="sourceAssetPrice" class="mono" style="margin-left: 5px;">({{sourceAssetPrice * currency.value * networkFeeInSource | number: '0.2-2'}} {{currency.code}})</span></span>
             <span *ngIf="!networkFeeInSource">...</span>
           </div>
-
           <div class="flex justify-between">
             <span class="tx-detail-label">Slip:</span>
             <span *ngIf="slip" [ngStyle]="{'color': (slip * 100) > slippageTolerance ? '#FF4954' : 'var(--primary-default)'}">{{slip | percent:"0.2-4" }}<span *ngIf="sourceAssetPrice" class="mono" style="margin-left: 5px;">({{(sourceAssetPrice * sourceAssetUnit) * currency.value * slip | number: '1.2-2'}} {{currency.code}})</span></span>
             <span *ngIf="!slip">...</span>
           </div>
-
           <div class="flex justify-between">
             <span>Settings:</span>
             <span>{{slippageTolerance}}% slip tolerance <span class="adjust" (click)="goToSettings()">(click to adjust)</span></span>
