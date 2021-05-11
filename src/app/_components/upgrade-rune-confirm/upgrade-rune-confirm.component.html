@@ -68,6 +68,11 @@
           Your native THOR.RUNE will show up in your wallet. <br />
           <span *ngIf="txState === 'ERROR'" style="color: var(--primary-red)">Be sure you have gas in your {{asset.asset.chain}} chain to upgrade.</span>
         </div>
+        <div class="flex justify-between mt-4 mb-2">
+          <span class="tx-detail-label">Fees</span>
+          <span class="text-sm" *ngIf="networkFee && asset">{{networkFee | number:"0.0-4"}} {{asset.asset.chain}}</span>
+          <span class="text-sm" *ngIf="!networkFee || !asset">-</span>
+        </div>
 
         <div>
 
@@ -81,6 +86,7 @@
           <div class="right-btn">
             <button
               class="next-btn"
+              [disabled]="insufficientChainBalance"
               (click)="submitTransaction()">
                 <span>confirm</span>
             </button>

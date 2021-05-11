@@ -55,6 +55,14 @@
           <span>PLEASE WAIT…</span>
         </button>
       </div>
+
+    <div *ngIf="asset.asset.chain === 'BNB'" class="uni-input">
+      <label>Memo (Optional)</label>
+      <textarea [(ngModel)]="memo" name="memo" [disabled]="true"></textarea>
+    </div>
+
+    <div *ngIf="loading" style="height: 56px;" class="flex justify-center items-center w-full mt-4">
+      <mat-progress-spinner mode="indeterminate" diameter="30"></mat-progress-spinner>
     </div>
     <div class="bottom-actions" *ngIf="(mode === 'SUCCESS' && asset) || mode === 'ERROR'">
       <div style="width: 100%;">

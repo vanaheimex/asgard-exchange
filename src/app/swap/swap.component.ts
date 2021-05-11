@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Asset } from '../_classes/asset';
+import { Asset, getChainAsset } from '../_classes/asset';
 import { UserService } from '../_services/user.service';
 import { combineLatest, Subscription, timer } from 'rxjs';
 import {
@@ -35,10 +35,10 @@ import { MainViewsEnum, OverlaysService } from '../_services/overlays.service';
 import { ThorchainPricesService } from '../_services/thorchain-prices.service';
 import { TransactionUtilsService } from '../_services/transaction-utils.service';
 import { NetworkQueueService } from '../_services/network-queue.service';
-import { retry, switchMap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment'; 
 import { CurrencyService } from '../_services/currency.service';
 import { Currency } from '../_components/account-settings/currency-converter/currency-converter.component';
+import { debounceTime, retry, switchMap } from 'rxjs/operators';
 
 export enum SwapType {
   DOUBLE_SWAP = 'double_swap',
@@ -110,6 +110,8 @@ export class SwapComponent implements OnInit, OnDestroy {
       this.sourceAssetUnit = this.sourceBalance;
     }
 
+    this.setSourceChainBalance();
+
   }
   private _selectedSourceAsset: Asset;
   selectedSourceBalance: number;
@@ -161,8 +163,6 @@ export class SwapComponent implements OnInit, OnDestroy {
   calculatingTargetAsset: boolean;
   poolDetailTargetError: boolean;
   poolDetailSourceError: boolean;
-
-  insufficientBnb: boolean;
   selectableMarkets: AssetAndBalance[];
   targetMarketShow: boolean;
   sourceMarketShow: boolean;
@@ -195,6 +195,7 @@ export class SwapComponent implements OnInit, OnDestroy {
   appLocked: boolean;
   networkFeeInSource: number;
   currency: Currency;
+  sourceChainBalance: number;
 
   constructor(
     private dialog: MatDialog,
@@ -209,32 +210,27 @@ export class SwapComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute) {
 
-    // this.selectedSourceAsset = new Asset('THOR.RUNE');
     this.ethContractApprovalRequired = false;
     this.selectableMarkets = undefined;
-    // Just in case at the begining There is no Source Asset yet.
-    // this.selectedSourceAsset = new Asset(`BNB.${this.runeSymbol}`);
-    // this.overlaysService.setCurrentSwapView('Swap');
-    // this.overlayShow = false;
-    // this.targetMarketShow = false;
-    // this.sourceMarketShow = false;
-    // this.confirmShow = false;
 
-    const balances$ = this.userService.userBalances$.subscribe(
+    const balances$ = this.userService.userBalances$.pipe(debounceTime(500)).subscribe(
       (balances) => {
         this.balances = balances;
         this.sourceBalance = this.userService.findBalance(this.balances, this.selectedSourceAsset);
         this.targetBalance = this.userService.findBalance(this.balances, this.selectedTargetAsset);
 
-        const bnbBalance = this.userService.findBalance(this.balances, new Asset('BNB.BNB'));
-        this.insufficientBnb = bnbBalance < 0.000375;
-
         if (this.selectedTargetAsset && !this.isRune(this.selectedTargetAsset)) {
           this.updateSwapDetails();
         }
 
-        if (this.selectedSourceAsset && !this.isRune(this.selectedSourceAsset)) {
-          this.updateSwapDetails();
+        if (this.selectedSourceAsset) {
+
+          this.setSourceChainBalance();
+
+          if (!this.isRune(this.selectedSourceAsset)) {
+            this.updateSwapDetails();
+          }
+
         }
 
       }
@@ -336,6 +332,16 @@ export class SwapComponent implements OnInit, OnDestroy {
 
     this.subs.push(sub);
 
+  }
+
+  setSourceChainBalance() {
+    if (this.selectedSourceAsset && this.balances) {
+      const sourceChainAsset = getChainAsset(this.selectedSourceAsset.chain);
+      const sourceChainBalance = this.userService.findBalance(this.balances, sourceChainAsset);
+      this.sourceChainBalance = sourceChainBalance ?? 0;
+    } else {
+      this.sourceChainBalance = 0;
+    }
   }
 
   setNetworkFees() {
@@ -467,17 +473,15 @@ export class SwapComponent implements OnInit, OnDestroy {
       || (this.queue && this.queue.outbound >= 12)
       || (this.slip * 100) > this.slippageTolerance
 
-      // check source asset amount is greater than network fee
-      || this.sourceAssetUnit < (1.5 * this.inboundFees[assetToString(this.selectedSourceAsset)])
       // check target asset amount is greater than outbound network fee * 3
       || this.targetAssetUnitDisplay < (this.outboundFees[assetToString(this.selectedTargetAsset)])
 
-      || (this.selectedSourceAsset.chain === 'BNB' && this.insufficientBnb) // source is BNB and not enough funds to cover fee
+      // if RUNE, ensure 3 RUNE remain in wallet
       || (this.selectedSourceAsset.chain === 'THOR') && (this.sourceBalance - this.sourceAssetUnit < 3)
 
-      /** TEMPORARILY RESTRICT BTC/LTC -> ERC20 DUE TO BYTE SIZE ERROR */
-      || ( (this.selectedSourceAsset.chain === 'BTC' || this.selectedSourceAsset.chain === 'LTC')
-        && (this.selectedTargetAsset.chain === 'ETH' && this.selectedTargetAsset.symbol !== 'ETH') );
+      // check sufficient underlying chain balance to cover fees
+      || this.sourceChainBalance < (1.5 * this.inboundFees[assetToString(getChainAsset(this.selectedSourceAsset.chain))]);
+
   }
 
   // getMessage() {
@@ -538,12 +542,6 @@ export class SwapComponent implements OnInit, OnDestroy {
       return 'Select';
     }
 
-    /** TEMPORARILY RESTRICT BTC/LTC -> ERC20 DUE TO BYTE SIZE ERROR */
-    if ( (this.selectedSourceAsset.chain === 'BTC' || this.selectedSourceAsset.chain === 'LTC')
-      && (this.selectedTargetAsset.chain === 'ETH' && this.selectedTargetAsset.symbol !== 'ETH') ) {
-      return `${this.selectedSourceAsset.chain} -> ERC20 Temporarily Suspended`;
-    }
-
     if ( (this.selectedSourceAsset.chain === 'THOR') && (this.sourceBalance - this.sourceAssetUnit < 3) ) {
       return 'Min 3 RUNE in Wallet Required';
     }
@@ -554,8 +552,8 @@ export class SwapComponent implements OnInit, OnDestroy {
     }
 
     /** Input Amount is less than network fees */
-    if (this.sourceAssetUnit < (1.5 * this.inboundFees[assetToString(this.selectedSourceAsset)])) {
-      return 'Input Amount Less Than Fees';
+    if (this.sourceChainBalance < (1.5 * this.inboundFees[assetToString(getChainAsset(this.selectedSourceAsset.chain))])) {
+      return `Insufficient ${this.selectedSourceAsset.chain}`;
     }
 
     /** Output Amount is less than network fees */
@@ -566,11 +564,6 @@ export class SwapComponent implements OnInit, OnDestroy {
     /** Source amount is higher than user spendable amount */
     if (this.sourceAssetUnit > this.userService.maximumSpendableBalance(this.selectedSourceAsset, this.sourceBalance)) {
       return `Insufficient ${this.selectedSourceAsset.chain}.${this.selectedSourceAsset.ticker} balance`;
-    }
-
-    /** BNB chain tx and user doesn't have enough BNB  */
-    if (this.selectedSourceAsset.chain === 'BNB' && this.insufficientBnb) {
-      return 'Insufficient BNB for Fee';
     }
 
     /** Amount is too low, considered "dusting" */

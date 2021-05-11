@@ -14,6 +14,7 @@ import { ExplorerPathsService } from 'src/app/_services/explorer-paths.service';
 import { MidgardService } from 'src/app/_services/midgard.service';
 import { MainViewsEnum, OverlaysService } from 'src/app/_services/overlays.service';
 import { TransactionStatusService, TxActions, TxStatus } from 'src/app/_services/transaction-status.service';
+import { TransactionUtilsService } from 'src/app/_services/transaction-utils.service';
 import { UserService } from 'src/app/_services/user.service';
 
 @Component({
@@ -39,8 +40,7 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
   runeBalance: number;
   insufficientChainBalance: boolean;
   balances: Balances;
-  ethNetworkFee: number;
-  loading: boolean;
+  networkFee: number;
 
   message: string;
 
@@ -51,9 +51,9 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
     private ethUtilsService: EthUtilsService,
     private copyService: CopyService,
     private explorerPathsService: ExplorerPathsService,
-    private oveylaysService: OverlaysService
+    private oveylaysService: OverlaysService,
+    private txUtilsService: TransactionUtilsService
   ) {
-    this.loading = true;
     this.insufficientChainBalance = false;
     this.back = new EventEmitter<null>();
     this.transactionSuccessful = new EventEmitter<string>();
@@ -86,75 +86,28 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
     this.copyService.copyToClipboard(this.hash);
   }
 
-  ngOnInit(): void {
-
+  async ngOnInit(): Promise<void> {
     this.message = "Confirm"
-
-    if (this.asset) {
-      if (this.asset.asset.chain === 'BNB') {
-        const bnbBalance = this.userService.findBalance(this.balances, new Asset('BNB.BNB'));
-        this.insufficientChainBalance = bnbBalance < 0.000375;
-        this.loading = false;
-      } else if (this.asset.asset.chain === 'ETH') {
-        this.estimateEthGasPrice();
-      } else {
-        this.message = "no chain match";
-        console.error('no chain match: ', this.asset?.asset);
-      }
-    }
-
+    await this.estimateFees();
+    this.checkSufficientFunds();
   }
 
-  async estimateEthGasPrice() {
-    const user = this.user;
-    const thorchainClient = this.user.clients.thorchain;
-    const thorAddress = await thorchainClient.getAddress();
+  async estimateFees() {
+    if (this.asset && this.asset.asset) {
+      const asset = (this.asset.asset.chain === 'BNB') ? new Asset('BNB.BNB') : new Asset('ETH.ETH');
+      const inboundAddresses = await this.midgardService.getInboundAddresses().toPromise();
+      this.networkFee = this.txUtilsService.calculateNetworkFee(asset, inboundAddresses, 'INBOUND');
+    }
+  }
 
-    if (user && user.clients && user.clients.ethereum) {
+  checkSufficientFunds() {
+    if (this.asset && this.asset.asset) {
+      const balance = (this.asset.asset.chain === 'BNB')
+        ? this.userService.findBalance(this.balances, new Asset('BNB.BNB'))
+        : this.userService.findBalance(this.balances, new Asset('ETH.ETH'));
 
-      const ethClient = user.clients.ethereum;
-      const ethBalances = await ethClient.getBalance();
-      const ethBalance = ethBalances[0];
-
-      // get inbound addresses
-      this.midgardService.getInboundAddresses().subscribe(
-        async (addresses) => {
-
-          const ethInbound = addresses.find( (inbound) => inbound.chain === 'ETH' );
-          const decimal = await this.ethUtilsService.getAssetDecimal(this.asset.asset, ethClient);
-          let amount = assetToBase(assetAmount(this.amount, decimal)).amount();
-          const balanceAmount = assetToBase(assetAmount(this.asset.balance.amount(), decimal)).amount();
-
-          const balanceFormatted = this.userService.findBalance(this.balances, this.asset.asset);
-          const max = await this.ethUtilsService.maximumSpendableBalance({
-            asset: this.asset.asset,
-            balance: balanceFormatted,
-            client: ethClient
-          });
-
-          if (this.amount >= max) {
-            amount = balanceAmount;
-          }
-
-          if (amount.isGreaterThan(balanceAmount)) {
-            amount = balanceAmount;
-          }
-
-          const estimatedFeeWei = await this.ethUtilsService.estimateFee({
-            sourceAsset: this.asset.asset,
-            ethClient,
-            ethInbound,
-            inputAmount: amount,
-            memo: `SWITCH:${thorAddress}`
-          });
-
-          this.ethNetworkFee = estimatedFeeWei.dividedBy(10 ** ETH_DECIMAL).toNumber();
-          this.insufficientChainBalance = estimatedFeeWei.isGreaterThan(ethBalance.amount.amount());
-          this.loading = false;
-
-        }
-      );
-
+      this.insufficientChainBalance = balance < this.networkFee;
+      this.message = `Insufficient ${this.asset.asset.chain} to Cover Fees`
     }
   }
 

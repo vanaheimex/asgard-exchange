@@ -33,11 +33,9 @@
         [hideMax]="true">
       </app-asset-input>
       <div class="swap-details">
-        <div class="flex justify-between">
-          <span class="tx-detail-label">{{data.asset.chain}} Fee:</span>
-          <span *ngIf="!data.asset.chain" class="tx-detail-label">...</span>
-          <span *ngIf="networkFee">{{networkFee | number:"0.0-5"}}</span>
-          <span *ngIf="!networkFee">...</span>
+        <div *ngIf="data.networkFee" class="flex justify-between mb-2">
+          <span class="tx-detail-label">Fees:</span>
+          <span>{{data.networkFee | number:"0.0-6"}} {{data.asset.chain}} <span *ngIf="data.networkFee && data.runeFee">+</span> <span>{{data.runeFee | number:"0.0-2"}} RUNE</span></span>
         </div>
         <div class="flex justify-between">
           <span class="tx-detail-label">Disclaimer:</span>
