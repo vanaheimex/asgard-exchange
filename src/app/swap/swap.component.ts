@@ -662,7 +662,7 @@ export class SwapComponent implements OnInit, OnDestroy {
 
   reverseTransaction() {
 
-    if (this.selectedSourceAsset && this.selectedTargetAsset && this.user) {
+    if (this.selectedSourceAsset && this.selectedTargetAsset) {
 
       const source = this.selectedSourceAsset;
       const target = this.selectedTargetAsset;

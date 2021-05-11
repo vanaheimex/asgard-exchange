@@ -42,7 +42,8 @@ export interface Tx {
   status: TxStatus;
   action: TxActions;
   isThorchainTx: boolean;
-
+  
+  date?: Date;
   outbound?: OutboundTx;
 
   /**

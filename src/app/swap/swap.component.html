@@ -6,8 +6,7 @@
         <nav class="content-top">
           <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'swap', disable: true}]" [isError]="isError()" [message]="mainButtonText()"></app-breadcrumb>
           <div class="top-right">
-            <app-right-option *ngIf="user" [switchField]="{right: {text: 'Pool', tag: '', disable: false}, left: {text: 'Swap', tag: '', disable: false}}"></app-right-option>
-            <app-right-option *ngIf="!user" [switchField]="{right: {text: 'Pool', tag: '', disable: true}, left: {text: 'Swap', tag: '', disable: true}}"></app-right-option>
+            <app-right-option [switchField]="{right: {text: 'Pool', tag: '', disable: false}, left: {text: 'Swap', tag: '', disable: false}}"></app-right-option>
           </div>
         </nav>
 
@@ -22,7 +21,7 @@
           (lunchMarket)="overlaysService.setCurrentSwapView('SourceAsset')">
         </app-asset-input>
 
-        <app-arrow [isGrey]="!user || !balances || !selectedSourceAsset || !selectedTargetAsset" [seperator]="!selectedSourceAsset || !selectedTargetAsset"
+        <app-arrow [isGrey]="(user && !balances) || (!selectedSourceAsset || !selectedTargetAsset)" [seperator]="!selectedSourceAsset || !selectedTargetAsset"
           (onClick)="reverseTransaction()"
         ></app-arrow>
 
@@ -40,7 +39,6 @@
           [error]="poolDetailTargetError || poolDetailSourceError"
           [selectableMarkets]="selectableMarkets"
           [showBalance]="false"
-          [disableInput]="true"
           (lunchMarket)="overlaysService.setCurrentSwapView('TargetAsset')">
         </app-asset-input>
 
@@ -64,7 +62,7 @@
             <span *ngIf="slip" [ngStyle]="{'color': (slip * 100) > slippageTolerance ? '#FF4954' : 'var(--primary-default)'}">{{slip | percent:"0.2-4" }}<span *ngIf="sourceAssetPrice" class="mono" style="margin-left: 5px;">({{(sourceAssetPrice * sourceAssetUnit) * currency.value * slip | number: '1.2-2'}} {{currency.code}})</span></span>
             <span *ngIf="!slip">...</span>
           </div>
-          <div class="flex justify-between">
+          <div *ngIf="user" class="flex justify-between">
             <span>Settings:</span>
             <span>{{slippageTolerance}}% slip tolerance <span class="adjust" (click)="goToSettings()">(click to adjust)</span></span>
           </div>

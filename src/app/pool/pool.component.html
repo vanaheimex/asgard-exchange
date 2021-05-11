@@ -15,8 +15,7 @@
       <nav class="content-top">
         <app-breadcrumb [path]="[{name: 'vanaheimex', call: 'swap'}, {name: 'Pools', disable: true}]" [message]="getBreadcrumbText()" (funcCaller)="goToNav($event)"></app-breadcrumb>
         <div class="top-right">
-          <app-right-option *ngIf="user" [switchField]="{right: {text: 'Pool', tag: '', disable: false}, left: {text: 'Swap', tag: '', disable: false}}"></app-right-option>
-          <app-right-option *ngIf="!user" [switchField]="{right: {text: 'Pool', tag: '', disable: true}, left: {text: 'Swap', tag: '', disable: true}}"></app-right-option>
+          <app-right-option [switchField]="{right: {text: 'Pool', tag: '', disable: false}, left: {text: 'Swap', tag: '', disable: false}}"></app-right-option>
         </div>
       </nav>
 
@@ -32,10 +31,9 @@
       <!-- <button *ngIf="depositsDisabled" class="main-action-btn w-full" mat-flat-button color="primary" disabled>Pool Cap > 90%</button> -->
 
 
-      <app-staked-pools-list *ngIf="user && pools && memberPools && !userPoolError" [pools]="pools" [runePrice]="runePrice" [memberPools]="memberPools"></app-staked-pools-list>
-      <div *ngIf="userPoolError || !user || !pools" class="lists flex justify-center items-center" style="height: 262px;">
+      <app-staked-pools-list *ngIf="pools && !userPoolError" [pools]="pools" [runePrice]="runePrice" [memberPools]="memberPools"></app-staked-pools-list>
+      <div *ngIf="userPoolError || !pools" class="lists flex justify-center items-center" style="height: 262px;">
         <span style="color: var(--primary-grey-color); font-size: 22px;" *ngIf="(!memberPools || !pools) && !userPoolError">FETCHING POOLS</span>
-        <span style="color: var(--primary-grey-color); font-size: 22px;" *ngIf="!user">PLEASE CONNECT YOUR WALLET</span>
         <span style="color: var(--primary-grey-color); font-size: 22px;" *ngIf="userPoolError">ERROR OCCURRED</span>
       </div>
 

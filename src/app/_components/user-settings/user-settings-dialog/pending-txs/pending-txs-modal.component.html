@@ -46,6 +46,7 @@
             </div>
             <div *ngIf="i !== activeIndex" class="addr" style="min-width: initial; margin-left: 0; overflow: hidden;">
               <span *ngIf="tx.status === 'PENDING'">PENDING</span>
+              <span *ngIf="tx.status !== 'PENDING' && tx.date">{{tx.date | date: 'dd/MM/yy'}}</span>
             </div>
             <div *ngIf="i == activeIndex" class="addr" style="min-width: initial; margin-left: 0; overflow: hidden;">
               <app-tag *ngIf="tx.hash" type="dark">

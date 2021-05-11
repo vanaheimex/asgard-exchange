@@ -16,7 +16,6 @@ const routes: Routes = [
   {
     path: 'pool',
     loadChildren: () => import('./pool/pool.module').then(m => m.PoolModule),
-    canActivate: [HasUserGuard],
   },
   {
     path: 'create-pool',
