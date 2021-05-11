@@ -1,6 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { UserService } from 'src/app/_services/user.service';
 import { XDEFIService } from 'src/app/_services/xdefi.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-xdefi-connect',
@@ -15,6 +16,7 @@ export class XDEFIConnectComponent implements OnInit {
   isValidNetwork: boolean;
   @Output() back: EventEmitter<null>;
   @Output() closeModal: EventEmitter<null>;
+  isTestnet: boolean;
 
   message: string;
 
@@ -24,6 +26,7 @@ export class XDEFIConnectComponent implements OnInit {
   ) {
     this.back = new EventEmitter<null>();
     this.closeModal = new EventEmitter<null>();
+    this.isTestnet = environment.network === 'testnet';
   }
 
   ngOnInit(): void {
