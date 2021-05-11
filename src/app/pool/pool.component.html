@@ -71,12 +71,12 @@
     <div class="swap-details" *ngIf="poolType === 'notMember'">
       <div class="flex justify-between">
         <span class="tx-detail-label">Average 24H Volume:</span>
-        <span *ngIf="pooledRune !== undefined && pooledRune !== null">{{pooledRune | shortNumber}} {{currency.code}}</span>
+        <span *ngIf="pooledRune !== undefined && pooledRune !== null">{{pooledRune | number: '0.0-2'}} {{currency.code}}</span>
         <span *ngIf="pooledRune === undefined || pooledRune === null">...</span>
       </div>
       <div class="flex justify-between">
         <span class="tx-detail-label">Depth:</span>
-        <span *ngIf="pooledAsset">{{pooledAsset | shortNumber}} {{currency.code}}</span>
+        <span *ngIf="pooledAsset">{{pooledAsset | number: '0.0-2'}} {{currency.code}}</span>
         <span *ngIf="!pooledAsset">...</span>
       </div>
     </div>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Artboard</title>
+    <defs>
+        <circle id="path-1" cx="12" cy="12" r="12"></circle>
+    </defs>
+    <g id="Artboard" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <mask id="mask-2" fill="white">
+            <use xlink:href="#path-1"></use>
+        </mask>
+        <use id="Oval" fill="#000B12" xlink:href="#path-1"></use>
+        <polygon id="+" fill="#F3BA2F" fill-rule="nonzero" mask="url(#mask-2)" points="12.75 18 12.75 12.75 18 12.75 18 11.25 12.75 11.25 12.75 6 11.25 6 11.25 11.25 6 11.25 6 12.75 11.25 12.75 11.25 18"></polygon>
+    </g>
+</svg>
