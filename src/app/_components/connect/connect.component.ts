@@ -43,6 +43,7 @@ export enum ConnectionView {
   KEYSTORE_CONNECT      = 'KEYSTORE_CONNECT',
   KEYSTORE_CREATE       = 'KEYSTORE_CREATE',
   KEYSTORE_WRITE_PHRASE = 'KEYSTORE_WRITE_PHRASE',
+  KEYSTORE_IMPORT_PHRASE = "KEYSTORE_IMPORT_PHRASE",
   XDEFI = 'XDEFI',
 }
 
@@ -76,6 +77,10 @@ export class ConnectModal {
 
   connectKeystore() {
     this.connectionView = ConnectionView.KEYSTORE_CONNECT;
+  }
+
+  createKeystoreFromPhrase() {
+    this.connectionView = ConnectionView.KEYSTORE_IMPORT_PHRASE
   }
 
   connectXDEFI() {

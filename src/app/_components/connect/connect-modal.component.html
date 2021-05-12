@@ -61,6 +61,15 @@
             <span class="item-text">Connect To Existing Keystore</span>
           </div>
         </button>
+
+        <button class="connect-option focus:outline-none justify-between" (click)="createKeystoreFromPhrase()">
+          <div class="flex item items-center">
+            <div class="add-icon">
+              <img [src]="isTestnet ?  '/assets/icons/folder-icon-testnet.svg' : '/assets/icons/folder-icon.svg'" alt="folder icon">
+            </div>
+            <span class="item-text">Create Keystore from phrase</span>
+          </div>
+        </button>
         
         <button class="connect-option focus:outline-none justify-between" (click)="connectXDEFI()">
           <div class="flex item items-center">
@@ -70,7 +79,6 @@
             <span class="item-text" *ngIf="isXDEFIConnected">Connect with XDEFI</span>
             <span class="item-text" *ngIf="!isXDEFIConnected">Install XDEFI in Chrome/Brave</span>
           </div>
-          
         </button>
 
         <!-- close dialog -->
@@ -94,6 +102,9 @@
 
   <!-- XDEFI CONNECT -->
   <app-xdefi-connect *ngIf="connectionView == 'XDEFI'" (back)="clearConnectionMethod()" (closeModal)="close()"></app-xdefi-connect>
+
+  <!--KEYSTORE IMPORT PHRASE -->
+  <app-import-phrase *ngIf="connectionView == 'KEYSTORE_IMPORT_PHRASE'"  (back)="clearConnectionMethod()" (closeModal)="close()" (keystoreCreated)="storePhrasePrompt($event)"></app-import-phrase>
 
 </div>
 

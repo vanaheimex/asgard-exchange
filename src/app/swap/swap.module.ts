@@ -13,14 +13,7 @@ import { IconTickerModule } from '../_components/icon-ticker/icon-ticker.module'
 /** COMPONENTS */
 import { SwapComponent } from './swap.component';
 import { ConfirmSwapModalComponent } from './confirm-swap-modal/confirm-swap-modal.component';
-import { ConnectComponent, ConnectModal } from './../_components/connect/connect.component';
-import { ConnectErrorComponent } from './../_components/connect/connect-error/connect-error.component';
-import { KeystoreConnectComponent } from './../_components/connect/keystore-connect/keystore-connect.component';
-// import { LedgerConnectComponent } from './../_components/connect/ledger-connect/ledger-connect.component';
-import { KeystoreCreateComponent } from './../_components/connect/keystore-create/keystore-create.component';
-// import { UserSettingsDialogComponent } from './../_components/user-settings/user-settings-dialog/user-settings-dialog.component';
-import { KeystoreCreateStorePhraseComponent } from '../_components/connect/keystore-create-store-phrase/keystore-create-store-phrase.component';
-
+import { ConnectModule } from '../_components/connect/connect.module';
 
 /** MODULES */
 import { AssetInputModule } from '../_components/asset-input/asset-input.module';
@@ -40,22 +33,10 @@ import { NoticeModule } from '../_components/notice/notice.module';
 import { RightOptionModule } from '../_components/right-option/right-option.module';
 import { PhraseWordsListModule } from '../_components/phrase-words-list/phrase-words-list.module';
 import { ApproveEthContractModalModule } from '../_components/approve-eth-contract/approve-eth-contract-modal/approve-eth-contract-modal.module';
-import { XDEFIConnectComponent } from '../_components/connect/xdefi-connect/xdefi-connect.component';
 @NgModule({
   declarations: [
     SwapComponent,
     ConfirmSwapModalComponent,
-    ConnectComponent,
-    ConnectModal,
-    KeystoreConnectComponent,
-    ConnectErrorComponent,
-    // LedgerConnectComponent,
-    KeystoreCreateComponent,
-    XDEFIConnectComponent,
-    KeystoreCreateStorePhraseComponent,
-    XDEFIConnectComponent,
-    // UserSettingsDialogComponent,
-    // RightOptionComponent
   ],
   imports: [
     CommonModule,
@@ -79,6 +60,7 @@ import { XDEFIConnectComponent } from '../_components/connect/xdefi-connect/xdef
     NoticeModule,
     RightOptionModule,
     PhraseWordsListModule,
+    ConnectModule,
     RouterModule.forChild([
       {
         path: ':sourceAsset/:targetAsset',
