@@ -20,9 +20,11 @@ export class ImportPhraseComponent implements OnInit {
   phrase: string;
   loading: boolean;
   error: boolean;
+  message: string;
   
   constructor(private userService: UserService, private keystoreService: KeystoreService, private phraseConfirm: PhraseConfirmService) { 
     this.loading = false;
+    this.message = "import phrase"
     this.back = new EventEmitter<null>();
     this.closeModal = new EventEmitter<null>();
     this.keystoreCreated = new EventEmitter<string>();
@@ -64,6 +66,8 @@ export class ImportPhraseComponent implements OnInit {
       this.keystoreCreated.emit(this.phrase);
     } catch (error) {
       console.error(error);
+      this.message = error.message;
+      this.error = true;
     }
 
     this.loading = false;
