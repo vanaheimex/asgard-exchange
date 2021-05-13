@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit, EventEmitter, Output } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { MainViewsEnum, OverlaysService } from 'src/app/_services/overlays.service';
 import { SlippageToleranceService } from 'src/app/_services/slippage-tolerance.service';
 @Component({
   selector: 'app-slippage-tolerance',
@@ -23,7 +24,7 @@ export class SlippageToleranceComponent implements OnInit, OnDestroy {
   }
   private _customTolerance: number;
 
-  constructor(private slippageToleranceService: SlippageToleranceService) {
+  constructor(private slippageToleranceService: SlippageToleranceService, private overlaysService: OverlaysService) {
     this.slippageTolerance$ = this.slippageToleranceService.slippageTolerance$.subscribe(
       (percent: number) => {
         this.tolerance = percent;
@@ -39,7 +40,15 @@ export class SlippageToleranceComponent implements OnInit, OnDestroy {
   setSlippage() {
     this.slippageToleranceService.setSlippageTolerance(this.customTolerance);
     this.message = 'saved';
-    this.close.emit();
+    this.closeDialog();
+  }
+
+  closeDialog() {
+    const gotoSwap = this.overlaysService.getSettingNavSwap();
+    if(gotoSwap) {
+      this.overlaysService.setSettingViews(MainViewsEnum.Swap, 'ACCOUNT');
+    }
+    this.close.emit()
   }
 
   ngOnDestroy() {

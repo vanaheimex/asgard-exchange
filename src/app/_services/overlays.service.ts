@@ -49,6 +49,7 @@ export class OverlaysService {
   innerUserView = this.userViewSource.asObservable();
 
   private innerSettingView: SettingViews = 'ACCOUNT';
+  private innerSettingViewSwap: boolean = false;
 
   private showMenu: boolean = false;
 
@@ -124,12 +125,26 @@ export class OverlaysService {
     return this.innerSettingView;
   }
 
-  setSettingView(val: SettingViews) {
-    this.innerSettingView = val;
+  getSettingNavSwap() {
+    return this.innerSettingViewSwap;
   }
 
-  setSettingViews(val: MainViewsEnum, inner: SettingViews) {
+  setSettingView(val: SettingViews, back?: boolean) {
+    this.innerSettingView = val;
+    if (back) {
+      this.innerSettingViewSwap = back;
+    } else {
+      this.innerSettingViewSwap = false;
+    }
+  }
+
+  setSettingViews(val: MainViewsEnum, inner: SettingViews, back?: boolean) {
     this.innerSettingView = inner;
     this.currentViewSource.next(val);
+    if (back) {
+      this.innerSettingViewSwap = back;
+    } else {
+      this.innerSettingViewSwap = false;
+    }
   }
 }

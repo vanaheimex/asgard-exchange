@@ -137,12 +137,10 @@ export class UserService {
       const index = this._balances.findIndex( (balance) => balance.asset.ticker === _balance.asset.ticker && balance.asset.chain === _balance.asset.chain)
 
       if (index === -1) {
-        console.log('adding this balance..', _balance)
 
         this._balances = [...this._balances, _balance];
         this.userBalancesSource.next(this._balances);
       } else {
-        console.log('updating this...', _balance)
 
         this._balances[index] = _balance;
         this.userBalancesSource.next(this._balances);

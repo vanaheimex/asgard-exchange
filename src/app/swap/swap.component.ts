@@ -384,7 +384,7 @@ export class SwapComponent implements OnInit, OnDestroy {
   }
 
   goToSettings() {
-    this.overlaysService.setSettingViews(MainViewsEnum.AccountSetting, 'SLIP');
+    this.overlaysService.setSettingViews(MainViewsEnum.AccountSetting, 'SLIP', true);
   }
 
   transactionSuccess() {
@@ -728,6 +728,9 @@ export class SwapComponent implements OnInit, OnDestroy {
       const inboundFee = this.inboundFees[assetToString(this.selectedSourceAsset)];
       const outboundFee = this.outboundFees[assetToString(this.selectedTargetAsset)];
       const outboundFeeInSourceVal = this.basePrice * outboundFee;
+
+      console.log('inboundFee :', inboundFee)
+      console.log('outboundFee :', outboundFee)
 
       this.networkFeeInSource = inboundFee + outboundFeeInSourceVal;
 
