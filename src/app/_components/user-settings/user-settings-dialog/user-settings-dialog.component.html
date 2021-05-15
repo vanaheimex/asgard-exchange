@@ -28,10 +28,10 @@
                     src="/assets/icons/logo-thor-rune.svg" />
                 </div>
                 <label>THOR</label>
+                <span class="chain-usd" *ngIf="chainUsdValue['THOR'] && !isTestnet && chainUsdValue['THOR'].value !== 0">({{chainUsdValue['THOR'].value | number: '0.0-2'}} USD)</span>
               </div>
               <div class="addr">
-                <!-- <input [value]="thorAddress.substring(0, 12) + '...' + thorAddress.substring(thorAddress.length - 12, thorAddress.length)" name="rune-address" [disabled]="true" /> -->
-                <span>{{thorAddress.substring(0, 12) + '...' + thorAddress.substring(thorAddress.length - 12, thorAddress.length)}}</span>
+                <span>{{thorAddress.substring(0, 9) + '...' + thorAddress.substring(thorAddress.length - 9, thorAddress.length)}}</span>
               </div>
             </div>
 
@@ -43,10 +43,10 @@
                     src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/binance/assets/BTCB-1DE/logo.png" />
                 </div>
                 <label>BTC</label>
+                <span class="chain-usd" *ngIf="chainUsdValue['BTC'] && !isTestnet && chainUsdValue['BTC'].value !== 0">({{chainUsdValue['BTC'].value | number: '0.0-2'}} USD)</span>
               </div>
               <div class="addr">
-                <!-- <input [value]="bitcoinAddress.substring(0, 12) + '...' + bitcoinAddress.substring(bitcoinAddress.length - 12, bitcoinAddress.length)" name="btc-address" [disabled]="true" /> -->
-                <span>{{bitcoinAddress.substring(0, 12) + '...' + bitcoinAddress.substring(bitcoinAddress.length - 12, bitcoinAddress.length)}}</span>
+                <span>{{bitcoinAddress.substring(0, 9) + '...' + bitcoinAddress.substring(bitcoinAddress.length - 9, bitcoinAddress.length)}}</span>
               </div>
             </div>
 
@@ -58,10 +58,10 @@
                     src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png" />
                 </div>
                 <label>ETH</label>
+                <span class="chain-usd" *ngIf="chainUsdValue['ETH'] && !isTestnet && chainUsdValue['ETH'].value !== 0">({{chainUsdValue['ETH'].value | number: '0.0-2'}} USD)</span>
               </div>
               <div class="addr">
-                <!-- <input [value]="ethereumAddress.substring(0, 12) + '...' + ethereumAddress.substring(ethereumAddress.length - 12, ethereumAddress.length)" name="eth-address" [disabled]="true" /> -->
-                <span>{{ethereumAddress.substring(0, 12) + '...' + ethereumAddress.substring(ethereumAddress.length - 12, ethereumAddress.length)}}</span>
+                <span>{{ethereumAddress.substring(0, 9) + '...' + ethereumAddress.substring(ethereumAddress.length - 9, ethereumAddress.length)}}</span>
               </div>
             </div>
 
@@ -72,10 +72,10 @@
                   <img class="asset-icon" src="assets/images/token-icons/bnb.png" />
                 </div>
                 <label>BNB</label>
+                <span class="chain-usd" *ngIf="chainUsdValue['BNB'] && !isTestnet && chainUsdValue['BNB'].value !== 0">({{chainUsdValue['BNB'].value | number: '0.0-2'}} USD)</span>
               </div>
               <div class="addr">
-                <!-- <input [value]="binanceAddress.substring(0, 12) + '...' + binanceAddress.substring(binanceAddress.length - 12, binanceAddress.length)" name="binance-address" [disabled]="true" /> -->
-                <span>{{binanceAddress.substring(0, 12) + '...' + binanceAddress.substring(binanceAddress.length - 12, binanceAddress.length)}}</span>
+                <span>{{binanceAddress.substring(0, 9) + '...' + binanceAddress.substring(binanceAddress.length - 9, binanceAddress.length)}}</span>
               </div>
             </div>
 
@@ -86,10 +86,10 @@
                   <img class="asset-icon" src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/litecoin/info/logo.png" />
                 </div>
                 <label>LTC</label>
+                <span class="chain-usd" *ngIf="chainUsdValue['LTC'] && !isTestnet && chainUsdValue['LTC'].value !== 0">({{chainUsdValue['LTC'].value | number: '0.0-2'}} USD)</span>
               </div>
               <div class="addr">
-                <!-- <input [value]="litecoinAddress.substring(0, 12) + '...' + litecoinAddress.substring(litecoinAddress.length - 12, litecoinAddress.length)" name="litecoin-address" [disabled]="true" /> -->
-                <span>{{litecoinAddress.substring(0, 12) + '...' + litecoinAddress.substring(litecoinAddress.length - 12, litecoinAddress.length)}}</span>
+                <span>{{litecoinAddress.substring(0, 9) + '...' + litecoinAddress.substring(litecoinAddress.length - 9, litecoinAddress.length)}}</span>
               </div>
             </div>
 
@@ -100,10 +100,10 @@
                   <img class="asset-icon" src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/bitcoincash/info/logo.png" />
                 </div>
                 <label>BCH</label>
+                <span class="chain-usd" *ngIf="chainUsdValue['BCH'] && !isTestnet && chainUsdValue['BCH'].value !== 0">({{chainUsdValue['BCH'].value | number: '0.0-2'}} USD)</span>
               </div>
               <div class="addr">
-                <!-- <input [value]="bchAddress.substring(0, 12) + '...' + bchAddress.substring(bchAddress.length - 12, bchAddress.length)" name="bch-address" [disabled]="true" /> -->
-                <span>{{bchAddress.substring(0, 12) + '...' + bchAddress.substring(bchAddress.length - 12, bchAddress.length)}}</span>
+                <span>{{bchAddress.substring(0, 9) + '...' + bchAddress.substring(bchAddress.length - 9, bchAddress.length)}}</span>
               </div>
             </div>
 

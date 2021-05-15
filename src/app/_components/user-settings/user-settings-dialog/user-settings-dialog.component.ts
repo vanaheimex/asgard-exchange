@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { Chain } from '@xchainjs/xchain-util';
+import { baseToAsset, Chain } from '@xchainjs/xchain-util';
 import { Subscription } from 'rxjs';
 import { AssetAndBalance } from 'src/app/_classes/asset-and-balance';
 import { PoolDTO } from 'src/app/_classes/pool';
@@ -9,6 +9,8 @@ import { MainViewsEnum, OverlaysService, UserViews } from 'src/app/_services/ove
 import { MidgardService } from 'src/app/_services/midgard.service';
 import { TransactionStatusService } from 'src/app/_services/transaction-status.service';
 import { UserService } from 'src/app/_services/user.service';
+import { CoinGeckoService } from 'src/app/_services/coin-gecko.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-user-settings-dialog',
@@ -44,17 +46,21 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
 
   @Input() userSetting: boolean;
   pools: PoolDTO[];
+  chainUsdValue = {};
+  isTestnet: boolean;
 
   constructor(
     private userService: UserService,
     private txStatusService: TransactionStatusService,
     private overlaysService: OverlaysService,
     private midgardService: MidgardService,
-    private transactionStatusService: TransactionStatusService
+    private transactionStatusService: TransactionStatusService,
+    private cgService: CoinGeckoService
   ) {
     this.pools = [];
     this.pendingTxCount = 0;
     this.mode = 'ADDRESSES';
+    this.isTestnet = environment.network === 'testnet' ? true : false;
 
     this.selectedAsset = null;
     this.selectedChain = null;
@@ -118,7 +124,48 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
   }
 
   getPools() {
-    this.midgardService.getPools().subscribe( (res) => this.pools = res );
+    this.midgardService.getPools().subscribe( 
+    (res) => {
+      this.pools = res;
+      if (!this.isTestnet) {
+        this.getBalances();
+      }
+    });
+  }
+
+  async getBalances() {
+    var i = 0;
+    const list = await this.cgService.getCoinList().toPromise(); 
+    const balances$ = this.userService.userBalances$.subscribe(
+      (balances) => {
+        this.chainUsdValue = {};
+        console.log(i++)
+        if (balances) {
+          balances.forEach(
+            async (balance) => {
+              let id = this.cgService.getCoinIdBySymbol(balance.asset.ticker, list);
+              if (id) {
+                let res = await this.cgService.getCurrencyConversion(id).toPromise();
+                for (const [_key, value] of Object.entries(res)) {
+                  if (this.chainUsdValue[balance.asset.chain] && !this.chainUsdValue[balance.asset.chain].tokens.find(el => el === balance.asset.ticker)) {
+                    this.chainUsdValue[balance.asset.chain].tokens = [...this.chainUsdValue[balance.asset.chain].tokens, balance.asset.ticker];
+                    this.chainUsdValue[balance.asset.chain].value += value.usd * baseToAsset(balance.amount).amount().toNumber();
+                  }
+                  else if(!this.chainUsdValue[balance.asset.chain]) {
+                    this.chainUsdValue[balance.asset.chain] = {}
+                    this.chainUsdValue[balance.asset.chain].value = value.usd * baseToAsset(balance.amount).amount().toNumber();
+                    this.chainUsdValue[balance.asset.chain].tokens = [balance.asset.ticker]
+                  }
+                  console.log(this.chainUsdValue, balance.asset.chain, balance.asset.ticker, value.usd, baseToAsset(balance.amount).amount().toNumber())
+                }
+              }
+            }
+          )
+        }
+      }
+    );
+
+    this.subs.push(balances$);
   }
 
   selectAddress(address: string, chain: Chain) {
