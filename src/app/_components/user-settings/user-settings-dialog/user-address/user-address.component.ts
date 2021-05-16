@@ -15,10 +15,9 @@ import { OverlaysService } from 'src/app/_services/overlays.service';
 @Component({
   selector: 'app-user-address',
   templateUrl: './user-address.component.html',
-  styleUrls: ['./user-address.component.scss']
+  styleUrls: ['./user-address.component.scss'],
 })
 export class UserAddressComponent implements OnInit {
-
   @Input() address: string;
   @Input() chain: Chain;
   @Input() pools: PoolDTO[];
@@ -51,20 +50,17 @@ export class UserAddressComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
     this.iconPath = this.getIconPath(this.chain);
 
     const balances$ = this.userService.userBalances$.subscribe(
       (balances) => {
-        console.log(balances);
         if (balances) {
           this.balances = balances.filter( (balance) => balance.asset.chain === this.chain );
         }
 
         this.createAssetList();
 
-      }
-    );
+      });
 
     const chainBalanceErrors$ = this.userService.chainBalanceErrors$.subscribe(
       (chains) => {
@@ -77,7 +73,6 @@ export class UserAddressComponent implements OnInit {
     this.setExplorerPath();
 
     this.subs = [balances$, chainBalanceErrors$];
-
   }
 
   getMessage(): string {
@@ -92,18 +87,19 @@ export class UserAddressComponent implements OnInit {
   createAssetList() {
 
     if (this.balances && this.pools) {
-
-      this.assets = this.balances.reduce( (list: AssetAndBalance[], balance) => {
-
+      this.assets = this.balances.reduce((list: AssetAndBalance[], balance) => {
         const assetString = `${balance.asset.chain}.${balance.asset.symbol}`;
-        const asset = new Asset(`${balance.asset.chain}.${balance.asset.symbol}`);
+        const asset = new Asset(
+          `${balance.asset.chain}.${balance.asset.symbol}`
+        );
         let assetBalance: AssetAndBalance;
 
         if (asset.ticker === 'RUNE') {
           assetBalance = {
             asset,
-            assetPriceUSD: this.thorchainPricesService.estimateRunePrice(this.pools) ?? 0,
-            balance: baseToAsset(balance.amount)
+            assetPriceUSD:
+              this.thorchainPricesService.estimateRunePrice(this.pools) ?? 0,
+            balance: baseToAsset(balance.amount),
           };
         } else {
           const matchingPool = this.pools.find( (pool) => {
@@ -113,19 +109,16 @@ export class UserAddressComponent implements OnInit {
           assetBalance = {
             asset,
             assetPriceUSD: matchingPool ? +matchingPool.assetPriceUSD : 0,
-            balance: baseToAsset(balance.amount)
+            balance: baseToAsset(balance.amount),
           };
         }
 
         list.push(assetBalance);
 
         return list;
-
       }, []);
 
-
       this.loading = false;
-
     }
   }
 
@@ -197,7 +190,9 @@ export class UserAddressComponent implements OnInit {
   }
 
   selectAsset(asset: Asset) {
-    const match = this.assets.find( (assetAndBalance) => assetAndBalance.asset === asset );
+    const match = this.assets.find(
+      (assetAndBalance) => assetAndBalance.asset === asset
+    );
     if (match) {
       this.navigateToAsset.next(match);
     } else {

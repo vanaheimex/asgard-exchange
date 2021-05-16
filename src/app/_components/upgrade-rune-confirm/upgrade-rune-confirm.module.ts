@@ -13,8 +13,6 @@ import { BreadcrumbModule } from '../breadcrumb/breadcrumb.module';
 import { NoticeModule } from '../notice/notice.module';
 import { TransactionSuccessModalModule } from '../transaction-success-modal/transaction-success-modal.module';
 
-
-
 @NgModule({
   declarations: [UpgradeRuneConfirmComponent],
   imports: [
@@ -31,6 +29,6 @@ import { TransactionSuccessModalModule } from '../transaction-success-modal/tran
     NoticeModule,
     ModalSectionHeaderModule
   ],
-  exports: [UpgradeRuneConfirmComponent]
+  exports: [UpgradeRuneConfirmComponent],
 })
-export class UpgradeRuneConfirmModule { }
+export class UpgradeRuneConfirmModule {}

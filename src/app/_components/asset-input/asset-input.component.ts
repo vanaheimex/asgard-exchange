@@ -1,4 +1,11 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { Asset } from 'src/app/_classes/asset';
 import { MarketsModalComponent } from '../markets-modal/markets-modal.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -13,14 +20,15 @@ import { MidgardService } from 'src/app/_services/midgard.service';
 import { ThorchainPricesService } from 'src/app/_services/thorchain-prices.service';
 import { CurrencyService } from 'src/app/_services/currency.service';
 import { Currency } from '../account-settings/currency-converter/currency-converter.component';
+import { PoolAddressDTO } from 'src/app/_classes/pool-address';
+import { TxType } from 'src/app/_const/tx-type';
 
 @Component({
   selector: 'app-asset-input',
   templateUrl: './asset-input.component.html',
-  styleUrls: ['./asset-input.component.scss']
+  styleUrls: ['./asset-input.component.scss'],
 })
 export class AssetInputComponent implements OnInit, OnDestroy {
-
   /**
    * Selected Asset
    */
@@ -88,15 +96,19 @@ export class AssetInputComponent implements OnInit, OnDestroy {
 
   @Input() priceInput: number;
   @Input() inputColor: string;
+  @Input() txType?: TxType;
+
   usdValue: number;
   user: User;
   subs: Subscription[];
   inputUsdValue: number;
   currency: Currency;
+  inboundAddresses: PoolAddressDTO[];
+
 
   constructor(private userService: UserService, private ethUtilsService: EthUtilsService, public overlayService: OverlaysService, private midgardService: MidgardService, private thorchainPricesService: ThorchainPricesService, private currencyService: CurrencyService) {
     const user$ = this.userService.user$.subscribe(
-      (user) => this.user = user
+      (user) => (this.user = user)
     );
 
     const curs$ = this.currencyService.cur$.subscribe(
@@ -107,16 +119,26 @@ export class AssetInputComponent implements OnInit, OnDestroy {
     this.subs = [user$];
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
+    this.setPoolAddresses();
+  }
+
+  setPoolAddresses() {
+    this.midgardService
+      .getInboundAddresses()
+      .subscribe((res) => (this.inboundAddresses = res));
   }
 
   checkUsdBalance(): void {
-
     if (!this.balance || !this.selectableMarkets) {
       return;
     }
 
-    const targetPool = this.selectableMarkets.find( (market) => `${market.asset.chain}.${market.asset.ticker}` === `${this.selectedAsset.chain}.${this.selectedAsset.ticker}` );
+    const targetPool = this.selectableMarkets.find(
+      (market) =>
+        `${market.asset.chain}.${market.asset.ticker}` ===
+        `${this.selectedAsset.chain}.${this.selectedAsset.ticker}`
+    );
     if (!targetPool || !targetPool.assetPriceUSD) {
       return;
     }
@@ -124,18 +146,16 @@ export class AssetInputComponent implements OnInit, OnDestroy {
     this.usdValue = targetPool.assetPriceUSD * this.balance;
   }
 
-  getMax() {
-    if (this.balance && this.selectedAsset) {
-      return this.userService.maximumSpendableBalance(this.selectedAsset, this.balance);
-    }
-  }
-
   setInputUsdValue(): void {
     if (!this.selectedAsset || !this.selectableMarkets) {
       return;
     }
 
-    const targetPool = this.selectableMarkets.find( (market) => `${market.asset.chain}.${market.asset.ticker}` === `${this.selectedAsset.chain}.${this.selectedAsset.ticker}` );
+    const targetPool = this.selectableMarkets.find(
+      (market) =>
+        `${market.asset.chain}.${market.asset.ticker}` ===
+        `${this.selectedAsset.chain}.${this.selectedAsset.ticker}`
+    );
     if (!targetPool || !targetPool.assetPriceUSD) {
       return;
     }
@@ -147,26 +167,22 @@ export class AssetInputComponent implements OnInit, OnDestroy {
     this.setInputUsdValue();
   }
 
-  async setMax(): Promise<void> {
+  getMax() {
+    if (this.balance && this.selectedAsset) {
+      return this.userService.maximumSpendableBalance(this.selectedAsset, this.balance, this.inboundAddresses, this.txType ?? 'INBOUND');
+    }
+  }
 
+  async setMax(): Promise<void> {
     this.loading = true;
 
-    if (this.balance) {
-      let max: number;
-      if (this.selectedAsset.chain === 'ETH') {
-        if (this.user && this.user.clients) {
-          max = await this.ethUtilsService.maximumSpendableBalance({
-            asset: this.selectedAsset,
-            client: this.user.clients.ethereum,
-            balance: this.balance
-          });
-        } else {
-          console.error('no user clients found: ', this.user);
-          max = 0;
-        }
-      } else {
-        max = this.userService.maximumSpendableBalance(this.selectedAsset, this.balance);
-      }
+    if (this.balance && this.inboundAddresses) {
+      const max = this.userService.maximumSpendableBalance(
+        this.selectedAsset,
+        this.balance,
+        this.inboundAddresses,
+        this.txType ?? 'INBOUND'
+      );
 
       if (max) {
         this.assetUnitChange.emit(max);
@@ -176,19 +192,9 @@ export class AssetInputComponent implements OnInit, OnDestroy {
     }
 
     this.loading = false;
-
   }
 
   launchMarketsModal(): void {
-    //TODO: change the data flow into the compoenent directly
-    // if(!this.isDeposit) {
-    //   if(this.isSource)
-    //     this.overlayService.setCurrentSwapView('SourceAsset')
-    //   else
-    //     this.overlayService.setCurrentSwapView('TargetAsset')
-    // } else if (this.isDeposit) {
-    //   this.overlayService.setCurrentDepositView('Asset');
-    // }
     this.lunchMarket.emit();
   }
 
@@ -238,5 +244,4 @@ export class AssetInputComponent implements OnInit, OnDestroy {
       sub.unsubscribe();
     }
   }
-
 }

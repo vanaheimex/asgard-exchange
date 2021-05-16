@@ -11,10 +11,9 @@ import { assetAmount } from '@xchainjs/xchain-util';
 @Component({
   selector: 'app-native-rune-prompt-modal',
   templateUrl: './native-rune-prompt-modal.component.html',
-  styleUrls: ['./native-rune-prompt-modal.component.scss']
+  styleUrls: ['./native-rune-prompt-modal.component.scss'],
 })
-export class NativeRunePromptModalComponent implements OnInit {
-
+export class NativeRunePromptModalComponent {
   assets: AssetAndBalance[];
   loading: boolean;
   subs: Subscription[];
@@ -118,11 +117,12 @@ export class NativeRunePromptModalComponent implements OnInit {
     this.subs.push(user$);
   }
 
-  ngOnInit(): void {
-  }
-
   selectAsset(asset: Asset) {
-    const withBalance = this.assets.find( (anb) => `${anb.asset.chain}.${anb.asset.symbol}` === `${asset.chain}.${asset.symbol}` );
+    const withBalance = this.assets.find(
+      (anb) =>
+        `${anb.asset.chain}.${anb.asset.symbol}` ===
+        `${asset.chain}.${asset.symbol}`
+    );
     this.selectedAsset = withBalance;
     this.mode = 'UPGRADE_ASSET';
   }
@@ -132,7 +132,7 @@ export class NativeRunePromptModalComponent implements OnInit {
     this.mode = 'SUCCESS';
   }
 
-  confirmUpgradeRune(p: {amount: number}) {
+  confirmUpgradeRune(p: { amount: number }) {
     this.amountToSend = p.amount;
     this.mode = 'CONFIRM';
   }

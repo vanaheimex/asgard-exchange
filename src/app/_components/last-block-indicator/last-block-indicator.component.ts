@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { LastBlockService } from 'src/app/_services/last-block.service';
 import { environment } from 'src/environments/environment';
@@ -7,10 +7,9 @@ import { links } from 'src/app/_const/links';
 @Component({
   selector: 'app-last-block-indicator',
   templateUrl: './last-block-indicator.component.html',
-  styleUrls: ['./last-block-indicator.component.scss']
+  styleUrls: ['./last-block-indicator.component.scss'],
 })
-export class LastBlockIndicatorComponent implements OnInit, OnDestroy {
-
+export class LastBlockIndicatorComponent implements OnDestroy {
   subs: Subscription[];
   lastBlock: number;
   updating: boolean;
@@ -37,13 +36,9 @@ export class LastBlockIndicatorComponent implements OnInit, OnDestroy {
     this.subs = [lastBlock$];
   }
 
-  ngOnInit(): void {
-  }
-
   ngOnDestroy() {
     for (const subs of this.subs) {
       subs.unsubscribe();
     }
   }
-
 }

@@ -33,10 +33,9 @@ export interface ConfirmWithdrawData {
 @Component({
   selector: 'app-confirm-withdraw-modal',
   templateUrl: './confirm-withdraw-modal.component.html',
-  styleUrls: ['./confirm-withdraw-modal.component.scss']
+  styleUrls: ['./confirm-withdraw-modal.component.scss'],
 })
 export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
-
   txState: TransactionConfirmationState;
   hash: string;
   subs: Subscription[];
@@ -60,13 +59,11 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
   ) {
     this.close = new EventEmitter<boolean>();
     this.txState = TransactionConfirmationState.PENDING_CONFIRMATION;
-    const user$ = this.userService.user$.subscribe(
-      (user) => {
-        if (!user) {
-          this.closeDialog();
-        }
+    const user$ = this.userService.user$.subscribe((user) => {
+      if (!user) {
+        this.closeDialog();
       }
-    );
+    });
 
     this.subs = [user$];
   }
@@ -77,29 +74,35 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
 
   async estimateTime() {
     if (this.data.asset.chain === 'ETH' && this.data.asset.symbol !== 'ETH') {
-      this.estimatedMinutes = await this.ethUtilsService.estimateERC20Time(assetToString(this.data.asset), this.data.assetAmount);
+      this.estimatedMinutes = await this.ethUtilsService.estimateERC20Time(
+        assetToString(this.data.asset),
+        this.data.assetAmount
+      );
     } else {
-      this.estimatedMinutes = this.txStatusService.estimateTime(this.data.asset.chain, this.data.assetAmount);
+      this.estimatedMinutes = this.txStatusService.estimateTime(
+        this.data.asset.chain,
+        this.data.assetAmount
+      );
     }
   }
 
   async submitTransaction(): Promise<void> {
     this.txState = TransactionConfirmationState.SUBMITTING;
 
-    const memo = `WITHDRAW:${this.data.asset.chain}.${this.data.asset.symbol}:${this.data.unstakePercent * 100}`;
+    const memo = `WITHDRAW:${this.data.asset.chain}.${this.data.asset.symbol}:${
+      this.data.unstakePercent * 100
+    }`;
 
     if (this.data.withdrawType === 'ASYM_ASSET') {
       this.assetWithdraw(memo);
     } else {
       this.runeWithdraw(memo);
     }
-
   }
 
   async runeWithdraw(memo: string) {
     // withdraw RUNE
     try {
-
       const txCost = assetToBase(assetAmount(0.00000001));
 
       const thorClient = this.data.user.clients.thorchain;
@@ -122,12 +125,12 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
   }
 
   async assetWithdraw(memo: string) {
-
     try {
-
       const asset = this.data.asset;
 
-      const inboundAddresses = await this.midgardService.getInboundAddresses().toPromise();
+      const inboundAddresses = await this.midgardService
+        .getInboundAddresses()
+        .toPromise();
       if (!inboundAddresses) {
         console.error('no inbound addresses found');
         this.error = 'No Inbound Addresses Found. Please try again later.';
@@ -135,10 +138,13 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
         return;
       }
 
-      const matchingInboundAddress = inboundAddresses.find( (inbound) => inbound.chain === asset.chain );
+      const matchingInboundAddress = inboundAddresses.find(
+        (inbound) => inbound.chain === asset.chain
+      );
       if (!matchingInboundAddress) {
         console.error('no matching inbound addresses found');
-        this.error = 'No Matching Inbound Address Found. Please try again later.';
+        this.error =
+          'No Matching Inbound Address Found. Please try again later.';
         this.txState = TransactionConfirmationState.ERROR;
         return;
       }
@@ -159,7 +165,7 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
             ethClient,
             asset: new Asset('ETH.ETH'),
             amount: minAmount.amount(),
-            memo
+            memo,
           });
 
           hash = this.ethUtilsService.strip0x(ethHash);
@@ -170,7 +176,10 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
         case 'BCH':
         case 'LTC':
         case 'BNB':
-          const client = this.userService.getChainClient(this.data.user, asset.chain);
+          const client = this.userService.getChainClient(
+            this.data.user,
+            asset.chain
+          );
           if (!client) {
             console.error('no client found for withdraw');
             this.error = 'No Client Found. Please try again later.';
@@ -182,12 +191,12 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
             asset: {
               chain: asset.chain,
               symbol: asset.symbol,
-              ticker: asset.ticker
+              ticker: asset.ticker,
             },
             amount: minAmount,
             recipient: matchingInboundAddress.address,
             memo,
-            feeRate: +matchingInboundAddress.gas_rate
+            feeRate: +matchingInboundAddress.gas_rate,
           });
           break;
       }
@@ -199,13 +208,11 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
         this.error = 'Error withdrawing, hash is empty. Please try again later';
         this.txState = TransactionConfirmationState.ERROR;
       }
-
     } catch (error) {
       console.error(error);
       this.error = 'Error withdrawing. Please try again later';
       this.txState = TransactionConfirmationState.ERROR;
     }
-
   }
 
   goToNav(nav: string) {
@@ -227,7 +234,7 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
       symbol: this.data.asset.symbol,
       status: TxStatus.PENDING,
       action: TxActions.WITHDRAW,
-      isThorchainTx: true
+      isThorchainTx: true,
     });
   }
 
@@ -244,5 +251,4 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
       sub.unsubscribe();
     }
   }
-
 }

@@ -11,10 +11,9 @@ import { ApproveEthContractModalComponent } from './approve-eth-contract-modal/a
 @Component({
   selector: 'app-approve-eth-contract',
   templateUrl: './approve-eth-contract.component.html',
-  styleUrls: ['./approve-eth-contract.component.scss']
+  styleUrls: ['./approve-eth-contract.component.scss'],
 })
-export class ApproveEthContractComponent implements OnInit, OnDestroy {
-
+export class ApproveEthContractComponent implements OnDestroy {
   @Input() contractAddress: string;
   @Input() asset: Asset;
   @Output() approved: EventEmitter<null>;
@@ -33,21 +32,17 @@ export class ApproveEthContractComponent implements OnInit, OnDestroy {
     this.approving = false;
 
     const user$ = this.userService.user$.subscribe(
-      (user) => this.user = user
+      (user) => (this.user = user)
     );
 
-    const ethContractApproval$ = this.txStatusService.ethContractApproval$.subscribe(
-      (hash) => {
+    const ethContractApproval$ =
+      this.txStatusService.ethContractApproval$.subscribe((hash) => {
         if (hash === this.isApprovedTxHash) {
           this.approved.emit();
         }
-      }
-    );
+      });
 
     this.subs = [user$, ethContractApproval$];
-  }
-
-  ngOnInit(): void {
   }
 
   openConfirmationDialog() {
@@ -88,5 +83,4 @@ export class ApproveEthContractComponent implements OnInit, OnDestroy {
       sub.unsubscribe();
     }
   }
-
 }

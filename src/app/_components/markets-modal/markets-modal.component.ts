@@ -9,7 +9,6 @@ import { Balances } from '@xchainjs/xchain-client';
 import { AssetAndBalance } from 'src/app/_classes/asset-and-balance';
 import { OverlaysService } from 'src/app/_services/overlays.service';
 
-
 @Component({
   selector: 'app-markets-modal',
   templateUrl: './markets-modal.component.html',
@@ -57,16 +56,14 @@ export class MarketsModalComponent implements OnInit, OnDestroy {
 
     // this.marketListItems = this.selectableMarkets;
 
-    const user$ = this.userService.user$.subscribe(
-      (user) => {
-        this.user = user;
-        if (!user) {
-          this.userBalances = [];
-        }
+    const user$ = this.userService.user$.subscribe((user) => {
+      this.user = user;
+      if (!user) {
+        this.userBalances = [];
       }
-    );
+    });
 
-    const balances$ = this.userService.userBalances$.subscribe( (balances) => {
+    const balances$ = this.userService.userBalances$.subscribe((balances) => {
       this.userBalances = balances;
       if (this.marketListItems) {
         this.sortMarketsByUserBalance();
@@ -90,7 +87,6 @@ export class MarketsModalComponent implements OnInit, OnDestroy {
       this.filteredMarketListItems = this.marketListItems;
     }
   }
-
 
   initList() {
     this.filteredMarketListItems = this.marketListItems;

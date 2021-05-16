@@ -22,10 +22,9 @@ export type ApproveEthContractModalParams = {
 @Component({
   selector: 'app-approve-eth-contract-modal',
   templateUrl: './approve-eth-contract-modal.component.html',
-  styleUrls: ['./approve-eth-contract-modal.component.scss']
+  styleUrls: ['./approve-eth-contract-modal.component.scss'],
 })
 export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
-
   user: User;
   subs: Subscription[];
   loading: boolean;
@@ -47,9 +46,7 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
   constructor(
     private userService: UserService,
     private txStatusService: TransactionStatusService,
-    private ethUtilsService: EthUtilsService,
     private midgardService: MidgardService,
-    private overlaysService: OverlaysService,
     private copySerivce: CopyService,
     private explorerPathsService : ExplorerPathsService
   ) {
@@ -78,10 +75,12 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
 
     const sub = combined.subscribe(([user, balances, inboundAddresses]) => {
       this.user = user;
-      this.ethBalance = this.userService.findBalance(balances, new Asset('ETH.ETH'));
+      this.ethBalance = this.userService.findBalance(
+        balances,
+        new Asset('ETH.ETH')
+      );
       this.estimateApprovalFee(inboundAddresses);
     });
-
 
     this.subs.push(sub);
   }
@@ -92,7 +91,9 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
   }
 
   async estimateApprovalFee(addresses: PoolAddressDTO[]) {
-    const ethInboundAddress = addresses.find( (address) => address.chain === 'ETH' );
+    const ethInboundAddress = addresses.find(
+      (address) => address.chain === 'ETH'
+    );
     const { asset, contractAddress } = this.data;
     const assetAddress = asset.symbol.slice(asset.ticker.length + 1);
     const strip0x = assetAddress.substr(2);
@@ -111,10 +112,10 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
       const fee = await this.user.clients.ethereum.estimateApprove({
         spender: contractAddress,
         sender: strip0x,
-        amount: baseAmount(bn(2).pow(96).minus(1))
+        amount: baseAmount(bn(2).pow(96).minus(1)),
       });
       this.fee = ethers.utils.formatEther(fee.toString());
-      this.insufficientEthBalance = (+this.fee) > this.ethBalance;
+      this.insufficientEthBalance = +this.fee > this.ethBalance;
     } catch (error) {
       console.error('error estimating approve fee: ', error);
     }
@@ -123,7 +124,6 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
   }
 
   async approve() {
-
     this.loading = true;
 
     if (this.data.contractAddress && this.user && this.data.asset) {
@@ -136,7 +136,7 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
         spender: contractAddress,
         sender: strip0x,
         amount: baseAmount(bn(2).pow(96).minus(1)),
-        feeOptionKey: 'fast'
+        feeOptionKey: 'fast',
       });
 
       this.txStatusService.pollEthContractApproval(approve.hash);
@@ -146,7 +146,6 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
     }
 
     this.loading = false;
-
   }
 
   closeDialog() {
@@ -168,5 +167,4 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
       sub.unsubscribe();
     }
   }
-
 }

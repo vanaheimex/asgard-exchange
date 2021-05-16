@@ -7,10 +7,9 @@ import { UserService } from 'src/app/_services/user.service';
 @Component({
   selector: 'app-reconnect-dialog',
   templateUrl: './reconnect-dialog.component.html',
-  styleUrls: ['./reconnect-dialog.component.scss']
+  styleUrls: ['./reconnect-dialog.component.scss'],
 })
-export class ReconnectDialogComponent implements OnInit {
-
+export class ReconnectDialogComponent {
   keystorePassword: string;
   keystoreError: boolean;
   keystoreConnecting: boolean;
@@ -33,7 +32,6 @@ export class ReconnectDialogComponent implements OnInit {
   }
 
   async initUnlock() {
-
     if (this.keystoreConnecting) {
       return;
     }
@@ -43,7 +41,6 @@ export class ReconnectDialogComponent implements OnInit {
     setTimeout(() => {
       this.keystoreUnlock();
     }, 100);
-
   }
 
   async keystoreUnlock() {
@@ -51,7 +48,10 @@ export class ReconnectDialogComponent implements OnInit {
 
     try {
       localStorage.setItem('keystore', JSON.stringify(this.keystore));
-      const user = await this.keystoreService.unlockKeystore(this.keystore, this.keystorePassword);
+      const user = await this.keystoreService.unlockKeystore(
+        this.keystore,
+        this.keystorePassword
+      );
       this.userService.setUser(user);
       this.overlayService.setViews(MainViewsEnum.Swap, 'Swap');
     } catch (error) {
@@ -65,5 +65,4 @@ export class ReconnectDialogComponent implements OnInit {
     this.overlayService.setViews(MainViewsEnum.Swap, 'Swap');
     localStorage.clear();
   }
-
 }

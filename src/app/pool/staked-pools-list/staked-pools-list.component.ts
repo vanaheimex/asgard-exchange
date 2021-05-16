@@ -10,9 +10,9 @@ import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-staked-pools-list',
   templateUrl: './staked-pools-list.component.html',
-  styleUrls: ['./staked-pools-list.component.scss']
+  styleUrls: ['./staked-pools-list.component.scss'],
 })
-export class StakedPoolsListComponent implements OnInit {
+export class StakedPoolsListComponent {
 
   activePool: PoolDTO;
 
@@ -37,8 +37,8 @@ export class StakedPoolsListComponent implements OnInit {
   _memberPools: MemberPool[];
 
   mappedPools: {
-    poolData: PoolDTO,
-    memberData: MemberPool
+    poolData: PoolDTO;
+    memberData: MemberPool;
   }[];
 
   notMamberPools: PoolDTO[];
@@ -56,12 +56,9 @@ export class StakedPoolsListComponent implements OnInit {
     this.subs = [cur$]
   }
 
-  ngOnInit(): void { }
-
   mapPools() {
-
     if (this.pools && this.memberPools) {
-      this.mappedPools = this.memberPools.map( (memberPool) => {
+      this.mappedPools = this.memberPools.map((memberPool) => {
         return {
           poolData: {...this.pools.find( (pool) => pool.asset === memberPool.pool ), runePrice: this.runePrice},
           memberData: memberPool
@@ -93,7 +90,6 @@ export class StakedPoolsListComponent implements OnInit {
       }
       
     }
-
   }
 
   ngOnDestroy(): void {

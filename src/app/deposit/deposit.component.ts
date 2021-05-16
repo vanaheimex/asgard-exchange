@@ -1,6 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { getValueOfAssetInRune, getValueOfRuneInAsset, PoolData } from '@thorchain/asgardex-util';
+import {
+  getValueOfAssetInRune,
+  getValueOfRuneInAsset,
+  PoolData,
+} from '@thorchain/asgardex-util';
 import {
   baseAmount,
   assetToBase,
@@ -22,15 +26,14 @@ import { DepositViews, OverlaysService } from '../_services/overlays.service';
 import { ThorchainPricesService } from '../_services/thorchain-prices.service';
 import { TransactionUtilsService } from '../_services/transaction-utils.service';
 import { debounceTime } from 'rxjs/operators';
+import { PoolAddressDTO } from '../_classes/pool-address';
 
 @Component({
   selector: 'app-deposit',
   templateUrl: './deposit.component.html',
-  styleUrls: ['./deposit.component.scss']
+  styleUrls: ['./deposit.component.scss'],
 })
 export class DepositComponent implements OnInit, OnDestroy {
-
-
   /**
    * Rune
    */
@@ -48,24 +51,18 @@ export class DepositComponent implements OnInit, OnDestroy {
    * Asset
    */
   set asset(val: Asset) {
-
     if (val) {
-
       if (!this._asset) {
         this._asset = val;
       } else {
-
         if (val.symbol !== this._asset.symbol) {
           this.router.navigate(['/', 'deposit', `${val.chain}.${val.symbol}`]);
           this._asset = val;
           this.assetBalance = this.userService.findBalance(this.balances, this.asset);
           this.assetAmount = 0;
         }
-
       }
-
     }
-
   }
   get asset() {
     return this._asset;
@@ -75,7 +72,6 @@ export class DepositComponent implements OnInit, OnDestroy {
     return this._assetAmount;
   }
   set assetAmount(val: number) {
-
     this._assetAmount = val;
 
     if (val) {
@@ -83,7 +79,6 @@ export class DepositComponent implements OnInit, OnDestroy {
     } else {
       this.runeAmount = null;
     }
-
   }
   private _assetAmount: number;
   assetPoolData: PoolData;
@@ -109,6 +104,10 @@ export class DepositComponent implements OnInit, OnDestroy {
   chainNetworkFee: number;
   depositsDisabled: boolean;
   sourceChainBalance: number;
+  inboundAddresses: PoolAddressDTO[];
+
+  haltedChains: string[];
+  isHalted: boolean;
 
   view: DepositViews;
   // saving data of confirm in variable to pass it to the confirm
@@ -131,51 +130,79 @@ export class DepositComponent implements OnInit, OnDestroy {
     this.overlaysService.setCurrentDepositView('Deposit');
     this.subs = [];
     this.depositsDisabled = false;
+    this.haltedChains = [];
+    this.isHalted = false;
   }
 
   ngOnInit(): void {
-
     const params$ = this.route.paramMap;
     const balances$ = this.userService.userBalances$;
     const user$ = this.userService.user$.pipe(debounceTime(500));
+    const inboundAddresses$ = this.midgardService.getInboundAddresses();
 
-    const combined = combineLatest([params$, user$, balances$]);
-    const sub = combined.subscribe( ([params, user, balances]) => {
+    const combined = combineLatest([
+      params$,
+      user$,
+      balances$,
+      inboundAddresses$,
+    ]);
+    const sub = combined.subscribe(
+      ([params, user, balances, inboundAddresses]) => {
+        // Inbound Addresses
+        this.inboundAddresses = inboundAddresses;
+        this.haltedChains = this.inboundAddresses
+          .filter((address) => address.halted)
+          .map((address) => address.chain);
 
-      // User
-      this.user = user;
-      if (this.asset && this.asset.chain === 'ETH' && this.asset.ticker !== 'ETH') {
-        this.checkContractApproved(this.asset);
-      }
-
-      // Balance
-      this.balances = balances;
-      this.runeBalance = this.userService.findBalance(this.balances, this.rune);
-      this.assetBalance = this.userService.findBalance(this.balances, this.asset);
-
-      // Asset
-      this.ethContractApprovalRequired = false;
-      const asset = params.get('asset');
-
-      if (asset) {
-        this.asset = new Asset(asset);
-
-        this.setSourceChainBalance();
-
-        if (isNonNativeRuneToken(this.asset)) {
-          this.back();
-          return;
-        }
-
-        this.getPoolDetail(asset);
-        this.assetBalance = this.userService.findBalance(this.balances, this.asset);
-
-        if (this.asset.chain === 'ETH' && this.asset.ticker !== 'ETH') {
+        // User
+        this.user = user;
+        if (
+          this.asset &&
+          this.asset.chain === 'ETH' &&
+          this.asset.ticker !== 'ETH'
+        ) {
           this.checkContractApproved(this.asset);
         }
-      }
 
-    });
+        // Balance
+        this.balances = balances;
+        this.runeBalance = this.userService.findBalance(
+          this.balances,
+          this.rune
+        );
+        this.assetBalance = this.userService.findBalance(
+          this.balances,
+          this.asset
+        );
+
+        // Asset
+        this.ethContractApprovalRequired = false;
+        const asset = params.get('asset');
+
+        if (asset) {
+          this.asset = new Asset(asset);
+
+          this.isHalted = this.haltedChains.includes(this.asset.chain);
+
+          this.setSourceChainBalance();
+
+          if (isNonNativeRuneToken(this.asset)) {
+            this.back();
+            return;
+          }
+
+          this.getPoolDetail(asset);
+          this.assetBalance = this.userService.findBalance(
+            this.balances,
+            this.asset
+          );
+
+          if (this.asset.chain === 'ETH' && this.asset.ticker !== 'ETH') {
+            this.checkContractApproved(this.asset);
+          }
+        }
+      }
+    );
 
     const depositView$ = this.overlaysService.depositView.subscribe(
       (view) => {
@@ -192,7 +219,10 @@ export class DepositComponent implements OnInit, OnDestroy {
   setSourceChainBalance() {
     if (this.asset && this.balances) {
       const sourceChainAsset = getChainAsset(this.asset.chain);
-      const sourceChainBalance = this.userService.findBalance(this.balances, sourceChainAsset);
+      const sourceChainBalance = this.userService.findBalance(
+        this.balances,
+        sourceChainAsset
+      );
       this.sourceChainBalance = sourceChainBalance ?? 0;
     } else {
       this.sourceChainBalance = 0;
@@ -203,29 +233,27 @@ export class DepositComponent implements OnInit, OnDestroy {
     const mimir$ = this.midgardService.getMimir();
     const network$ = this.midgardService.getNetwork();
     const combined = combineLatest([mimir$, network$]);
-    const sub = combined.subscribe( ([mimir, network]) => {
-
+    const sub = combined.subscribe(([mimir, network]) => {
+      // prettier-ignore
       const totalPooledRune = +network.totalPooledRune / (10 ** 8);
 
       if (mimir && mimir['mimir//MAXIMUMLIQUIDITYRUNE']) {
+        // prettier-ignore
         const maxLiquidityRune = mimir['mimir//MAXIMUMLIQUIDITYRUNE'] / (10 ** 8);
-        this.depositsDisabled = (totalPooledRune / maxLiquidityRune >= .9);
+        this.depositsDisabled = totalPooledRune / maxLiquidityRune >= 0.9;
       }
-
     });
 
     this.subs.push(sub);
   }
 
   getEthRouter() {
-    this.midgardService.getInboundAddresses().subscribe(
-      (addresses) => {
-        const ethInbound = addresses.find( (inbound) => inbound.chain === 'ETH' );
-        if (ethInbound) {
-          this.ethRouter = ethInbound.router;
-        }
+    this.midgardService.getInboundAddresses().subscribe((addresses) => {
+      const ethInbound = addresses.find((inbound) => inbound.chain === 'ETH');
+      if (ethInbound) {
+        this.ethRouter = ethInbound.router;
       }
-    );
+    });
   }
 
   contractApproved() {
@@ -233,24 +261,36 @@ export class DepositComponent implements OnInit, OnDestroy {
   }
 
   async checkContractApproved(asset: Asset) {
-
     if (this.ethRouter && this.user) {
       const assetAddress = asset.symbol.slice(asset.ticker.length + 1);
       const strip0x = assetAddress.substr(2);
-      const isApproved = await this.user.clients.ethereum.isApproved(this.ethRouter, strip0x, baseAmount(1));
+      const isApproved = await this.user.clients.ethereum.isApproved(
+        this.ethRouter,
+        strip0x,
+        baseAmount(1)
+      );
       this.ethContractApprovalRequired = !isApproved;
     }
-
   }
 
   updateRuneAmount() {
-    const runeAmount = getValueOfAssetInRune(assetToBase(assetAmount(this.assetAmount)), this.assetPoolData);
-    this.runeAmount = runeAmount.amount().isLessThan(0) ? 0 : runeAmount.amount().div(10 ** 8 ).toNumber();
+    const runeAmount = getValueOfAssetInRune(
+      assetToBase(assetAmount(this.assetAmount)),
+      this.assetPoolData
+    );
+    this.runeAmount = runeAmount.amount().isLessThan(0)
+      ? 0
+      : runeAmount
+          .amount()
+          .div(10 ** 8)
+          .toNumber();
   }
 
   async getPoolDetail(asset: string) {
-
-    const inboundAddresses = await this.midgardService.getInboundAddresses().toPromise();
+    if (!this.inboundAddresses) {
+      console.error('error fetching inbound addresses');
+      return;
+    }
 
     this.midgardService.getPool(asset).subscribe(
       (res) => {
@@ -260,12 +300,26 @@ export class DepositComponent implements OnInit, OnDestroy {
             runeBalance: baseAmount(res.runeDepth),
           };
 
-          this.networkFee = this.txUtilsService.calculateNetworkFee(this.asset, inboundAddresses, 'INBOUND', res);
+          this.networkFee = this.txUtilsService.calculateNetworkFee(
+            this.asset,
+            this.inboundAddresses,
+            'INBOUND',
+            res
+          );
 
-          this.chainNetworkFee = this.txUtilsService.calculateNetworkFee(getChainAsset(this.asset.chain), inboundAddresses, 'INBOUND', res);
+          this.chainNetworkFee = this.txUtilsService.calculateNetworkFee(
+            getChainAsset(this.asset.chain),
+            this.inboundAddresses,
+            'INBOUND',
+            res
+          );
 
-          this.runeFee = this.txUtilsService.calculateNetworkFee(new Asset('THOR.RUNE'), inboundAddresses, 'INBOUND', res);
-
+          this.runeFee = this.txUtilsService.calculateNetworkFee(
+            new Asset('THOR.RUNE'),
+            this.inboundAddresses,
+            'INBOUND',
+            res
+          );
         }
       },
       (err) => {
@@ -278,56 +332,69 @@ export class DepositComponent implements OnInit, OnDestroy {
   getPools() {
     this.midgardService.getPools().subscribe(
       (res) => {
-        this.selectableMarkets = res.sort( (a, b) => a.asset.localeCompare(b.asset) ).map((pool) => ({
-          asset: new Asset(pool.asset),
-          assetPriceUSD: +pool.assetPriceUSD
-        }))
-        // filter out until we can add support
-        .filter( (pool) => pool.asset.chain === 'BNB'
-          || pool.asset.chain === 'BTC'
-          || pool.asset.chain === 'ETH'
-          || pool.asset.chain === 'LTC'
-          || pool.asset.chain === 'BCH')
+        this.selectableMarkets = res
+          .sort((a, b) => a.asset.localeCompare(b.asset))
+          .map((pool) => ({
+            asset: new Asset(pool.asset),
+            assetPriceUSD: +pool.assetPriceUSD,
+          }))
+          // filter out until we can add support
+          .filter(
+            (pool) =>
+              pool.asset.chain === 'BNB' ||
+              pool.asset.chain === 'BTC' ||
+              pool.asset.chain === 'ETH' ||
+              pool.asset.chain === 'LTC'
 
-        // filter out non-native RUNE tokens
-        .filter( (pool) => !isNonNativeRuneToken(pool.asset));
+            // temporarily disable bch due to https://github.com/asgardex/asgard-exchange/issues/379
+            // pool.asset.chain === 'BCH'
+          )
 
-        //add rune price
-        const availablePools = res.filter( (pool) => pool.status === 'available' );
-        this.runePrice = this.thorchainPricesService.estimateRunePrice(availablePools);
+          // filter out non-native RUNE tokens
+          .filter((pool) => !isNonNativeRuneToken(pool.asset))
+
+          // filter out halted chains
+          .filter((pool) => !this.haltedChains.includes(pool.asset.chain));
+
+          //add rune price
+          const availablePools = res.filter( (pool) => pool.status === 'available' );
+          this.runePrice = this.thorchainPricesService.estimateRunePrice(availablePools);
       },
       (err) => console.error('error fetching pools:', err)
     );
   }
 
   formDisabled(): boolean {
-
-    return !this.balances || !this.runeAmount || !this.assetAmount
-    || this.ethContractApprovalRequired
-    || this.depositsDisabled
-    || (this.assetAmount <= this.userService.minimumSpendable(this.asset))
-
-    // check sufficient underlying chain balance to cover fees
-    || (this.sourceChainBalance <= this.chainNetworkFee)
-
-    || ( this.assetAmount <= (
+    return (
+      !this.balances ||
+      !this.runeAmount ||
+      !this.assetAmount ||
+      this.ethContractApprovalRequired ||
+      this.depositsDisabled ||
+      this.isHalted ||
+      this.assetAmount <= this.userService.minimumSpendable(this.asset) ||
+      // check sufficient underlying chain balance to cover fees
+      this.sourceChainBalance <= this.chainNetworkFee ||
       // outbound fee plus inbound fee
-      (this.networkFee * 3) + this.networkFee) )
-
-    /**
-     * Asset matches chain asset
-     * check balance + amount < chain_network_fee
-     */
-    || ( assetToString(getChainAsset(this.asset.chain)) === assetToString(this.asset)
-      && (this.sourceChainBalance - this.assetAmount - this.chainNetworkFee <= 0) )
-
-    || ( this.assetBalance < this.assetAmount )
-
-    || (this.runeBalance - this.runeAmount < 3);
+      this.assetAmount <= this.networkFee * 3 + this.networkFee ||
+      /**
+       * Asset matches chain asset
+       * check balance + amount < chain_network_fee
+       */
+      (assetToString(getChainAsset(this.asset.chain)) ===
+        assetToString(this.asset) &&
+        this.assetAmount <
+          this.userService.maximumSpendableBalance(
+            this.asset,
+            this.sourceChainBalance,
+            this.inboundAddresses
+          )) ||
+      this.assetBalance < this.assetAmount ||
+      this.runeBalance - this.runeAmount < 3
+    );
   }
 
   mainButtonText(): string {
-
     /** Wallet not connected */
     if (!this.balances) {
       return 'Please connect wallet';
@@ -345,13 +412,17 @@ export class DepositComponent implements OnInit, OnDestroy {
       return 'There is no asset here!'
     }
 
+    if (this.isHalted) {
+      return 'Pool Halted';
+    }
+
     /** User either lacks asset balance or RUNE balance */
     if (this.balances && (!this.runeAmount || !this.assetAmount)) {
       return 'Enter an amount';
     }
 
     /** Asset amount is greater than balance */
-    if ( this.assetBalance < this.assetAmount ) {
+    if (this.assetBalance < this.assetAmount) {
       return `Insufficient ${this.asset.ticker}`;
     }
 
@@ -369,13 +440,21 @@ export class DepositComponent implements OnInit, OnDestroy {
      * Asset matches chain asset
      * check balance + amount < chain_network_fee
      */
-    if ( assetToString(getChainAsset(this.asset.chain)) === assetToString(this.asset)
-      && (this.sourceChainBalance - this.assetAmount - this.chainNetworkFee <= 0) ) {
-        return `Insufficient ${this.asset.chain}`;
-      }
+    if (
+      assetToString(getChainAsset(this.asset.chain)) ===
+        assetToString(this.asset) &&
+      this.assetAmount <
+        this.userService.maximumSpendableBalance(
+          this.asset,
+          this.sourceChainBalance,
+          this.inboundAddresses
+        )
+    ) {
+      return `Insufficient ${this.asset.chain}`;
+    }
 
     /** Amount is too low, considered "dusting" */
-    if ( (this.assetAmount <= this.userService.minimumSpendable(this.asset))) {
+    if (this.assetAmount <= this.userService.minimumSpendable(this.asset)) {
       return 'Amount too low';
     }
 
@@ -383,7 +462,7 @@ export class DepositComponent implements OnInit, OnDestroy {
      * Deposit amount should be more than outbound fee + inbound fee network fee costs
      * Ensures sufficient amount to withdraw
      */
-    if ( this.assetAmount <= ((this.networkFee * 3) + this.networkFee) ) {
+    if (this.assetAmount <= this.networkFee * 3 + this.networkFee) {
       return 'Amount too low';
     }
 
@@ -398,7 +477,6 @@ export class DepositComponent implements OnInit, OnDestroy {
   }
 
   openConfirmationDialog() {
-
     const runeBasePrice = getValueOfAssetInRune(assetToBase(assetAmount(1)), this.assetPoolData).amount().div(10 ** 8).toNumber();
     const assetBasePrice = getValueOfRuneInAsset(assetToBase(assetAmount(1)), this.assetPoolData).amount().div(10 ** 8).toNumber();
     const assetPrice = this.selectableMarkets.find( (asset) => this.asset.symbol === asset.asset.symbol).assetPriceUSD;
@@ -457,5 +535,4 @@ export class DepositComponent implements OnInit, OnDestroy {
       sub.unsubscribe();
     }
   }
-
 }

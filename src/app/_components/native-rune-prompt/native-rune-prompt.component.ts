@@ -8,7 +8,7 @@ import { Asset } from 'src/app/_classes/asset';
 @Component({
   selector: 'app-native-rune-prompt',
   templateUrl: './native-rune-prompt.component.html',
-  styleUrls: ['./native-rune-prompt.component.scss']
+  styleUrls: ['./native-rune-prompt.component.scss'],
 })
 export class NativeRunePromptComponent implements OnInit {
 
@@ -62,5 +62,4 @@ export class NativeRunePromptComponent implements OnInit {
   launchModal() {
     this.overlaysService.setCurrentView(MainViewsEnum.Upgrade);
   }
-
 }

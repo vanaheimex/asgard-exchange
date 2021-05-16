@@ -10,8 +10,6 @@ import { TransactionSuccessModalModule } from '../transaction-success-modal/tran
 import { NotificationComponent } from '../notification/notification.component';
 import { BreadcrumbModule } from '../breadcrumb/breadcrumb.module';
 
-
-
 @NgModule({
   declarations: [NativeRunePromptComponent, NativeRunePromptModalComponent, NotificationComponent],
   imports: [
@@ -25,4 +23,4 @@ import { BreadcrumbModule } from '../breadcrumb/breadcrumb.module';
   ],
   exports: [NativeRunePromptComponent, NativeRunePromptModalComponent]
 })
-export class NativeRunePromptModule { }
+export class NativeRunePromptModule {}

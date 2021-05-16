@@ -21,10 +21,12 @@ import { MarketsModalModule } from '../_components/markets-modal/markets-modal.m
 import { RetryRuneDepositComponent } from './retry-rune-deposit/retry-rune-deposit.component';
 import { ApproveEthContractModalModule } from '../_components/approve-eth-contract/approve-eth-contract-modal/approve-eth-contract-modal.module';
 
-
-
 @NgModule({
-  declarations: [DepositComponent, ConfirmDepositModalComponent, RetryRuneDepositComponent],
+  declarations: [
+    DepositComponent,
+    ConfirmDepositModalComponent,
+    RetryRuneDepositComponent,
+  ],
   imports: [
     CommonModule,
     MatButtonModule,
@@ -45,13 +47,13 @@ import { ApproveEthContractModalModule } from '../_components/approve-eth-contra
     RouterModule.forChild([
       {
         path: ':asset',
-        component: DepositComponent
+        component: DepositComponent,
       },
       {
         path: '',
-        redirectTo: '/pool'
-      }
-    ])
-  ]
+        redirectTo: '/pool',
+      },
+    ]),
+  ],
 })
-export class DepositModule { }
+export class DepositModule {}

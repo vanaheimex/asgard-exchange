@@ -10,16 +10,15 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-user-settings',
   templateUrl: './user-settings.component.html',
-  styleUrls: ['./user-settings.component.scss']
+  styleUrls: ['./user-settings.component.scss'],
 })
-export class UserSettingsComponent implements OnInit, OnDestroy {
-
+export class UserSettingsComponent implements OnDestroy {
   @Input() user: User;
   pendingTxCount: number;
   modalDimensions = {
     maxWidth: '520px',
     width: '50vw',
-    minWidth: '260px'
+    minWidth: '260px',
   };
   subs: Subscription[];
   @Input() overlay: boolean;
@@ -51,9 +50,6 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
 
     this.subs = [pendingTx$, overlay$];
 
-  }
-
-  ngOnInit(): void {
   }
 
   openUserSettings() {
@@ -99,5 +95,4 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
       sub.unsubscribe();
     }
   }
-
 }

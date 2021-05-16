@@ -18,7 +18,6 @@ import { ArrowModule } from '../_components/arrow/arrow.module';
 import { DoubleAssetFieldModule } from '../_components/double-asset-field/double-asset-field.module';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-
 @NgModule({
   declarations: [WithdrawComponent, ConfirmWithdrawModalComponent],
   imports: [
@@ -39,13 +38,13 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     RouterModule.forChild([
       {
         path: ':asset',
-        component: WithdrawComponent
+        component: WithdrawComponent,
       },
       {
         path: '',
-        redirectTo: '/pool'
-      }
-    ])
-  ]
+        redirectTo: '/pool',
+      },
+    ]),
+  ],
 })
-export class WithdrawModule { }
+export class WithdrawModule {}

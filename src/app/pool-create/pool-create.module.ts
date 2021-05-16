@@ -20,7 +20,6 @@ import { MarketsModalModule } from '../_components/markets-modal/markets-modal.m
 import { NoticeModule } from '../_components/notice/notice.module';
 import { ApproveEthContractModalModule } from '../_components/approve-eth-contract/approve-eth-contract-modal/approve-eth-contract-modal.module';
 
-
 @NgModule({
   declarations: [PoolCreateComponent, ConfirmPoolCreateComponent],
   imports: [
@@ -43,9 +42,9 @@ import { ApproveEthContractModalModule } from '../_components/approve-eth-contra
     RouterModule.forChild([
       {
         path: '',
-        component: PoolCreateComponent
-      }
-    ])
-  ]
+        component: PoolCreateComponent,
+      },
+    ]),
+  ],
 })
-export class PoolCreateModule { }
+export class PoolCreateModule {}

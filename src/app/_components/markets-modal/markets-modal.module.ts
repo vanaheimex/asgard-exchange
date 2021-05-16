@@ -12,7 +12,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { BreadcrumbModule } from '../breadcrumb/breadcrumb.module';
 
-
 @NgModule({
   declarations: [MarketsModalComponent],
   imports: [
@@ -24,6 +23,6 @@ import { BreadcrumbModule } from '../breadcrumb/breadcrumb.module';
     AssetsListModule,
     BreadcrumbModule
   ],
-  exports: [MarketsModalComponent]
+  exports: [MarketsModalComponent],
 })
-export class MarketsModalModule { }
+export class MarketsModalModule {}

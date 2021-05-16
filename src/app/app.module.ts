@@ -75,9 +75,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { QRCodeModule } from 'angularx-qrcode';
 import { ViewPhraseComponent } from './_components/user-settings/user-settings-dialog/view-phrase/view-phrase.component';
 import { DepositComponent } from './_components/user-settings/user-settings-dialog/deposit/deposit.component';
-import {
-  DepositConfirmComponent
-} from './_components/user-settings/user-settings-dialog/deposit/deposit-confirm/deposit-confirm.component';
+import { DepositConfirmComponent } from './_components/user-settings/user-settings-dialog/deposit/deposit-confirm/deposit-confirm.component';
 import { DepositFormComponent } from './_components/user-settings/user-settings-dialog/deposit/deposit-form/deposit-form.component';
 import { TransactionSuccessModalModule } from './_components/transaction-success-modal/transaction-success-modal.module';
 import { NativeRunePromptModule } from './_components/native-rune-prompt/native-rune-prompt.module';
@@ -96,7 +94,6 @@ import { from } from 'rxjs';
 import { CurrencyConverterComponent } from './_components/account-settings/currency-converter/currency-converter.component';
 import { ShortNumberPipe } from './_pipes/short-number.pipe';
 import { RuneYieldService } from './_services/rune-yield.service';
-
 
 @NgModule({
   declarations: [

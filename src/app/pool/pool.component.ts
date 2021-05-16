@@ -17,10 +17,9 @@ import { Currency } from '../_components/account-settings/currency-converter/cur
 @Component({
   selector: 'app-pool',
   templateUrl: './pool.component.html',
-  styleUrls: ['./pool.component.scss']
+  styleUrls: ['./pool.component.scss'],
 })
 export class PoolComponent implements OnInit, OnDestroy {
-
   user: User;
   pools: PoolDTO[];
   userPoolError: boolean;
@@ -50,12 +49,10 @@ export class PoolComponent implements OnInit, OnDestroy {
     this.memberPools = [];
     this.depositsDisabled = false;
 
-    const user$ = this.userService.user$.subscribe(
-      (user) => {
-        this.user = user;
-        this.getAccountPools();
-      }
-    );
+    const user$ = this.userService.user$.subscribe((user) => {
+      this.user = user;
+      this.getAccountPools();
+    });
 
     const balances$ = this.userService.userBalances$.subscribe(
       (balances) => {
@@ -65,22 +62,21 @@ export class PoolComponent implements OnInit, OnDestroy {
     );
 
     const pendingTx$ = this.txStatusService.txs$.subscribe(
-      (_) => {
+    (_) => {
 
-        //clear until you get the new memeberPools
-        this.memberPools = [];
+      //clear until you get the new memeberPools
+      this.memberPools = [];
 
-        if (!this.txStreamInitSuccess) {
-          this.txStreamInitSuccess = true;
-        } else {
-          setTimeout( () => {
-            this.getAccountPools();
-          }, 3000);
-        }
-
-        this.pendingPoolTxs = this.txStatusService.getPoolPedingTx();
+      if (!this.txStreamInitSuccess) {
+        this.txStreamInitSuccess = true;
+      } else {
+        setTimeout( () => {
+          this.getAccountPools();
+        }, 3000);
       }
-    );
+
+      this.pendingPoolTxs = this.txStatusService.getPoolPedingTx();
+    });
 
     const poolDeatil$ = this.poolDetailService.pooledDetails$.subscribe(
       (poolDetails) => {
@@ -162,31 +158,35 @@ export class PoolComponent implements OnInit, OnDestroy {
   }
 
   checkCreateableMarkets() {
-
     if (this.pools && this.balances) {
-
-      this.createablePools = this.balances.filter( (balance) => {
-        const asset = balance.asset;
-        return !this.pools.find((pool) => pool.asset === `${asset.chain}.${asset.symbol}`)
-          && !isNonNativeRuneToken(asset)
-          && asset.chain !== 'THOR';
-      }).map( (balance) => `${balance.asset.chain}.${balance.asset.symbol}` );
-
+      this.createablePools = this.balances
+        .filter((balance) => {
+          const asset = balance.asset;
+          return (
+            !this.pools.find(
+              (pool) => pool.asset === `${asset.chain}.${asset.symbol}`
+            ) &&
+            !isNonNativeRuneToken(asset) &&
+            asset.chain !== 'THOR'
+          );
+        })
+        .map((balance) => `${balance.asset.chain}.${balance.asset.symbol}`);
     }
-
   }
 
   getPoolCap() {
     const mimir$ = this.midgardService.getMimir();
     const network$ = this.midgardService.getNetwork();
     const combined = combineLatest([mimir$, network$]);
-    const sub = combined.subscribe( ([mimir, network]) => {
-
+    const sub = combined.subscribe(([mimir, network]) => {
+      // prettier-ignore
       this.totalPooledRune = +network.totalPooledRune / (10 ** 8);
 
       if (mimir && mimir['mimir//MAXIMUMLIQUIDITYRUNE']) {
+        // prettier-ignore
         this.maxLiquidityRune = mimir['mimir//MAXIMUMLIQUIDITYRUNE'] / (10 ** 8);
-        this.depositsDisabled = (this.totalPooledRune / this.maxLiquidityRune >= .9);
+        this.depositsDisabled =
+          this.totalPooledRune / this.maxLiquidityRune >= 0.9;
       }
 
       setTimeout( () => {
@@ -218,7 +218,14 @@ export class PoolComponent implements OnInit, OnDestroy {
     const ethClient = this.user.clients.ethereum;
     const ethAddress = await ethClient.getAddress();
 
-    return [thorAddress, btcAddress, ltcAddress, bchAddress, bnbAddress, ethAddress];
+    return [
+      thorAddress,
+      btcAddress,
+      ltcAddress,
+      bchAddress,
+      bnbAddress,
+      ethAddress,
+    ];
   }
 
   async getAccountPools() {
@@ -226,24 +233,23 @@ export class PoolComponent implements OnInit, OnDestroy {
     this.memberPools = [];
 
     if (this.user) {
-
       if (!this.addresses) {
         this.addresses = await this.getAddresses();
       }
 
       for (const address of this.addresses) {
-        this.midgardService.getMember(address).subscribe(
-          (res) => {
-            for (const pool of res.pools) {
-              const match = this.memberPools.find( (existingPool) => existingPool.pool === pool.pool );
-              if (!match) {
-                const memberPools = this.memberPools;
-                memberPools.push(pool);
-                this.memberPools = [...memberPools];
-              }
+        this.midgardService.getMember(address).subscribe((res) => {
+          for (const pool of res.pools) {
+            const match = this.memberPools.find(
+              (existingPool) => existingPool.pool === pool.pool
+            );
+            if (!match) {
+              const memberPools = this.memberPools;
+              memberPools.push(pool);
+              this.memberPools = [...memberPools];
             }
           }
-        );
+        });
       }
     }
 
@@ -258,5 +264,4 @@ export class PoolComponent implements OnInit, OnDestroy {
     this.clearPoolDetail();
     console.log('destory the pool veiw')
   }
-
 }

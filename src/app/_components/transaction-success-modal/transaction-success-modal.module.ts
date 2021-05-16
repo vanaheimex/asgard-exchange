@@ -11,8 +11,6 @@ import { DoubleAssetFieldModule } from '../double-asset-field/double-asset-field
 import { MatSliderModule } from '@angular/material/slider';
 import { TagModule } from '../tag/tag.module';
 
-
-
 @NgModule({
   declarations: [TransactionSuccessModalComponent],
   imports: [
@@ -29,4 +27,4 @@ import { TagModule } from '../tag/tag.module';
   ],
   exports: [TransactionSuccessModalComponent]
 })
-export class TransactionSuccessModalModule { }
+export class TransactionSuccessModalModule {}

@@ -16,10 +16,9 @@ import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-staked-pool-list-item',
   templateUrl: './staked-pool-list-item.component.html',
-  styleUrls: ['./staked-pool-list-item.component.scss']
+  styleUrls: ['./staked-pool-list-item.component.scss'],
 })
 export class StakedPoolListItemComponent implements OnChanges {
-
   expanded: boolean;
 
   @Input() activate: boolean;
@@ -110,15 +109,14 @@ export class StakedPoolListItemComponent implements OnChanges {
 
   getPoolShare(): void {
     if (this.memberPoolData && this.poolData) {
-
       const unitData: UnitData = {
         stakeUnits: baseAmount(this.memberPoolData.liquidityUnits),
-        totalUnits: baseAmount(this.poolData.units)
+        totalUnits: baseAmount(this.poolData.units),
       };
 
       const poolData: PoolData = {
         assetBalance: baseAmount(this.poolData.assetDepth),
-        runeBalance: baseAmount(this.poolData.runeDepth)
+        runeBalance: baseAmount(this.poolData.runeDepth),
       };
 
       const poolShare = getPoolShare(unitData, poolData);
@@ -151,5 +149,4 @@ export class StakedPoolListItemComponent implements OnChanges {
     if (this.activate)
       this.poolDetailService.setActivatedAsset(null);
   }
-
 }

@@ -13,10 +13,9 @@ import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-transaction-success-modal',
   templateUrl: './transaction-success-modal.component.html',
-  styleUrls: ['./transaction-success-modal.component.scss']
+  styleUrls: ['./transaction-success-modal.component.scss'],
 })
-export class TransactionSuccessModalComponent implements OnInit {
-
+export class TransactionSuccessModalComponent {
   @Input() chain: Chain;
   @Input() hash: string;
   // @Input() tx: Tx;

@@ -94,7 +94,7 @@
     [asset]="[data.asset, data.rune]"
     [label]="['Depositing', 'Depositing']"
     [amount]="[data.assetAmount, data.runeAmount]"
-    transactionDetail="Depositing {{data.assetAmount}} {{data.asset.asset.ticker}} + {{data.runeAmount}} {{data.rune.asset.ticker}}"
+    transactionDetail="Depositing {{+data.assetAmount | number:'0.0-4'}} {{data.asset.asset.ticker}} + {{+data.runeAmount | number:'0.0-2'}} {{data.rune.asset.ticker}}"
     (closeDialog)="closeDialog()"
     [isPlus]="true">
     <app-breadcrumb [path]="[{name: 'vanaheimex', call: 'swap'}, {name: 'Pools', disable: true}, {name: 'Deposit', disable: true}]" message="Transaction Processing" (funcCaller)="goToNav($event)"></app-breadcrumb>

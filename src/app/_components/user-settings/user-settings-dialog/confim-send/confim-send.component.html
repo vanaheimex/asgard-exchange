@@ -43,7 +43,7 @@
       <div class="divider"></div>
       <div class="left-btn">
         <div>
-          <button [disabled]="loading || insufficientChainBalance" (click)="submitTransaction()" class="next-btn">
+          <button [disabled]="insufficientChainBalance" (click)="submitTransaction()" class="next-btn">
             <span>confirm</span>
           </button>
         </div>
@@ -71,6 +71,11 @@
         </button>
       </div>
     </div> -->
+    <!-- <button (click)="submitTransaction()" mat-flat-button color="primary" class="main-action-btn w-full" [disabled]="insufficientChainBalance">
+      <span *ngIf="insufficientChainBalance">Insufficient {{asset.asset.chain}}</span>
+      <span *ngIf="!insufficientChainBalance">Send {{asset.asset.ticker}}</span>
+    </button> -->
+
   </div>
 </div>
 

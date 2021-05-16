@@ -2,20 +2,19 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { HasUserGuard } from './_guards/has-user.guard';
 
-
 const routes: Routes = [
   {
     path: '',
     redirectTo: 'swap',
-    pathMatch: 'full'
+    pathMatch: 'full',
   },
   {
     path: 'swap',
-    loadChildren: () => import('./swap/swap.module').then(m => m.SwapModule),
+    loadChildren: () => import('./swap/swap.module').then((m) => m.SwapModule),
   },
   {
     path: 'pool',
-    loadChildren: () => import('./pool/pool.module').then(m => m.PoolModule),
+    loadChildren: () => import('./pool/pool.module').then((m) => m.PoolModule),
   },
   {
     path: 'create-pool',
@@ -24,7 +23,8 @@ const routes: Routes = [
   },
   {
     path: 'deposit',
-    loadChildren: () => import('./deposit/deposit.module').then(m => m.DepositModule),
+    loadChildren: () =>
+      import('./deposit/deposit.module').then((m) => m.DepositModule),
   },
   {
     path: 'deposit-sym-recovery',
@@ -40,6 +40,6 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' })],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

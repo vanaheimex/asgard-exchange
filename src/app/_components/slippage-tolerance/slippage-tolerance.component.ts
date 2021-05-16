@@ -4,7 +4,7 @@ import { SlippageToleranceService } from 'src/app/_services/slippage-tolerance.s
 @Component({
   selector: 'app-slippage-tolerance',
   templateUrl: './slippage-tolerance.component.html',
-  styleUrls: ['./slippage-tolerance.component.scss']
+  styleUrls: ['./slippage-tolerance.component.scss'],
 })
 export class SlippageToleranceComponent implements OnInit, OnDestroy {
 
@@ -45,5 +45,4 @@ export class SlippageToleranceComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.slippageTolerance$.unsubscribe();
   }
-
 }

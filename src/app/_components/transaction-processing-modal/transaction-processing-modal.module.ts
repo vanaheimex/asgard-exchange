@@ -9,8 +9,6 @@ import { TextFieldModule } from '../text-field/text-field.module';
 import { DoubleAssetFieldModule } from '../double-asset-field/double-asset-field.module';
 import { MatSliderModule } from '@angular/material/slider';
 
-
-
 @NgModule({
   declarations: [TransactionProcessingModalComponent],
   imports: [
@@ -25,4 +23,4 @@ import { MatSliderModule } from '@angular/material/slider';
   ],
   exports: [TransactionProcessingModalComponent]
 })
-export class TransactionProcessingModalModule { }
+export class TransactionProcessingModalModule {}

@@ -14,8 +14,7 @@ import { DecimalPipe } from '@angular/common';
   styleUrls: ['./header.component.scss'],
   providers: [DecimalPipe]
 })
-export class HeaderComponent implements OnInit, OnDestroy {
-
+export class HeaderComponent implements OnDestroy {
   isTestnet: boolean;
   isMainnetSkin: boolean;
   user: User;
@@ -41,7 +40,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.isTestnet = environment.network === 'testnet' ? true : false;
 
     const user$ = this.userService.user$.subscribe(
-      (user) => this.user = user
+      (user) => (this.user = user)
     );
 
     const confirm$ = this.phraseConfirm.isUnderStood$.subscribe(
@@ -98,5 +97,4 @@ export class HeaderComponent implements OnInit, OnDestroy {
       sub.unsubscribe();
     }
   }
-
 }

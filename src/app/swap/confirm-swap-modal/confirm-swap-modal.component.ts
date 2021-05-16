@@ -6,7 +6,11 @@ import { UserService } from 'src/app/_services/user.service';
 import { TransactionConfirmationState } from 'src/app/_const/transaction-confirmation-state';
 import { PoolAddressDTO } from 'src/app/_classes/pool-address';
 import { Subscription } from 'rxjs';
-import { TransactionStatusService, TxActions, TxStatus } from 'src/app/_services/transaction-status.service';
+import {
+  TransactionStatusService,
+  TxActions,
+  TxStatus,
+} from 'src/app/_services/transaction-status.service';
 import { SlippageToleranceService } from 'src/app/_services/slippage-tolerance.service';
 import BigNumber from 'bignumber.js';
 import { EthUtilsService } from 'src/app/_services/eth-utils.service';
@@ -26,7 +30,6 @@ import { Transaction } from 'src/app/_classes/transaction';
 import { CurrencyService } from 'src/app/_services/currency.service';
 import { Currency } from 'src/app/_components/account-settings/currency-converter/currency-converter.component';
 
-
 export interface SwapData {
   sourceAsset: AssetAndBalance;
   targetAsset: AssetAndBalance;
@@ -43,10 +46,9 @@ export interface SwapData {
 @Component({
   selector: 'app-confirm-swap-modal',
   templateUrl: './confirm-swap-modal.component.html',
-  styleUrls: ['./confirm-swap-modal.component.scss']
+  styleUrls: ['./confirm-swap-modal.component.scss'],
 })
 export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
-
   confirmationPending: boolean;
   transactionSubmitted: boolean;
   txState: TransactionConfirmationState;
@@ -89,20 +91,18 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
     this.txState = TransactionConfirmationState.PENDING_CONFIRMATION;
     this.insufficientChainBalance = false;
 
-    const user$ = this.userService.user$.subscribe(
-      (user) => {
-        if (!user) {
-          this.closeDialog();
-        }
+    const user$ = this.userService.user$.subscribe((user) => {
+      if (!user) {
+        this.closeDialog();
       }
-    );
+    });
 
     const slippageTolerange$ = this.slipLimitService.slippageTolerance$.subscribe(
       (limit) => this.slippageTolerance = limit
     );
 
     const balances$ = this.userService.userBalances$.subscribe(
-      (balances) => this.balances = balances
+      (balances) => (this.balances = balances)
     );
 
     const curs$ = this.currencyService.cur$.subscribe(
@@ -141,13 +141,19 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
   }
 
   async estimateTime() {
-    if (this.swapData.sourceAsset.asset.chain === 'ETH' && this.swapData.sourceAsset.asset.symbol !== 'ETH') {
+    if (
+      this.swapData.sourceAsset.asset.chain === 'ETH' &&
+      this.swapData.sourceAsset.asset.symbol !== 'ETH'
+    ) {
       this.estimatedMinutes = await this.ethUtilsService.estimateERC20Time(
         assetToString(this.swapData.sourceAsset.asset),
         this.swapData.inputValue
       );
     } else {
-      this.estimatedMinutes = this.txStatusService.estimateTime(this.swapData.sourceAsset.asset.chain, this.swapData.inputValue);
+      this.estimatedMinutes = this.txStatusService.estimateTime(
+        this.swapData.sourceAsset.asset.chain,
+        this.swapData.inputValue
+      );
     }
   }
 
@@ -174,56 +180,48 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
   }
 
   submitTransaction() {
-
     this.txState = TransactionConfirmationState.SUBMITTING;
 
     // Source asset is not RUNE
-    if (this.swapData.sourceAsset.asset.chain === 'BNB'
-      || this.swapData.sourceAsset.asset.chain === 'BTC'
-      || this.swapData.sourceAsset.asset.chain === 'ETH'
-      || this.swapData.sourceAsset.asset.chain === 'LTC'
-      || this.swapData.sourceAsset.asset.chain === 'BCH') {
+    if (
+      this.swapData.sourceAsset.asset.chain === 'BNB' ||
+      this.swapData.sourceAsset.asset.chain === 'BTC' ||
+      this.swapData.sourceAsset.asset.chain === 'ETH' ||
+      this.swapData.sourceAsset.asset.chain === 'LTC' ||
+      this.swapData.sourceAsset.asset.chain === 'BCH'
+    ) {
+      this.midgardService.getInboundAddresses().subscribe(async (res) => {
+        const currentPools = res;
 
-      this.midgardService.getInboundAddresses().subscribe(
-        async (res) => {
+        if (currentPools && currentPools.length > 0) {
+          const matchingPool = currentPools.find(
+            (pool) => pool.chain === this.swapData.sourceAsset.asset.chain
+          );
 
-          const currentPools = res;
-
-          if (currentPools && currentPools.length > 0) {
-
-            const matchingPool = currentPools.find( (pool) => pool.chain === this.swapData.sourceAsset.asset.chain );
-
-            if (matchingPool) {
-
-              if (
-                this.swapData.user.type === 'keystore' ||
-                this.swapData.user.type === 'ledger' ||
-                this.swapData.user.type === 'XDEFI'
-              ) {
-                this.keystoreTransfer(matchingPool);
-              } else {
-                console.log('no error type matches');
-              }
-
+          if (matchingPool) {
+            if (
+              this.swapData.user.type === 'keystore' ||
+              this.swapData.user.type === 'ledger' ||
+              this.swapData.user.type === 'XDEFI'
+            ) {
+              this.keystoreTransfer(matchingPool);
             } else {
-              console.log('no matching pool found');
+              console.log('no error type matches');
             }
-
           } else {
-            console.log('no current pools found...');
+            console.log('no matching pool found');
           }
-
+        } else {
+          console.log('no current pools found...');
         }
-      );
-
-    } else { // RUNE is source asset
+      });
+    } else {
+      // RUNE is source asset
       this.keystoreTransfer();
     }
-
   }
 
   async keystoreTransfer(matchingPool?: PoolAddressDTO) {
-
     const amountNumber = this.swapData.inputValue;
     const binanceClient = this.swapData.user.clients.binance;
     const bitcoinClient = this.swapData.user.clients.bitcoin;
@@ -231,9 +229,14 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
     const ethClient = this.swapData.user.clients.ethereum;
     const litecoinClient = this.swapData.user.clients.litecoin;
 
-    const targetAddress = this.userService.getTokenAddress(this.swapData.user, this.swapData.targetAsset.asset.chain);
+    const targetAddress = this.userService.getTokenAddress(
+      this.swapData.user,
+      this.swapData.targetAsset.asset.chain
+    );
 
-    const floor = this.slipLimitService.getSlipLimitFromAmount(this.swapData.outputValue);
+    const floor = this.slipLimitService.getSlipLimitFromAmount(
+      this.swapData.outputValue
+    );
 
     const memo = this.getSwapMemo(
       this.swapData.targetAsset.asset.chain,
@@ -249,11 +252,10 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
     }
 
     if (this.swapData.sourceAsset.asset.chain === 'THOR') {
-
       try {
         const hash = await thorClient.deposit({
           amount: assetToBase(assetAmount(amountNumber)),
-          memo
+          memo,
         });
 
         const sourceAsset = this.swapData.sourceAsset.asset;
@@ -287,7 +289,7 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
           asset: this.swapData.sourceAsset.asset,
           amount: assetToBase(assetAmount(amountNumber)),
           recipient: matchingPool.address,
-          memo
+          memo,
         });
 
         const sourceAsset = this.swapData.sourceAsset.asset;
@@ -304,19 +306,20 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
     } else if (this.swapData.sourceAsset.asset.chain === 'BTC') {
 
       try {
-
         // TODO -> consolidate this with BTC, BCH, LTC
         const balanceAmount = this.userService.findRawBalance(this.balances, this.swapData.sourceAsset.asset);
         const toBase = assetToBase(assetAmount(amountNumber));
-        const feeToBase = assetToBase(assetAmount(this.swapData.networkFeeInSource));
-        const amount = (balanceAmount
+        const feeToBase = assetToBase(
+          assetAmount(this.swapData.networkFeeInSource)
+        );
+        const amount = balanceAmount
           // subtract fee
           .minus(feeToBase.amount())
           // subtract amount
           .minus(toBase.amount())
-          .isGreaterThan(0))
-            ? toBase.amount() // send full amount, fee can be deducted from remaining balance
-            : toBase.amount().minus(feeToBase.amount()); // after deductions, not enough to process, subtract fee from amount
+          .isGreaterThan(0)
+          ? toBase.amount() // send full amount, fee can be deducted from remaining balance
+          : toBase.amount().minus(feeToBase.amount()); // after deductions, not enough to process, subtract fee from amount
 
         if (amount.isLessThan(0)) {
           this.error = 'Insufficient funds. Try sending a smaller amount';
@@ -326,7 +329,8 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
         // TODO -> consolidate this with BTC, BCH, LTC
 
         if (memo.length > 80) {
-          this.error = 'Memo exceeds 80. Report to https://github.com/asgardex/asgard-exchange/issues.';
+          this.error =
+            'Memo exceeds 80. Report to https://github.com/asgardex/asgard-exchange/issues.';
           this.txState = TransactionConfirmationState.ERROR;
           return;
         }
@@ -338,7 +342,7 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
           amount: baseAmount(amount),
           recipient: matchingPool.address,
           memo,
-          feeRate: +matchingPool.gas_rate
+          feeRate: +matchingPool.gas_rate,
         });
 
         this.hash = hash;
@@ -351,12 +355,9 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
       }
 
     } else if (this.swapData.sourceAsset.asset.chain === 'ETH') {
-
       try {
-
         const sourceAsset = this.swapData.sourceAsset.asset;
         const targetAsset = this.swapData.targetAsset.asset;
-
         // temporarily drops slip limit until mainnet
         const ethMemo = `=:${targetAsset.chain}.${targetAsset.symbol}:${targetAddress}`;
 
@@ -373,7 +374,7 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
           asset: sourceAsset,
           memo: ethMemo,
           amount,
-          ethClient
+          ethClient,
         });
 
         this.hash = hash.substr(2);
@@ -382,26 +383,28 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
       } catch (error) {
         console.error('error making transfer: ', error);
         console.error(error.stack);
-        this.error = 'ETH swap failed. Please try again using a smaller amount.';
+        this.error =
+          'ETH swap failed. Please try again using a smaller amount.';
         this.txState = TransactionConfirmationState.ERROR;
       }
 
     } else if (this.swapData.sourceAsset.asset.chain === 'LTC') {
 
       try {
-
         // TODO -> consolidate this with BTC, BCH, LTC
         const balanceAmount = this.userService.findRawBalance(this.balances, this.swapData.sourceAsset.asset);
         const toBase = assetToBase(assetAmount(amountNumber));
-        const feeToBase = assetToBase(assetAmount(this.swapData.networkFeeInSource));
-        const amount = (balanceAmount
+        const feeToBase = assetToBase(
+          assetAmount(this.swapData.networkFeeInSource)
+        );
+        const amount = balanceAmount
           // subtract fee
           .minus(feeToBase.amount())
           // subtract amount
           .minus(toBase.amount())
-          .isGreaterThan(0))
-            ? toBase.amount() // send full amount, fee can be deducted from remaining balance
-            : toBase.amount().minus(feeToBase.amount()); // after deductions, not enough to process, subtract fee from amount
+          .isGreaterThan(0)
+          ? toBase.amount() // send full amount, fee can be deducted from remaining balance
+          : toBase.amount().minus(feeToBase.amount()); // after deductions, not enough to process, subtract fee from amount
 
         if (amount.isLessThan(0)) {
           this.error = 'Insufficient funds. Try sending a smaller amount';
@@ -412,7 +415,8 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
 
         const sourceAsset = this.swapData.sourceAsset.asset;
         if (memo.length > 80) {
-          this.error = 'Memo exceeds 80. Report to https://github.com/asgardex/asgard-exchange/issues.';
+          this.error =
+            'Memo exceeds 80. Report to https://github.com/asgardex/asgard-exchange/issues.';
           this.txState = TransactionConfirmationState.ERROR;
           return;
         }
@@ -421,7 +425,7 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
           amount: baseAmount(amount),
           recipient: matchingPool.address,
           memo,
-          feeRate: +matchingPool.gas_rate
+          feeRate: +matchingPool.gas_rate,
         });
 
         this.hash = hash;
@@ -432,24 +436,27 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
         this.error = error;
         this.txState = TransactionConfirmationState.ERROR;
       }
-
     } else if (this.swapData.sourceAsset.asset.chain === 'BCH') {
-
       try {
         const bchClient = this.swapData.user.clients.bitcoinCash;
 
         // TODO -> consolidate this with BTC, BCH, LTC
-        const balanceAmount = this.userService.findRawBalance(this.balances, this.swapData.sourceAsset.asset);
+        const balanceAmount = this.userService.findRawBalance(
+          this.balances,
+          this.swapData.sourceAsset.asset
+        );
         const toBase = assetToBase(assetAmount(amountNumber));
-        const feeToBase = assetToBase(assetAmount(this.swapData.networkFeeInSource));
-        const amount = (balanceAmount
+        const feeToBase = assetToBase(
+          assetAmount(this.swapData.networkFeeInSource)
+        );
+        const amount = balanceAmount
           // subtract fee
           .minus(feeToBase.amount())
           // subtract amount
           .minus(toBase.amount())
-          .isGreaterThan(0))
-            ? toBase.amount() // send full amount, fee can be deducted from remaining balance
-            : toBase.amount().minus(feeToBase.amount()); // after deductions, not enough to process, subtract fee from amount
+          .isGreaterThan(0)
+          ? toBase.amount() // send full amount, fee can be deducted from remaining balance
+          : toBase.amount().minus(feeToBase.amount()); // after deductions, not enough to process, subtract fee from amount
 
         if (amount.isLessThan(0)) {
           this.error = 'Insufficient funds. Try sending a smaller amount';
@@ -464,7 +471,7 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
           amount: baseAmount(amount),
           recipient: matchingPool.address,
           memo,
-          feeRate: +matchingPool.gas_rate
+          feeRate: +matchingPool.gas_rate,
         });
 
         this.hash = hash;
@@ -475,7 +482,6 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
         this.error = error;
         this.txState = TransactionConfirmationState.ERROR;
       }
-
     }
 
     const outbound$ = this.txStatusService.getOutboundHash(this.hash).subscribe(
@@ -509,11 +515,18 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
     });
   }
 
-  getSwapMemo(chain: string, symbol: string, addr: string, sliplimit: number): string {
-
-    const tag = (this.swapData.user && this.swapData.user.type && this.swapData.user.type === 'XDEFI')
-      ? '333'
-      : '444';
+  getSwapMemo(
+    chain: string,
+    symbol: string,
+    addr: string,
+    sliplimit: number
+  ): string {
+    const tag =
+      this.swapData.user &&
+      this.swapData.user.type &&
+      this.swapData.user.type === 'XDEFI'
+        ? '333'
+        : '444';
 
     /** shorten ERC20 tokens */
     if (chain === 'ETH' && symbol !== 'ETH') {
@@ -523,7 +536,8 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
     }
 
     if (sliplimit && sliplimit.toString().length > 3) {
-      const taggedSlip = sliplimit.toString().slice(0, sliplimit.toString().length - 3) + tag;
+      const taggedSlip =
+        sliplimit.toString().slice(0, sliplimit.toString().length - 3) + tag;
       return `=:${chain}.${symbol}:${addr}:${taggedSlip}`;
     } else {
       return `=:${chain}.${symbol}:${addr}:${sliplimit}`;
@@ -535,5 +549,4 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
       sub.unsubscribe();
     }
   }
-
 }

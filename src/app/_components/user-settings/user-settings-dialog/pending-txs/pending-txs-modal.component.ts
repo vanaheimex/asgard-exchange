@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, Output } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { ExplorerPathsService } from 'src/app/_services/explorer-paths.service';
@@ -15,10 +15,9 @@ import { Chain } from '@xchainjs/xchain-util';
 @Component({
   selector: 'app-pending-txs-modal',
   templateUrl: './pending-txs-modal.component.html',
-  styleUrls: ['./pending-txs-modal.component.scss']
+  styleUrls: ['./pending-txs-modal.component.scss'],
 })
-export class PendingTxsModalComponent implements OnInit, OnDestroy {
-
+export class PendingTxsModalComponent implements OnDestroy {
   txs: Tx[];
   subs: Subscription[];
   bitcoinExplorerUrl: string;
@@ -40,7 +39,6 @@ export class PendingTxsModalComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private midgardService: MidgardService
   ) {
-
     this.back = new EventEmitter<null>();
     this.txs = [];
 
@@ -216,10 +214,9 @@ export class PendingTxsModalComponent implements OnInit, OnDestroy {
 
   explorerPath(tx: Tx): string {
     if (tx.isThorchainTx) {
-
       if (tx.pollThornodeDirectly) {
         return this.getViewBlockPath(tx.hash);
-      }  else if (tx.pollRpc) {
+      } else if (tx.pollRpc) {
         /**
          * For THOR transfers
          */
@@ -227,7 +224,6 @@ export class PendingTxsModalComponent implements OnInit, OnDestroy {
       } else {
         return this.thorchainExplorerUrl + '/' + tx.hash;
       }
-
     } else if (tx.chain === 'ETH') {
       return `${this.ethereumExplorerUrl}/0x${tx.hash}`;
     } else {
@@ -271,5 +267,4 @@ export class PendingTxsModalComponent implements OnInit, OnDestroy {
       sub.unsubscribe();
     }
   }
-
 }

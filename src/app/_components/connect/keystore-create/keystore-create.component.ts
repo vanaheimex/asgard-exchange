@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 import { generatePhrase, encryptToKeyStore } from '@xchainjs/xchain-crypto';
 import { KeystoreService } from 'src/app/_services/keystore.service';
 import { PhraseConfirmService } from 'src/app/_services/phrase-confirm.service';
@@ -8,10 +8,9 @@ import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-keystore-create',
   templateUrl: './keystore-create.component.html',
-  styleUrls: ['./keystore-create.component.scss']
+  styleUrls: ['./keystore-create.component.scss'],
 })
-export class KeystoreCreateComponent implements OnInit {
-
+export class KeystoreCreateComponent {
   @Output() back: EventEmitter<null>;
   @Output() closeModal: EventEmitter<null>;
   @Output() keystoreCreated: EventEmitter<string>;
@@ -29,11 +28,7 @@ export class KeystoreCreateComponent implements OnInit {
     this.keystoreCreated = new EventEmitter<string>();
   }
 
-  ngOnInit(): void {
-  }
-
   async createKeystore() {
-
     if (this.password !== this.confirmPassword) {
       return;
     }
@@ -53,17 +48,19 @@ export class KeystoreCreateComponent implements OnInit {
 
       const thorAddress = await user.clients.thorchain.getAddress();
       const addressLength = thorAddress.length;
-      const minAddress = `${thorAddress.substring(0, environment.network === 'testnet' ? 7 : 6)}_${thorAddress.substring(addressLength - 3, addressLength)}`;
+      const minAddress = `${thorAddress.substring(
+        0,
+        environment.network === 'testnet' ? 7 : 6
+      )}_${thorAddress.substring(addressLength - 3, addressLength)}`;
       const bl = new Blob([JSON.stringify(keystore)], {
-        type: 'text/plain'
+        type: 'text/plain',
       });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(bl);
       a.download = `keystore_thorchain_${minAddress}`;
       a.hidden = true;
       document.body.appendChild(a);
-      a.innerHTML =
-        'loading';
+      a.innerHTML = 'loading';
       a.click();
 
       this.keystoreCreated.emit(this.phrase);
@@ -72,7 +69,5 @@ export class KeystoreCreateComponent implements OnInit {
     }
 
     this.loading = false;
-
   }
-
 }

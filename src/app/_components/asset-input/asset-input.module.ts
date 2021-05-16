@@ -11,7 +11,6 @@ import { IconTickerModule } from '../icon-ticker/icon-ticker.module';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TagModule } from '../tag/tag.module';
 
-
 @NgModule({
   declarations: [AssetInputComponent],
   imports: [
@@ -24,6 +23,6 @@ import { TagModule } from '../tag/tag.module';
     MatIconModule,
     TagModule
   ],
-  exports: [AssetInputComponent]
+  exports: [AssetInputComponent],
 })
-export class AssetInputModule { }
+export class AssetInputModule {}

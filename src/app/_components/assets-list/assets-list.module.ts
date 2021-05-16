@@ -8,8 +8,6 @@ import { DirectivesModule } from 'src/app/_directives/directives.module';
 import { IconTickerModule } from '../icon-ticker/icon-ticker.module';
 import { ArrowModule } from '../arrow/arrow.module';
 
-
-
 @NgModule({
   declarations: [AssetsListComponent],
   imports: [
@@ -21,6 +19,6 @@ import { ArrowModule } from '../arrow/arrow.module';
     ArrowModule,
     DirectivesModule
   ],
-  exports: [AssetsListComponent]
+  exports: [AssetsListComponent],
 })
-export class AssetsListModule { }
+export class AssetsListModule {}

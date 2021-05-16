@@ -6,8 +6,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
 
-
-
 @NgModule({
   declarations: [ApproveEthContractComponent],
   imports: [
@@ -15,8 +13,8 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatButtonModule,
     MatProgressSpinnerModule,
     MatIconModule,
-    MatDialogModule
+    MatDialogModule,
   ],
-  exports: [ApproveEthContractComponent]
+  exports: [ApproveEthContractComponent],
 })
-export class ApproveEthContractModule { }
+export class ApproveEthContractModule {}

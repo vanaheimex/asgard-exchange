@@ -98,6 +98,6 @@ import { XDEFIConnectComponent } from '../_components/connect/xdefi-connect/xdef
       }
     ])
   ],
-  entryComponents: [ConfirmSwapModalComponent]
+  entryComponents: [ConfirmSwapModalComponent],
 })
-export class SwapModule { }
+export class SwapModule {}

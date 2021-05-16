@@ -1,4 +1,10 @@
-import { Component, OnInit, Output, EventEmitter, Input, OnDestroy } from '@angular/core';
+import {
+  Component,
+  Output,
+  EventEmitter,
+  Input,
+  OnDestroy,
+} from '@angular/core';
 import { Client } from '@xchainjs/xchain-ethereum/lib';
 import { Chain } from '@xchainjs/xchain-util';
 import { Subscription } from 'rxjs';
@@ -10,10 +16,9 @@ import { OverlaysService } from 'src/app/_services/overlays.service';
 @Component({
   selector: 'app-user-address-add-token',
   templateUrl: './user-address-add-token.component.html',
-  styleUrls: ['./user-address-add-token.component.scss']
+  styleUrls: ['./user-address-add-token.component.scss'],
 })
-export class UserAddressAddTokenComponent implements OnInit, OnDestroy {
-
+export class UserAddressAddTokenComponent implements OnDestroy {
   @Input() chain: Chain;
   @Input() chainAddress: string;
   @Output() back: EventEmitter<null>;
@@ -29,16 +34,13 @@ export class UserAddressAddTokenComponent implements OnInit, OnDestroy {
     this.tokenAddress = '';
     this.back = new EventEmitter<null>();
 
-    const clients$ = this.userService.user$.subscribe( (user) => {
-
+    const clients$ = this.userService.user$.subscribe((user) => {
       if (user && user.clients && user.clients.ethereum) {
         this.ethClient = user.clients.ethereum;
       }
-
     });
 
     this.subs = [clients$];
-
   }
 
   ngOnInit(): void {
@@ -49,18 +51,27 @@ export class UserAddressAddTokenComponent implements OnInit, OnDestroy {
     this.loading = true;
 
     if (this.ethClient && this.chainAddress) {
-
       try {
-
         const wallet = this.ethClient.getWallet();
-        const tokenContract = new ethers.Contract(this.tokenAddress, erc20ABI, wallet);
+        const tokenContract = new ethers.Contract(
+          this.tokenAddress,
+          erc20ABI,
+          wallet
+        );
         const ticker = await tokenContract.symbol();
-        const existingTokens = JSON.parse(localStorage.getItem(`${this.chainAddress}_user_added`)) || [];
-        const tokenToPush = `${this.chain}.${ticker}-${this.tokenAddress.toUpperCase()}`;
+        const existingTokens =
+          JSON.parse(localStorage.getItem(`${this.chainAddress}_user_added`)) ||
+          [];
+        const tokenToPush = `${
+          this.chain
+        }.${ticker}-${this.tokenAddress.toUpperCase()}`;
 
         if (existingTokens.indexOf(tokenToPush) < 0) {
           existingTokens.push(tokenToPush);
-          localStorage.setItem(`${this.chainAddress}_user_added`, JSON.stringify(existingTokens));
+          localStorage.setItem(
+            `${this.chainAddress}_user_added`,
+            JSON.stringify(existingTokens)
+          );
         } else {
           console.log(`token already in localstorage: ${tokenToPush}`);
         }
@@ -68,14 +79,11 @@ export class UserAddressAddTokenComponent implements OnInit, OnDestroy {
         this.userService.fetchBalances();
 
         this.back.emit();
-
       } catch (error) {
         this.error = error;
         this.message = 'an ERROR occurred'
       }
-
     }
-
   }
 
   async navCaller(nav) {
@@ -93,5 +101,4 @@ export class UserAddressAddTokenComponent implements OnInit, OnDestroy {
       sub.unsubscribe();
     }
   }
-
 }

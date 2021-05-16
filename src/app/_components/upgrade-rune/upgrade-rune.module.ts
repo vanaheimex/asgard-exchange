@@ -8,8 +8,6 @@ import { ModalSectionHeaderModule } from '../modal-section-header/modal-section-
 import { ArrowModule } from '../arrow/arrow.module';
 import { BreadcrumbModule } from '../breadcrumb/breadcrumb.module';
 
-
-
 @NgModule({
   declarations: [UpgradeRuneComponent],
   imports: [
@@ -21,6 +19,6 @@ import { BreadcrumbModule } from '../breadcrumb/breadcrumb.module';
     BreadcrumbModule,
     ModalSectionHeaderModule
   ],
-  exports: [UpgradeRuneComponent]
+  exports: [UpgradeRuneComponent],
 })
-export class UpgradeRuneModule { }
+export class UpgradeRuneModule {}
