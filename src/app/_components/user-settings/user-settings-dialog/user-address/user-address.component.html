@@ -1,14 +1,25 @@
 <div class="container-wrapper">
   <div class="container">
     <div class="content-top">
-      <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'wallet', call: 'wallet'}, {name: chain, disable: true}]" message="select" (funcCaller)="navCaller($event)"></app-breadcrumb>
-      <div class="top-right">
-      </div>
+      <app-breadcrumb
+        [path]="[
+          { name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap' },
+          { name: 'wallet', call: 'wallet' },
+          { name: chain, disable: true }
+        ]"
+        message="select"
+        (funcCaller)="navCaller($event)"
+      ></app-breadcrumb>
+      <div class="top-right"></div>
     </div>
     <div class="content-middle">
-      <div class="modal-head" style="margin-bottom: 20px;">
+      <div class="modal-head" style="margin-bottom: 20px">
         <app-notice [isMono]="true" [isCenter]="true">
-          <span text style="font-family: inherit; text-align: center;">{{address.substring(0, 10) + '...' + address.substring(address.length - 10, address.length)}}</span>
+          <span text style="font-family: inherit; text-align: center">{{
+            address.substring(0, 10) +
+              "..." +
+              address.substring(address.length - 10, address.length)
+          }}</span>
           <ng-container tags>
             <app-tag>
               <div (click)="copyToClipboard(address)">
@@ -16,10 +27,15 @@
                 <span *ngIf="copied">COPIED</span>
               </div>
             </app-tag>
-            <div style="width: 5px;"></div>
+            <div style="width: 5px"></div>
             <app-tag>
               <div>
-                <a target="_blank" style="text-decoration: none; color: inherit;" [href]="explorerPath">Explore</a>
+                <a
+                  target="_blank"
+                  style="text-decoration: none; color: inherit"
+                  [href]="explorerPath"
+                  >Explore</a
+                >
               </div>
             </app-tag>
           </ng-container>
@@ -34,33 +50,59 @@
           [displayAddTokenButton]="chain === 'ETH'"
           (selectAsset)="selectAsset($event)"
           (addToken)="navigateToAddToken.emit()"
-          expandable="semi">
+          expandable="semi"
+        >
         </app-assets-list>
-        <div *ngIf="error" class="lists" style="height: 289px; justify-content: center; align-items: center;">
+        <div
+          *ngIf="error"
+          class="lists"
+          style="height: 289px; justify-content: center; align-items: center"
+        >
           <div class="info">
-            <span>{{error}}</span>
+            <span>{{ error }}</span>
             <br />
-            <a *ngIf="explorerPath" class="adjust" [href]="explorerPath" target="_blank">Check funds safe.</a>
+            <a
+              *ngIf="explorerPath"
+              class="adjust"
+              [href]="explorerPath"
+              target="_blank"
+              >Check funds safe.</a
+            >
           </div>
           <br />
         </div>
       </div>
     </div>
 
-    <div class="bottom-actions two-btn" style="display: flex; margin-top: 30px;">
+    <div class="bottom-actions two-btn" style="display: flex; margin-top: 30px">
       <div class="left-btn">
-        <button class="close-btn flex justify-center items-center" (click)="back.emit()">
-          <svg class="arrow-left" width="11" height="20" viewBox="0 0 11 20" fill="#000" xmlns="http://www.w3.org/2000/svg">
-            <path d="M5.74609 19.4531L10.8086 14.3906H6.61328V0.65625H4.87891V14.3906H0.683594L5.74609 19.4531Z"/>
+        <button
+          class="close-btn flex justify-center items-center"
+          (click)="back.emit()"
+        >
+          <svg
+            class="arrow-left"
+            width="11"
+            height="20"
+            viewBox="0 0 11 20"
+            fill="#000"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M5.74609 19.4531L10.8086 14.3906H6.61328V0.65625H4.87891V14.3906H0.683594L5.74609 19.4531Z"
+            />
           </svg>
-          <span>
-            WALLET
-          </span>
+          <span> WALLET </span>
         </button>
       </div>
       <div class="divider"></div>
       <div class="right-btn">
-        <button class="next-btn" [disabled]="loadingBalance" aria-label="Close Connect Wallet Dialog" (click)="refreshBalances()">
+        <button
+          class="next-btn"
+          [disabled]="loadingBalance"
+          aria-label="Close Connect Wallet Dialog"
+          (click)="refreshBalances()"
+        >
           <span>refresh</span>
         </button>
       </div>

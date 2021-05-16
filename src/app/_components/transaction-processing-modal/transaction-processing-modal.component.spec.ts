@@ -1,18 +1,17 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatIconModule } from '@angular/material/icon';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { MatIconModule } from "@angular/material/icon";
 
-import { TransactionProcessingModalComponent } from './transaction-processing-modal.component';
+import { TransactionProcessingModalComponent } from "./transaction-processing-modal.component";
 
-describe('TransactionProcessingModalComponent', () => {
+describe("TransactionProcessingModalComponent", () => {
   let component: TransactionProcessingModalComponent;
   let fixture: ComponentFixture<TransactionProcessingModalComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TransactionProcessingModalComponent ],
-      imports: [ MatIconModule ]
-    })
-    .compileComponents();
+      declarations: [TransactionProcessingModalComponent],
+      imports: [MatIconModule],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -21,7 +20,7 @@ describe('TransactionProcessingModalComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

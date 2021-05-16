@@ -1,5 +1,4 @@
 #indicator-container {
-
   position: relative;
 
   #last-block-indicator {
@@ -28,7 +27,6 @@
     width: 12px;
     will-change: transform;
   }
-
 }
 
 .header-social {
@@ -47,24 +45,26 @@
     }
 
     &--twitter {
-      -webkit-mask: url(./../../../assets/icons/twitter-brands.svg) no-repeat center;
+      -webkit-mask: url(./../../../assets/icons/twitter-brands.svg) no-repeat
+        center;
       mask: url(./../../../assets/icons/twitter-brands.svg) no-repeat center;
-
     }
 
     &--telegram {
       margin-left: 0;
-      -webkit-mask: url(./../../../assets/icons/social-telegram-icon.svg) no-repeat center;
-      mask: url(./../../../assets/icons/social-telegram-icon.svg) no-repeat center;
+      -webkit-mask: url(./../../../assets/icons/social-telegram-icon.svg)
+        no-repeat center;
+      mask: url(./../../../assets/icons/social-telegram-icon.svg) no-repeat
+        center;
     }
 
     &--github {
-      -webkit-mask: url(https://raw.githubusercontent.com/Pusher-Labs/asgard-exchange/master/src/assets/icons/github-alt-brands.svg) no-repeat center;
-      mask: url(https://raw.githubusercontent.com/Pusher-Labs/asgard-exchange/master/src/assets/icons/github-alt-brands.svg) no-repeat center;
+      -webkit-mask: url(https://raw.githubusercontent.com/Pusher-Labs/asgard-exchange/master/src/assets/icons/github-alt-brands.svg)
+        no-repeat center;
+      mask: url(https://raw.githubusercontent.com/Pusher-Labs/asgard-exchange/master/src/assets/icons/github-alt-brands.svg)
+        no-repeat center;
     }
-
   }
-
 }
 
 .nav-social {

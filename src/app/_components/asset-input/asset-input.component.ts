@@ -1,26 +1,37 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
-import { Asset } from 'src/app/_classes/asset';
-import { MarketsModalComponent } from '../markets-modal/markets-modal.component';
-import { MatDialog } from '@angular/material/dialog';
-import { UserService } from 'src/app/_services/user.service';
-import { AssetAndBalance } from 'src/app/_classes/asset-and-balance';
-import { MainViewsEnum, OverlaysService } from 'src/app/_services/overlays.service';
-import { EthUtilsService } from 'src/app/_services/eth-utils.service';
-import { User } from 'src/app/_classes/user';
-import { Subscription } from 'rxjs';
-import { baseToAsset } from '@xchainjs/xchain-util';
-import { MidgardService } from 'src/app/_services/midgard.service';
-import { ThorchainPricesService } from 'src/app/_services/thorchain-prices.service';
-import { CurrencyService } from 'src/app/_services/currency.service';
-import { Currency } from '../account-settings/currency-converter/currency-converter.component';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+} from "@angular/core";
+import { Asset } from "src/app/_classes/asset";
+import { MarketsModalComponent } from "../markets-modal/markets-modal.component";
+import { MatDialog } from "@angular/material/dialog";
+import { UserService } from "src/app/_services/user.service";
+import { AssetAndBalance } from "src/app/_classes/asset-and-balance";
+import {
+  MainViewsEnum,
+  OverlaysService,
+} from "src/app/_services/overlays.service";
+import { EthUtilsService } from "src/app/_services/eth-utils.service";
+import { User } from "src/app/_classes/user";
+import { Subscription } from "rxjs";
+import { baseToAsset } from "@xchainjs/xchain-util";
+import { MidgardService } from "src/app/_services/midgard.service";
+import { ThorchainPricesService } from "src/app/_services/thorchain-prices.service";
+import { CurrencyService } from "src/app/_services/currency.service";
+import { Currency } from "../account-settings/currency-converter/currency-converter.component";
+import { PoolAddressDTO } from "src/app/_classes/pool-address";
+import { TxType } from "src/app/_const/tx-type";
 
 @Component({
-  selector: 'app-asset-input',
-  templateUrl: './asset-input.component.html',
-  styleUrls: ['./asset-input.component.scss']
+  selector: "app-asset-input",
+  templateUrl: "./asset-input.component.html",
+  styleUrls: ["./asset-input.component.scss"],
 })
 export class AssetInputComponent implements OnInit, OnDestroy {
-
   /**
    * Selected Asset
    */
@@ -88,35 +99,53 @@ export class AssetInputComponent implements OnInit, OnDestroy {
 
   @Input() priceInput: number;
   @Input() inputColor: string;
+  @Input() txType?: TxType;
+
   usdValue: number;
   user: User;
   subs: Subscription[];
   inputUsdValue: number;
   currency: Currency;
+  inboundAddresses: PoolAddressDTO[];
 
-  constructor(private userService: UserService, private ethUtilsService: EthUtilsService, public overlayService: OverlaysService, private midgardService: MidgardService, private thorchainPricesService: ThorchainPricesService, private currencyService: CurrencyService) {
+  constructor(
+    private userService: UserService,
+    private ethUtilsService: EthUtilsService,
+    public overlayService: OverlaysService,
+    private midgardService: MidgardService,
+    private thorchainPricesService: ThorchainPricesService,
+    private currencyService: CurrencyService
+  ) {
     const user$ = this.userService.user$.subscribe(
-      (user) => this.user = user
+      (user) => (this.user = user)
     );
 
-    const curs$ = this.currencyService.cur$.subscribe(
-      (currency) => {
-        this.currency = currency;
-      }
-    )
+    const curs$ = this.currencyService.cur$.subscribe((currency) => {
+      this.currency = currency;
+    });
     this.subs = [user$];
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
+    this.setPoolAddresses();
+  }
+
+  setPoolAddresses() {
+    this.midgardService
+      .getInboundAddresses()
+      .subscribe((res) => (this.inboundAddresses = res));
   }
 
   checkUsdBalance(): void {
-
     if (!this.balance || !this.selectableMarkets) {
       return;
     }
 
-    const targetPool = this.selectableMarkets.find( (market) => `${market.asset.chain}.${market.asset.ticker}` === `${this.selectedAsset.chain}.${this.selectedAsset.ticker}` );
+    const targetPool = this.selectableMarkets.find(
+      (market) =>
+        `${market.asset.chain}.${market.asset.ticker}` ===
+        `${this.selectedAsset.chain}.${this.selectedAsset.ticker}`
+    );
     if (!targetPool || !targetPool.assetPriceUSD) {
       return;
     }
@@ -124,18 +153,16 @@ export class AssetInputComponent implements OnInit, OnDestroy {
     this.usdValue = targetPool.assetPriceUSD * this.balance;
   }
 
-  getMax() {
-    if (this.balance && this.selectedAsset) {
-      return this.userService.maximumSpendableBalance(this.selectedAsset, this.balance);
-    }
-  }
-
   setInputUsdValue(): void {
     if (!this.selectedAsset || !this.selectableMarkets) {
       return;
     }
 
-    const targetPool = this.selectableMarkets.find( (market) => `${market.asset.chain}.${market.asset.ticker}` === `${this.selectedAsset.chain}.${this.selectedAsset.ticker}` );
+    const targetPool = this.selectableMarkets.find(
+      (market) =>
+        `${market.asset.chain}.${market.asset.ticker}` ===
+        `${this.selectedAsset.chain}.${this.selectedAsset.ticker}`
+    );
     if (!targetPool || !targetPool.assetPriceUSD) {
       return;
     }
@@ -147,90 +174,92 @@ export class AssetInputComponent implements OnInit, OnDestroy {
     this.setInputUsdValue();
   }
 
-  async setMax(): Promise<void> {
+  getMax() {
+    if (this.balance && this.selectedAsset) {
+      return this.userService.maximumSpendableBalance(
+        this.selectedAsset,
+        this.balance,
+        this.inboundAddresses,
+        this.txType ?? "INBOUND"
+      );
+    }
+  }
 
+  async setMax(): Promise<void> {
     this.loading = true;
 
-    if (this.balance) {
-      let max: number;
-      if (this.selectedAsset.chain === 'ETH') {
-        if (this.user && this.user.clients) {
-          max = await this.ethUtilsService.maximumSpendableBalance({
-            asset: this.selectedAsset,
-            client: this.user.clients.ethereum,
-            balance: this.balance
-          });
-        } else {
-          console.error('no user clients found: ', this.user);
-          max = 0;
-        }
-      } else {
-        max = this.userService.maximumSpendableBalance(this.selectedAsset, this.balance);
-      }
+    if (this.balance && this.inboundAddresses) {
+      const max = this.userService.maximumSpendableBalance(
+        this.selectedAsset,
+        this.balance,
+        this.inboundAddresses,
+        this.txType ?? "INBOUND"
+      );
 
       if (max) {
         this.assetUnitChange.emit(max);
       } else {
-        console.error('max undefined');
+        console.error("max undefined");
       }
     }
 
     this.loading = false;
-
   }
 
   launchMarketsModal(): void {
-    //TODO: change the data flow into the compoenent directly
-    // if(!this.isDeposit) {
-    //   if(this.isSource)
-    //     this.overlayService.setCurrentSwapView('SourceAsset')
-    //   else
-    //     this.overlayService.setCurrentSwapView('TargetAsset')
-    // } else if (this.isDeposit) {
-    //   this.overlayService.setCurrentDepositView('Asset');
-    // }
     this.lunchMarket.emit();
   }
 
   async gotoWallet() {
-
     const userBalance$ = this.userService.userBalances$.subscribe(
       (balances) => {
         if (balances) {
-          const balance = balances.filter( (balance) => balance.asset.chain === this.selectedAsset.chain && balance.asset.ticker === this.selectedAsset.ticker )[0];
+          const balance = balances.filter(
+            (balance) =>
+              balance.asset.chain === this.selectedAsset.chain &&
+              balance.asset.ticker === this.selectedAsset.ticker
+          )[0];
 
           const assetString = `${balance.asset.chain}.${balance.asset.symbol}`;
-          const asset = new Asset(`${balance.asset.chain}.${balance.asset.symbol}`);
+          const asset = new Asset(
+            `${balance.asset.chain}.${balance.asset.symbol}`
+          );
           let assetBalance: AssetAndBalance;
-          this.midgardService.getPools().subscribe( async (pools) => {
-            if (asset.ticker === 'RUNE') {
+          this.midgardService.getPools().subscribe(async (pools) => {
+            if (asset.ticker === "RUNE") {
               assetBalance = {
                 asset,
-                assetPriceUSD: this.thorchainPricesService.estimateRunePrice(pools) ?? 0,
-                balance: baseToAsset(balance.amount)
+                assetPriceUSD:
+                  this.thorchainPricesService.estimateRunePrice(pools) ?? 0,
+                balance: baseToAsset(balance.amount),
               };
             } else {
-              const matchingPool = pools.find( (pool) => {
+              const matchingPool = pools.find((pool) => {
                 return pool.asset === assetString;
               });
 
               assetBalance = {
                 asset,
                 assetPriceUSD: matchingPool ? +matchingPool.assetPriceUSD : 0,
-                balance: baseToAsset(balance.amount)
+                balance: baseToAsset(balance.amount),
               };
             }
-            const address = await this.userService.getAdrressChain(this.selectedAsset.chain);
-            this.overlayService.setCurrentUserView({ userView: 'Asset', address, chain: this.selectedAsset.chain, asset: assetBalance })
+            const address = await this.userService.getAdrressChain(
+              this.selectedAsset.chain
+            );
+            this.overlayService.setCurrentUserView({
+              userView: "Asset",
+              address,
+              chain: this.selectedAsset.chain,
+              asset: assetBalance,
+            });
             this.overlayService.setCurrentView(MainViewsEnum.UserSetting);
-          } );
-
+          });
         }
-
       }
     );
 
-    this.subs.push(userBalance$)
+    this.subs.push(userBalance$);
   }
 
   ngOnDestroy() {
@@ -238,5 +267,4 @@ export class AssetInputComponent implements OnInit, OnDestroy {
       sub.unsubscribe();
     }
   }
-
 }

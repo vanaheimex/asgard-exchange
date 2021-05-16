@@ -1,19 +1,26 @@
-import { Component, OnInit, OnDestroy, Inject, Input, Output, EventEmitter } from '@angular/core';
-import { Market } from 'src/app/_classes/market';
-import { UserService } from 'src/app/_services/user.service';
-import { Asset } from '../../_classes/asset';
-import { Subscription } from 'rxjs';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { User } from 'src/app/_classes/user';
-import { Balances } from '@xchainjs/xchain-client';
-import { AssetAndBalance } from 'src/app/_classes/asset-and-balance';
-import { OverlaysService } from 'src/app/_services/overlays.service';
-
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  Inject,
+  Input,
+  Output,
+  EventEmitter,
+} from "@angular/core";
+import { Market } from "src/app/_classes/market";
+import { UserService } from "src/app/_services/user.service";
+import { Asset } from "../../_classes/asset";
+import { Subscription } from "rxjs";
+import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { User } from "src/app/_classes/user";
+import { Balances } from "@xchainjs/xchain-client";
+import { AssetAndBalance } from "src/app/_classes/asset-and-balance";
+import { OverlaysService } from "src/app/_services/overlays.service";
 
 @Component({
-  selector: 'app-markets-modal',
-  templateUrl: './markets-modal.component.html',
-  styleUrls: ['./markets-modal.component.scss'],
+  selector: "app-markets-modal",
+  templateUrl: "./markets-modal.component.html",
+  styleUrls: ["./markets-modal.component.scss"],
 })
 export class MarketsModalComponent implements OnInit, OnDestroy {
   get searchTerm(): string {
@@ -54,19 +61,16 @@ export class MarketsModalComponent implements OnInit, OnDestroy {
     private userService: UserService,
     public overlaysService: OverlaysService
   ) {
-
     // this.marketListItems = this.selectableMarkets;
 
-    const user$ = this.userService.user$.subscribe(
-      (user) => {
-        this.user = user;
-        if (!user) {
-          this.userBalances = [];
-        }
+    const user$ = this.userService.user$.subscribe((user) => {
+      this.user = user;
+      if (!user) {
+        this.userBalances = [];
       }
-    );
+    });
 
-    const balances$ = this.userService.userBalances$.subscribe( (balances) => {
+    const balances$ = this.userService.userBalances$.subscribe((balances) => {
       this.userBalances = balances;
       if (this.marketListItems) {
         this.sortMarketsByUserBalance();
@@ -85,12 +89,16 @@ export class MarketsModalComponent implements OnInit, OnDestroy {
   sortMarketsByUserBalance(): void {
     // Sort first by user balances
     if (this.userBalances && this.marketListItems) {
-      this.marketListItems = this.marketListItems.filter((asset) => this.disabledAssetSymbol !== asset.asset.symbol)
-      this.marketListItems = this.userService.sortMarketsByUserBalance(this.userBalances, this.marketListItems);
+      this.marketListItems = this.marketListItems.filter(
+        (asset) => this.disabledAssetSymbol !== asset.asset.symbol
+      );
+      this.marketListItems = this.userService.sortMarketsByUserBalance(
+        this.userBalances,
+        this.marketListItems
+      );
       this.filteredMarketListItems = this.marketListItems;
     }
   }
-
 
   initList() {
     this.filteredMarketListItems = this.marketListItems;
@@ -104,9 +112,9 @@ export class MarketsModalComponent implements OnInit, OnDestroy {
   }
 
   selectItem(item: Asset) {
-    if (item.symbol !== '') {
+    if (item.symbol !== "") {
       // this.dialogRef.close(item);
-      console.log(item)
+      console.log(item);
       if (this.disabledAssetSymbol != item.symbol) {
         this.selectedAssetChange.emit(item);
         // this.overlay = false;

@@ -3,30 +3,28 @@
   align-items: center;
 
   .path {
-    font-family: 'Roboto';
+    font-family: "Roboto";
     font-weight: 500;
     text-transform: uppercase;
     margin: 0 2px;
     font-size: 14px;
     padding: 2px;
 
-    &:hover:not(.disable,&--active) {
+    &:hover:not(.disable, &--active) {
       border-radius: 2px;
       background-color: var(--primary-default);
-      color: #000B12;
+      color: #000b12;
       cursor: pointer;
     }
 
     &--active {
       color: var(--primary-default);
       font-weight: 500;
-
     }
 
     &:first-of-type {
       margin-left: 0;
     }
-
   }
 
   .cursor {
@@ -36,14 +34,12 @@
   }
 
   &.error {
-
     .path--active {
-      color: #FF4954 !important;
+      color: #ff4954 !important;
     }
 
     .cursor {
-      background: #FF4954;
+      background: #ff4954;
     }
   }
-
 }

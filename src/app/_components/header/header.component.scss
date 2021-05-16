@@ -2,7 +2,11 @@
   display: block;
   width: 100%;
   height: 16px;
-  background: linear-gradient(45deg, var(--primary-graident-bottom-left) 0%, var(--primary-graident-top-right) 100%);
+  background: linear-gradient(
+    45deg,
+    var(--primary-graident-bottom-left) 0%,
+    var(--primary-graident-top-right) 100%
+  );
 
   a {
     height: 16px;
@@ -15,8 +19,7 @@
     font-size: 11px;
     padding-top: 1px;
     cursor: pointer;
-    color: #02121D;
-
+    color: #02121d;
   }
 }
 
@@ -37,7 +40,7 @@ header {
     left: 15px;
     letter-spacing: 1px;
     font-size: 22.5px;
-    font-family: 'Exo 2', monospace;
+    font-family: "Exo 2", monospace;
     text-transform: uppercase;
     letter-spacing: 3.7px;
     line-height: 27px;
@@ -96,10 +99,19 @@ header {
 }
 
 .gradient {
-  background: linear-gradient(to top right,var(--primary-graident-bottom-left), var(--primary-graident-top-right));
-  
+  background: linear-gradient(
+    to top right,
+    var(--primary-graident-bottom-left),
+    var(--primary-graident-top-right)
+  );
+
   &.special-gradient {
-    background: linear-gradient(to right, #FFFD00 0%, #F625F0 49.98%, #01F6EE 100%);
+    background: linear-gradient(
+      to right,
+      #fffd00 0%,
+      #f625f0 49.98%,
+      #01f6ee 100%
+    );
   }
 
   &.red {

@@ -1,16 +1,15 @@
 <div class="container-wrapper">
   <div class="container">
-
     <div class="content-top">
       <ng-content></ng-content>
-      <div class="top-right">
-      </div>
+      <div class="top-right"></div>
     </div>
 
     <div mat-dialog-content>
-
-      <div class="modal-head confirm-modal-head" *ngIf="isSending && !isWithdraw">
-
+      <div
+        class="modal-head confirm-modal-head"
+        *ngIf="isSending && !isWithdraw"
+      >
         <app-asset-input
           [label]="label[0]"
           [(selectedAsset)]="asset[0].asset"
@@ -20,20 +19,30 @@
           [disabledMarketSelect]="true"
           [disableInput]="true"
           [hideMax]="true"
-          
           [showPrice]="false"
           [disableUser]="false"
-          [isWallet]="true">
+          [isWallet]="true"
+        >
         </app-asset-input>
 
         <app-arrow [isGrey]="true"></app-arrow>
 
-        <app-text-field selectedType="Text" mode="Single" label="Recipient Address" [(textOfField)]="recipientAddress" [disable]="true"></app-text-field>
+        <app-text-field
+          selectedType="Text"
+          mode="Single"
+          label="Recipient Address"
+          [(textOfField)]="recipientAddress"
+          [disable]="true"
+        ></app-text-field>
 
         <app-arrow></app-arrow>
 
         <app-notice [isMono]="true">
-          <span text style="font-family: inherit;" *ngIf="hash">{{hash.substring(0, 16) + '...' + hash.substring(hash.length - 16, hash.length)}}</span>
+          <span text style="font-family: inherit" *ngIf="hash">{{
+            hash.substring(0, 16) +
+              "..." +
+              hash.substring(hash.length - 16, hash.length)
+          }}</span>
           <ng-container tags>
             <app-tag>
               <div (click)="copyToClipboard()">
@@ -41,19 +50,22 @@
                 <span *ngIf="copied">COPIED</span>
               </div>
             </app-tag>
-            <div style="width: 5px;"></div>
+            <div style="width: 5px"></div>
             <app-tag>
               <div>
-                <a target="_blank" style="text-decoration: none; color: inherit;" [href]="explorerPath()">Explore</a>
+                <a
+                  target="_blank"
+                  style="text-decoration: none; color: inherit"
+                  [href]="explorerPath()"
+                  >Explore</a
+                >
               </div>
             </app-tag>
           </ng-container>
         </app-notice>
-
       </div>
 
       <div *ngIf="!isSending && !isWithdraw">
-
         <app-asset-input
           [label]="label[0]"
           [(selectedAsset)]="asset[0].asset"
@@ -65,7 +77,8 @@
           [hideMax]="true"
           [showPrice]="false"
           [disableUser]="false"
-          [isWallet]="true">
+          [isWallet]="true"
+        >
         </app-asset-input>
 
         <app-arrow [isGrey]="true" [isPlus]="isPlus"></app-arrow>
@@ -74,43 +87,35 @@
           [label]="label[1]"
           [(selectedAsset)]="asset[1].asset"
           [(assetUnit)]="amount[1]"
-          [extraLabel]="(hasOutbound && hashOutbound) || !hasOutbound ? undefined : '(Pending)'"
-          [balance]="(hasOutbound && hashOutbound) || !hasOutbound ? targetBalance : undefined"
+          [extraLabel]="
+            (hasOutbound && hashOutbound) || !hasOutbound
+              ? undefined
+              : '(Pending)'
+          "
+          [balance]="
+            (hasOutbound && hashOutbound) || !hasOutbound
+              ? targetBalance
+              : undefined
+          "
           [disabledAssetSymbol]="asset[1].asset.symbol"
           [disabledMarketSelect]="true"
           [disableInput]="true"
           [hideMax]="true"
           [showPrice]="false"
           [disableUser]="false"
-          [isWallet]="true">
+          [isWallet]="true"
+        >
         </app-asset-input>
 
         <app-arrow></app-arrow>
 
         <ng-container *ngIf="!hasOutbound">
           <app-notice [isMono]="true">
-          <span text style="font-family: inherit;">{{hash.substring(0, 16) + '...' + hash.substring(hash.length - 16, hash.length)}}</span>
-          <ng-container tags>
-            <app-tag>
-              <div (click)="copyToClipboard()">
-                <span *ngIf="!copied">COPY</span>
-                <span *ngIf="copied">COPIED</span>
-              </div>
-            </app-tag>
-            <div style="width: 5px;"></div>
-            <app-tag>
-              <div>
-                <a target="_blank" style="text-decoration: none; color: inherit;" [href]="explorerPath()">Explore</a>
-              </div>
-            </app-tag>
-          </ng-container>  
-          </app-notice>
-        </ng-container>
-
-        <ng-container *ngIf="hasOutbound">
-          <div style="display: flex;">
-            <app-notice style="width: calc( 50% - 5px);" [isMono]="true">
-            <span text style="font-family: inherit;"><span style="font-family: 'Roboto';">{{asset[0].asset.ticker}}: </span>{{hash.substring(0, 3) + '...' + hash.substring(hash.length - 3, hash.length)}}</span>
+            <span text style="font-family: inherit">{{
+              hash.substring(0, 16) +
+                "..." +
+                hash.substring(hash.length - 16, hash.length)
+            }}</span>
             <ng-container tags>
               <app-tag>
                 <div (click)="copyToClipboard()">
@@ -118,27 +123,87 @@
                   <span *ngIf="copied">COPIED</span>
                 </div>
               </app-tag>
-              <div style="width: 5px;"></div>
+              <div style="width: 5px"></div>
               <app-tag>
                 <div>
-                  <a target="_blank" style="text-decoration: none; color: inherit;" [href]="explorerPath()">Explore</a>
+                  <a
+                    target="_blank"
+                    style="text-decoration: none; color: inherit"
+                    [href]="explorerPath()"
+                    >Explore</a
+                  >
                 </div>
               </app-tag>
             </ng-container>
+          </app-notice>
+        </ng-container>
+
+        <ng-container *ngIf="hasOutbound">
+          <div style="display: flex">
+            <app-notice style="width: calc(50% - 5px)" [isMono]="true">
+              <span text style="font-family: inherit"
+                ><span style="font-family: 'Roboto'"
+                  >{{ asset[0].asset.ticker }}: </span
+                >{{
+                  hash.substring(0, 3) +
+                    "..." +
+                    hash.substring(hash.length - 3, hash.length)
+                }}</span
+              >
+              <ng-container tags>
+                <app-tag>
+                  <div (click)="copyToClipboard()">
+                    <span *ngIf="!copied">COPY</span>
+                    <span *ngIf="copied">COPIED</span>
+                  </div>
+                </app-tag>
+                <div style="width: 5px"></div>
+                <app-tag>
+                  <div>
+                    <a
+                      target="_blank"
+                      style="text-decoration: none; color: inherit"
+                      [href]="explorerPath()"
+                      >Explore</a
+                    >
+                  </div>
+                </app-tag>
+              </ng-container>
             </app-notice>
-  
-            <div style="width: 10px;"></div>
-  
-            <app-notice [isDisabled]="!hashOutbound" [isTag]="hashOutbound" style="width: calc( 50% - 5px);" [isMono]="true">
-              <span *ngIf="hashOutbound" text style="font-family: inherit;">
+
+            <div style="width: 10px"></div>
+
+            <app-notice
+              [isDisabled]="!hashOutbound"
+              [isTag]="hashOutbound"
+              style="width: calc(50% - 5px)"
+              [isMono]="true"
+            >
+              <span *ngIf="hashOutbound" text style="font-family: inherit">
                 <ng-container *ngIf="hashOutbound !== 'success'">
-                  <span style="font-family: 'Roboto';">{{asset[1].asset.ticker}}: </span>{{hashOutbound.substring(0, 3) + '...' + hashOutbound.substring(hashOutbound.length - 3, hashOutbound.length)}}
+                  <span style="font-family: 'Roboto'"
+                    >{{ asset[1].asset.ticker }}: </span
+                  >{{
+                    hashOutbound.substring(0, 3) +
+                      "..." +
+                      hashOutbound.substring(
+                        hashOutbound.length - 3,
+                        hashOutbound.length
+                      )
+                  }}
                 </ng-container>
                 <ng-container *ngIf="hashOutbound === 'success'">
-                  <span style="font-family: 'Roboto';">{{asset[1].asset.ticker}}: </span>NO TXID!
+                  <span style="font-family: 'Roboto'"
+                    >{{ asset[1].asset.ticker }}: </span
+                  >NO TXID!
                 </ng-container>
               </span>
-              <span *ngIf="!hashOutbound" text style="font-family: 'Roboto'; color: #fff;">WAITING FOR {{asset[1].asset.ticker}} TX...</span>
+              <span
+                *ngIf="!hashOutbound"
+                text
+                style="font-family: 'Roboto'; color: #fff"
+                >WAITING FOR {{ asset[1].asset.ticker }} TX...</span
+              >
               <ng-container tags>
                 <app-tag *ngIf="hashOutbound && hashOutbound !== 'success'">
                   <div (click)="copyToClipboard(hashOutbound, true)">
@@ -146,23 +211,31 @@
                     <span *ngIf="copiedOutbound">COPIED</span>
                   </div>
                 </app-tag>
-                <div style="width: 5px;"></div>
+                <div style="width: 5px"></div>
                 <app-tag>
                   <div>
-                    <a target="_blank" style="text-decoration: none; color: inherit;" [href]="hashOutbound !== 'success' ? explorerPath(hashOutbound, asset[1].asset.chain) : viewBlockPath(hash)">Explore</a>
+                    <a
+                      target="_blank"
+                      style="text-decoration: none; color: inherit"
+                      [href]="
+                        hashOutbound !== 'success'
+                          ? explorerPath(hashOutbound, asset[1].asset.chain)
+                          : viewBlockPath(hash)
+                      "
+                      >Explore</a
+                    >
                   </div>
                 </app-tag>
               </ng-container>
-              </app-notice>
+            </app-notice>
           </div>
         </ng-container>
-
       </div>
 
       <div *ngIf="isWithdraw && !isSending">
         <div class="percent-container">
           <span class="percent-label">Percentage</span>
-          <span class="unstake-percent">{{percentage}}%</span>
+          <span class="unstake-percent">{{ percentage }}%</span>
           <mat-slider
             class="slider"
             [disabled]="true"
@@ -170,7 +243,8 @@
             [min]="0"
             step="1"
             [tickInterval]="25"
-            [value]="percentage">
+            [value]="percentage"
+          >
           </mat-slider>
         </div>
 
@@ -187,7 +261,11 @@
         <app-arrow></app-arrow>
 
         <app-notice [isMono]="true">
-          <span text style="font-family: inherit;">{{hash.substring(0, 16) + '...' + hash.substring(hash.length - 16, hash.length)}}</span>
+          <span text style="font-family: inherit">{{
+            hash.substring(0, 16) +
+              "..." +
+              hash.substring(hash.length - 16, hash.length)
+          }}</span>
           <ng-container tags>
             <app-tag>
               <div (click)="copyToClipboard()">
@@ -195,30 +273,35 @@
                 <span *ngIf="copied">COPIED</span>
               </div>
             </app-tag>
-            <div style="width: 5px;"></div>
+            <div style="width: 5px"></div>
             <app-tag>
               <div>
-                <a target="_blank" style="text-decoration: none; color: inherit;" [href]="explorerPath()">Explore</a>
+                <a
+                  target="_blank"
+                  style="text-decoration: none; color: inherit"
+                  [href]="explorerPath()"
+                  >Explore</a
+                >
               </div>
             </app-tag>
           </ng-container>
         </app-notice>
-
       </div>
-
     </div>
 
     <div class="bottom-actions">
-      <div style="width: 100%;">
-        <button class="close-btn" aria-label="CLOSE" (click)="closeDialog.emit()">
+      <div style="width: 100%">
+        <button
+          class="close-btn"
+          aria-label="CLOSE"
+          (click)="closeDialog.emit()"
+        >
           <span>close</span>
         </button>
       </div>
     </div>
   </div>
 </div>
-
-
 
 <!-- <div class="success">
   <div class="icon-container icon-container--sent">

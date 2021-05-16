@@ -1,5 +1,9 @@
-<div class="tag-container" [ngClass]='getMode()' [ngStyle]="{'background': active ? 'var(--primary-dark-color)' : color}">
-  <div class="tag-field" [ngStyle]="{'color': active ? color : undefined}">
+<div
+  class="tag-container"
+  [ngClass]="getMode()"
+  [ngStyle]="{ background: active ? 'var(--primary-dark-color)' : color }"
+>
+  <div class="tag-field" [ngStyle]="{ color: active ? color : undefined }">
     <ng-content></ng-content>
   </div>
 </div>

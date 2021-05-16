@@ -1,12 +1,11 @@
-import { Injectable } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { Injectable } from "@angular/core";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class CopyService {
-
-  constructor(private _snackBar: MatSnackBar) { }
+  constructor(private _snackBar: MatSnackBar) {}
 
   // pulled from https://stackoverflow.com/a/58276867/3703043
   copyToClipboard(textToCopy) {
@@ -18,7 +17,7 @@ export class CopyService {
     }
 
     function createTextArea(text) {
-      textArea = document.createElement('textArea');
+      textArea = document.createElement("textArea");
       textArea.readOnly = true;
       textArea.contentEditable = true;
       textArea.value = text;
@@ -42,7 +41,7 @@ export class CopyService {
     }
 
     function copyTo() {
-      document.execCommand('copy');
+      document.execCommand("copy");
       document.body.removeChild(textArea);
     }
 
@@ -55,8 +54,6 @@ export class CopyService {
     // });
 
     //changing it to the copied text
-    return true
-
+    return true;
   }
-
 }

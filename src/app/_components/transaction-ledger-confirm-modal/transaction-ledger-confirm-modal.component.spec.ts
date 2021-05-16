@@ -1,16 +1,15 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { TransactionLedgerConfirmModalComponent } from './transaction-ledger-confirm-modal.component';
+import { TransactionLedgerConfirmModalComponent } from "./transaction-ledger-confirm-modal.component";
 
-describe('TransactionLedgerConfirmModalComponent', () => {
+describe("TransactionLedgerConfirmModalComponent", () => {
   let component: TransactionLedgerConfirmModalComponent;
   let fixture: ComponentFixture<TransactionLedgerConfirmModalComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TransactionLedgerConfirmModalComponent ]
-    })
-    .compileComponents();
+      declarations: [TransactionLedgerConfirmModalComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -19,7 +18,7 @@ describe('TransactionLedgerConfirmModalComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

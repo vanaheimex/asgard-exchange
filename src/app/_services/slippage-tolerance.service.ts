@@ -1,13 +1,12 @@
-import { Injectable } from '@angular/core';
-import { assetAmount, assetToBase } from '@xchainjs/xchain-util';
-import BigNumber from 'bignumber.js';
-import { BehaviorSubject } from 'rxjs';
+import { Injectable } from "@angular/core";
+import { assetAmount, assetToBase } from "@xchainjs/xchain-util";
+import BigNumber from "bignumber.js";
+import { BehaviorSubject } from "rxjs";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class SlippageToleranceService {
-
   private slippageToleranceSource = new BehaviorSubject<number>(3);
   slippageTolerance$ = this.slippageToleranceSource.asObservable();
   private _slippageTolerance: number;
@@ -23,8 +22,9 @@ export class SlippageToleranceService {
 
   getSlipLimitFromAmount(amount: BigNumber): BigNumber {
     const baseTransferAmount = assetToBase(assetAmount(amount));
-    const limitFromAmount = baseTransferAmount.amount().multipliedBy( (100 - this._slippageTolerance) / 100);
+    const limitFromAmount = baseTransferAmount
+      .amount()
+      .multipliedBy((100 - this._slippageTolerance) / 100);
     return limitFromAmount;
   }
-
 }

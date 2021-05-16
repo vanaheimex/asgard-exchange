@@ -1,19 +1,21 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { MemberPool } from 'src/app/_classes/member';
-import { PoolDTO } from 'src/app/_classes/pool';
-import { Currency } from 'src/app/_components/account-settings/currency-converter/currency-converter.component';
-import { CurrencyService } from 'src/app/_services/currency.service';
-import { RuneYieldPoolResponse, RuneYieldService } from 'src/app/_services/rune-yield.service';
-import { environment } from 'src/environments/environment';
+import { Component, Input, OnInit } from "@angular/core";
+import { Subscription } from "rxjs";
+import { MemberPool } from "src/app/_classes/member";
+import { PoolDTO } from "src/app/_classes/pool";
+import { Currency } from "src/app/_components/account-settings/currency-converter/currency-converter.component";
+import { CurrencyService } from "src/app/_services/currency.service";
+import {
+  RuneYieldPoolResponse,
+  RuneYieldService,
+} from "src/app/_services/rune-yield.service";
+import { environment } from "src/environments/environment";
 
 @Component({
-  selector: 'app-staked-pools-list',
-  templateUrl: './staked-pools-list.component.html',
-  styleUrls: ['./staked-pools-list.component.scss']
+  selector: "app-staked-pools-list",
+  templateUrl: "./staked-pools-list.component.html",
+  styleUrls: ["./staked-pools-list.component.scss"],
 })
-export class StakedPoolsListComponent implements OnInit {
-
+export class StakedPoolsListComponent {
   activePool: PoolDTO;
 
   @Input() runePrice: number;
@@ -37,8 +39,8 @@ export class StakedPoolsListComponent implements OnInit {
   _memberPools: MemberPool[];
 
   mappedPools: {
-    poolData: PoolDTO,
-    memberData: MemberPool
+    poolData: PoolDTO;
+    memberData: MemberPool;
   }[];
 
   notMamberPools: PoolDTO[];
@@ -46,58 +48,62 @@ export class StakedPoolsListComponent implements OnInit {
   subs: Subscription[];
   runeYieldPools: RuneYieldPoolResponse[];
 
-  constructor(private currencyService: CurrencyService, private runeYieldService: RuneYieldService) { 
-    const cur$ = this.currencyService.cur$.subscribe(
-      (cur) => {
-        this.currency = cur;
-      }
-    )
+  constructor(
+    private currencyService: CurrencyService,
+    private runeYieldService: RuneYieldService
+  ) {
+    const cur$ = this.currencyService.cur$.subscribe((cur) => {
+      this.currency = cur;
+    });
 
-    this.subs = [cur$]
+    this.subs = [cur$];
   }
 
-  ngOnInit(): void { }
-
   mapPools() {
-
     if (this.pools && this.memberPools) {
-      this.mappedPools = this.memberPools.map( (memberPool) => {
+      this.mappedPools = this.memberPools.map((memberPool) => {
         return {
-          poolData: {...this.pools.find( (pool) => pool.asset === memberPool.pool ), runePrice: this.runePrice},
-          memberData: memberPool
+          poolData: {
+            ...this.pools.find((pool) => pool.asset === memberPool.pool),
+            runePrice: this.runePrice,
+          },
+          memberData: memberPool,
         };
       });
 
-      this.mappedPools.sort((a,b) => (a.poolData.asset > b.poolData.asset) ? 1 : ((b.poolData.asset > a.poolData.asset) ? -1 : 0))
+      this.mappedPools.sort((a, b) =>
+        a.poolData.asset > b.poolData.asset
+          ? 1
+          : b.poolData.asset > a.poolData.asset
+          ? -1
+          : 0
+      );
     }
 
-    if(this.pools && this.memberPools) {
+    if (this.pools && this.memberPools) {
       this.notMamberPools = [] as PoolDTO[];
-      this.pools.forEach(
-        (pool) => {
-          if (this.memberPools.find( (p) => p.pool === pool.asset )) {
-            return;
-          }
-          this.notMamberPools.push({...pool, runePrice: this.runePrice})
+      this.pools.forEach((pool) => {
+        if (this.memberPools.find((p) => p.pool === pool.asset)) {
+          return;
         }
-      )
+        this.notMamberPools.push({ ...pool, runePrice: this.runePrice });
+      });
 
-      this.notMamberPools.sort((a,b) => (a.asset > b.asset) ? 1 : ((b.asset > a.asset) ? -1 : 0));
+      this.notMamberPools.sort((a, b) =>
+        a.asset > b.asset ? 1 : b.asset > a.asset ? -1 : 0
+      );
 
-      if (environment.network !== 'testnet') {
-        this.runeYieldService.getCurrentValueOfPool(this.memberPools[0].runeAddress).subscribe(
-          (pools) => {
+      if (environment.network !== "testnet") {
+        this.runeYieldService
+          .getCurrentValueOfPool(this.memberPools[0].runeAddress)
+          .subscribe((pools) => {
             this.runeYieldPools = pools;
-          }
-        );
+          });
       }
-      
     }
-
   }
 
   ngOnDestroy(): void {
-    this.subs.forEach(sub => sub.unsubscribe())
+    this.subs.forEach((sub) => sub.unsubscribe());
   }
-
 }

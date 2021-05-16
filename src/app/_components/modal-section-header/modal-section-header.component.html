@@ -2,13 +2,23 @@
   <button *ngIf="displayBackBtn" (click)="back.emit()" mat-icon-button>
     <mat-icon>arrow_back</mat-icon>
   </button>
-  <h1 class="flex items-center text-white text-lg font-medium m-0" *ngIf="sectionTitle">
-    <mat-icon *ngIf="sectionTitleIcon" class="mr-2">{{sectionTitleIcon}}</mat-icon>
-    {{sectionTitle}}
+  <h1
+    class="flex items-center text-white text-lg font-medium m-0"
+    *ngIf="sectionTitle"
+  >
+    <mat-icon *ngIf="sectionTitleIcon" class="mr-2">{{
+      sectionTitleIcon
+    }}</mat-icon>
+    {{ sectionTitle }}
   </h1>
   <div *ngIf="!displayCloseBtn" style="width: 40px"></div>
   <div *ngIf="displayCloseBtn" mat-dialog-actions>
-    <button mat-icon-button aria-label="Close Dialog" mat-dialog-close (click)="this.closeModal.emit()">
+    <button
+      mat-icon-button
+      aria-label="Close Dialog"
+      mat-dialog-close
+      (click)="this.closeModal.emit()"
+    >
       <mat-icon>close</mat-icon>
     </button>
   </div>

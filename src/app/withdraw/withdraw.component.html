@@ -2,7 +2,16 @@
   <div class="container">
     <div class="main-container">
       <nav class="content-top">
-        <app-breadcrumb [path]="[{name: 'vanaheimex', call: 'swap'}, {name: 'Pools', call: 'pool'}, {name: 'Withdraw', disable: true}]" [isError]="isError" [message]="mainButtonText()" (funcCaller)="goToNav($event)"></app-breadcrumb>
+        <app-breadcrumb
+          [path]="[
+            { name: 'vanaheimex', call: 'swap' },
+            { name: 'Pools', call: 'pool' },
+            { name: 'Withdraw', disable: true }
+          ]"
+          [isError]="isError"
+          [message]="mainButtonText()"
+          (funcCaller)="goToNav($event)"
+        ></app-breadcrumb>
       </nav>
 
       <!-- <div class="px-4 h-12 flex items-center">
@@ -23,7 +32,7 @@
 
       <div class="percent-container">
         <span class="percent-label">Percentage</span>
-        <span class="unstake-percent">{{withdrawPercent}}%</span>
+        <span class="unstake-percent">{{ withdrawPercent }}%</span>
         <mat-slider
           class="slider"
           [disabled]="!user"
@@ -32,7 +41,8 @@
           step="1"
           [tickInterval]="25"
           (input)="onInputChange($event)"
-          [(ngModel)]="withdrawPercent">
+          [(ngModel)]="withdrawPercent"
+        >
         </mat-slider>
       </div>
 
@@ -59,22 +69,36 @@
       <div class="swap-details">
         <div class="flex justify-between items-center">
           <span class="tx-detail-label">Prices:</span>
-          <span *ngIf="asset && assetBasePrice">1 {{rune.ticker}} = {{assetBasePrice | number:"1.2-4"}} {{asset.ticker}}</span>
+          <span *ngIf="asset && assetBasePrice"
+            >1 {{ rune.ticker }} = {{ assetBasePrice | number: "1.2-4" }}
+            {{ asset.ticker }}</span
+          >
           <span *ngIf="!asset || !assetBasePrice">...</span>
         </div>
         <div class="flex justify-between items-center">
           <span></span>
-          <span *ngIf="asset && runeBasePrice">1 {{asset.ticker}} = {{runeBasePrice | number:"1.2-4"}} {{rune.ticker}}</span>
+          <span *ngIf="asset && runeBasePrice"
+            >1 {{ asset.ticker }} = {{ runeBasePrice | number: "1.2-4" }}
+            {{ rune.ticker }}</span
+          >
           <span *ngIf="!asset || !runeBasePrice">...</span>
         </div>
-        <div *ngIf="withdrawType !== 'ASYM_ASSET'" class="flex justify-between items-center">
+        <div
+          *ngIf="withdrawType !== 'ASYM_ASSET'"
+          class="flex justify-between items-center"
+        >
           <span class="tx-detail-label">Fees:</span>
-          <span *ngIf="runeFee">{{runeFee}} RUNE</span>
+          <span *ngIf="runeFee">{{ runeFee }} RUNE</span>
           <span *ngIf="!runeFee && !networkFee">...</span>
         </div>
-        <div *ngIf="withdrawType === 'ASYM_ASSET'" class="flex justify-between items-center">
+        <div
+          *ngIf="withdrawType === 'ASYM_ASSET'"
+          class="flex justify-between items-center"
+        >
           <span class="tx-detail-label">Fees:</span>
-          <span *ngIf="networkFee">{{networkFee | number:"1.0-4"}} {{asset.ticker}}</span>
+          <span *ngIf="networkFee"
+            >{{ networkFee | number: "1.0-4" }} {{ asset.ticker }}</span
+          >
           <span *ngIf="!networkFee && !networkFee">...</span>
         </div>
       </div>
@@ -97,7 +121,6 @@
         </div>
       </div>
     </div>
-
   </div>
 </div>
 
@@ -107,4 +130,3 @@
   (close)="close($event)"
 >
 </app-confirm-withdraw-modal>
-

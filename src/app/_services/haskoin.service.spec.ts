@@ -1,19 +1,19 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed } from "@angular/core/testing";
 
-import { HaskoinService } from './haskoin.service';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { HaskoinService } from "./haskoin.service";
+import { HttpClientTestingModule } from "@angular/common/http/testing";
 
-describe('HaskoinService', () => {
+describe("HaskoinService", () => {
   let service: HaskoinService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ HttpClientTestingModule ]
+      imports: [HttpClientTestingModule],
     });
     service = TestBed.inject(HaskoinService);
   });
 
-  it('should be created', () => {
+  it("should be created", () => {
     expect(service).toBeTruthy();
   });
 });

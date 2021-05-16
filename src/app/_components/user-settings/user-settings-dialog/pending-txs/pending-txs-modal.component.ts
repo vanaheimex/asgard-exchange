@@ -1,24 +1,31 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
-import { Subscription } from 'rxjs';
-import { ExplorerPathsService } from 'src/app/_services/explorer-paths.service';
-import { TransactionStatusService, Tx, TxActions, TxStatus } from 'src/app/_services/transaction-status.service';
-import { OverlaysService, MainViewsEnum } from 'src/app/_services/overlays.service';
-import { Asset } from 'src/app/_classes/asset';
-import { environment } from 'src/environments/environment';
-import { User } from 'src/app/_classes/user';
-import { UserService } from 'src/app/_services/user.service';
-import { MidgardService } from 'src/app/_services/midgard.service';
-import { TransactionDTO } from 'src/app/_classes/transaction';
-import { Chain } from '@xchainjs/xchain-util';
+import { Component, EventEmitter, OnDestroy, Output } from "@angular/core";
+import { MatDialogRef } from "@angular/material/dialog";
+import { Subscription } from "rxjs";
+import { ExplorerPathsService } from "src/app/_services/explorer-paths.service";
+import {
+  TransactionStatusService,
+  Tx,
+  TxActions,
+  TxStatus,
+} from "src/app/_services/transaction-status.service";
+import {
+  OverlaysService,
+  MainViewsEnum,
+} from "src/app/_services/overlays.service";
+import { Asset } from "src/app/_classes/asset";
+import { environment } from "src/environments/environment";
+import { User } from "src/app/_classes/user";
+import { UserService } from "src/app/_services/user.service";
+import { MidgardService } from "src/app/_services/midgard.service";
+import { TransactionDTO } from "src/app/_classes/transaction";
+import { Chain } from "@xchainjs/xchain-util";
 
 @Component({
-  selector: 'app-pending-txs-modal',
-  templateUrl: './pending-txs-modal.component.html',
-  styleUrls: ['./pending-txs-modal.component.scss']
+  selector: "app-pending-txs-modal",
+  templateUrl: "./pending-txs-modal.component.html",
+  styleUrls: ["./pending-txs-modal.component.scss"],
 })
-export class PendingTxsModalComponent implements OnInit, OnDestroy {
-
+export class PendingTxsModalComponent implements OnDestroy {
   txs: Tx[];
   subs: Subscription[];
   bitcoinExplorerUrl: string;
@@ -40,7 +47,6 @@ export class PendingTxsModalComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private midgardService: MidgardService
   ) {
-
     this.back = new EventEmitter<null>();
     this.txs = [];
 
@@ -51,21 +57,17 @@ export class PendingTxsModalComponent implements OnInit, OnDestroy {
     this.litecoinExplorerUrl = `${this.explorerPathsService.litecoinExplorerUrl}`;
     this.bchExplorerUrl = `${this.explorerPathsService.bchExplorerUrl}/tx`;
 
-    const pendingTxs$ = this.txStatusService.txs$.subscribe( (txs) => {
-      this.txs = txs
+    const pendingTxs$ = this.txStatusService.txs$.subscribe((txs) => {
+      this.txs = txs;
     });
 
-    const user$ = this.userService.user$.subscribe(
-      async (user) => {
-        this.user = user;
-      }
-    );
+    const user$ = this.userService.user$.subscribe(async (user) => {
+      this.user = user;
+    });
 
     this.subs = [pendingTxs$, user$];
-
   }
 
-  
   ngOnInit(): void {
     this.getThorchainTxs();
   }
@@ -73,13 +75,13 @@ export class PendingTxsModalComponent implements OnInit, OnDestroy {
   getStatus(status: string): TxStatus {
     switch (status) {
       case "success":
-        return TxStatus.COMPLETE
+        return TxStatus.COMPLETE;
         break;
       case "refunded":
-        return TxStatus.REFUNDED
+        return TxStatus.REFUNDED;
         break;
       default:
-        return TxStatus.PENDING
+        return TxStatus.PENDING;
         break;
     }
   }
@@ -114,7 +116,7 @@ export class PendingTxsModalComponent implements OnInit, OnDestroy {
   transactionToTx(transactions: TransactionDTO): Tx[] {
     let txs: Tx[] = [];
 
-    transactions.actions.forEach(transaction => {
+    transactions.actions.forEach((transaction) => {
       let inboundAsset = new Asset(transaction.in[0].coins[0].asset);
       let outbound = undefined;
       let status = this.getStatus(transaction.status);
@@ -122,33 +124,31 @@ export class PendingTxsModalComponent implements OnInit, OnDestroy {
       let date = new Date(+transaction.date / 1000000);
       console.log(date);
 
-      if (transaction.out.length > 0 && transaction.type == 'swap') {
+      if (transaction.out.length > 0 && transaction.type == "swap") {
         const outboundAsset = new Asset(transaction.out[0].coins[0].asset);
 
         outbound = {
           hash: transaction.out[0].txID,
-          asset: outboundAsset
-        }
+          asset: outboundAsset,
+        };
       }
 
       // ignore upgarde txs because of midgard bug (temp)
       if (action == TxActions.UPGRADE_RUNE) {
-        return
+        return;
       }
-      
-      txs.push(
-        {
-          chain: inboundAsset.chain,
-          hash: transaction.in[0].txID,
-          ticker: inboundAsset.ticker,
-          status,
-          action,
-          date,
-          isThorchainTx: inboundAsset.chain === 'THOR' ? true : false,
-          symbol: inboundAsset.symbol,
-          outbound
-        }
-      )
+
+      txs.push({
+        chain: inboundAsset.chain,
+        hash: transaction.in[0].txID,
+        ticker: inboundAsset.ticker,
+        status,
+        action,
+        date,
+        isThorchainTx: inboundAsset.chain === "THOR" ? true : false,
+        symbol: inboundAsset.symbol,
+        outbound,
+      });
     });
 
     return txs;
@@ -156,23 +156,25 @@ export class PendingTxsModalComponent implements OnInit, OnDestroy {
 
   async getThorchainTxs() {
     if (!this.user && !this.user.clients && !this.user.clients.thorchain)
-      return
+      return;
 
     // this.transactions = await this.user.clients.thorchain.getTransactions({
     //   address: this.user.clients.thorchain.getAddress(),
     //   limit: 10,
     // })
 
-    this.transactions = await this.midgardService.getAddrTransactions(this.user.clients.thorchain.getAddress()).toPromise();
+    this.transactions = await this.midgardService
+      .getAddrTransactions(this.user.clients.thorchain.getAddress())
+      .toPromise();
 
-    this.transactionToTx(this.transactions).forEach(
-      (tx) => {
-        if (this.txs.find(ptx => ptx.hash.toUpperCase() === tx.hash.toUpperCase())) {
-          return
-        }
-        this.txStatusService.addHistoryTransaction(tx)
+    this.transactionToTx(this.transactions).forEach((tx) => {
+      if (
+        this.txs.find((ptx) => ptx.hash.toUpperCase() === tx.hash.toUpperCase())
+      ) {
+        return;
       }
-    );
+      this.txStatusService.addHistoryTransaction(tx);
+    });
 
     // this.txs = this.txs.filter((thing, index) => {
     //   const _thing = JSON.stringify(thing);
@@ -186,84 +188,81 @@ export class PendingTxsModalComponent implements OnInit, OnDestroy {
 
   getIconPath(tx: Tx) {
     const asset = new Asset(`${tx.chain}.${tx.symbol}`);
-    return asset.iconPath
+    return asset.iconPath;
   }
 
   explorerUrl(chain: string): string {
     switch (chain) {
-      case 'BTC':
+      case "BTC":
         return this.bitcoinExplorerUrl;
 
-      case 'BNB':
+      case "BNB":
         return this.binanceExplorerUrl;
 
-      case 'THOR':
+      case "THOR":
         return this.thorchainExplorerUrl;
 
-      case 'ETH':
+      case "ETH":
         return this.ethereumExplorerUrl;
 
-      case 'LTC':
+      case "LTC":
         return this.litecoinExplorerUrl;
 
-      case 'BCH':
+      case "BCH":
         return this.bchExplorerUrl;
 
       default:
-        return '';
+        return "";
     }
   }
 
   explorerPath(tx: Tx): string {
     if (tx.isThorchainTx) {
-
       if (tx.pollThornodeDirectly) {
         return this.getViewBlockPath(tx.hash);
-      }  else if (tx.pollRpc) {
+      } else if (tx.pollRpc) {
         /**
          * For THOR transfers
          */
         return this.getViewBlockPath(tx.hash);
       } else {
-        return this.thorchainExplorerUrl + '/' + tx.hash;
+        return this.thorchainExplorerUrl + "/" + tx.hash;
       }
-
-    } else if (tx.chain === 'ETH') {
+    } else if (tx.chain === "ETH") {
       return `${this.ethereumExplorerUrl}/0x${tx.hash}`;
     } else {
-      return this.explorerUrl(tx.chain) + '/' + tx.hash;
+      return this.explorerUrl(tx.chain) + "/" + tx.hash;
     }
   }
 
   explorerPathAlt(hash: string, chain: Chain, externalTx?: boolean): string {
-    if (externalTx)
-      chain = 'THOR';
+    if (externalTx) chain = "THOR";
 
-    if (chain === 'THOR') {
-      return this.thorchainExplorerUrl + '/' + hash;
-    } else if (chain === 'ETH') {
+    if (chain === "THOR") {
+      return this.thorchainExplorerUrl + "/" + hash;
+    } else if (chain === "ETH") {
       return `${this.ethereumExplorerUrl}/0x${hash}`;
     } else {
-      return this.explorerUrl(chain) + '/' + hash;
+      return this.explorerUrl(chain) + "/" + hash;
     }
   }
 
   goToExternal(url: string) {
-    console.log(url)
-    window.open(url, '_blank');
+    console.log(url);
+    window.open(url, "_blank");
   }
-  
+
   getViewBlockPath(hash): string {
     let path = `https://viewblock.io/thorchain/tx/${hash}`;
-    if (environment.network === 'testnet') {
-      path += '?network=testnet';
+    if (environment.network === "testnet") {
+      path += "?network=testnet";
     }
     return path;
   }
 
   close(): void {
     // this.dialogRef.close();
-    this.overlaysService.setViews(MainViewsEnum.Swap, 'Swap');
+    this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
   }
 
   ngOnDestroy() {
@@ -271,5 +270,4 @@ export class PendingTxsModalComponent implements OnInit, OnDestroy {
       sub.unsubscribe();
     }
   }
-
 }

@@ -16,7 +16,7 @@
   <main *ngIf="currentView == currentViewType.ReconnectXDEFI && !appLocked">
     <app-reconnect-xdefi-dialog></app-reconnect-xdefi-dialog>
   </main>
-  
+
   <main *ngIf="currentView == currentViewType.AccountSetting && !appLocked">
     <app-account-settings></app-account-settings>
   </main>
@@ -31,11 +31,22 @@
 
   <footer>
     <div class="footer-content">
-      <span><span [ngStyle]="{'color': isTestnet ? 'inherit': 'var(--primary-red)', 'font-weight': isTestnet ? 'inherit' : 'bold'}">BETA product. Don’t swap/pool large.</span> Powered by <a class="footer-link" href="https://t.me/thorchain_org" target="_blank">THORChain</a>. Go to <a class="footer-link" [href]="appUrl" *ngIf="!isTestnet">TestNet</a><a class="footer-link" [href]="appUrl" *ngIf="isTestnet">ChaosNet</a> app instead.</span>
+      <span
+        ><span
+          [ngStyle]="{
+            color: isTestnet ? 'inherit' : 'var(--primary-red)',
+            'font-weight': isTestnet ? 'inherit' : 'bold'
+          }"
+          >BETA product. Don’t swap/pool large.</span
+        >
+        Powered by
+        <a class="footer-link" href="https://t.me/thorchain_org" target="_blank"
+          >THORChain</a
+        >. Go to
+        <a class="footer-link" [href]="appUrl" *ngIf="!isTestnet">TestNet</a
+        ><a class="footer-link" [href]="appUrl" *ngIf="isTestnet">ChaosNet</a>
+        app instead.</span
+      >
     </div>
   </footer>
 </div>
-
-
-
-

@@ -1,25 +1,34 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { User } from 'src/app/_classes/user';
-import { TransactionStatusService } from 'src/app/_services/transaction-status.service';
-import { UserSettingsDialogComponent } from './user-settings-dialog/user-settings-dialog.component';
-import { UserService } from 'src/app/_services/user.service';
-import { MainViewsEnum, OverlaysService } from 'src/app/_services/overlays.service';
-import { Router } from '@angular/router';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from "@angular/core";
+import { Subscription } from "rxjs";
+import { User } from "src/app/_classes/user";
+import { TransactionStatusService } from "src/app/_services/transaction-status.service";
+import { UserSettingsDialogComponent } from "./user-settings-dialog/user-settings-dialog.component";
+import { UserService } from "src/app/_services/user.service";
+import {
+  MainViewsEnum,
+  OverlaysService,
+} from "src/app/_services/overlays.service";
+import { Router } from "@angular/router";
 
 @Component({
-  selector: 'app-user-settings',
-  templateUrl: './user-settings.component.html',
-  styleUrls: ['./user-settings.component.scss']
+  selector: "app-user-settings",
+  templateUrl: "./user-settings.component.html",
+  styleUrls: ["./user-settings.component.scss"],
 })
-export class UserSettingsComponent implements OnInit, OnDestroy {
-
+export class UserSettingsComponent implements OnDestroy {
   @Input() user: User;
   pendingTxCount: number;
   modalDimensions = {
-    maxWidth: '520px',
-    width: '50vw',
-    minWidth: '260px'
+    maxWidth: "520px",
+    width: "50vw",
+    minWidth: "260px",
   };
   subs: Subscription[];
   @Input() overlay: boolean;
@@ -30,30 +39,29 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
   }
   set showMenu(val: boolean) {
     this.overlaysService.setMenu(val);
-    this._showMenu = val
+    this._showMenu = val;
   }
 
   currentView: MainViewsEnum;
 
-  constructor(private txStatusService: TransactionStatusService, private router: Router, private userService: UserService, public overlaysService: OverlaysService) {
+  constructor(
+    private txStatusService: TransactionStatusService,
+    private router: Router,
+    private userService: UserService,
+    public overlaysService: OverlaysService
+  ) {
     this.pendingTxCount = 0;
     this.showMenu = false;
 
-    const pendingTx$ = this.txStatusService.txs$.subscribe(
-      (_txs) => {
-        this.pendingTxCount = this.txStatusService.getPendingTxCount();
-      }
-    );
+    const pendingTx$ = this.txStatusService.txs$.subscribe((_txs) => {
+      this.pendingTxCount = this.txStatusService.getPendingTxCount();
+    });
 
-    const overlay$ = this.overlaysService.currentView.subscribe(val => {
+    const overlay$ = this.overlaysService.currentView.subscribe((val) => {
       this.currentView = val;
     });
 
     this.subs = [pendingTx$, overlay$];
-
-  }
-
-  ngOnInit(): void {
   }
 
   openUserSettings() {
@@ -61,15 +69,20 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
     // if (this.currentView == MainViewsEnum.UserSetting)
     //   this.overlaysService.setCurrentView(MainViewsEnum.Swap)
     // else
-    this.overlaysService.setCurrentUserView({userView: "Addresses", address: null, chain: null, asset: null});
-    this.overlaysService.setSettingViews(MainViewsEnum.UserSetting, 'ACCOUNT');
+    this.overlaysService.setCurrentUserView({
+      userView: "Addresses",
+      address: null,
+      chain: null,
+      asset: null,
+    });
+    this.overlaysService.setSettingViews(MainViewsEnum.UserSetting, "ACCOUNT");
   }
 
   openAccountSetting() {
     // if (this.currentView == MainViewsEnum.AccountSetting)
     //   this.overlaysService.setCurrentView(MainViewsEnum.Swap)
     // else
-    this.overlaysService.setSettingView('ACCOUNT');
+    this.overlaysService.setSettingView("ACCOUNT");
     this.overlaysService.setCurrentView(MainViewsEnum.AccountSetting);
   }
 
@@ -85,13 +98,13 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
     this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
 
     // add this guard in case the route is not in the swap change it to the swap
-    if (this.router.url !== '/swap') {
-      this.router.navigate(['/', 'swap']);
+    if (this.router.url !== "/swap") {
+      this.router.navigate(["/", "swap"]);
     }
   }
 
   toggleMenu() {
-    this.showMenu = !(this.showMenu)
+    this.showMenu = !this.showMenu;
   }
 
   ngOnDestroy() {
@@ -99,5 +112,4 @@ export class UserSettingsComponent implements OnInit, OnDestroy {
       sub.unsubscribe();
     }
   }
-
 }

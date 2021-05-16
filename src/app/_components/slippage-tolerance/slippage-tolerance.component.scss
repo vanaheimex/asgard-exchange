@@ -1,5 +1,3 @@
-
-
 // button, #custom-tolerance {
 //   color: #33FF99;
 //   background-color: rgba(255, 255, 255, 0.02);
@@ -15,7 +13,7 @@
 
 #custom-tolerance {
   width: 100%;
-  border: 2px solid #0D1B23;
+  border: 2px solid #0d1b23;
   border-radius: 6px;
   background-color: transparent;
   padding: 0 20px;
@@ -28,17 +26,16 @@
     top: 25px;
     font-size: 14px;
     font-weight: 500;
-
   }
 
   #custom-tolerance-input {
     max-width: 100%;
-    color:var(--primary-graident-top-right);
+    color: var(--primary-graident-top-right);
     background-color: transparent;
     border: none;
     text-align: left;
     font-size: 22px;
-    font-family: 'Roboto Mono';
+    font-family: "Roboto Mono";
     position: relative;
     top: 45%;
 
@@ -47,7 +44,7 @@
     }
 
     &::placeholder {
-      color: #474E5D;
+      color: #474e5d;
     }
 
     &::after {

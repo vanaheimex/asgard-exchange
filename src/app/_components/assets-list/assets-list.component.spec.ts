@@ -1,18 +1,17 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatIconModule } from '@angular/material/icon';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { MatIconModule } from "@angular/material/icon";
 
-import { AssetsListComponent } from './assets-list.component';
+import { AssetsListComponent } from "./assets-list.component";
 
-describe('AssetsListComponent', () => {
+describe("AssetsListComponent", () => {
   let component: AssetsListComponent;
   let fixture: ComponentFixture<AssetsListComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ AssetsListComponent ],
-      imports: [MatIconModule]
-    })
-    .compileComponents();
+      declarations: [AssetsListComponent],
+      imports: [MatIconModule],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -21,7 +20,7 @@ describe('AssetsListComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

@@ -1,26 +1,27 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { ReconnectXDEFIDialogComponent } from './reconnect-xdefi-dialog.component';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { MatIconModule } from "@angular/material/icon";
+import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { ReconnectXDEFIDialogComponent } from "./reconnect-xdefi-dialog.component";
 
-describe('ReconnectDialogComponent', () => {
+describe("ReconnectDialogComponent", () => {
   let component: ReconnectXDEFIDialogComponent;
   let fixture: ComponentFixture<ReconnectXDEFIDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ReconnectXDEFIDialogComponent ],
-      imports: [ MatIconModule, HttpClientTestingModule ],
+      declarations: [ReconnectXDEFIDialogComponent],
+      imports: [MatIconModule, HttpClientTestingModule],
       providers: [
-        { provide: MAT_DIALOG_DATA, useValue: {
-            keystore: null
-          }
+        {
+          provide: MAT_DIALOG_DATA,
+          useValue: {
+            keystore: null,
+          },
         },
-        { provide: MatDialogRef, useValue: { close: (dialogResult: any) => { } } }
-      ]
-    })
-    .compileComponents();
+        { provide: MatDialogRef, useValue: { close: () => {} } },
+      ],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -29,7 +30,7 @@ describe('ReconnectDialogComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

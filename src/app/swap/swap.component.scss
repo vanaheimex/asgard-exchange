@@ -69,15 +69,15 @@ $default-font-size: 14px;
     outline: none;
     cursor: pointer;
     text-decoration: none;
-    color: #474E5D;
-    background-color: #000B12;
+    color: #474e5d;
+    background-color: #000b12;
     font-size: $default-font-size;
     font-family: Roboto;
     border-radius: $border-radius;
     text-transform: uppercase;
     padding: 0 $default-padding;
     z-index: 0;
-    border: $default-border solid #474E5D;
+    border: $default-border solid #474e5d;
 
     &.active {
       border: $default-border solid var(--primary-default);
@@ -94,7 +94,7 @@ $default-font-size: 14px;
       }
 
       &.inactive {
-        padding-right: 2*$default-padding - $default-border;
+        padding-right: 2 * $default-padding - $default-border;
       }
     }
 
@@ -106,17 +106,17 @@ $default-font-size: 14px;
       }
 
       &.inactive {
-        padding-left: 2*$default-padding - $default-border;
+        padding-left: 2 * $default-padding - $default-border;
       }
     }
 
     .tag {
       top: 4px;
-      font-family: 'Exo 2';
+      font-family: "Exo 2";
       font-weight: 700;
       font-size: $default-font-size/1.75;
       position: absolute;
-      color: #F3BA2F;
+      color: #f3ba2f;
     }
   }
 
@@ -138,4 +138,3 @@ $default-font-size: 14px;
     }
   }
 }
-

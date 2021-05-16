@@ -1,21 +1,40 @@
-<div *ngIf="asset" class="pool-list-item" [ngClass]="{'activate': activate, 'pending': isPending}" (click)="toggleExpanded()">
-
-    <div class="flex justify-between items-center">
-      <div class="left-section">
-        <app-icon-ticker [iconPath]="asset.iconPath" [chain]="asset.chain" [ticker]="asset.ticker"></app-icon-ticker>
-        <span class="extra-info" *ngIf="poolData && !activate"> / {{+poolData.poolAPY * 100 | number: '0.0-2'}}% APY / {{assetDepth | shortNumber}} {{currency.code}} D</span>
-      </div>
-  
-      <span class="pending" *ngIf="">(STAGED {{isPending.action}})</span>
-      <div class="flex justify-between" *ngIf="activate && !isPending">
-        <app-tag>
-          <a [href]="'https://thorchain.delphidigital.io/thorchain/' + (isTestnet ? 'testnet/' : 'chaosnet/')" target="_blank">POOL STATS</a>
-        </app-tag>
-        <div style="width: 5px;"></div>
-        <app-tag *ngIf="!depositsDisabled">
-          <a [routerLink]="['/', 'deposit', asset.chain + '.' + asset.symbol]">Deposit</a>
-        </app-tag>
-      </div>
+<div
+  *ngIf="asset"
+  class="pool-list-item"
+  [ngClass]="{ activate: activate, pending: isPending }"
+  (click)="toggleExpanded()"
+>
+  <div class="flex justify-between items-center">
+    <div class="left-section">
+      <app-icon-ticker
+        [iconPath]="asset.iconPath"
+        [chain]="asset.chain"
+        [ticker]="asset.ticker"
+      ></app-icon-ticker>
+      <span class="extra-info" *ngIf="poolData && !activate">
+        / {{ +poolData.poolAPY * 100 | number: "0.0-2" }}% APY /
+        {{ assetDepth | shortNumber }} {{ currency.code }} D</span
+      >
     </div>
-  
+
+    <span class="pending" *ngIf="">(STAGED {{ isPending.action }})</span>
+    <div class="flex justify-between" *ngIf="activate && !isPending">
+      <app-tag>
+        <a
+          [href]="
+            'https://thorchain.delphidigital.io/thorchain/' +
+            (isTestnet ? 'testnet/' : 'chaosnet/')
+          "
+          target="_blank"
+          >POOL STATS</a
+        >
+      </app-tag>
+      <div style="width: 5px"></div>
+      <app-tag *ngIf="!depositsDisabled">
+        <a [routerLink]="['/', 'deposit', asset.chain + '.' + asset.symbol]"
+          >Deposit</a
+        >
+      </app-tag>
+    </div>
+  </div>
 </div>

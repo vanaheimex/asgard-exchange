@@ -1,13 +1,12 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { decryptFromKeystore } from '@xchainjs/xchain-crypto';
+import { Component, EventEmitter, Output } from "@angular/core";
+import { decryptFromKeystore } from "@xchainjs/xchain-crypto";
 
 @Component({
-  selector: 'app-view-phrase',
-  templateUrl: './view-phrase.component.html',
-  styleUrls: ['./view-phrase.component.scss']
+  selector: "app-view-phrase",
+  templateUrl: "./view-phrase.component.html",
+  styleUrls: ["./view-phrase.component.scss"],
 })
-export class ViewPhraseComponent implements OnInit {
-
+export class ViewPhraseComponent {
   @Output() back: EventEmitter<null>;
   passwordAccepted: boolean;
   keystoreConnecting: boolean;
@@ -19,12 +18,9 @@ export class ViewPhraseComponent implements OnInit {
     this.back = new EventEmitter();
   }
 
-  ngOnInit(): void {
-  }
-
   async unlock() {
     try {
-      const keystoreString = localStorage.getItem('keystore');
+      const keystoreString = localStorage.getItem("keystore");
       const keystore = JSON.parse(keystoreString);
       this.phrase = await decryptFromKeystore(keystore, this.keystorePassword);
       this.passwordAccepted = true;
@@ -35,5 +31,4 @@ export class ViewPhraseComponent implements OnInit {
       console.error(error);
     }
   }
-
 }

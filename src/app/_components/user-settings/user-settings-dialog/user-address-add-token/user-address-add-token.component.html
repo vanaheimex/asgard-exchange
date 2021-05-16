@@ -7,27 +7,39 @@
     </app-modal-section-header> -->
 
     <div class="content-top">
-      <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'wallet', call: 'wallet'}, {name: chain, call: 'chain'}, {name: 'Add token', disable: true}]" [isError]="error" [message]="message" (funcCaller)="navCaller($event)"></app-breadcrumb>
-      <div class="top-right">
-      </div>
+      <app-breadcrumb
+        [path]="[
+          { name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap' },
+          { name: 'wallet', call: 'wallet' },
+          { name: chain, call: 'chain' },
+          { name: 'Add token', disable: true }
+        ]"
+        [isError]="error"
+        [message]="message"
+        (funcCaller)="navCaller($event)"
+      ></app-breadcrumb>
+      <div class="top-right"></div>
     </div>
 
     <div mat-dialog-content>
-
       <div>
-
         <!-- <div class="uni-input">
           <label>Token Contract Address</label>
           <input [(ngModel)]="tokenAddress" name="custom-token-address" placeholder="Enter {{chain}} Token Address" />
         </div> -->
-        <app-text-field [(textOfField)]="tokenAddress" label="Enter {{chain}} Token Address"></app-text-field>
+        <app-text-field
+          [(textOfField)]="tokenAddress"
+          label="Enter {{ chain }} Token Address"
+        ></app-text-field>
 
         <div class="swap-details">
           <div class="flex justify-between">
-            <span class="tx-detail-label">This will add the {{chain}} contract address to your wallet.</span>
+            <span class="tx-detail-label"
+              >This will add the {{ chain }} contract address to your
+              wallet.</span
+            >
           </div>
         </div>
-
       </div>
 
       <div class="bottom-actions two-btn">
@@ -38,7 +50,18 @@
         </div>
         <div class="divider"></div>
         <div class="left-btn">
-          <button class="next-btn" [disabled]="tokenAddress.length < 40 || tokenAddress.length > 42 || !ethClient || !chainAddress || !chain || loading" (click)="addToken()">
+          <button
+            class="next-btn"
+            [disabled]="
+              tokenAddress.length < 40 ||
+              tokenAddress.length > 42 ||
+              !ethClient ||
+              !chainAddress ||
+              !chain ||
+              loading
+            "
+            (click)="addToken()"
+          >
             <span>Add Token</span>
           </button>
         </div>
@@ -47,7 +70,6 @@
         An error occurred <br />
         {{error}}
       </div> -->
-
     </div>
   </div>
 </div>

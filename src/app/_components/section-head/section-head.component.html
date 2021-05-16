@@ -1,7 +1,12 @@
 <div class="flex justify-between items-center mb-4">
-  <button *ngIf="displayBackBtn" class="text-white" mat-icon-button (click)="back.emit()">
+  <button
+    *ngIf="displayBackBtn"
+    class="text-white"
+    mat-icon-button
+    (click)="back.emit()"
+  >
     <mat-icon>arrow_back</mat-icon>
   </button>
-  <h1 class="text-lg font-medium">{{sectionTitle}}</h1>
+  <h1 class="text-lg font-medium">{{ sectionTitle }}</h1>
   <div style="width: 40px"></div>
 </div>

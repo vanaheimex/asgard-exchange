@@ -1,6 +1,6 @@
 .notice-container {
   background: var(--primary-default);
-  color: #000B12;
+  color: #000b12;
   padding: 0 20px;
   display: flex;
   justify-content: space-between;
@@ -30,7 +30,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     text-transform: inherit;
-    font-family: 'Roboto';
+    font-family: "Roboto";
 
     user-select: none; /* supported by Chrome and Opera */
     -webkit-user-select: none; /* Safari */
@@ -43,7 +43,7 @@
     }
 
     &.mono {
-      font-family: 'Roboto Mono';
+      font-family: "Roboto Mono";
     }
   }
 
@@ -56,8 +56,7 @@
 
     &.center {
       position: absolute;
-      right:  20px;
+      right: 20px;
     }
   }
-
 }

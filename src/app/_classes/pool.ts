@@ -11,4 +11,3 @@ export interface PoolDTO {
   units: string;
   runePrice?: number;
 }
-
