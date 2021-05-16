@@ -63,25 +63,9 @@
           </div>
         </button>
 
-        <button class="connect-option" (click)="connectKeystore()">
-          <div class="flex item items-center">
-            <div class="add-icon">
-              <img
-                [src]="
-                  isTestnet
-                    ? '/assets/icons/folder-icon-testnet.svg'
-                    : '/assets/icons/folder-icon.svg'
-                "
-                alt="folder icon"
-              />
-            </div>
-            <span class="item-text">Connect To Existing Keystore</span>
-          </div>
-        </button>
-
         <button
-          class="connect-option focus:outline-none justify-between"
-          (click)="createKeystoreFromPhrase()"
+        class="connect-option focus:outline-none justify-between"
+        (click)="createKeystoreFromPhrase()"
         >
           <div class="flex item items-center">
             <div class="add-icon">
@@ -95,6 +79,22 @@
               />
             </div>
             <span class="item-text">Create Keystore from phrase</span>
+          </div>
+        </button>
+
+        <button class="connect-option" (click)="connectKeystore()">
+          <div class="flex item items-center">
+            <div class="add-icon">
+              <img
+                [src]="
+                  isTestnet
+                    ? '/assets/icons/folder-icon-testnet.svg'
+                    : '/assets/icons/folder-icon.svg'
+                "
+                alt="folder icon"
+              />
+            </div>
+            <span class="item-text">Connect To Existing Keystore</span>
           </div>
         </button>
 
