@@ -1,21 +1,21 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Tx, TxsPage } from '@xchainjs/xchain-client';
-import { Chain } from '@xchainjs/xchain-util';
-import { Subscription } from 'rxjs';
-import { Asset } from 'src/app/_classes/asset';
-import { AssetAndBalance } from 'src/app/_classes/asset-and-balance';
-import { User } from 'src/app/_classes/user';
-import { Currency } from 'src/app/_components/account-settings/currency-converter/currency-converter.component';
-import { CopyService } from 'src/app/_services/copy.service';
-import { CurrencyService } from 'src/app/_services/currency.service';
-import { ExplorerPathsService } from 'src/app/_services/explorer-paths.service';
-import { OverlaysService } from 'src/app/_services/overlays.service';
-import { UserService } from 'src/app/_services/user.service';
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Tx, TxsPage } from "@xchainjs/xchain-client";
+import { Chain } from "@xchainjs/xchain-util";
+import { Subscription } from "rxjs";
+import { Asset } from "src/app/_classes/asset";
+import { AssetAndBalance } from "src/app/_classes/asset-and-balance";
+import { User } from "src/app/_classes/user";
+import { Currency } from "src/app/_components/account-settings/currency-converter/currency-converter.component";
+import { CopyService } from "src/app/_services/copy.service";
+import { CurrencyService } from "src/app/_services/currency.service";
+import { ExplorerPathsService } from "src/app/_services/explorer-paths.service";
+import { OverlaysService } from "src/app/_services/overlays.service";
+import { UserService } from "src/app/_services/user.service";
 
 @Component({
-  selector: 'app-user-asset',
-  templateUrl: './user-asset.component.html',
-  styleUrls: ['./user-asset.component.scss'],
+  selector: "app-user-asset",
+  templateUrl: "./user-asset.component.html",
+  styleUrls: ["./user-asset.component.scss"],
 })
 export class UserAssetComponent {
   @Input() set asset(asset: AssetAndBalance) {
@@ -47,17 +47,21 @@ export class UserAssetComponent {
   activeIndex: number;
   user: User;
 
-  constructor(private copyService: CopyService, private explorerPathsService: ExplorerPathsService, private overlaysService: OverlaysService, private currencyService: CurrencyService, private userService: UserService) {
+  constructor(
+    private copyService: CopyService,
+    private explorerPathsService: ExplorerPathsService,
+    private overlaysService: OverlaysService,
+    private currencyService: CurrencyService,
+    private userService: UserService
+  ) {
     this.back = new EventEmitter();
     this.send = new EventEmitter();
     this.upgradeRune = new EventEmitter();
     this.deposit = new EventEmitter();
 
-    const curs$ = this.currencyService.cur$.subscribe(
-      (cur) => {
-        this.currency = cur;
-      }
-    )
+    const curs$ = this.currencyService.cur$.subscribe((cur) => {
+      this.currency = cur;
+    });
 
     this.subs = [curs$];
   }
@@ -73,22 +77,28 @@ export class UserAssetComponent {
 
   async getTransactions() {
     /**Get transaction of the asset/chain */
-    const user$ = this.userService.user$.subscribe(
-      (user) => {
-        this.user = user;
-      }
-    )
+    const user$ = this.userService.user$.subscribe((user) => {
+      this.user = user;
+    });
 
-    let client = this.userService.getChainClient(this.user, this.asset.asset.chain);
+    let client = this.userService.getChainClient(
+      this.user,
+      this.asset.asset.chain
+    );
 
-    let txsPage: TxsPage = await client.getTransactions({address: client.getAddress()});
+    let txsPage: TxsPage = await client.getTransactions({
+      address: client.getAddress(),
+    });
     this.txs = txsPage.txs.filter((el) => {
-      return el.asset.chain === this.asset.asset.chain && el.asset.ticker === this.asset.asset.ticker
-    })
+      return (
+        el.asset.chain === this.asset.asset.chain &&
+        el.asset.ticker === this.asset.asset.ticker
+      );
+    });
 
     console.log(txsPage);
 
-    this.subs.push(user$)
+    this.subs.push(user$);
   }
 
   getIconPath(asset_name: Asset): string {
@@ -97,47 +107,48 @@ export class UserAssetComponent {
   }
 
   getExplorerUrl(hash: string) {
-    let client = this.userService.getChainClient(this.user, this.asset.asset.chain);
+    let client = this.userService.getChainClient(
+      this.user,
+      this.asset.asset.chain
+    );
     return client.getExplorerTxUrl(hash);
   }
 
   formatDate(date) {
     var d = new Date(date),
-        month = '' + (d.getMonth() + 1),
-        day = '' + d.getDate(),
-        year = d.getFullYear() % 100;
+      month = "" + (d.getMonth() + 1),
+      day = "" + d.getDate(),
+      year = d.getFullYear() % 100;
 
-    if (month.length < 2) 
-        month = '0' + month;
-    if (day.length < 2) 
-        day = '0' + day;
+    if (month.length < 2) month = "0" + month;
+    if (day.length < 2) day = "0" + day;
 
-    return [day, month, year].join('/');
+    return [day, month, year].join("/");
   }
 
   setExplorerPath() {
     switch (this.asset.asset.chain) {
-      case 'BTC':
+      case "BTC":
         this.explorerPath = `${this.explorerPathsService.bitcoinExplorerUrl}/address/${this.address}`;
         break;
 
-      case 'BNB':
+      case "BNB":
         this.explorerPath = `${this.explorerPathsService.binanceExplorerUrl}/address/${this.address}`;
         break;
 
-      case 'THOR':
+      case "THOR":
         this.explorerPath = `${this.explorerPathsService.thorchainExplorerUrl}/address/${this.address}`;
         break;
 
-      case 'ETH':
+      case "ETH":
         this.explorerPath = `${this.explorerPathsService.ethereumExplorerUrl}/address/${this.address}`;
         break;
 
-      case 'LTC':
+      case "LTC":
         this.explorerPath = `${this.explorerPathsService.litecoinExplorerUrl}/${this.address}`;
         break;
 
-      case 'BCH':
+      case "BCH":
         this.explorerPath = `${this.explorerPathsService.bchExplorerUrl}/address/${this.address}`;
         break;
 
@@ -147,28 +158,34 @@ export class UserAssetComponent {
   }
 
   navCaller(nav) {
-    console.log(this.asset)
-    if (nav === 'wallet')
-      this.overlaysService.setCurrentUserView({userView: 'Addresses', address: null, chain: null, asset: null});
-    else if (nav === 'chain')
-      this.overlaysService.setCurrentUserView({userView: 'Address', address: this.address, chain: this.chain, asset: null})
+    console.log(this.asset);
+    if (nav === "wallet")
+      this.overlaysService.setCurrentUserView({
+        userView: "Addresses",
+        address: null,
+        chain: null,
+        asset: null,
+      });
+    else if (nav === "chain")
+      this.overlaysService.setCurrentUserView({
+        userView: "Address",
+        address: this.address,
+        chain: this.chain,
+        asset: null,
+      });
   }
 
   copyToClipboard() {
     if (this.address) {
       let result = this.copyService.copyToClipboard(this.address);
 
-      if (result)
-        this.copied = true;
+      if (result) this.copied = true;
     }
   }
 
   ngOnDestroy(): void {
-    this.subs.forEach(
-      (sub) => {
-        sub.unsubscribe();
-      }
-    )
+    this.subs.forEach((sub) => {
+      sub.unsubscribe();
+    });
   }
-
 }

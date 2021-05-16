@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
-import { assetAmount, assetToBase } from '@xchainjs/xchain-util';
-import BigNumber from 'bignumber.js';
-import { BehaviorSubject } from 'rxjs';
+import { Injectable } from "@angular/core";
+import { assetAmount, assetToBase } from "@xchainjs/xchain-util";
+import BigNumber from "bignumber.js";
+import { BehaviorSubject } from "rxjs";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class SlippageToleranceService {
   private slippageToleranceSource = new BehaviorSubject<number>(3);

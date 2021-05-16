@@ -1,10 +1,10 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { AssetAndBalance } from 'src/app/_classes/asset-and-balance';
+import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { AssetAndBalance } from "src/app/_classes/asset-and-balance";
 
 @Component({
-  selector: 'app-transaction-processing-modal',
-  templateUrl: './transaction-processing-modal.component.html',
-  styleUrls: ['./transaction-processing-modal.component.scss'],
+  selector: "app-transaction-processing-modal",
+  templateUrl: "./transaction-processing-modal.component.html",
+  styleUrls: ["./transaction-processing-modal.component.scss"],
 })
 export class TransactionProcessingModalComponent {
   @Input() transactionDetail: string;

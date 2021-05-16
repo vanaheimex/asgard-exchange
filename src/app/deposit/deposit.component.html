@@ -1,9 +1,23 @@
-<div class="container-wrapper" *ngIf="view === 'Asset' || view === 'Deposit' || view === 'Approve'">
+<div
+  class="container-wrapper"
+  *ngIf="view === 'Asset' || view === 'Deposit' || view === 'Approve'"
+>
   <div class="container">
     <div *ngIf="view === 'Deposit'">
       <div class="main-container">
         <nav class="content-top">
-          <app-breadcrumb [path]="[{name: 'vanaheimex', call: 'swap'}, {name: 'Pools', call: 'pool'}, {name: 'Deposit', disable: true}]" [isError]="mainButtonText() !== 'Ready' && mainButtonText() !== 'Prepare'" [message]="mainButtonText()" (funcCaller)="goToNav($event)"></app-breadcrumb>
+          <app-breadcrumb
+            [path]="[
+              { name: 'vanaheimex', call: 'swap' },
+              { name: 'Pools', call: 'pool' },
+              { name: 'Deposit', disable: true }
+            ]"
+            [isError]="
+              mainButtonText() !== 'Ready' && mainButtonText() !== 'Prepare'
+            "
+            [message]="mainButtonText()"
+            (funcCaller)="goToNav($event)"
+          ></app-breadcrumb>
         </nav>
       </div>
 
@@ -14,9 +28,9 @@
         [balance]="assetBalance"
         [disabledAssetSymbol]="rune.symbol"
         [selectableMarkets]="selectableMarkets"
-        
         [isDeposit]="true"
-        (lunchMarket)="overlaysService.setCurrentDepositView('Asset')">
+        (lunchMarket)="overlaysService.setCurrentDepositView('Asset')"
+      >
       </app-asset-input>
 
       <app-arrow [isPlus]="true"></app-arrow>
@@ -31,19 +45,23 @@
         [disableInput]="true"
         [disabledAssetSymbol]="rune.symbol"
         [disabledMarketSelect]="true"
-        
-        [isDeposit]="true">
+        [isDeposit]="true"
+      >
       </app-asset-input>
 
       <div class="swap-details">
         <div class="flex justify-between">
           <span class="tx-detail-label">Network Fee:</span>
-          <span *ngIf="networkFee">{{networkFee | number:"1.0-8"}} {{asset.ticker}}.{{asset.chain}}</span>
+          <span *ngIf="networkFee"
+            >{{ networkFee | number: "1.0-8" }} {{ asset.ticker }}.{{
+              asset.chain
+            }}</span
+          >
           <span *ngIf="!networkFee">...</span>
         </div>
         <div class="flex justify-between">
           <span class="tx-detail-label">RUNE Fee:</span>
-          <span *ngIf="runeFee">{{runeFee | number:"1.0-4"}} RUNE</span>
+          <span *ngIf="runeFee">{{ runeFee | number: "1.0-4" }} RUNE</span>
           <span *ngIf="!runeFee">...</span>
         </div>
       </div>
@@ -69,33 +87,48 @@
             [contractAddress]="ethRouter"
             [asset]="asset"
             (approveClicked)="overlaysService.setCurrentDepositView('Approve')"
-            (approved)="contractApproved()">
+            (approved)="contractApproved()"
+          >
           </app-approve-eth-contract>
         </div>
       </div>
     </div>
 
-    <div class="overlay-container overlay-connect-wallet" *ngIf="view === 'Asset'">
+    <div
+      class="overlay-container overlay-connect-wallet"
+      *ngIf="view === 'Asset'"
+    >
       <app-markets-modal
         [(selectedAsset)]="asset"
         [selectableMarkets]="selectableMarkets"
         [disabledAssetSymbol]="rune.symbol"
-        (close)="overlaysService.setCurrentDepositView('Deposit')">
-        <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'Pools', call: 'pool'}, {name: 'Deposit', call: 'deposit-back'}, {name: 'SEARCH', disable: true}]" message="SELECT" (funcCaller)="goToNav($event)"></app-breadcrumb>
+        (close)="overlaysService.setCurrentDepositView('Deposit')"
+      >
+        <app-breadcrumb
+          [path]="[
+            { name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap' },
+            { name: 'Pools', call: 'pool' },
+            { name: 'Deposit', call: 'deposit-back' },
+            { name: 'SEARCH', disable: true }
+          ]"
+          message="SELECT"
+          (funcCaller)="goToNav($event)"
+        ></app-breadcrumb>
       </app-markets-modal>
     </div>
 
-    <div class="overlay-container overlay-connect-wallet" *ngIf="view === 'Approve'">
+    <div
+      class="overlay-container overlay-connect-wallet"
+      *ngIf="view === 'Approve'"
+    >
       <app-approve-eth-contract-modal
-        [data]="{asset: asset, contractAddress: ethRouter}"
+        [data]="{ asset: asset, contractAddress: ethRouter }"
         (approvedHash)="contractApproved()"
         (close)="overlaysService.setCurrentDepositView('Deposit')"
-        mode='deposit'
+        mode="deposit"
       ></app-approve-eth-contract-modal>
     </div>
-
   </div>
-
 </div>
 
 <app-confirm-deposit-modal
@@ -120,4 +153,3 @@
     </div>
   </div>
 </div> -->
-

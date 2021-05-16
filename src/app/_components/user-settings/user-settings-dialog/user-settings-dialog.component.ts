@@ -1,19 +1,30 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
-import { Chain } from '@xchainjs/xchain-util';
-import { Subscription } from 'rxjs';
-import { AssetAndBalance } from 'src/app/_classes/asset-and-balance';
-import { PoolDTO } from 'src/app/_classes/pool';
-import { User } from 'src/app/_classes/user';
-import { MainViewsEnum, OverlaysService, UserViews } from 'src/app/_services/overlays.service';
-import { MidgardService } from 'src/app/_services/midgard.service';
-import { TransactionStatusService } from 'src/app/_services/transaction-status.service';
-import { UserService } from 'src/app/_services/user.service';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from "@angular/core";
+import { MatDialogRef } from "@angular/material/dialog";
+import { Chain } from "@xchainjs/xchain-util";
+import { Subscription } from "rxjs";
+import { AssetAndBalance } from "src/app/_classes/asset-and-balance";
+import { PoolDTO } from "src/app/_classes/pool";
+import { User } from "src/app/_classes/user";
+import {
+  MainViewsEnum,
+  OverlaysService,
+  UserViews,
+} from "src/app/_services/overlays.service";
+import { MidgardService } from "src/app/_services/midgard.service";
+import { TransactionStatusService } from "src/app/_services/transaction-status.service";
+import { UserService } from "src/app/_services/user.service";
 
 @Component({
-  selector: 'app-user-settings-dialog',
-  templateUrl: './user-settings-dialog.component.html',
-  styleUrls: ['./user-settings-dialog.component.scss'],
+  selector: "app-user-settings-dialog",
+  templateUrl: "./user-settings-dialog.component.html",
+  styleUrls: ["./user-settings-dialog.component.scss"],
 })
 export class UserSettingsDialogComponent implements OnInit, OnDestroy {
   user: User;
@@ -26,10 +37,23 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
   bchAddress: string;
   loading: boolean;
   pendingTxCount: number;
-  mode: 'ADDRESSES' | 'ADDRESS' | 'PENDING_TXS'
-    | 'ASSET' | 'SEND' | 'CONFIRM_SEND' | 'UPGRADE_RUNE'
-    | 'CONFIRM_UPGRADE_RUNE' | 'VIEW_PHRASE' | 'DEPOSIT' | 'CONFIRM_DEPOSIT'
-    | 'ADDRESS_ADD_TOKEN' | 'PROCESSING' | 'SUCCESS' | 'CONFIRM_SEND' | 'ERROR';
+  mode:
+    | "ADDRESSES"
+    | "ADDRESS"
+    | "PENDING_TXS"
+    | "ASSET"
+    | "SEND"
+    | "CONFIRM_SEND"
+    | "UPGRADE_RUNE"
+    | "CONFIRM_UPGRADE_RUNE"
+    | "VIEW_PHRASE"
+    | "DEPOSIT"
+    | "CONFIRM_DEPOSIT"
+    | "ADDRESS_ADD_TOKEN"
+    | "PROCESSING"
+    | "SUCCESS"
+    | "CONFIRM_SEND"
+    | "ERROR";
   selectedAddress: string;
   selectedChain: Chain;
   selectedAsset: AssetAndBalance;
@@ -53,19 +77,16 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
   ) {
     this.pools = [];
     this.pendingTxCount = 0;
-    this.mode = 'ADDRESSES';
+    this.mode = "ADDRESSES";
 
     this.selectedAsset = null;
     this.selectedChain = null;
 
-    const user$ = this.userService.user$.subscribe(
-      async (user) => {
+    const user$ = this.userService.user$.subscribe(async (user) => {
+      if (user) {
+        this.loading = true;
 
-        if (user) {
-
-          this.loading = true;
-
-          this.user = user;
+        this.user = user;
 
         this.user = user;
 
@@ -88,27 +109,32 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
       this.pendingTxCount = this.txStatusService.getPendingTxCount();
     });
 
-    const overlay$ = this.overlaysService.innerUserView.subscribe(val => {
+    const overlay$ = this.overlaysService.innerUserView.subscribe((val) => {
       this.userView = val.userView;
       this.selectedAddress = val.address;
       this.selectedChain = val.chain;
       this.selectedAsset = val.asset;
 
-      console.log('user tree is :', val);
-    })
+      console.log("user tree is :", val);
+    });
 
     this.subs = [user$, txs$, overlay$];
 
     // this.path = this.getPath();
   }
 
-  setMode(val: UserViews, address?: string, chain?: Chain, asset?: AssetAndBalance) {
+  setMode(
+    val: UserViews,
+    address?: string,
+    chain?: Chain,
+    asset?: AssetAndBalance
+  ) {
     this.overlaysService.setCurrentUserView({
-        userView: val,
-        address: address === undefined ? this.selectedAddress : address,
-        chain: chain === undefined ? this.selectedChain : chain,
-        asset: asset === undefined ? this.selectedAsset : asset
-      });
+      userView: val,
+      address: address === undefined ? this.selectedAddress : address,
+      chain: chain === undefined ? this.selectedChain : chain,
+      asset: asset === undefined ? this.selectedAsset : asset,
+    });
   }
 
   ngOnInit(): void {
@@ -122,47 +148,47 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
   selectAddress(address: string, chain: Chain) {
     this.selectedAddress = address;
     this.selectedChain = chain;
-    this.mode = 'ADDRESS';
-    this.setMode('Address', address, chain);
+    this.mode = "ADDRESS";
+    this.setMode("Address", address, chain);
   }
 
   clearSelectedAddress() {
     this.selectedAddress = null;
     this.selectedChain = null;
-    this.mode = 'ADDRESSES';
-    this.setMode('Addresses', null, null);
+    this.mode = "ADDRESSES";
+    this.setMode("Addresses", null, null);
   }
 
   selectAsset(asset: AssetAndBalance) {
     this.selectedAsset = asset;
-    this.mode = 'ASSET';
-    this.setMode('Asset', this.selectedAddress, this.selectedChain, asset);
+    this.mode = "ASSET";
+    this.setMode("Asset", this.selectedAddress, this.selectedChain, asset);
   }
 
   changeMessage(val: string) {
-    console.log(val)
+    console.log(val);
     this.message = val;
-    console.log(this.message)
+    console.log(this.message);
   }
 
   confirmSend(p: { amount: number; recipientAddress: string; memo: string }) {
     this.amountToSend = p.amount;
     this.recipient = p.recipientAddress;
     this.memo = p.memo;
-    this.mode = 'CONFIRM_SEND';
-    this.setMode('Confirm');
+    this.mode = "CONFIRM_SEND";
+    this.setMode("Confirm");
   }
 
   confirmUpgradeRune(p: { amount: number }) {
     this.amountToSend = p.amount;
-    this.mode = 'CONFIRM_UPGRADE_RUNE';
+    this.mode = "CONFIRM_UPGRADE_RUNE";
     console.log(this.mode);
   }
 
   clearSelectedAsset() {
     this.selectedAsset = null;
-    this.mode = 'ADDRESS';
-    this.setMode('Address', this.selectedAddress, this.selectedChain, null)
+    this.mode = "ADDRESS";
+    this.setMode("Address", this.selectedAddress, this.selectedChain, null);
   }
 
   transactionSuccessful() {
@@ -181,7 +207,7 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
   }
 
   close() {
-    this.overlaysService.setViews(MainViewsEnum.Swap, 'Swap')
+    this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
   }
 
   // getPath() {
@@ -202,12 +228,9 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
   // }
 
   navCaller(nav) {
-    if (nav === 'wallet')
-      this.clearSelectedAddress();
-    else if (nav === 'address')
-      this.clearSelectedAsset()
-    else if (nav === 'asset')
-      this.mode = 'ASSET'
+    if (nav === "wallet") this.clearSelectedAddress();
+    else if (nav === "address") this.clearSelectedAsset();
+    else if (nav === "asset") this.mode = "ASSET";
   }
 
   ngOnDestroy(): void {

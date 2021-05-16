@@ -1,38 +1,44 @@
-
 <div class="overlay-of-content">
-
   <div class="content-top">
     <ng-content></ng-content>
     <div class="top-right">
       <div class="right-option">
-        <div class="uni-input" style="height: 48px; width: 160.38px !important; padding: 0 17px">
-          <input class="search-input focus:ring-0" [(ngModel)]="searchTerm" name="keystore-password" placeholder="search here..." />
+        <div
+          class="uni-input"
+          style="height: 48px; width: 160.38px !important; padding: 0 17px"
+        >
+          <input
+            class="search-input focus:ring-0"
+            [(ngModel)]="searchTerm"
+            name="keystore-password"
+            placeholder="search here..."
+          />
         </div>
       </div>
     </div>
   </div>
 
   <div>
-    <div mat-dialog-content style="height: 365px;">
-
+    <div mat-dialog-content style="height: 365px">
       <app-assets-list
         [loading]="loading"
         [assetListItems]="filteredMarketListItems"
         [disabledAssetSymbol]="disabledAssetSymbol"
         (selectAsset)="selectItem($event)"
-        noAssets="NOT FOUND">
+        noAssets="NOT FOUND"
+      >
       </app-assets-list>
-
     </div>
-
   </div>
 
   <!-- close dialog -->
   <div class="bottom-actions">
-    <button class="close-btn" aria-label="Close Markets Dialog" (click)="closeDialog()">
+    <button
+      class="close-btn"
+      aria-label="Close Markets Dialog"
+      (click)="closeDialog()"
+    >
       <span>CANCEL</span>
     </button>
   </div>
-
 </div>
-

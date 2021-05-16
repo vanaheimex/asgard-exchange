@@ -21,7 +21,7 @@
   margin: 4px 0 0 6px;
 
   .mat-icon {
-    color: #C7D0CB;
+    color: #c7d0cb;
     font-size: 14px;
     width: 16px;
     height: 16px;
@@ -37,14 +37,13 @@
     width: 10px;
   }
 
-  .left-content, .right-content {
+  .left-content,
+  .right-content {
     flex: 1 1 calc(50% - 10px);
     display: flex;
     flex-direction: column;
   }
-
 }
-
 
 .balance {
   display: flex;
@@ -52,7 +51,7 @@
   justify-content: space-between;
   height: 76px;
   width: 100%;
-  background: #0D1B23;
+  background: #0d1b23;
   border-radius: 6px;
   padding: 0 20px;
   margin-bottom: 10px;
@@ -78,15 +77,13 @@
       top: -17px;
     }
   }
-
 }
 
 .tx-history {
   width: 100%;
   flex: 1 1 auto;
-  background: #0D1B23;
+  background: #0d1b23;
   border-radius: 6px;
   display: flex;
   flex-direction: column;
 }
-

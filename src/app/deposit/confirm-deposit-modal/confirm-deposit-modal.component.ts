@@ -1,24 +1,32 @@
-import { Component, OnInit, Inject, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { assetToString } from '@xchainjs/xchain-util';
-import { Subscription } from 'rxjs';
-import { PoolAddressDTO } from 'src/app/_classes/pool-address';
-import { User } from 'src/app/_classes/user';
-import { TransactionConfirmationState } from 'src/app/_const/transaction-confirmation-state';
-import { MidgardService } from 'src/app/_services/midgard.service';
-import { UserService } from 'src/app/_services/user.service';
+import {
+  Component,
+  OnInit,
+  Inject,
+  OnDestroy,
+  Input,
+  Output,
+  EventEmitter,
+} from "@angular/core";
+import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { assetToString } from "@xchainjs/xchain-util";
+import { Subscription } from "rxjs";
+import { PoolAddressDTO } from "src/app/_classes/pool-address";
+import { User } from "src/app/_classes/user";
+import { TransactionConfirmationState } from "src/app/_const/transaction-confirmation-state";
+import { MidgardService } from "src/app/_services/midgard.service";
+import { UserService } from "src/app/_services/user.service";
 import {
   TransactionStatusService,
   TxActions,
   TxStatus,
-} from 'src/app/_services/transaction-status.service';
-import { EthUtilsService } from 'src/app/_services/eth-utils.service';
-import { OverlaysService } from 'src/app/_services/overlays.service';
-import { Router } from '@angular/router';
-import { Balances } from '@xchainjs/xchain-client';
-import { AssetAndBalance } from 'src/app/_classes/asset-and-balance';
-import { KeystoreDepositService } from 'src/app/_services/keystore-deposit.service';
-import { Asset } from 'src/app/_classes/asset';
+} from "src/app/_services/transaction-status.service";
+import { EthUtilsService } from "src/app/_services/eth-utils.service";
+import { OverlaysService } from "src/app/_services/overlays.service";
+import { Router } from "@angular/router";
+import { Balances } from "@xchainjs/xchain-client";
+import { AssetAndBalance } from "src/app/_classes/asset-and-balance";
+import { KeystoreDepositService } from "src/app/_services/keystore-deposit.service";
+import { Asset } from "src/app/_classes/asset";
 
 // assets should be added for asset-input as designed.
 export interface ConfirmDepositData {
@@ -38,12 +46,12 @@ export interface ConfirmDepositData {
 }
 
 @Component({
-  selector: 'app-confirm-deposit-modal',
-  templateUrl: './confirm-deposit-modal.component.html',
-  styleUrls: ['./confirm-deposit-modal.component.scss'],
+  selector: "app-confirm-deposit-modal",
+  templateUrl: "./confirm-deposit-modal.component.html",
+  styleUrls: ["./confirm-deposit-modal.component.scss"],
 })
 export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
-  txState: TransactionConfirmationState | 'RETRY_RUNE_DEPOSIT';
+  txState: TransactionConfirmationState | "RETRY_RUNE_DEPOSIT";
   hash: string;
   subs: Subscription[];
   error: string;
@@ -86,10 +94,19 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
   }
 
   async estimateTime() {
-    if (this.data.asset.asset.chain === 'ETH' && this.data.asset.asset.symbol !== 'ETH') {
-      this.estimatedMinutes = await this.ethUtilsService.estimateERC20Time(assetToString(this.data.asset.asset), this.data.assetAmount);
+    if (
+      this.data.asset.asset.chain === "ETH" &&
+      this.data.asset.asset.symbol !== "ETH"
+    ) {
+      this.estimatedMinutes = await this.ethUtilsService.estimateERC20Time(
+        assetToString(this.data.asset.asset),
+        this.data.assetAmount
+      );
     } else {
-      this.estimatedMinutes = this.txStatusService.estimateTime(this.data.asset.asset.chain, this.data.assetAmount);
+      this.estimatedMinutes = this.txStatusService.estimateTime(
+        this.data.asset.asset.chain,
+        this.data.assetAmount
+      );
     }
   }
 
@@ -108,19 +125,24 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
     const asset = this.data.asset.asset;
     const thorClient = clients.thorchain;
     const thorchainAddress = await thorClient.getAddress();
-    let hash = '';
+    let hash = "";
 
     // get token address
-    const address = this.userService.getTokenAddress(this.data.user, this.data.asset.asset.chain);
-    if (!address || address === '') {
-      console.error('no address found');
+    const address = this.userService.getTokenAddress(
+      this.data.user,
+      this.data.asset.asset.chain
+    );
+    if (!address || address === "") {
+      console.error("no address found");
       return;
     }
 
     // find recipient pool
-    const recipientPool = pools.find( (pool) => pool.chain === this.data.asset.asset.chain );
+    const recipientPool = pools.find(
+      (pool) => pool.chain === this.data.asset.asset.chain
+    );
     if (!recipientPool) {
-      console.error('no recipient pool found');
+      console.error("no recipient pool found");
       return;
     }
 
@@ -128,7 +150,7 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
     try {
       // deposit using xchain
       switch (this.data.asset.asset.chain) {
-        case 'BNB':
+        case "BNB":
           hash = await this.keystoreDepositService.binanceDeposit({
             asset: this.data.asset.asset as Asset,
             inputAmount: this.data.assetAmount,
@@ -138,7 +160,7 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
           });
           break;
 
-        case 'BTC':
+        case "BTC":
           hash = await this.keystoreDepositService.bitcoinDeposit({
             asset: this.data.asset.asset as Asset,
             inputAmount: this.data.assetAmount,
@@ -150,7 +172,7 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
           });
           break;
 
-        case 'LTC':
+        case "LTC":
           hash = await this.keystoreDepositService.litecoinDeposit({
             asset: this.data.asset.asset as Asset,
             inputAmount: this.data.assetAmount,
@@ -162,7 +184,7 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
           });
           break;
 
-        case 'BCH':
+        case "BCH":
           hash = await this.keystoreDepositService.bchDeposit({
             asset: this.data.asset.asset as Asset,
             inputAmount: this.data.assetAmount,
@@ -175,7 +197,7 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
 
           break;
 
-        case 'ETH':
+        case "ETH":
           hash = await this.keystoreDepositService.ethereumDeposit({
             asset: this.data.asset.asset as Asset,
             inputAmount: this.data.assetAmount,
@@ -191,18 +213,18 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
           return;
       }
 
-      if (hash === '') {
-        console.error('no hash set');
+      if (hash === "") {
+        console.error("no hash set");
         return;
       }
     } catch (error) {
-      console.error('error making token transfer: ', error);
+      console.error("error making token transfer: ", error);
       this.txState = TransactionConfirmationState.ERROR;
       this.error = error;
       return;
     }
 
-    console.log('pending hash is: ', hash);
+    console.log("pending hash is: ", hash);
 
     // deposit RUNE
     try {
@@ -214,8 +236,8 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
 
       this.runeDepositSuccess(runeHash);
     } catch (error) {
-      console.error('error making RUNE transfer: ', error);
-      this.txState = 'RETRY_RUNE_DEPOSIT';
+      console.error("error making RUNE transfer: ", error);
+      this.txState = "RETRY_RUNE_DEPOSIT";
       this.error = error;
     }
   }
@@ -223,13 +245,13 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
   runeDepositSuccess(runeHash: string) {
     this.hash = runeHash;
     this.txStatusService.addTransaction({
-      chain: 'THOR',
+      chain: "THOR",
       hash: runeHash,
       ticker: `${this.data.asset.asset.ticker}-RUNE`,
       status: TxStatus.PENDING,
       action: TxActions.DEPOSIT,
       symbol: this.data.asset.asset.symbol,
-      isThorchainTx: true
+      isThorchainTx: true,
     });
     this.txState = TransactionConfirmationState.SUCCESS;
   }
@@ -237,7 +259,7 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
   withdrawSuccess(hash: string) {
     this.hash = hash;
     this.txStatusService.addTransaction({
-      chain: 'THOR',
+      chain: "THOR",
       hash,
       ticker: `${this.data.asset.asset.ticker}-RUNE`,
       status: TxStatus.PENDING,
@@ -250,26 +272,26 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
   }
 
   goToNav(nav: string) {
-    if (nav === 'pool') {
-      this.router.navigate(['/', 'pool']);
-    }
-    else if (nav === 'swap') {
-      this.router.navigate(['/', 'swap']);
-    }
-    else if (nav === 'deposit') {
-      this.router.navigate(['/', 'deposit', `${this.data.asset.asset.chain}.${this.data.asset.asset.symbol}`])
-    }
-    else if (nav === 'deposit-back') {
-      this.overlaysService.setCurrentDepositView('Deposit');
+    if (nav === "pool") {
+      this.router.navigate(["/", "pool"]);
+    } else if (nav === "swap") {
+      this.router.navigate(["/", "swap"]);
+    } else if (nav === "deposit") {
+      this.router.navigate([
+        "/",
+        "deposit",
+        `${this.data.asset.asset.chain}.${this.data.asset.asset.symbol}`,
+      ]);
+    } else if (nav === "deposit-back") {
+      this.overlaysService.setCurrentDepositView("Deposit");
     }
   }
 
   getMessage(): string {
     if (this.error) {
-      return this.error
-    }
-    else {
-      return 'confirm'
+      return this.error;
+    } else {
+      return "confirm";
     }
   }
 
@@ -278,7 +300,7 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
   }
 
   closeToPool() {
-    this.router.navigate(['/', 'pool']);
+    this.router.navigate(["/", "pool"]);
   }
 
   ngOnDestroy() {

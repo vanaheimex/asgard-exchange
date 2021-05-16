@@ -1,16 +1,15 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { TagComponent } from './tag.component';
+import { TagComponent } from "./tag.component";
 
-describe('TagComponent', () => {
+describe("TagComponent", () => {
   let component: TagComponent;
   let fixture: ComponentFixture<TagComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TagComponent ]
-    })
-    .compileComponents();
+      declarations: [TagComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -19,7 +18,7 @@ describe('TagComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

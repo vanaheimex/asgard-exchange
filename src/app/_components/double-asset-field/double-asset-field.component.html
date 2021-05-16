@@ -1,20 +1,30 @@
-<div class="swap-input uni-input" [ngClass]="{'disable': disableUser}">
+<div class="swap-input uni-input" [ngClass]="{ disable: disableUser }">
   <div class="swap-input--inner">
     <div class="flex justify-between label-wrapper">
-      <label class="label-title" for="{{label}}Input">{{label}}</label>
+      <label class="label-title" for="{{ label }}Input">{{ label }}</label>
     </div>
 
-    <div class="flex justify-between items-center" style="position: relative;">
-
+    <div class="flex justify-between items-center" style="position: relative">
       <div *ngIf="loading" class="flex items-center" style="height: 29.333px">
-        <span style="text-transform: uppercase; color: var(--primary-grey-color); font-size: 22px; font-family: 'Roboto Mono';">0.0</span>
+        <span
+          style="
+            text-transform: uppercase;
+            color: var(--primary-grey-color);
+            font-size: 22px;
+            font-family: 'Roboto Mono';
+          "
+          >0.0</span
+        >
       </div>
 
-      <div *ngIf="!loading && error" class="flex items-center" style="height: 53px">
-        <mat-icon style="font-size: 1rem; height: 18px;">warning</mat-icon>
+      <div
+        *ngIf="!loading && error"
+        class="flex items-center"
+        style="height: 53px"
+      >
+        <mat-icon style="font-size: 1rem; height: 18px">warning</mat-icon>
         <span style="font-size: 0.8rem">Error fetching pool</span>
       </div>
-
     </div>
 
     <div class="inputs">
@@ -23,47 +33,83 @@
           class="priceInput focus:outline-none focus:ring-0"
           *ngIf="!loading && !error"
           [ngModel]="assetUnits[0]"
-          id="{{label}}Input"
+          id="{{ label }}Input"
           name="fromUnit"
           placeholder="0.0"
           type="number"
           [disabled]="true"
-          [ngClass]="{'disable': disableUser}" />
-          <div class="tag-space--between" style="margin-right: 8px;" *ngIf="isWallet">
-            <app-tag (click)="gotoWallet(selectedAssets[0])">WALLET</app-tag>
+          [ngClass]="{ disable: disableUser }"
+        />
+        <div
+          class="tag-space--between"
+          style="margin-right: 8px"
+          *ngIf="isWallet"
+        >
+          <app-tag (click)="gotoWallet(selectedAssets[0])">WALLET</app-tag>
+        </div>
+        <button
+          *ngIf="selectedAssets[0]"
+          class="launch-markets-btn"
+          [disabled]="true"
+        >
+          <div class="flex items-center asset-selector disabled">
+            <app-icon-ticker
+              [iconPath]="selectedAssets[0].iconPath"
+              [ticker]="selectedAssets[0].ticker"
+              [chain]="selectedAssets[0].chain"
+            ></app-icon-ticker>
           </div>
-          <button *ngIf="selectedAssets[0]" class="launch-markets-btn" [disabled]="true">
-            <div class="flex items-center asset-selector disabled">
-              <app-icon-ticker [iconPath]="selectedAssets[0].iconPath" [ticker]="selectedAssets[0].ticker" [chain]="selectedAssets[0].chain"></app-icon-ticker>
-            </div>
-          </button>
+        </button>
       </div>
 
-      <div class="input flex-grow" style="margin-top: -5px;">
+      <div class="input flex-grow" style="margin-top: -5px">
         <input
           class="priceInput focus:outline-none focus:ring-0"
           *ngIf="!loading && !error"
           [ngModel]="assetUnits[1]"
-          id="{{label}}Input"
+          id="{{ label }}Input"
           name="fromUnit"
           placeholder="0.0"
           type="number"
           [disabled]="true"
-          [ngClass]="{'disable': disableUser}" />
-          <div class="tag-space--between" style="margin-right: 8px;" *ngIf="isWallet">
-            <app-tag (click)="gotoWallet(selectedAssets[1])">WALLET</app-tag>
+          [ngClass]="{ disable: disableUser }"
+        />
+        <div
+          class="tag-space--between"
+          style="margin-right: 8px"
+          *ngIf="isWallet"
+        >
+          <app-tag (click)="gotoWallet(selectedAssets[1])">WALLET</app-tag>
+        </div>
+        <button
+          *ngIf="selectedAssets[1]"
+          class="launch-markets-btn"
+          [disabled]="true"
+        >
+          <div class="flex items-center asset-selector disabled">
+            <app-icon-ticker
+              [iconPath]="selectedAssets[1].iconPath"
+              [ticker]="selectedAssets[1].ticker"
+              [chain]="selectedAssets[1].chain"
+            ></app-icon-ticker>
           </div>
-          <button *ngIf="selectedAssets[1]" class="launch-markets-btn" [disabled]="true">
-            <div class="flex items-center asset-selector disabled">
-              <app-icon-ticker [iconPath]="selectedAssets[1].iconPath" [ticker]="selectedAssets[1].ticker" [chain]="selectedAssets[1].chain"></app-icon-ticker>
-            </div>
-          </button>
+        </button>
       </div>
     </div>
 
-    <span class="usd-est" *ngIf="showPrice && priceInputs && assetUnits[0] && assetUnits[1]">{{ ((priceInputs[0] * assetUnits[0]) + (priceInputs[1] * assetUnits[1])) * currency.value| number: '.2-3' }} {{currency.code}} CUMULATIVE</span>
-    <span class="usd-est" *ngIf="showPrice && (!assetUnits[0] || !assetUnits[1])">{{ 0 | number: '.2-3' }} {{currency.code}} CUMULATIVE</span>
-
+    <span
+      class="usd-est"
+      *ngIf="showPrice && priceInputs && assetUnits[0] && assetUnits[1]"
+      >{{
+        (priceInputs[0] * assetUnits[0] + priceInputs[1] * assetUnits[1]) *
+          currency.value | number: ".2-3"
+      }}
+      {{ currency.code }} CUMULATIVE</span
+    >
+    <span
+      class="usd-est"
+      *ngIf="showPrice && (!assetUnits[0] || !assetUnits[1])"
+      >{{ 0 | number: ".2-3" }} {{ currency.code }} CUMULATIVE</span
+    >
   </div>
-
 </div>

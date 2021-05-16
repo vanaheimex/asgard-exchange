@@ -1,16 +1,16 @@
-import { Injectable } from '@angular/core';
-import { assetAmount, assetToBase, baseAmount } from '@xchainjs/xchain-util';
-import { Asset } from '../_classes/asset';
-import { PoolAddressDTO } from '../_classes/pool-address';
-import { EthUtilsService } from './eth-utils.service';
-import { Client } from '@xchainjs/xchain-ethereum/lib';
-import { UserService } from './user.service';
-import { Balances } from '@xchainjs/xchain-client';
-import { Client as BinanceClient } from '@xchainjs/xchain-binance';
-import { Client as BitcoinClient } from '@xchainjs/xchain-bitcoin';
-import { Client as LitecoinClient } from '@xchainjs/xchain-litecoin';
-import { Client as BchClient } from '@xchainjs/xchain-bitcoincash';
-import { Client as ThorClient } from '@xchainjs/xchain-thorchain';
+import { Injectable } from "@angular/core";
+import { assetAmount, assetToBase, baseAmount } from "@xchainjs/xchain-util";
+import { Asset } from "../_classes/asset";
+import { PoolAddressDTO } from "../_classes/pool-address";
+import { EthUtilsService } from "./eth-utils.service";
+import { Client } from "@xchainjs/xchain-ethereum/lib";
+import { UserService } from "./user.service";
+import { Balances } from "@xchainjs/xchain-client";
+import { Client as BinanceClient } from "@xchainjs/xchain-binance";
+import { Client as BitcoinClient } from "@xchainjs/xchain-bitcoin";
+import { Client as LitecoinClient } from "@xchainjs/xchain-litecoin";
+import { Client as BchClient } from "@xchainjs/xchain-bitcoincash";
+import { Client as ThorClient } from "@xchainjs/xchain-thorchain";
 
 export interface EthDepositParams {
   asset: Asset;
@@ -66,7 +66,7 @@ export interface RuneDepositParams {
 }
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class KeystoreDepositService {
   constructor(
@@ -151,7 +151,7 @@ export class KeystoreDepositService {
       : toBase.amount().minus(feeToBase.amount()); // after deductions, not enough to process, subtract fee from amount
 
     if (amount.isLessThan(0)) {
-      throw new Error('Insufficient funds. Try sending a smaller amount');
+      throw new Error("Insufficient funds. Try sending a smaller amount");
     }
     // TODO -> consolidate this with BTC, BCH, LTC
 
@@ -195,7 +195,7 @@ export class KeystoreDepositService {
       : toBase.amount().minus(feeToBase.amount()); // after deductions, not enough to process, subtract fee from amount
 
     if (amount.isLessThan(0)) {
-      throw new Error('Insufficient funds. Try sending a smaller amount');
+      throw new Error("Insufficient funds. Try sending a smaller amount");
     }
     // TODO -> consolidate this with BTC, BCH, LTC
 
@@ -241,7 +241,7 @@ export class KeystoreDepositService {
         : toBase.amount().minus(feeToBase.amount()); // after deductions, not enough to process, subtract fee from amount
 
       if (amount.isLessThan(0)) {
-        throw new Error('Insufficient funds. Try sending a smaller amount');
+        throw new Error("Insufficient funds. Try sending a smaller amount");
       }
       // TODO -> consolidate this with BTC, BCH, LTC
 

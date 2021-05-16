@@ -1,5 +1,4 @@
 <div *ngIf="asset">
-
   <app-transaction-processing-modal
     *ngIf="txState === 'SUBMITTING' && asset"
     [label]="['Upgrading', 'Receiving']"
@@ -7,7 +6,14 @@
     [asset]="[asset, nativeRune]"
     [amount]="[amount, amount]"
   >
-    <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'upgrade rune', disable: true}, {name:  asset.asset.chain + '.' + asset.asset.ticker, disable: true}]" message="TRANSACTION PROCESSING"></app-breadcrumb>
+    <app-breadcrumb
+      [path]="[
+        { name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap' },
+        { name: 'upgrade rune', disable: true },
+        { name: asset.asset.chain + '.' + asset.asset.ticker, disable: true }
+      ]"
+      message="TRANSACTION PROCESSING"
+    ></app-breadcrumb>
   </app-transaction-processing-modal>
 
   <app-transaction-success-modal
@@ -18,89 +24,125 @@
     [chain]="asset.asset.chain"
     [hash]="hash"
     [isSending]="false"
-    (closeDialog)="close()">
-    <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'upgrade rune', disable: false, call: 'back'}, {name:  asset.asset.chain + '.' + asset.asset.ticker, disable: true}]" (funcCaller)="backCall($event)" message="SUCCESS"></app-breadcrumb>
+    (closeDialog)="close()"
+  >
+    <app-breadcrumb
+      [path]="[
+        { name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap' },
+        { name: 'upgrade rune', disable: false, call: 'back' },
+        { name: asset.asset.chain + '.' + asset.asset.ticker, disable: true }
+      ]"
+      (funcCaller)="backCall($event)"
+      message="SUCCESS"
+    ></app-breadcrumb>
   </app-transaction-success-modal>
 
-  <div class="container-wrapper upgrade" *ngIf="txState === 'PENDING_CONFIRMATION' || txState === 'ERROR'">
-
+  <div
+    class="container-wrapper upgrade"
+    *ngIf="txState === 'PENDING_CONFIRMATION' || txState === 'ERROR'"
+  >
     <div class="container">
       <div class="main-container" *ngIf="asset">
         <div class="content-top">
-            <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'},  {name: 'upgrade rune', disable: false, call: 'back'}, {name:  asset.asset.chain + '.' + asset.asset.ticker, disable: true}]" (funcCaller)="backCall($event)" [isError]="txState === 'ERROR' || isError" [message]="message"></app-breadcrumb>
-            <div class="top-right">
+          <app-breadcrumb
+            [path]="[
+              { name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap' },
+              { name: 'upgrade rune', disable: false, call: 'back' },
+              {
+                name: asset.asset.chain + '.' + asset.asset.ticker,
+                disable: true
+              }
+            ]"
+            (funcCaller)="backCall($event)"
+            [isError]="txState === 'ERROR' || isError"
+            [message]="message"
+          ></app-breadcrumb>
+          <div class="top-right"></div>
+        </div>
+
+        <div class="content-middle">
+          <app-asset-input
+            label="Upgrade"
+            [(selectedAsset)]="asset.asset"
+            [(assetUnit)]="amount"
+            [balance]="asset.balance.amount().toNumber()"
+            [disabledAssetSymbol]="asset.asset.symbol"
+            [selectableMarkets]="[asset]"
+            [hideMax]="true"
+            [disableInput]="true"
+            [disabledMarketSelect]="true"
+          >
+          </app-asset-input>
+
+          <app-arrow [seperator]="true"></app-arrow>
+
+          <app-asset-input
+            label="Receive"
+            [(selectedAsset)]="nativeRune.asset"
+            [(assetUnit)]="amount"
+            [balance]="asset.balance.amount().toNumber()"
+            [disabledAssetSymbol]="nativeRune.asset.symbol"
+            [selectableMarkets]="[nativeRune]"
+            [disableInput]="true"
+            [hideMax]="true"
+            [showBalance]="false"
+            [disabledMarketSelect]="true"
+          >
+          </app-asset-input>
+
+          <div class="swap-details">
+            <div class="flex justify-between">
+              <span class="tx-detail-label">Fees:</span>
+              <span class="text-sm" *ngIf="networkFee && asset"
+                >{{ networkFee | number: "0.0-8" }}
+                {{ asset.asset.chain }}</span
+              >
+              <span class="text-sm" *ngIf="!networkFee || !asset">...</span>
             </div>
-        </div>
-
-      <div class="content-middle">
-        <app-asset-input
-          label='Upgrade'
-          [(selectedAsset)]="asset.asset"
-          [(assetUnit)]="amount"
-          
-          [balance]="asset.balance.amount().toNumber()"
-          [disabledAssetSymbol]="asset.asset.symbol"
-          [selectableMarkets]="[asset]"
-          [hideMax]="true"
-          [disableInput]="true"
-          [disabledMarketSelect]="true">
-        </app-asset-input>
-
-        <app-arrow [seperator]="true"></app-arrow>
-
-        <app-asset-input
-          label="Receive"
-          [(selectedAsset)]="nativeRune.asset"
-          [(assetUnit)]="amount"
-          
-          [balance]="asset.balance.amount().toNumber()"
-          [disabledAssetSymbol]="nativeRune.asset.symbol"
-          [selectableMarkets]="[nativeRune]"
-          [disableInput]="true"
-          [hideMax]="true"
-          [showBalance]="false"
-          [disabledMarketSelect]="true">
-        </app-asset-input>
-
-        <div class="swap-details">
-          <div class="flex justify-between">
-            <span class="tx-detail-label">Fees:</span>
-            <span class="text-sm" *ngIf="networkFee && asset">{{networkFee | number:"0.0-8"}} {{asset.asset.chain}}</span>
-            <span class="text-sm" *ngIf="!networkFee || !asset">...</span>
+            <div class="disclaimer">
+              Some of your RUNE is currently a
+              {{ asset.asset.chain }} token.<br />
+              <span style="color: var(--primary-red)"
+                >By upgrading the confirm button, you will be upgrading it off
+                of the {{ asset.asset.chain }} chain to native RUNE.</span
+              >
+              <br />
+              Your native THOR.RUNE will show up in your wallet. <br />
+              <span
+                *ngIf="txState === 'ERROR'"
+                style="color: var(--primary-red)"
+                >Be sure you have gas in your {{ asset.asset.chain }} chain to
+                upgrade.</span
+              >
+            </div>
           </div>
-          <div class="disclaimer">
-            Some of your RUNE is currently a {{asset.asset.chain}} token.<br />
-            <span style="color: var(--primary-red)">By upgrading the confirm button, you will be upgrading it off of the {{asset.asset.chain}} chain to native RUNE.</span> <br />
-            Your native THOR.RUNE will show up in your wallet. <br />
-            <span *ngIf="txState === 'ERROR'" style="color: var(--primary-red)">Be sure you have gas in your {{asset.asset.chain}} chain to upgrade.</span>
+
+          <div>
+            <div class="bottom-actions two-btn">
+              <div class="left-btn">
+                <button class="close-btn" (click)="back.emit()">
+                  <span>cancel</span>
+                </button>
+              </div>
+              <div class="divider"></div>
+              <div class="right-btn">
+                <button
+                  class="next-btn"
+                  [disabled]="insufficientChainBalance"
+                  (click)="submitTransaction()"
+                >
+                  <span>confirm</span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
+      </div>
 
-        <div>
-
-        <div class="bottom-actions two-btn">
-          <div class="left-btn">
-            <button class="close-btn" (click)="back.emit()">
-              <span>cancel</span>
-            </button>
-          </div>
-          <div class="divider"></div>
-          <div class="right-btn">
-            <button
-              class="next-btn"
-              [disabled]="insufficientChainBalance"
-              (click)="submitTransaction()">
-                <span>confirm</span>
-            </button>
-          </div>
-        </div>
-    </div>
-
-  </div>
-
-</div>
-
-<!-- <div class="flex flex-col items-center py-8 text-sm" *ngIf="txState === 'ERROR'">
+      <!-- <div class="flex flex-col items-center py-8 text-sm" *ngIf="txState === 'ERROR'">
   <mat-icon>warning</mat-icon>
   There was an error processing the RUNE upgrade.
 </div> -->
+    </div>
+  </div>
+</div>

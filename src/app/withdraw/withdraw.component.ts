@@ -1,14 +1,14 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSliderChange } from '@angular/material/slider';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit } from "@angular/core";
+import { MatDialog } from "@angular/material/dialog";
+import { MatSliderChange } from "@angular/material/slider";
+import { ActivatedRoute, Router } from "@angular/router";
 import {
   getPoolShare,
   getValueOfAssetInRune,
   getValueOfRuneInAsset,
   PoolData,
   UnitData,
-} from '@thorchain/asgardex-util';
+} from "@thorchain/asgardex-util";
 import {
   baseAmount,
   assetToBase,
@@ -16,27 +16,27 @@ import {
   bn,
   assetToString,
   BaseAmount,
-} from '@xchainjs/xchain-util';
-import BigNumber from 'bignumber.js';
-import { combineLatest, Subscription } from 'rxjs';
-import { Asset } from '../_classes/asset';
-import { MemberPool } from '../_classes/member';
-import { User } from '../_classes/user';
-import { LastBlockService } from '../_services/last-block.service';
-import { OverlaysService, WithdrawViews } from '../_services/overlays.service';
-import { MidgardService, ThorchainQueue } from '../_services/midgard.service';
-import { TransactionUtilsService } from '../_services/transaction-utils.service';
-import { UserService } from '../_services/user.service';
-import { ConfirmWithdrawData } from './confirm-withdraw-modal/confirm-withdraw-modal.component';
-import { ConfirmWithdrawModalComponent } from './confirm-withdraw-modal/confirm-withdraw-modal.component';
-import { WithdrawTypeOptions } from '../_const/withdraw-type-options';
-import { Balances } from '@xchainjs/xchain-client';
-import { debounceTime } from 'rxjs/operators';
+} from "@xchainjs/xchain-util";
+import BigNumber from "bignumber.js";
+import { combineLatest, Subscription } from "rxjs";
+import { Asset } from "../_classes/asset";
+import { MemberPool } from "../_classes/member";
+import { User } from "../_classes/user";
+import { LastBlockService } from "../_services/last-block.service";
+import { OverlaysService, WithdrawViews } from "../_services/overlays.service";
+import { MidgardService, ThorchainQueue } from "../_services/midgard.service";
+import { TransactionUtilsService } from "../_services/transaction-utils.service";
+import { UserService } from "../_services/user.service";
+import { ConfirmWithdrawData } from "./confirm-withdraw-modal/confirm-withdraw-modal.component";
+import { ConfirmWithdrawModalComponent } from "./confirm-withdraw-modal/confirm-withdraw-modal.component";
+import { WithdrawTypeOptions } from "../_const/withdraw-type-options";
+import { Balances } from "@xchainjs/xchain-client";
+import { debounceTime } from "rxjs/operators";
 
 @Component({
-  selector: 'app-withdraw',
-  templateUrl: './withdraw.component.html',
-  styleUrls: ['./withdraw.component.scss'],
+  selector: "app-withdraw",
+  templateUrl: "./withdraw.component.html",
+  styleUrls: ["./withdraw.component.scss"],
 })
 export class WithdrawComponent implements OnInit {
   get withdrawPercent() {
@@ -50,7 +50,7 @@ export class WithdrawComponent implements OnInit {
 
   subs: Subscription[];
   asset: Asset;
-  rune = new Asset('THOR.RUNE');
+  rune = new Asset("THOR.RUNE");
   assetPoolData: PoolData;
   poolUnits: number;
   user: User;
@@ -83,7 +83,7 @@ export class WithdrawComponent implements OnInit {
 
   //breadcrumb
   isError: boolean = false;
-  
+
   withdrawOptions = {
     asymAsset: false,
     asymRune: false,
@@ -112,7 +112,7 @@ export class WithdrawComponent implements OnInit {
       this.user = user;
       this.getAccountStaked();
       if (this.assetPoolData) {
-        this.getPoolDetail(this.asset.chain + '.' + this.asset.symbol);
+        this.getPoolDetail(this.asset.chain + "." + this.asset.symbol);
       }
     });
 
@@ -139,7 +139,7 @@ export class WithdrawComponent implements OnInit {
       if (this.balances) {
         const bnbBalance = this.userService.findBalance(
           balances,
-          new Asset('BNB.BNB')
+          new Asset("BNB.BNB")
         );
         this.insufficientBnb = bnbBalance < 0.000375;
         this.runeBalance = this.userService.findBalance(
@@ -148,7 +148,7 @@ export class WithdrawComponent implements OnInit {
         );
       }
 
-      const asset = params.get('asset');
+      const asset = params.get("asset");
 
       if (asset) {
         this.asset = new Asset(asset);
@@ -173,10 +173,9 @@ export class WithdrawComponent implements OnInit {
       (view) => {
         this.view = view;
       }
-    )
+    );
 
     this.subs.push(sub, overlayService$);
-
   }
 
   async getAccountStaked() {
@@ -187,7 +186,7 @@ export class WithdrawComponent implements OnInit {
         this.asset.chain
       );
       if (!thorclient || !chainClient) {
-        console.error('no client found');
+        console.error("no client found");
         return;
       }
 
@@ -214,7 +213,7 @@ export class WithdrawComponent implements OnInit {
 
         this.setMemberPools(thorAssetPools);
       } catch (error) {
-        console.error('error fetching thor pool member data: ', error);
+        console.error("error fetching thor pool member data: ", error);
       }
 
       /**
@@ -229,16 +228,16 @@ export class WithdrawComponent implements OnInit {
         );
         this.setMemberPools(assetPools);
       } catch (error) {
-        console.error('error fetching asset pool member data: ', error);
+        console.error("error fetching asset pool member data: ", error);
       }
 
       this.setWithdrawOptions();
       if (this.withdrawOptions.sym) {
-        this.withdrawType = 'SYM';
+        this.withdrawType = "SYM";
       } else if (this.withdrawOptions.asymAsset) {
-        this.withdrawType = 'ASYM_ASSET';
+        this.withdrawType = "ASYM_ASSET";
       } else if (this.withdrawOptions.asymRune) {
-        this.withdrawType = 'ASYM_RUNE';
+        this.withdrawType = "ASYM_RUNE";
       }
     }
   }
@@ -292,15 +291,15 @@ export class WithdrawComponent implements OnInit {
 
   calculate() {
     switch (this.withdrawType) {
-      case 'SYM':
+      case "SYM":
         this.calculateSym();
         break;
 
-      case 'ASYM_ASSET':
+      case "ASYM_ASSET":
         this.calculateAsymAsset();
         break;
 
-      case 'ASYM_RUNE':
+      case "ASYM_RUNE":
         this.calculateAsymRune();
         break;
     }
@@ -392,7 +391,7 @@ export class WithdrawComponent implements OnInit {
           .toNumber();
         this.checkCooldown();
       },
-      (err) => console.error('error fetching constants: ', err)
+      (err) => console.error("error fetching constants: ", err)
     );
   }
 
@@ -439,7 +438,7 @@ export class WithdrawComponent implements OnInit {
      * Amount to withdraw is less than gas fees
      */
     if (
-      this.withdrawType === 'ASYM_ASSET' &&
+      this.withdrawType === "ASYM_ASSET" &&
       this.removeAssetAmount <= this.networkFee
     ) {
       return true;
@@ -449,7 +448,7 @@ export class WithdrawComponent implements OnInit {
      * Check ASYM ASSET asset balance for tx + network fee
      */
     if (
-      this.withdrawType === 'ASYM_ASSET' &&
+      this.withdrawType === "ASYM_ASSET" &&
       this.assetBalance < this.networkFee
     ) {
       return true;
@@ -459,7 +458,7 @@ export class WithdrawComponent implements OnInit {
      * Check SYM or ASYM RUNE sufficient RUNE
      */
     if (
-      this.withdrawType !== 'ASYM_ASSET' &&
+      this.withdrawType !== "ASYM_ASSET" &&
       this.runeBalance - this.runeFee < 3
     ) {
       return true;
@@ -476,35 +475,35 @@ export class WithdrawComponent implements OnInit {
     /** No user connected */
     if (!this.user) {
       this.isError = false;
-      return 'Please Connect Wallet';
+      return "Please Connect Wallet";
     }
 
     /** THORChain is backed up */
     if (this.queue && this.queue.outbound >= 12) {
       this.isError = true;
-      return 'THORChain Network Latency. Try Later';
+      return "THORChain Network Latency. Try Later";
     }
 
     /** When amount is only zero */
     if (!this.removeAssetAmount) {
       this.isError = false;
-      return 'PICK PERCENTAGE WITH SLIDER';
+      return "PICK PERCENTAGE WITH SLIDER";
     }
 
     /** No asset amount set */
     if (this.removeAssetAmount && this.removeAssetAmount <= 0) {
       this.isError = true;
-      return 'Enter an Amount';
+      return "Enter an Amount";
     }
 
     /**
      * Amount to withdraw is less than gas fees
      */
     if (
-      this.withdrawType === 'ASYM_ASSET' &&
+      this.withdrawType === "ASYM_ASSET" &&
       this.removeAssetAmount <= this.networkFee
     ) {
-      return 'Amount less than gas fees';
+      return "Amount less than gas fees";
     }
 
     if (this.remainingTime) {
@@ -513,27 +512,39 @@ export class WithdrawComponent implements OnInit {
     }
 
     if (
-      this.withdrawType === 'ASYM_ASSET' &&
+      this.withdrawType === "ASYM_ASSET" &&
       this.assetBalance < this.networkFee
     ) {
-      return 'Insufficient Balance';
+      return "Insufficient Balance";
     }
 
     if (
-      this.withdrawType !== 'ASYM_ASSET' &&
+      this.withdrawType !== "ASYM_ASSET" &&
       this.runeBalance - this.runeFee < 3
     ) {
-      return 'Min 3 RUNE in Wallet Required';
+      return "Min 3 RUNE in Wallet Required";
     }
 
     /** Good to go */
     this.isError = false;
-    return 'Ready';
+    return "Ready";
   }
 
   openConfirmationDialog(): void {
-    const runeBasePrice = getValueOfAssetInRune(assetToBase(assetAmount(1)), this.assetPoolData).amount().div(10 ** 8).toNumber();
-    const assetBasePrice = getValueOfRuneInAsset(assetToBase(assetAmount(1)), this.assetPoolData).amount().div(10 ** 8).toNumber();
+    const runeBasePrice = getValueOfAssetInRune(
+      assetToBase(assetAmount(1)),
+      this.assetPoolData
+    )
+      .amount()
+      .div(10 ** 8)
+      .toNumber();
+    const assetBasePrice = getValueOfRuneInAsset(
+      assetToBase(assetAmount(1)),
+      this.assetPoolData
+    )
+      .amount()
+      .div(10 ** 8)
+      .toNumber();
 
     this.data = {
       asset: this.asset,
@@ -548,10 +559,10 @@ export class WithdrawComponent implements OnInit {
       assetPrice: this.assetPrice,
       runePrice: this.runePrice,
       networkFee: this.networkFee,
-      withdrawType: this.withdrawType
-    }
+      withdrawType: this.withdrawType,
+    };
 
-    this.overlaysService.setCurrentWithdrawView('Confirm');
+    this.overlaysService.setCurrentWithdrawView("Confirm");
   }
 
   close(transactionSuccess: boolean) {
@@ -559,15 +570,14 @@ export class WithdrawComponent implements OnInit {
       this.withdrawPercent = 0;
     }
 
-    this.overlaysService.setCurrentWithdrawView('Withdraw');
+    this.overlaysService.setCurrentWithdrawView("Withdraw");
   }
 
   goToNav(nav: string) {
-    if (nav === 'pool') {
-      this.router.navigate(['/', 'pool']);
-    }
-    else if (nav === 'swap') {
-      this.router.navigate(['/', 'swap']);
+    if (nav === "pool") {
+      this.router.navigate(["/", "pool"]);
+    } else if (nav === "swap") {
+      this.router.navigate(["/", "swap"]);
     }
   }
 
@@ -576,7 +586,7 @@ export class WithdrawComponent implements OnInit {
   }
 
   back() {
-    this.router.navigate(['/', 'pool']);
+    this.router.navigate(["/", "pool"]);
   }
 
   async getPoolDetail(asset: string) {
@@ -593,17 +603,34 @@ export class WithdrawComponent implements OnInit {
           };
           this.poolUnits = +res.units;
           this.assetPrice = parseFloat(res.assetPriceUSD);
-          this.runePrice = parseFloat(res.assetPriceUSD) / parseFloat(res.assetPrice);
-          this.runeBasePrice = getValueOfAssetInRune(assetToBase(assetAmount(1)), this.assetPoolData).amount().div(10 ** 8).toNumber();
-          this.assetBasePrice = getValueOfRuneInAsset(assetToBase(assetAmount(1)), this.assetPoolData).amount().div(10 ** 8).toNumber();
+          this.runePrice =
+            parseFloat(res.assetPriceUSD) / parseFloat(res.assetPrice);
+          this.runeBasePrice = getValueOfAssetInRune(
+            assetToBase(assetAmount(1)),
+            this.assetPoolData
+          )
+            .amount()
+            .div(10 ** 8)
+            .toNumber();
+          this.assetBasePrice = getValueOfRuneInAsset(
+            assetToBase(assetAmount(1)),
+            this.assetPoolData
+          )
+            .amount()
+            .div(10 ** 8)
+            .toNumber();
 
-          this.networkFee = this.txUtilsService.calculateNetworkFee(this.asset, inboundAddresses, 'OUTBOUND', res);
+          this.networkFee = this.txUtilsService.calculateNetworkFee(
+            this.asset,
+            inboundAddresses,
+            "OUTBOUND",
+            res
+          );
 
           this.calculate();
-
         }
       },
-      (err) => console.error('error getting pool detail: ', err)
+      (err) => console.error("error getting pool detail: ", err)
     );
   }
 }

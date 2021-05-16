@@ -1,14 +1,14 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { AssetAndBalance } from 'src/app/_classes/asset-and-balance';
-import { PoolAddressDTO } from 'src/app/_classes/pool-address';
-import { MidgardService } from 'src/app/_services/midgard.service';
-import { UserService } from 'src/app/_services/user.service';
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Subscription } from "rxjs";
+import { AssetAndBalance } from "src/app/_classes/asset-and-balance";
+import { PoolAddressDTO } from "src/app/_classes/pool-address";
+import { MidgardService } from "src/app/_services/midgard.service";
+import { UserService } from "src/app/_services/user.service";
 
 @Component({
-  selector: 'app-upgrade-rune',
-  templateUrl: './upgrade-rune.component.html',
-  styleUrls: ['./upgrade-rune.component.scss'],
+  selector: "app-upgrade-rune",
+  templateUrl: "./upgrade-rune.component.html",
+  styleUrls: ["./upgrade-rune.component.scss"],
 })
 export class UpgradeRuneComponent implements OnInit {
   @Input() asset: AssetAndBalance;
@@ -43,22 +43,18 @@ export class UpgradeRuneComponent implements OnInit {
 
   ngOnInit(): void {
     this.setPoolAddresses();
-    
-    if (this.asset) {
-      const balances$ = this.userService.userBalances$.subscribe(
-        (balances) => {
-          this.balance = this.userService.findBalance(balances, this.asset.asset);
-        }
-      );
 
+    if (this.asset) {
+      const balances$ = this.userService.userBalances$.subscribe((balances) => {
+        this.balance = this.userService.findBalance(balances, this.asset.asset);
+      });
 
       this.subs = [balances$];
     }
   }
-  
+
   backCall(val: string): void {
-    if (val == 'back')
-      this.back.emit()
+    if (val == "back") this.back.emit();
   }
 
   setPoolAddresses() {

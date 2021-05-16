@@ -1,32 +1,47 @@
-import { Injectable } from '@angular/core';
-import { Chain } from '@xchainjs/xchain-util';
-import { BehaviorSubject, Observable, of, ReplaySubject, Subject, timer } from 'rxjs';
-import { catchError, switchMap, takeUntil, retryWhen, delay, take, retry } from 'rxjs/operators';
-import { TransactionDTO } from '../_classes/transaction';
-import { User } from '../_classes/user';
-import { BinanceService } from './binance.service';
-import { MidgardService, ThornodeTx } from './midgard.service';
-import { UserService } from './user.service';
-import { ethers } from 'ethers';
-import { environment } from 'src/environments/environment';
-import { SochainService, SochainTxResponse } from './sochain.service';
-import { HaskoinService, HaskoinTxResponse } from './haskoin.service';
-import { RpcTxSearchRes, ThorchainRpcService } from './thorchain-rpc.service';
-import { Asset } from '../_classes/asset';
+import { Injectable } from "@angular/core";
+import { Chain } from "@xchainjs/xchain-util";
+import {
+  BehaviorSubject,
+  Observable,
+  of,
+  ReplaySubject,
+  Subject,
+  timer,
+} from "rxjs";
+import {
+  catchError,
+  switchMap,
+  takeUntil,
+  retryWhen,
+  delay,
+  take,
+  retry,
+} from "rxjs/operators";
+import { TransactionDTO } from "../_classes/transaction";
+import { User } from "../_classes/user";
+import { BinanceService } from "./binance.service";
+import { MidgardService, ThornodeTx } from "./midgard.service";
+import { UserService } from "./user.service";
+import { ethers } from "ethers";
+import { environment } from "src/environments/environment";
+import { SochainService, SochainTxResponse } from "./sochain.service";
+import { HaskoinService, HaskoinTxResponse } from "./haskoin.service";
+import { RpcTxSearchRes, ThorchainRpcService } from "./thorchain-rpc.service";
+import { Asset } from "../_classes/asset";
 
 export const enum TxStatus {
-  PENDING = 'PENDING',
-  COMPLETE = 'COMPLETE',
-  REFUNDED = 'REFUNDED',
+  PENDING = "PENDING",
+  COMPLETE = "COMPLETE",
+  REFUNDED = "REFUNDED",
 }
 
 export enum TxActions {
-  SWAP = 'Swap',
-  DEPOSIT = 'Deposit',
-  WITHDRAW = 'Withdraw',
-  SEND = 'Send',
-  REFUND = 'Refund',
-  UPGRADE_RUNE = 'Upgrade',
+  SWAP = "Swap",
+  DEPOSIT = "Deposit",
+  WITHDRAW = "Withdraw",
+  SEND = "Send",
+  REFUND = "Refund",
+  UPGRADE_RUNE = "Upgrade",
 }
 
 export interface OutboundTx {
@@ -42,7 +57,7 @@ export interface Tx {
   status: TxStatus;
   action: TxActions;
   isThorchainTx: boolean;
-  
+
   date?: Date;
   outbound?: OutboundTx;
 
@@ -58,7 +73,7 @@ export interface Tx {
 }
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class TransactionStatusService {
   private _txs: Tx[];
@@ -81,20 +96,18 @@ export class TransactionStatusService {
   ) {
     this._txs = [];
 
-    userService.user$.subscribe( (user) => {
-        this.user = user
+    userService.user$.subscribe((user) => {
+      this.user = user;
 
-        if (!user) {
-          this.removeTransactions();
-          this._txs = [];
-        }
+      if (!user) {
+        this.removeTransactions();
+        this._txs = [];
       }
-    );
-
+    });
   }
 
   removeTransactions() {
-    this.transactionSource.next([] as Tx[])
+    this.transactionSource.next([] as Tx[]);
   }
 
   // this needs to be simplified and cleaned up
@@ -102,7 +115,7 @@ export class TransactionStatusService {
   // add inputs and outputs to Tx
   addTransaction(pendingTx: Tx) {
     // remove 0x
-    if (pendingTx.chain === 'ETH') {
+    if (pendingTx.chain === "ETH") {
       pendingTx.hash = pendingTx.hash.substr(2);
     }
 
@@ -111,7 +124,7 @@ export class TransactionStatusService {
     if (pendingTx.status === TxStatus.PENDING) {
       this.killTxPolling[pendingTx.hash] = new Subject();
 
-      if (pendingTx.isThorchainTx || pendingTx.chain === 'THOR') {
+      if (pendingTx.isThorchainTx || pendingTx.chain === "THOR") {
         if (pendingTx.pollRpc) {
           /**
            * THOR.RUNE transfers to different wallet
@@ -129,13 +142,13 @@ export class TransactionStatusService {
           this.pollThorchainTx(pendingTx.hash);
         }
       } else {
-        if (pendingTx.chain === 'BNB') {
+        if (pendingTx.chain === "BNB") {
           this.pollBnbTx(pendingTx);
-        } else if (pendingTx.chain === 'ETH') {
+        } else if (pendingTx.chain === "ETH") {
           this.pollEthTx(pendingTx);
-        } else if (pendingTx.chain === 'BTC' || pendingTx.chain === 'LTC') {
+        } else if (pendingTx.chain === "BTC" || pendingTx.chain === "LTC") {
           this.pollSochainTx(pendingTx);
-        } else if (pendingTx.chain === 'BCH') {
+        } else if (pendingTx.chain === "BCH") {
           this.pollBchTx(pendingTx);
         }
       }
@@ -145,7 +158,6 @@ export class TransactionStatusService {
   }
 
   addHistoryTransaction(pendingTx: Tx) {
-
     this._txs.push(pendingTx);
     this.transactionSource.next(this._txs);
   }
@@ -178,7 +190,7 @@ export class TransactionStatusService {
 
   async pollEthContractApproval(txHash) {
     if (!this.user) {
-      throw new Error('no user found polling eth contract approval');
+      throw new Error("no user found polling eth contract approval");
     }
 
     this.killTxPolling[txHash] = new Subject();
@@ -186,7 +198,7 @@ export class TransactionStatusService {
     const infuraProjectId = environment.infuraProjectId;
 
     const provider = new ethers.providers.InfuraProvider(
-      environment.network === 'testnet' ? 'ropsten' : 'mainnet',
+      environment.network === "testnet" ? "ropsten" : "mainnet",
       infuraProjectId
     );
     timer(0, 10000)
@@ -221,9 +233,9 @@ export class TransactionStatusService {
           for (const resTx of res.actions) {
             if (
               resTx.in[0].txID.toUpperCase() === hash.toUpperCase() &&
-              resTx.status.toUpperCase() === 'SUCCESS'
+              resTx.status.toUpperCase() === "SUCCESS"
             ) {
-              if (resTx.status.toUpperCase() === 'REFUND') {
+              if (resTx.status.toUpperCase() === "REFUND") {
                 this.updateTxStatus(hash, TxStatus.REFUNDED);
               } else {
                 this.updateTxStatus(hash, TxStatus.COMPLETE);
@@ -238,28 +250,26 @@ export class TransactionStatusService {
   }
 
   getOutboundHash(hash: string) {
-    return new Observable(
-      sub => {
-        timer(0, 10000)
+    return new Observable((sub) => {
+      timer(0, 10000)
         .pipe(
           // This kills the request if the user closes the component
           takeUntil(this.killTxPolling[hash]),
           // switchMap cancels the last request, if no response have been received since last tick
           switchMap(() => this.midgardService.getTransaction(hash)),
           // catchError handles http throws
-          catchError(error => of(error))
-        ).subscribe( async (res: TransactionDTO) => {
-
+          catchError((error) => of(error))
+        )
+        .subscribe(async (res: TransactionDTO) => {
           if (res.count > 0) {
             for (const resTx of res.actions) {
-
-              if (resTx.out.length > 0 && resTx.type === 'swap') {
-                
+              if (resTx.out.length > 0 && resTx.type === "swap") {
                 let tx_number = this._txs.findIndex(
-                  tx => tx.hash.toUpperCase() == resTx.in[0].txID.toUpperCase()
-                )
+                  (tx) =>
+                    tx.hash.toUpperCase() == resTx.in[0].txID.toUpperCase()
+                );
 
-                console.log(tx_number)
+                console.log(tx_number);
 
                 this._txs[tx_number].outbound.hash = resTx.out[0].txID;
 
@@ -267,14 +277,10 @@ export class TransactionStatusService {
               }
 
               sub.next(resTx);
-
             }
           }
-
         });
-      }
-    )
-    
+    });
   }
 
   /**
@@ -296,14 +302,14 @@ export class TransactionStatusService {
           res &&
           res.observed_tx &&
           res.observed_tx.status &&
-          res.observed_tx.status.toUpperCase() === 'DONE'
+          res.observed_tx.status.toUpperCase() === "DONE"
         ) {
           this.updateTxStatus(hash, TxStatus.COMPLETE);
           this.userService.fetchBalances();
           this.killTxPolling[hash].next();
         } else {
-          console.log('still pending...');
-          console.log('res');
+          console.log("still pending...");
+          console.log("res");
         }
       });
   }
@@ -338,7 +344,7 @@ export class TransactionStatusService {
             this.killTxPolling[hash].next();
           }
         } else {
-          console.log('continue polling rpc: ', res);
+          console.log("continue polling rpc: ", res);
         }
       });
   }
@@ -358,13 +364,13 @@ export class TransactionStatusService {
           this.userService.fetchBalances();
           this.killTxPolling[tx.hash].next();
         } else {
-          console.log('continue polling bch...', res);
+          console.log("continue polling bch...", res);
         }
       });
   }
 
   pollSochainTx(tx: Tx) {
-    const network = environment.network === 'testnet' ? 'testnet' : 'mainnet';
+    const network = environment.network === "testnet" ? "testnet" : "mainnet";
 
     timer(0, 15000)
       .pipe(
@@ -383,7 +389,7 @@ export class TransactionStatusService {
         retryWhen((errors) => errors.pipe(delay(10000), take(10)))
       )
       .subscribe(async (res: SochainTxResponse) => {
-        if (res.status === 'success') {
+        if (res.status === "success") {
           this.updateTxStatus(tx.hash, TxStatus.COMPLETE);
           this.userService.fetchBalances();
           this.killTxPolling[tx.hash].next();
@@ -433,22 +439,22 @@ export class TransactionStatusService {
           }
         });
     } else {
-      console.error('no eth client found...', this.user);
+      console.error("no eth client found...", this.user);
     }
   }
 
   chainBlockReward(chain: Chain): number {
     switch (chain) {
-      case 'BTC':
+      case "BTC":
         return 6.5;
 
-      case 'BCH':
+      case "BCH":
         return 6.25;
 
-      case 'LTC':
+      case "LTC":
         return 12.5;
 
-      case 'ETH':
+      case "ETH":
         return 3;
 
       // Confirms immediately
@@ -460,16 +466,16 @@ export class TransactionStatusService {
   chainBlockTime(chain: Chain): number {
     // in seconds
     switch (chain) {
-      case 'BTC':
+      case "BTC":
         return 600;
 
-      case 'BCH':
+      case "BCH":
         return 600;
 
-      case 'LTC':
+      case "LTC":
         return 150;
 
-      case 'ETH':
+      case "ETH":
         return 15;
 
       // Confirms immediately
@@ -479,7 +485,7 @@ export class TransactionStatusService {
   }
 
   estimateTime(chain: Chain, amount: number): number {
-    if (chain === 'BNB' || chain === 'THOR') {
+    if (chain === "BNB" || chain === "THOR") {
       return 1;
     } else {
       const chainBlockReward = this.chainBlockReward(chain);
@@ -502,14 +508,14 @@ export class TransactionStatusService {
 
   // a guard for deposit
   getPoolPedingTx() {
-    return this._txs.filter( (tx) => {
-
-      if(tx.status === TxStatus.PENDING && (tx.action === TxActions.DEPOSIT || tx.action === TxActions.WITHDRAW)) {
-        return true
+    return this._txs.filter((tx) => {
+      if (
+        tx.status === TxStatus.PENDING &&
+        (tx.action === TxActions.DEPOSIT || tx.action === TxActions.WITHDRAW)
+      ) {
+        return true;
       }
       return false;
-
-    })
+    });
   }
-
 }

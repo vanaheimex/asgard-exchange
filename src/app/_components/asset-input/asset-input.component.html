@@ -1,21 +1,40 @@
-<div class="swap-input uni-input" [ngClass]="{'disable': disableUser}">
+<div class="swap-input uni-input" [ngClass]="{ disable: disableUser }">
   <div class="swap-input--inner">
     <div class="flex justify-between label-wrapper">
-      <label class="label-title" for="{{label}}Input">{{label}}<span style="color: #474E5D;" *ngIf="selectedAsset && balance && !disableUser && showBalance"> (<span class="mono">{{balance}}</span> balance)</span><span style="color: #474E5D;"> {{extraLabel}}</span></label>
+      <label class="label-title" for="{{ label }}Input"
+        >{{ label
+        }}<span
+          style="color: #474e5d"
+          *ngIf="selectedAsset && balance && !disableUser && showBalance"
+        >
+          (<span class="mono">{{ balance }}</span> balance)</span
+        ><span style="color: #474e5d"> {{ extraLabel }}</span></label
+      >
     </div>
     <!-- <label style="color: #fff; font-size: 14px; font-weight: 500; text-align: right; margin-right: 8px;" *ngIf="selectedAsset && balance && !disableInput">
       Balance: {{balance | number:"1.0-8"}} <br />
       <span style="float: right;" *ngIf="usdValue">(<i>≈${{usdValue | number:"1.0-0"}}</i>)</span>
     </label> -->
 
-    <div class="flex justify-between items-center" style="position: relative;">
-
+    <div class="flex justify-between items-center" style="position: relative">
       <div *ngIf="loading" class="flex items-center flex-grow">
-        <span style="text-transform: uppercase; color: var(--primary-grey-color); font-size: 22px; font-family: 'Roboto Mono';">0.0</span>
+        <span
+          style="
+            text-transform: uppercase;
+            color: var(--primary-grey-color);
+            font-size: 22px;
+            font-family: 'Roboto Mono';
+          "
+          >0.0</span
+        >
       </div>
 
-      <div *ngIf="!loading && error" class="flex items-center" style="height: 53px">
-        <mat-icon style="font-size: 1rem; height: 18px;">warning</mat-icon>
+      <div
+        *ngIf="!loading && error"
+        class="flex items-center"
+        style="height: 53px"
+      >
+        <mat-icon style="font-size: 1rem; height: 18px">warning</mat-icon>
         <span style="font-size: 0.8rem">Error fetching pool</span>
       </div>
 
@@ -24,52 +43,123 @@
         *ngIf="!loading && !error"
         [ngModel]="assetUnit"
         (ngModelChange)="updateAssetUnits($event)"
-        id="{{label}}Input"
+        id="{{ label }}Input"
         name="fromUnit"
         placeholder="0.0"
         type="number"
         [disabled]="disableInput"
-        [ngClass]="{'disable': disableUser}"
-        [ngStyle]="{'color': inputColor}" />
+        [ngClass]="{ disable: disableUser }"
+        [ngStyle]="{ color: inputColor }"
+      />
 
-      <button *ngIf="!selectedAsset" class="launch-markets-btn focus:outline-none" [disabled]="disabledMarketSelect || disableUser || !selectableMarkets" [ngClass]="{'disabled': disabledMarketSelect || disableUser}" (click)="launchMarketsModal()">
-        <div class="flex items-center asset-selector select-token" [ngClass]="{'disabled': disabledMarketSelect || disableUser}">
-          <span style="font-size: 20px; line-height: 24px;">SELECT</span>
+      <button
+        *ngIf="!selectedAsset"
+        class="launch-markets-btn focus:outline-none"
+        [disabled]="disabledMarketSelect || disableUser || !selectableMarkets"
+        [ngClass]="{ disabled: disabledMarketSelect || disableUser }"
+        (click)="launchMarketsModal()"
+      >
+        <div
+          class="flex items-center asset-selector select-token"
+          [ngClass]="{ disabled: disabledMarketSelect || disableUser }"
+        >
+          <span style="font-size: 20px; line-height: 24px">SELECT</span>
           <!-- <mat-icon class="expand-more">expand_more</mat-icon> -->
-          <div style="display: flex; margin-left: 10px;" *ngIf="!disabledMarketSelect">
-            <svg class="expand-more" [ngClass]="{'disable': disableUser}" width="15" height="9" viewBox="0 0 15 9" xmlns="http://www.w3.org/2000/svg">
-              <path d="M7.50071 8.69094C7.23188 8.69094 6.96308 8.5883 6.75812 8.38344L0.308445 1.9337C-0.101838 1.52341 -0.101838 0.858209 0.308445 0.448091C0.718563 0.0379736 1.38363 0.0379736 1.79395 0.448091L7.50071 6.15518L13.2075 0.44829C13.6178 0.0381727 14.2828 0.0381727 14.6929 0.44829C15.1034 0.858408 15.1034 1.52361 14.6929 1.9339L8.24329 8.38364C8.03824 8.58853 7.76944 8.69094 7.50071 8.69094Z"/>
+          <div
+            style="display: flex; margin-left: 10px"
+            *ngIf="!disabledMarketSelect"
+          >
+            <svg
+              class="expand-more"
+              [ngClass]="{ disable: disableUser }"
+              width="15"
+              height="9"
+              viewBox="0 0 15 9"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M7.50071 8.69094C7.23188 8.69094 6.96308 8.5883 6.75812 8.38344L0.308445 1.9337C-0.101838 1.52341 -0.101838 0.858209 0.308445 0.448091C0.718563 0.0379736 1.38363 0.0379736 1.79395 0.448091L7.50071 6.15518L13.2075 0.44829C13.6178 0.0381727 14.2828 0.0381727 14.6929 0.44829C15.1034 0.858408 15.1034 1.52361 14.6929 1.9339L8.24329 8.38364C8.03824 8.58853 7.76944 8.69094 7.50071 8.69094Z"
+              />
             </svg>
           </div>
         </div>
       </button>
 
-      <div class="tag-space--between" style="margin-right: 8px;" *ngIf="balance && balance > 0 && balance != assetUnit && !hideMax && getMax() !== assetUnit">
+      <div
+        class="tag-space--between"
+        style="margin-right: 8px"
+        *ngIf="
+          balance &&
+          balance > 0 &&
+          balance != assetUnit &&
+          !hideMax &&
+          getMax() !== assetUnit
+        "
+      >
         <app-tag (click)="setMax()">MAX</app-tag>
       </div>
 
-      <div class="tag-space--between" style="margin-right: 8px;" *ngIf="isWallet">
+      <div
+        class="tag-space--between"
+        style="margin-right: 8px"
+        *ngIf="isWallet"
+      >
         <app-tag (click)="gotoWallet()">WALLET</app-tag>
       </div>
 
-      <button *ngIf="selectedAsset" class="launch-markets-btn" [disabled]="disabledMarketSelect || disableUser || !selectableMarkets" (click)="launchMarketsModal()" [disabled]="disabledMarketSelect || disableUser" [ngClass]="{'disabled': disabledMarketSelect || disableUser}">
-        <div class="flex items-center asset-selector" [ngClass]="{'disabled': disabledMarketSelect || disableUser}">
-          <app-icon-ticker [iconPath]="selectedAsset.iconPath" [ticker]="selectedAsset.ticker" [chain]="selectedAsset.chain"></app-icon-ticker>
+      <button
+        *ngIf="selectedAsset"
+        class="launch-markets-btn"
+        [disabled]="disabledMarketSelect || disableUser || !selectableMarkets"
+        (click)="launchMarketsModal()"
+        [disabled]="disabledMarketSelect || disableUser"
+        [ngClass]="{ disabled: disabledMarketSelect || disableUser }"
+      >
+        <div
+          class="flex items-center asset-selector"
+          [ngClass]="{ disabled: disabledMarketSelect || disableUser }"
+        >
+          <app-icon-ticker
+            [iconPath]="selectedAsset.iconPath"
+            [ticker]="selectedAsset.ticker"
+            [chain]="selectedAsset.chain"
+          ></app-icon-ticker>
           <!-- <mat-icon class="expand-more" *ngIf="!disabledMarketSelect">expand_more</mat-icon> -->
-          <div style="display: flex; margin-left: 10px;" *ngIf="!disabledMarketSelect">
-            <svg class="expand-more" [ngClass]="{'disable': disableUser}" width="15" height="9" viewBox="0 0 15 9" xmlns="http://www.w3.org/2000/svg">
-              <path d="M7.50071 8.69094C7.23188 8.69094 6.96308 8.5883 6.75812 8.38344L0.308445 1.9337C-0.101838 1.52341 -0.101838 0.858209 0.308445 0.448091C0.718563 0.0379736 1.38363 0.0379736 1.79395 0.448091L7.50071 6.15518L13.2075 0.44829C13.6178 0.0381727 14.2828 0.0381727 14.6929 0.44829C15.1034 0.858408 15.1034 1.52361 14.6929 1.9339L8.24329 8.38364C8.03824 8.58853 7.76944 8.69094 7.50071 8.69094Z"/>
+          <div
+            style="display: flex; margin-left: 10px"
+            *ngIf="!disabledMarketSelect"
+          >
+            <svg
+              class="expand-more"
+              [ngClass]="{ disable: disableUser }"
+              width="15"
+              height="9"
+              viewBox="0 0 15 9"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M7.50071 8.69094C7.23188 8.69094 6.96308 8.5883 6.75812 8.38344L0.308445 1.9337C-0.101838 1.52341 -0.101838 0.858209 0.308445 0.448091C0.718563 0.0379736 1.38363 0.0379736 1.79395 0.448091L7.50071 6.15518L13.2075 0.44829C13.6178 0.0381727 14.2828 0.0381727 14.6929 0.44829C15.1034 0.858408 15.1034 1.52361 14.6929 1.9339L8.24329 8.38364C8.03824 8.58853 7.76944 8.69094 7.50071 8.69094Z"
+              />
             </svg>
           </div>
         </div>
       </button>
-
     </div>
 
-    <span class="usd-est" *ngIf="showPrice && inputUsdValue">{{ inputUsdValue * currency.value | number: '.2-3' }} {{currency.code}}</span>
-    <span class="usd-est" *ngIf="showPrice && !inputUsdValue && priceInput && assetUnit">{{ priceInput * currency.value * assetUnit | number: '.2-3' }} {{currency.code}}</span>
-    <span class="usd-est" *ngIf="showPrice && !inputUsdValue && (assetUnit == 0 || !assetUnit)">{{ 0 | number: '.2-3' }} {{currency.code}}</span>
-
+    <span class="usd-est" *ngIf="showPrice && inputUsdValue"
+      >{{ inputUsdValue * currency.value | number: ".2-3" }}
+      {{ currency.code }}</span
+    >
+    <span
+      class="usd-est"
+      *ngIf="showPrice && !inputUsdValue && priceInput && assetUnit"
+      >{{ priceInput * currency.value * assetUnit | number: ".2-3" }}
+      {{ currency.code }}</span
+    >
+    <span
+      class="usd-est"
+      *ngIf="showPrice && !inputUsdValue && (assetUnit == 0 || !assetUnit)"
+      >{{ 0 | number: ".2-3" }} {{ currency.code }}</span
+    >
   </div>
-
 </div>

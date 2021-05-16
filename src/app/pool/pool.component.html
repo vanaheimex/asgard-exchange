@@ -13,12 +13,23 @@
     </nav> -->
     <div class="main-container">
       <nav class="content-top">
-        <app-breadcrumb [path]="[{name: 'vanaheimex', call: 'swap'}, {name: 'Pools', disable: true}]" [message]="getBreadcrumbText()" (funcCaller)="goToNav($event)"></app-breadcrumb>
+        <app-breadcrumb
+          [path]="[
+            { name: 'vanaheimex', call: 'swap' },
+            { name: 'Pools', disable: true }
+          ]"
+          [message]="getBreadcrumbText()"
+          (funcCaller)="goToNav($event)"
+        ></app-breadcrumb>
         <div class="top-right">
-          <app-right-option [switchField]="{right: {text: 'Pool', tag: '', disable: false}, left: {text: 'Swap', tag: '', disable: false}}"></app-right-option>
+          <app-right-option
+            [switchField]="{
+              right: { text: 'Pool', tag: '', disable: false },
+              left: { text: 'Swap', tag: '', disable: false }
+            }"
+          ></app-right-option>
         </div>
       </nav>
-
 
       <!-- TODO: pooled rune should be added into thorchain mainnet -->
       <!-- <div *ngIf="maxLiquidityRune" style="padding: 8px" class="flex justify-center disabled-list">
@@ -30,27 +41,51 @@
 
       <!-- <button *ngIf="depositsDisabled" class="main-action-btn w-full" mat-flat-button color="primary" disabled>Pool Cap > 90%</button> -->
 
-
-      <app-staked-pools-list *ngIf="pools && !userPoolError" [pools]="pools" [runePrice]="runePrice" [memberPools]="memberPools"></app-staked-pools-list>
-      <div *ngIf="userPoolError || !pools" class="lists flex justify-center items-center" style="height: 262px;">
-        <span style="color: var(--primary-grey-color); font-size: 22px;" *ngIf="(!memberPools || !pools) && !userPoolError">FETCHING POOLS</span>
-        <span style="color: var(--primary-grey-color); font-size: 22px;" *ngIf="userPoolError">ERROR OCCURRED</span>
+      <app-staked-pools-list
+        *ngIf="pools && !userPoolError"
+        [pools]="pools"
+        [runePrice]="runePrice"
+        [memberPools]="memberPools"
+      ></app-staked-pools-list>
+      <div
+        *ngIf="userPoolError || !pools"
+        class="lists flex justify-center items-center"
+        style="height: 262px"
+      >
+        <span
+          style="color: var(--primary-grey-color); font-size: 22px"
+          *ngIf="(!memberPools || !pools) && !userPoolError"
+          >FETCHING POOLS</span
+        >
+        <span
+          style="color: var(--primary-grey-color); font-size: 22px"
+          *ngIf="userPoolError"
+          >ERROR OCCURRED</span
+        >
       </div>
 
       <div class="swap-details" *ngIf="poolType !== 'notMember'">
         <div class="flex justify-between">
           <span class="tx-detail-label">Pooled RUNE:</span>
-          <span *ngIf="pooledRune">{{pooledRune | number:"0.0-6"}}</span>
+          <span *ngIf="pooledRune">{{ pooledRune | number: "0.0-6" }}</span>
           <span *ngIf="!pooledRune">...</span>
         </div>
         <div class="flex justify-between">
-          <span class="tx-detail-label">Pooled <span *ngIf="pooledAssetChain && pooledAssetTicker">{{pooledAssetChain}}.{{pooledAssetTicker}}</span><span *ngIf="!pooledAssetTicker || !pooledAssetChain">Asset</span>:</span>
-          <span *ngIf="pooledAsset">{{pooledAsset | number:"0.0-6"}}</span>
+          <span class="tx-detail-label"
+            >Pooled
+            <span *ngIf="pooledAssetChain && pooledAssetTicker"
+              >{{ pooledAssetChain }}.{{ pooledAssetTicker }}</span
+            ><span *ngIf="!pooledAssetTicker || !pooledAssetChain">Asset</span
+            >:</span
+          >
+          <span *ngIf="pooledAsset">{{ pooledAsset | number: "0.0-6" }}</span>
           <span *ngIf="!pooledAsset">...</span>
         </div>
         <div class="flex justify-between">
           <span class="tx-detail-label">Pool Share:</span>
-          <span *ngIf="pooledShare">{{pooledShare * 100 | number:"0.0-6" }}%</span>
+          <span *ngIf="pooledShare"
+            >{{ pooledShare * 100 | number: "0.0-6" }}%</span
+          >
           <span *ngIf="!pooledShare">...</span>
         </div>
         <!-- <div class="flex justify-between">
@@ -71,19 +106,24 @@
     <div class="swap-details" *ngIf="poolType === 'notMember'">
       <div class="flex justify-between">
         <span class="tx-detail-label">Average 24H Volume:</span>
-        <span *ngIf="pooledRune !== undefined && pooledRune !== null">{{pooledRune | number: '0.0-2'}} {{currency.code}}</span>
+        <span *ngIf="pooledRune !== undefined && pooledRune !== null"
+          >{{ pooledRune | number: "0.0-2" }} {{ currency.code }}</span
+        >
         <span *ngIf="pooledRune === undefined || pooledRune === null">...</span>
       </div>
       <div class="flex justify-between">
         <span class="tx-detail-label">Depth:</span>
-        <span *ngIf="pooledAsset">{{pooledAsset | number: '0.0-2'}} {{currency.code}}</span>
+        <span *ngIf="pooledAsset"
+          >{{ pooledAsset | number: "0.0-2" }} {{ currency.code }}</span
+        >
         <span *ngIf="!pooledAsset">...</span>
       </div>
     </div>
 
     <div class="bottom-actions two-btn">
       <div class="left-btn">
-        <button class="next-btn"
+        <button
+          class="next-btn"
           [disabled]="!user || loading"
           (click)="getAccountPools()"
         >
@@ -92,16 +132,22 @@
       </div>
       <div class="divider"></div>
       <div class="right-btn">
-        <a 
-          [ngClass]="{'disabled': !user || loading || userPoolError || depositsDisabled || (createablePools && createablePools.length == 0)}" 
-          [routerLink]="['/', 'create-pool']" 
-          [queryParams]="{pool: createablePools ? createablePools[0] : ''}" 
+        <a
+          [ngClass]="{
+            disabled:
+              !user ||
+              loading ||
+              userPoolError ||
+              depositsDisabled ||
+              (createablePools && createablePools.length == 0)
+          }"
+          [routerLink]="['/', 'create-pool']"
+          [queryParams]="{ pool: createablePools ? createablePools[0] : '' }"
           class="next-btn graident-btn"
         >
           <span>Create a new pool</span>
         </a>
       </div>
     </div>
-
   </div>
 </div>

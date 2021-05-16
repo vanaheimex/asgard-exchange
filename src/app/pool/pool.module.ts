@@ -1,22 +1,28 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { PoolComponent } from './pool.component';
-import { RouterModule } from '@angular/router';
-import { StakedPoolsListComponent } from './staked-pools-list/staked-pools-list.component';
-import { StakedPoolListItemComponent } from './staked-pool-list-item/staked-pool-list-item.component';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { IconTickerModule } from '../_components/icon-ticker/icon-ticker.module';
-import { BreadcrumbModule } from '../_components/breadcrumb/breadcrumb.module';
-import { RightOptionModule } from '../_components/right-option/right-option.module';
-import { NoticeModule } from '../_components/notice/notice.module';
-import { TagModule } from '../_components/tag/tag.module';
-import { PoolListItemComponent } from './pool-list-item/pool-list-item.component';
-import { ShortNumberPipe } from '../_pipes/short-number.pipe';
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { PoolComponent } from "./pool.component";
+import { RouterModule } from "@angular/router";
+import { StakedPoolsListComponent } from "./staked-pools-list/staked-pools-list.component";
+import { StakedPoolListItemComponent } from "./staked-pool-list-item/staked-pool-list-item.component";
+import { MatIconModule } from "@angular/material/icon";
+import { MatButtonModule } from "@angular/material/button";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { IconTickerModule } from "../_components/icon-ticker/icon-ticker.module";
+import { BreadcrumbModule } from "../_components/breadcrumb/breadcrumb.module";
+import { RightOptionModule } from "../_components/right-option/right-option.module";
+import { NoticeModule } from "../_components/notice/notice.module";
+import { TagModule } from "../_components/tag/tag.module";
+import { PoolListItemComponent } from "./pool-list-item/pool-list-item.component";
+import { ShortNumberPipe } from "../_pipes/short-number.pipe";
 
 @NgModule({
-  declarations: [PoolComponent, StakedPoolsListComponent, StakedPoolListItemComponent, PoolListItemComponent, ShortNumberPipe],
+  declarations: [
+    PoolComponent,
+    StakedPoolsListComponent,
+    StakedPoolListItemComponent,
+    PoolListItemComponent,
+    ShortNumberPipe,
+  ],
   imports: [
     CommonModule,
     MatButtonModule,
@@ -29,7 +35,7 @@ import { ShortNumberPipe } from '../_pipes/short-number.pipe';
     TagModule,
     RouterModule.forChild([
       {
-        path: '',
+        path: "",
         component: PoolComponent,
       },
     ]),

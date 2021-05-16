@@ -1,70 +1,82 @@
 <!-- <app-modal-section-header sectionTitle="Upgrade to Native RUNE" [displayBackBtn]="true" (back)="back.next()"></app-modal-section-header> -->
 
 <div class="container-wrapper upgrade">
-
   <div class="container">
     <div class="main-container" *ngIf="asset">
       <div class="content-top">
-        <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'upgrade rune', disable: false, call: 'back'}, {name:  asset.asset.chain + '.' + asset.asset.ticker, disable: true}]" (funcCaller)="backCall($event)" [message]="amountSpendable ? 'ready' : 'prepare'"></app-breadcrumb>
-          <div class="top-right">
+        <app-breadcrumb
+          [path]="[
+            { name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap' },
+            { name: 'upgrade rune', disable: false, call: 'back' },
+            {
+              name: asset.asset.chain + '.' + asset.asset.ticker,
+              disable: true
+            }
+          ]"
+          (funcCaller)="backCall($event)"
+          [message]="amountSpendable ? 'ready' : 'prepare'"
+        ></app-breadcrumb>
+        <div class="top-right"></div>
+      </div>
+
+      <div class="content-middle">
+        <app-asset-input
+          label="Upgrade"
+          [(selectedAsset)]="asset.asset"
+          [(assetUnit)]="amount"
+          [balance]="asset.balance.amount().toNumber()"
+          [disabledAssetSymbol]="asset.asset.symbol"
+          [selectableMarkets]="[asset]"
+          [disabledMarketSelect]="true"
+        >
+        </app-asset-input>
+
+        <app-arrow [seperator]="true"></app-arrow>
+
+        <app-asset-input
+          label="Receive"
+          [(selectedAsset)]="nativeRune.asset"
+          [(assetUnit)]="amount"
+          [balance]="nativeRune.balance.amount().toNumber()"
+          [disabledAssetSymbol]="nativeRune.asset.symbol"
+          [selectableMarkets]="[nativeRune]"
+          [disableInput]="true"
+          [hideMax]="true"
+          [showBalance]="false"
+          [disabledMarketSelect]="true"
+        >
+        </app-asset-input>
+
+        <div class="swap-details">
+          <div class="disclaimer">
+            Some of your RUNE is currently a {{ asset.asset.chain }} token.
+            <br />
+            By upgrading, you will be upgrading it off of the
+            {{ asset.asset.chain }} chain to native RUNE. <br />
+            Your native THOR.RUNE will show up in your wallet. <br />
           </div>
-      </div>
+        </div>
 
-    <div class="content-middle">
-      <app-asset-input
-        label="Upgrade"
-        [(selectedAsset)]="asset.asset"
-        [(assetUnit)]="amount"
-        
-        [balance]="asset.balance.amount().toNumber()"
-        [disabledAssetSymbol]="asset.asset.symbol"
-        [selectableMarkets]="[asset]"
-        [disabledMarketSelect]="true">
-      </app-asset-input>
-
-      <app-arrow [seperator]="true"></app-arrow>
-
-      <app-asset-input
-        label="Receive"
-        [(selectedAsset)]="nativeRune.asset"
-        [(assetUnit)]="amount"
-        
-        [balance]="nativeRune.balance.amount().toNumber()"
-        [disabledAssetSymbol]="nativeRune.asset.symbol"
-        [selectableMarkets]="[nativeRune]"
-        [disableInput]="true"
-        [hideMax]="true"
-        [showBalance]="false"
-        [disabledMarketSelect]="true">
-      </app-asset-input>
-
-      <div class="swap-details">
-        <div class="disclaimer">
-          Some of your RUNE is currently a {{asset.asset.chain}} token. <br />
-          By upgrading, you will be upgrading it off of the {{asset.asset.chain}} chain to native RUNE. <br />
-          Your native THOR.RUNE will show up in your wallet. <br />
+        <div>
+          <div class="bottom-actions two-btn">
+            <div class="left-btn">
+              <button class="close-btn" (click)="back.emit()">
+                <span>cancel</span>
+              </button>
+            </div>
+            <div class="divider"></div>
+            <div class="right-btn">
+              <button
+                class="next-btn upgrade"
+                [disabled]="!amountSpendable"
+                (click)="confirmUpgrade.next({ amount: amount })"
+              >
+                <span>upgrade</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-
-      <div>
-
-      <div class="bottom-actions two-btn">
-        <div class="left-btn">
-          <button class="close-btn" (click)="back.emit()">
-            <span>cancel</span>
-          </button>
-        </div>
-        <div class="divider"></div>
-        <div class="right-btn">
-          <button
-            class="next-btn upgrade"
-            [disabled]="!amountSpendable"
-            (click)="confirmUpgrade.next({amount: amount})">
-              <span>upgrade</span>
-          </button>
-        </div>
-      </div>
-
+    </div>
   </div>
-
 </div>

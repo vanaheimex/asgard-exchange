@@ -2,14 +2,24 @@
   <div class="container">
     <div class="main-container">
       <div class="content-top">
-        <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'Upgrade Rune', disable: true}]" message="SELECT ASSET TO UPGRADE"></app-breadcrumb>
-        <div class="top-right">
-        </div>
+        <app-breadcrumb
+          [path]="[
+            { name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap' },
+            { name: 'Upgrade Rune', disable: true }
+          ]"
+          message="SELECT ASSET TO UPGRADE"
+        ></app-breadcrumb>
+        <div class="top-right"></div>
       </div>
 
       <div class="content-middle">
         <div class="expandable">
-          <app-assets-list [assetListItems]="assets" [loading]="loading" (selectAsset)="selectAsset($event)" [showIcons]="false"></app-assets-list>
+          <app-assets-list
+            [assetListItems]="assets"
+            [loading]="loading"
+            (selectAsset)="selectAsset($event)"
+            [showIcons]="false"
+          ></app-assets-list>
         </div>
       </div>
     </div>
@@ -28,7 +38,8 @@
   [asset]="selectedAsset"
   [nativeRune]="nativeRune"
   (confirmUpgrade)="confirmUpgradeRune($event)"
-  (back)="mode = 'SELECT_ASSET'">
+  (back)="mode = 'SELECT_ASSET'"
+>
 </app-upgrade-rune>
 
 <app-upgrade-rune-confirm
@@ -37,7 +48,8 @@
   [amount]="amountToSend"
   [nativeRune]="nativeRune"
   (back)="mode = 'UPGRADE_ASSET'"
-  (upgradeRune)="mode = 'SELECT_ASSET'">
+  (upgradeRune)="mode = 'SELECT_ASSET'"
+>
 </app-upgrade-rune-confirm>
 
 <!-- <app-transaction-success-modal

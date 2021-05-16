@@ -1,8 +1,8 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Asset, getChainAsset } from '../_classes/asset';
-import { UserService } from '../_services/user.service';
-import { combineLatest, Subscription, timer } from 'rxjs';
+import { Component, OnInit, OnDestroy } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+import { Asset, getChainAsset } from "../_classes/asset";
+import { UserService } from "../_services/user.service";
+import { combineLatest, Subscription, timer } from "rxjs";
 import {
   getDoubleSwapOutput,
   getSwapSlip,
@@ -11,8 +11,8 @@ import {
   getValueOfAssetInRune,
   getValueOfRuneInAsset,
   getSwapOutput,
-} from '@thorchain/asgardex-util';
-import BigNumber from 'bignumber.js';
+} from "@thorchain/asgardex-util";
+import BigNumber from "bignumber.js";
 import {
   bn,
   baseAmount,
@@ -20,35 +20,38 @@ import {
   assetToBase,
   assetAmount,
   assetToString,
-} from '@xchainjs/xchain-util';
-import { PoolDetail } from '../_classes/pool-detail';
-import { MidgardService, ThorchainQueue } from '../_services/midgard.service';
-import { MatDialog } from '@angular/material/dialog';
-import { ConfirmSwapModalComponent, SwapData } from './confirm-swap-modal/confirm-swap-modal.component';
-import { User } from '../_classes/user';
-import { Balances } from '@xchainjs/xchain-client';
-import { AssetAndBalance } from '../_classes/asset-and-balance';
-import { PoolDTO } from '../_classes/pool';
-import { SlippageToleranceService } from '../_services/slippage-tolerance.service';
-import { PoolAddressDTO } from '../_classes/pool-address';
-import { MainViewsEnum, OverlaysService } from '../_services/overlays.service';
-import { ThorchainPricesService } from '../_services/thorchain-prices.service';
-import { TransactionUtilsService } from '../_services/transaction-utils.service';
-import { NetworkQueueService } from '../_services/network-queue.service';
-import { environment } from 'src/environments/environment'; 
-import { CurrencyService } from '../_services/currency.service';
-import { Currency } from '../_components/account-settings/currency-converter/currency-converter.component';
-import { debounceTime, retry, switchMap } from 'rxjs/operators';
+} from "@xchainjs/xchain-util";
+import { PoolDetail } from "../_classes/pool-detail";
+import { MidgardService, ThorchainQueue } from "../_services/midgard.service";
+import { MatDialog } from "@angular/material/dialog";
+import {
+  ConfirmSwapModalComponent,
+  SwapData,
+} from "./confirm-swap-modal/confirm-swap-modal.component";
+import { User } from "../_classes/user";
+import { Balances } from "@xchainjs/xchain-client";
+import { AssetAndBalance } from "../_classes/asset-and-balance";
+import { PoolDTO } from "../_classes/pool";
+import { SlippageToleranceService } from "../_services/slippage-tolerance.service";
+import { PoolAddressDTO } from "../_classes/pool-address";
+import { MainViewsEnum, OverlaysService } from "../_services/overlays.service";
+import { ThorchainPricesService } from "../_services/thorchain-prices.service";
+import { TransactionUtilsService } from "../_services/transaction-utils.service";
+import { NetworkQueueService } from "../_services/network-queue.service";
+import { environment } from "src/environments/environment";
+import { CurrencyService } from "../_services/currency.service";
+import { Currency } from "../_components/account-settings/currency-converter/currency-converter.component";
+import { debounceTime, retry, switchMap } from "rxjs/operators";
 
 export enum SwapType {
-  DOUBLE_SWAP = 'double_swap',
-  SINGLE_SWAP = 'single_swap',
+  DOUBLE_SWAP = "double_swap",
+  SINGLE_SWAP = "single_swap",
 }
 
 @Component({
-  selector: 'app-swap',
-  templateUrl: './swap.component.html',
-  styleUrls: ['./swap.component.scss'],
+  selector: "app-swap",
+  templateUrl: "./swap.component.html",
+  styleUrls: ["./swap.component.scss"],
 })
 export class SwapComponent implements OnInit, OnDestroy {
   /**
@@ -84,18 +87,31 @@ export class SwapComponent implements OnInit, OnDestroy {
       this.calculatingTargetAsset = true;
     }
     this._selectedSourceAsset = asset;
-   
+
     if (asset) {
-	    this.router.navigate(['/', 'swap', `${asset.chain}.${asset.symbol}`, this.selectedTargetAsset ? `${this.selectedTargetAsset.chain}.${this.selectedTargetAsset.symbol}` : '']);
+      this.router.navigate([
+        "/",
+        "swap",
+        `${asset.chain}.${asset.symbol}`,
+        this.selectedTargetAsset
+          ? `${this.selectedTargetAsset.chain}.${this.selectedTargetAsset.symbol}`
+          : "",
+      ]);
     }
 
     if (this._selectedSourceAsset) {
       this.updateSwapDetails();
     }
-    this.sourceBalance = this._selectedSourceAsset ? this.userService.findBalance(this.balances, asset) : 0;
-    
+    this.sourceBalance = this._selectedSourceAsset
+      ? this.userService.findBalance(this.balances, asset)
+      : 0;
+
     this.sourceBalance = this.userService.findBalance(this.balances, asset);
-    if (this._selectedSourceAsset && asset.chain === 'ETH' && asset.ticker !== 'ETH') {
+    if (
+      this._selectedSourceAsset &&
+      asset.chain === "ETH" &&
+      asset.ticker !== "ETH"
+    ) {
       this.checkContractApproved();
     }
 
@@ -141,7 +157,14 @@ export class SwapComponent implements OnInit, OnDestroy {
     this.targetBalance = this.userService.findBalance(this.balances, asset);
 
     if (asset) {
-	    this.router.navigate(['/', 'swap', this.selectedSourceAsset ? `${this.selectedSourceAsset.chain}.${this.selectedSourceAsset.symbol}` : 'no-asset' ,`${asset.chain}.${asset.symbol}`]);
+      this.router.navigate([
+        "/",
+        "swap",
+        this.selectedSourceAsset
+          ? `${this.selectedSourceAsset.chain}.${this.selectedSourceAsset.symbol}`
+          : "no-asset",
+        `${asset.chain}.${asset.symbol}`,
+      ]);
     }
   }
   private _selectedTargetAsset: Asset;
@@ -199,13 +222,13 @@ export class SwapComponent implements OnInit, OnDestroy {
     private midgardService: MidgardService,
     private slipLimitService: SlippageToleranceService,
     private thorchainPricesService: ThorchainPricesService,
-    public overlaysService: OverlaysService,  
+    public overlaysService: OverlaysService,
     private txUtilsService: TransactionUtilsService,
     private networkQueueService: NetworkQueueService,
     private currencyService: CurrencyService,
     private router: Router,
-    private route: ActivatedRoute) {
-
+    private route: ActivatedRoute
+  ) {
     this.ethContractApprovalRequired = false;
     this.selectableMarkets = undefined;
     this.haltedChains = [];
@@ -239,21 +262,19 @@ export class SwapComponent implements OnInit, OnDestroy {
         }
       });
 
-    const user$ = this.userService.user$.subscribe(
-      async (user) => {
-        this.user = user;
+    const user$ = this.userService.user$.subscribe(async (user) => {
+      this.user = user;
 
-        if (!user) {
-          this.sourceAssetUnit = null;
-          this.selectedTargetAsset = null;
-          this.selectedSourceAsset = null;
-          this.targetAssetUnit = null;
-          this.sourceBalance = undefined;
-          this.targetBalance = undefined;
-          this.balances = undefined;
-        }
+      if (!user) {
+        this.sourceAssetUnit = null;
+        this.selectedTargetAsset = null;
+        this.selectedSourceAsset = null;
+        this.targetAssetUnit = null;
+        this.sourceBalance = undefined;
+        this.targetBalance = undefined;
+        this.balances = undefined;
       }
-    );
+    });
 
     const queue$ = this.networkQueueService.networkQueue$.subscribe(
       (queue) => (this.queue = queue)
@@ -264,11 +285,10 @@ export class SwapComponent implements OnInit, OnDestroy {
         (limit) => (this.slippageTolerance = limit)
       );
 
-    const curs$ = this.currencyService.cur$.subscribe(
-    (cur) => {
+    const curs$ = this.currencyService.cur$.subscribe((cur) => {
       this.currency = cur;
     });
-    
+
     this.subs = [balances$, user$, slippageTolerange$, queue$, curs$];
 
     this.appLocked = environment.appLocked;
@@ -276,62 +296,80 @@ export class SwapComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getEthRouter();
-    const params$ = this.route.paramMap
+    const params$ = this.route.paramMap;
     const inboundAddresses$ = this.midgardService.getInboundAddresses();
     const pools$ = this.midgardService.getPools();
     const combined = combineLatest([inboundAddresses$, pools$, params$]);
-    const sub = timer(0, 30000).pipe(
-      // combined
-      switchMap(() => combined),
-      retry(),
-    ).subscribe( ([inboundAddresses, pools, params]) => {
+    const sub = timer(0, 30000)
+      .pipe(
+        // combined
+        switchMap(() => combined),
+        retry()
+      )
+      .subscribe(([inboundAddresses, pools, params]) => {
+        this.inboundAddresses = inboundAddresses;
 
-      this.inboundAddresses = inboundAddresses;
+        // check for halted chains
+        this.setHaltedChains();
 
-      // check for halted chains
-      this.setHaltedChains();
+        // set ETH pool if available
+        const ethPool = pools.find((pool) => pool.asset === "ETH.ETH");
+        if (ethPool) {
+          this.ethPool = ethPool;
+        }
 
-      // set ETH pool if available
-      const ethPool = pools.find( (pool) => pool.asset === 'ETH.ETH' );
-      if (ethPool) {
-        this.ethPool = ethPool;
-      }
-
-      this.setAvailablePools(pools);
-      this.setSelectableMarkets();
-
-      // update network fees
-      this.setNetworkFees();
+        this.setAvailablePools(pools);
+        this.setSelectableMarkets();
 
         // update network fees
         this.setNetworkFees();
 
-      // on init, set target asset
-      const sourceAssetName = params.get('sourceAsset');
-      const targetAssetName = params.get('targetAsset');
+        // update network fees
+        this.setNetworkFees();
 
-      if (sourceAssetName && targetAssetName  && sourceAssetName == targetAssetName) {
-        this.router.navigate(['/', 'swap', 'THOR.RUNE', 'BTC.BTC'])
-        return
-      }
-      else if (this.selectableMarkets && !this.selectedSourceAsset && !this.selectedTargetAsset) {
+        // on init, set target asset
+        const sourceAssetName = params.get("sourceAsset");
+        const targetAssetName = params.get("targetAsset");
 
-        if (sourceAssetName && sourceAssetName !== 'no-asset') {
-          let asset = new Asset(sourceAssetName);
-          if (this.selectableMarkets.find(market => market.asset.chain === asset.chain && market.asset.symbol === asset.symbol)) {
-            this.selectedSourceAsset = asset;
+        if (
+          sourceAssetName &&
+          targetAssetName &&
+          sourceAssetName == targetAssetName
+        ) {
+          this.router.navigate(["/", "swap", "THOR.RUNE", "BTC.BTC"]);
+          return;
+        } else if (
+          this.selectableMarkets &&
+          !this.selectedSourceAsset &&
+          !this.selectedTargetAsset
+        ) {
+          if (sourceAssetName && sourceAssetName !== "no-asset") {
+            let asset = new Asset(sourceAssetName);
+            if (
+              this.selectableMarkets.find(
+                (market) =>
+                  market.asset.chain === asset.chain &&
+                  market.asset.symbol === asset.symbol
+              )
+            ) {
+              this.selectedSourceAsset = asset;
+            }
+          }
+
+          if (targetAssetName && targetAssetName !== "no-asset") {
+            let assetTarget = new Asset(targetAssetName);
+            if (
+              this.selectableMarkets.find(
+                (market) =>
+                  market.asset.chain === assetTarget.chain &&
+                  market.asset.symbol === assetTarget.symbol
+              )
+            ) {
+              this.selectedTargetAsset = assetTarget;
+            }
           }
         }
-        
-        if (targetAssetName && targetAssetName !== 'no-asset') {
-          let assetTarget = new Asset(targetAssetName);
-          if (this.selectableMarkets.find(market => market.asset.chain === assetTarget.chain && market.asset.symbol === assetTarget.symbol)) {
-            this.selectedTargetAsset = assetTarget;
-          }
-        }
-      }
-
-    });
+      });
 
     this.subs.push(sub);
   }
@@ -360,14 +398,14 @@ export class SwapComponent implements OnInit, OnDestroy {
       const assetOutboundFee = this.txUtilsService.calculateNetworkFee(
         asset,
         this.inboundAddresses,
-        'OUTBOUND',
+        "OUTBOUND",
         pool
       );
 
       const assetInboundFee = this.txUtilsService.calculateNetworkFee(
         asset,
         this.inboundAddresses,
-        'INBOUND',
+        "INBOUND",
         pool
       );
 
@@ -376,21 +414,21 @@ export class SwapComponent implements OnInit, OnDestroy {
     }
 
     // set THOR.RUNE network fees
-    this.outboundFees['THOR.RUNE'] = this.txUtilsService.calculateNetworkFee(
-      new Asset('THOR.RUNE'),
+    this.outboundFees["THOR.RUNE"] = this.txUtilsService.calculateNetworkFee(
+      new Asset("THOR.RUNE"),
       this.inboundAddresses,
-      'OUTBOUND'
+      "OUTBOUND"
     );
 
-    this.inboundFees['THOR.RUNE'] = this.txUtilsService.calculateNetworkFee(
-      new Asset('THOR.RUNE'),
+    this.inboundFees["THOR.RUNE"] = this.txUtilsService.calculateNetworkFee(
+      new Asset("THOR.RUNE"),
       this.inboundAddresses,
-      'INBOUND'
+      "INBOUND"
     );
   }
 
   goToSettings() {
-    this.overlaysService.setSettingViews(MainViewsEnum.AccountSetting, 'SLIP');
+    this.overlaysService.setSettingViews(MainViewsEnum.AccountSetting, "SLIP");
   }
 
   transactionSuccess() {
@@ -399,16 +437,16 @@ export class SwapComponent implements OnInit, OnDestroy {
   }
 
   isRune(asset: Asset): boolean {
-    return asset && asset.ticker === 'RUNE'; // covers BNB and native
+    return asset && asset.ticker === "RUNE"; // covers BNB and native
   }
 
   isNativeRune(asset: Asset): boolean {
-    return assetToString(asset) === 'THOR.RUNE';
+    return assetToString(asset) === "THOR.RUNE";
   }
 
   getEthRouter() {
     this.midgardService.getInboundAddresses().subscribe((addresses) => {
-      const ethInbound = addresses.find((inbound) => inbound.chain === 'ETH');
+      const ethInbound = addresses.find((inbound) => inbound.chain === "ETH");
       if (ethInbound) {
         this.ethInboundAddress = ethInbound;
       }
@@ -423,7 +461,7 @@ export class SwapComponent implements OnInit, OnDestroy {
 
   setAvailablePools(pools: PoolDTO[]) {
     this.availablePools = pools
-      .filter((pool) => pool.status === 'available')
+      .filter((pool) => pool.status === "available")
       .filter(
         (pool) => !this.haltedChains.includes(new Asset(pool.asset).chain)
       );
@@ -442,18 +480,18 @@ export class SwapComponent implements OnInit, OnDestroy {
         // filter out until we can add support
         .filter(
           (pool) =>
-            pool.asset.chain === 'BNB' ||
-            pool.asset.chain === 'THOR' ||
-            pool.asset.chain === 'BTC' ||
-            pool.asset.chain === 'ETH' ||
-            pool.asset.chain === 'LTC'
+            pool.asset.chain === "BNB" ||
+            pool.asset.chain === "THOR" ||
+            pool.asset.chain === "BTC" ||
+            pool.asset.chain === "ETH" ||
+            pool.asset.chain === "LTC"
           // Temporarily disable BCH due to https://github.com/asgardex/asgard-exchange/issues/379
           // pool.asset.chain === 'BCH'
         );
 
       // Keeping RUNE at top by default
       this.selectableMarkets.unshift({
-        asset: new Asset('THOR.RUNE'),
+        asset: new Asset("THOR.RUNE"),
         assetPriceUSD: this.thorchainPricesService.estimateRunePrice(
           this.availablePools
         ),
@@ -508,7 +546,7 @@ export class SwapComponent implements OnInit, OnDestroy {
       this.targetAssetUnitDisplay <
         this.outboundFees[assetToString(this.selectedTargetAsset)] ||
       // if RUNE, ensure 3 RUNE remain in wallet
-      (this.selectedSourceAsset.chain === 'THOR' &&
+      (this.selectedSourceAsset.chain === "THOR" &&
         this.sourceBalance - this.sourceAssetUnit < 3) ||
       // check sufficient underlying chain balance to cover fees
       this.sourceChainBalance <
@@ -536,13 +574,13 @@ export class SwapComponent implements OnInit, OnDestroy {
   // }
 
   isError(): boolean {
-
-    if (this.mainButtonText() == 'Select'
-      || this.mainButtonText() == 'Connect wallet'
-      || this.mainButtonText() == 'Enter an amount'
-      || this.mainButtonText() == 'Swap'
-      || this.mainButtonText() == 'LOADING BALANCE'
-      || this.mainButtonText() == 'Maintenance Enabled'
+    if (
+      this.mainButtonText() == "Select" ||
+      this.mainButtonText() == "Connect wallet" ||
+      this.mainButtonText() == "Enter an amount" ||
+      this.mainButtonText() == "Swap" ||
+      this.mainButtonText() == "LOADING BALANCE" ||
+      this.mainButtonText() == "Maintenance Enabled"
     ) {
       return false;
     }
@@ -551,25 +589,24 @@ export class SwapComponent implements OnInit, OnDestroy {
   }
 
   mainButtonText(): string {
-
     /** App Lock situation */
     if (this.appLocked) {
-      return 'Maintenance Enabled';
+      return "Maintenance Enabled";
     }
 
     /** User Not connected */
     if (!this.user || !this.balances) {
-      return 'Connect wallet';
+      return "Connect wallet";
     }
 
     /** Loading balance from the user */
     if (this.user && !this.balances) {
-      return 'LOADING BALANCE';
+      return "LOADING BALANCE";
     }
 
     /** THORChain is backed up */
     if (this.queue && this.queue.outbound >= 12) {
-      return 'THORChain Network Latency';
+      return "THORChain Network Latency";
     }
 
     if (this.haltedChains.includes(this.selectedSourceAsset.chain)) {
@@ -578,7 +615,7 @@ export class SwapComponent implements OnInit, OnDestroy {
 
     /** No target asset selected */
     if (!this.selectedTargetAsset || !this.selectedSourceAsset) {
-      return 'Select';
+      return "Select";
     }
 
     if (this.haltedChains.includes(this.selectedTargetAsset.chain)) {
@@ -586,15 +623,15 @@ export class SwapComponent implements OnInit, OnDestroy {
     }
 
     if (
-      this.selectedSourceAsset.chain === 'THOR' &&
+      this.selectedSourceAsset.chain === "THOR" &&
       this.sourceBalance - this.sourceAssetUnit < 3
     ) {
-      return 'Min 3 RUNE in Wallet Required';
+      return "Min 3 RUNE in Wallet Required";
     }
 
     /** No source amount set */
     if (!this.sourceAssetUnit) {
-      return 'Enter an amount';
+      return "Enter an amount";
     }
 
     /** Input Amount is less than network fees */
@@ -613,11 +650,11 @@ export class SwapComponent implements OnInit, OnDestroy {
       this.targetAssetUnitDisplay <
       this.outboundFees[assetToString(this.selectedTargetAsset)]
     ) {
-      return 'Output Amount Less Than Fees';
+      return "Output Amount Less Than Fees";
     }
 
     if (!this.inboundAddresses) {
-      return 'Loading';
+      return "Loading";
     }
 
     /** Source amount is higher than user spendable amount */
@@ -639,12 +676,12 @@ export class SwapComponent implements OnInit, OnDestroy {
       this.targetAssetUnitDisplay <=
         this.userService.minimumSpendable(this.selectedTargetAsset)
     ) {
-      return 'Amount too low';
+      return "Amount too low";
     }
 
     /** Exceeds slip tolerance set in user settings */
     if (this.slip * 100 > this.slippageTolerance) {
-      return 'Slip Limit Exceeded';
+      return "Slip Limit Exceeded";
     }
 
     /** Good to go */
@@ -654,22 +691,38 @@ export class SwapComponent implements OnInit, OnDestroy {
       this.sourceAssetUnit <= this.sourceBalance &&
       this.selectedTargetAsset
     ) {
-      return 'Swap';
+      return "Swap";
     } else {
-      console.warn('error creating main button text');
+      console.warn("error creating main button text");
     }
   }
 
   getBalance() {
-    return (this.selectedSourceAsset && this.sourceBalance
-      && (this.sourceAssetUnit > this.userService.maximumSpendableBalance(this.selectedSourceAsset, this.sourceBalance, this.inboundAddresses)))
+    return (
+      this.selectedSourceAsset &&
+      this.sourceBalance &&
+      this.sourceAssetUnit >
+        this.userService.maximumSpendableBalance(
+          this.selectedSourceAsset,
+          this.sourceBalance,
+          this.inboundAddresses
+        )
+    );
   }
 
   openConfirmationDialog() {
     const output = this.targetAssetUnit.div(10 ** 8);
 
-    let sourceAsset = this.selectableMarkets.find( (asset) => `${asset.asset.chain}.${asset.asset.ticker}` === `${this.selectedSourceAsset.chain}.${this.selectedSourceAsset.ticker}`);
-    let targetAsset = this.selectableMarkets.find( (asset) => `${asset.asset.chain}.${asset.asset.ticker}` === `${this.selectedTargetAsset.chain}.${this.selectedTargetAsset.ticker}`);
+    let sourceAsset = this.selectableMarkets.find(
+      (asset) =>
+        `${asset.asset.chain}.${asset.asset.ticker}` ===
+        `${this.selectedSourceAsset.chain}.${this.selectedSourceAsset.ticker}`
+    );
+    let targetAsset = this.selectableMarkets.find(
+      (asset) =>
+        `${asset.asset.chain}.${asset.asset.ticker}` ===
+        `${this.selectedTargetAsset.chain}.${this.selectedTargetAsset.ticker}`
+    );
 
     this.swapData = {
       sourceAsset: sourceAsset,
@@ -681,11 +734,10 @@ export class SwapComponent implements OnInit, OnDestroy {
       slip: this.slip,
       balance: this.sourceBalance,
       runePrice: this.runePrice,
-      networkFeeInSource: this.networkFeeInSource
-    }
+      networkFeeInSource: this.networkFeeInSource,
+    };
 
-
-    this.overlaysService.setCurrentSwapView('Confirm')
+    this.overlaysService.setCurrentSwapView("Confirm");
   }
 
   updateSwapDetails() {
@@ -697,17 +749,27 @@ export class SwapComponent implements OnInit, OnDestroy {
 
     // Getting the source asset price from selected pools
     if (this.selectableMarkets && this._selectedSourceAsset) {
-      this.sourceAssetPrice = this.selectableMarkets.find( (pool) => `${pool.asset.chain}.${pool.asset.ticker}` === `${this._selectedSourceAsset.chain}.${this._selectedSourceAsset.ticker}`).assetPriceUSD;
-      console.log(this.sourceAssetPrice)
+      this.sourceAssetPrice = this.selectableMarkets.find(
+        (pool) =>
+          `${pool.asset.chain}.${pool.asset.ticker}` ===
+          `${this._selectedSourceAsset.chain}.${this._selectedSourceAsset.ticker}`
+      ).assetPriceUSD;
+      console.log(this.sourceAssetPrice);
     }
 
     // Getting the source asset price from selected pools
     if (this.selectableMarkets && this.balances && this._selectedTargetAsset) {
-      this.targetAssetPrice = this.selectableMarkets.find( (pool) => `${pool.asset.chain}.${pool.asset.ticker}` === `${this._selectedTargetAsset.chain}.${this._selectedTargetAsset.ticker}`).assetPriceUSD;
+      this.targetAssetPrice = this.selectableMarkets.find(
+        (pool) =>
+          `${pool.asset.chain}.${pool.asset.ticker}` ===
+          `${this._selectedTargetAsset.chain}.${this._selectedTargetAsset.ticker}`
+      ).assetPriceUSD;
     }
 
     if (this.selectableMarkets && this.balances && this._selectedSourceAsset) {
-      this.runePrice = this.selectableMarkets.find( (asset) => `${asset.asset.chain}.${asset.asset.ticker}` === `THOR.RUNE`).assetPriceUSD;
+      this.runePrice = this.selectableMarkets.find(
+        (asset) => `${asset.asset.chain}.${asset.asset.ticker}` === `THOR.RUNE`
+      ).assetPriceUSD;
     }
   }
 
@@ -882,13 +944,13 @@ export class SwapComponent implements OnInit, OnDestroy {
       this.inputNetworkFee = this.txUtilsService.calculateNetworkFee(
         this.selectedSourceAsset,
         this.inboundAddresses,
-        'INBOUND',
+        "INBOUND",
         sourcePool
       );
       this.outputNetworkFee = this.txUtilsService.calculateNetworkFee(
         this.selectedTargetAsset,
         this.inboundAddresses,
-        'OUTBOUND',
+        "OUTBOUND",
         targetPool
       );
 

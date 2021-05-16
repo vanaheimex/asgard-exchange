@@ -1,20 +1,23 @@
-<div class="breadcumber-container" [ngClass]="{'error': isError || message.isError}">
+<div
+  class="breadcumber-container"
+  [ngClass]="{ error: isError || message.isError }"
+>
   <ng-container *ngFor="let p of path">
-    <div class="path" [ngClass]="{'disable': p.disable}" (click)="navHandler(p)">
-      {{p.name}}
+    <div
+      class="path"
+      [ngClass]="{ disable: p.disable }"
+      (click)="navHandler(p)"
+    >
+      {{ p.name }}
     </div>
-    <div>
-      >
-    </div>
+    <div>></div>
   </ng-container>
   <ng-container *ngIf="backName">
-    <div class="path" (click)="backFunc.emit()">{{backName}}</div>
-    <div>
-      >
-    </div>
+    <div class="path" (click)="backFunc.emit()">{{ backName }}</div>
+    <div>></div>
   </ng-container>
   <div class="path path--active">
-    {{message.text || message}}
+    {{ message.text || message }}
   </div>
   <div class="cursor" #cursor></div>
 </div>

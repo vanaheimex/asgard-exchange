@@ -1,8 +1,8 @@
-import { CoinIconsFromTrustWallet } from 'src/app/_const/icon-list';
-import { Chain } from '@xchainjs/xchain-util';
-import { ethers } from 'ethers';
-import { ethToken } from '../_const/eth-token';
-import { environment } from '../../environments/environment'
+import { CoinIconsFromTrustWallet } from "src/app/_const/icon-list";
+import { Chain } from "@xchainjs/xchain-util";
+import { ethers } from "ethers";
+import { ethToken } from "../_const/eth-token";
+import { environment } from "../../environments/environment";
 
 export class Asset {
   chain: Chain;
@@ -11,60 +11,65 @@ export class Asset {
   iconPath: string;
 
   constructor(poolName: string) {
-    const { chain, symbol, ticker } = this._getAssetFromString(poolName.toUpperCase());
+    const { chain, symbol, ticker } = this._getAssetFromString(
+      poolName.toUpperCase()
+    );
     this.chain = chain;
     this.symbol = symbol;
     this.ticker = ticker;
 
     const trustWalletMatch = CoinIconsFromTrustWallet[this.ticker];
 
-    if (ticker == 'RUNE') {
-      this.iconPath = '/assets/icons/logo-thor-rune.svg';
-      return
+    if (ticker == "RUNE") {
+      this.iconPath = "/assets/icons/logo-thor-rune.svg";
+      return;
     }
 
-    if (trustWalletMatch && chain !== 'THOR') {
+    if (trustWalletMatch && chain !== "THOR") {
       this.iconPath = `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/binance/assets/${trustWalletMatch}/logo.png`;
     } else {
       // Override token icons when not found in trustwallet
 
       switch (chain) {
-        case 'BTC':
+        case "BTC":
           this.iconPath =
-            'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/binance/assets/BTCB-1DE/logo.png';
+            "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/binance/assets/BTCB-1DE/logo.png";
           break;
 
-        case 'LTC':
+        case "LTC":
           this.iconPath =
-            'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/litecoin/info/logo.png';
+            "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/litecoin/info/logo.png";
           break;
 
-        case 'BNB':
-          if (ticker === 'BNB') {
+        case "BNB":
+          if (ticker === "BNB") {
             this.iconPath =
-              'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/binance/info/logo.png';
+              "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/binance/info/logo.png";
           }
           break;
 
-        case 'ETH':
-          if (this.symbol !== 'ETH') {
+        case "ETH":
+          if (this.symbol !== "ETH") {
             // for ETH tokens
             this.iconPath = this._setEthIconPath(symbol, ticker);
 
             // getter of icons for eth testnet
-            if(environment.network === 'testnet') {
-              this.iconPath = this.getTestnetTokeIconPath(this.symbol, this.ticker);
+            if (environment.network === "testnet") {
+              this.iconPath = this.getTestnetTokeIconPath(
+                this.symbol,
+                this.ticker
+              );
             }
           }
           break;
 
-        case 'THOR':
-          this.iconPath = '/assets/icons/logo-thor-rune.svg';
+        case "THOR":
+          this.iconPath = "/assets/icons/logo-thor-rune.svg";
           break;
 
-        case 'BCH':
+        case "BCH":
           this.iconPath =
-            'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/bitcoincash/info/logo.png';
+            "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/bitcoincash/info/logo.png";
           break;
 
         default:
@@ -74,9 +79,12 @@ export class Asset {
   }
 
   //get tesnet token
-  private getTestnetTokeIconPath(assetSymbol: string, assetTicker: string): string {
+  private getTestnetTokeIconPath(
+    assetSymbol: string,
+    assetTicker: string
+  ): string {
     let token = ethToken.tokens.find((token) => assetTicker === token.symbol);
-    if( token ) {
+    if (token) {
       return token.logoURI;
     }
   }
@@ -97,15 +105,15 @@ export class Asset {
     let symbol: string;
     let ticker: string;
 
-    const data = poolName.split('.');
-    if (poolName.includes('.')) {
+    const data = poolName.split(".");
+    if (poolName.includes(".")) {
       chain = data[0] as Chain;
       symbol = data[1];
     } else {
       symbol = data[0];
     }
     if (symbol) {
-      ticker = symbol.split('-')[0];
+      ticker = symbol.split("-")[0];
     }
 
     return { chain, symbol, ticker };
@@ -118,7 +126,7 @@ export const checkSummedAsset = (
   const asset = new Asset(poolName);
   const assetAddress = asset.symbol.slice(asset.ticker.length + 1);
   const strip0x =
-    assetAddress.substr(0, 2).toUpperCase() === '0X'
+    assetAddress.substr(0, 2).toUpperCase() === "0X"
       ? assetAddress.substr(2)
       : assetAddress;
   const checkSummedAddress = ethers.utils.getAddress(strip0x);
@@ -135,10 +143,10 @@ export const isNonNativeRuneToken = (asset: {
   symbol: string;
 }): boolean => {
   const runeTokens = [
-    'BNB.RUNE-B1A', // chaosnet
-    'BNB.RUNE-67C', // testnet
-    'ETH.RUNE-0XD601C6A3A36721320573885A8D8420746DA3D7A0', // testnet
-    'ETH.RUNE-0X3155BA85D5F96B2D030A4966AF206230E46849CB', // chaosnet
+    "BNB.RUNE-B1A", // chaosnet
+    "BNB.RUNE-67C", // testnet
+    "ETH.RUNE-0XD601C6A3A36721320573885A8D8420746DA3D7A0", // testnet
+    "ETH.RUNE-0X3155BA85D5F96B2D030A4966AF206230E46849CB", // chaosnet
   ];
 
   return runeTokens.includes(`${asset.chain}.${asset.symbol}`.toUpperCase());
@@ -146,23 +154,23 @@ export const isNonNativeRuneToken = (asset: {
 
 export const getChainAsset = (chain: Chain): Asset => {
   switch (chain) {
-    case 'BTC':
-      return new Asset('BTC.BTC');
+    case "BTC":
+      return new Asset("BTC.BTC");
 
-    case 'LTC':
-      return new Asset('LTC.LTC');
+    case "LTC":
+      return new Asset("LTC.LTC");
 
-    case 'BCH':
-      return new Asset('BCH.BCH');
+    case "BCH":
+      return new Asset("BCH.BCH");
 
-    case 'ETH':
-      return new Asset('ETH.ETH');
+    case "ETH":
+      return new Asset("ETH.ETH");
 
-    case 'BNB':
-      return new Asset('BNB.BNB');
+    case "BNB":
+      return new Asset("BNB.BNB");
 
-    case 'THOR':
-      return new Asset('THOR.RUNE');
+    case "THOR":
+      return new Asset("THOR.RUNE");
 
     default:
       return null;

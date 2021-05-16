@@ -1,16 +1,16 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { MidgardConstants } from '../_classes/midgard-constants';
-import { PoolAddressDTO } from '../_classes/pool-address';
-import { TransactionDTO } from '../_classes/transaction';
-import { LastBlock } from '../_classes/last-block';
-import { PoolDTO } from '../_classes/pool';
-import { MemberDTO } from '../_classes/member';
-import { shareReplay } from 'rxjs/operators';
-import { environment } from 'src/environments/environment';
-import { NetworkSummary } from '../_classes/network';
-import { LiquidityProvider } from '../_classes/liquidity-provider';
+import { Injectable } from "@angular/core";
+import { HttpClient, HttpParams } from "@angular/common/http";
+import { Observable } from "rxjs";
+import { MidgardConstants } from "../_classes/midgard-constants";
+import { PoolAddressDTO } from "../_classes/pool-address";
+import { TransactionDTO } from "../_classes/transaction";
+import { LastBlock } from "../_classes/last-block";
+import { PoolDTO } from "../_classes/pool";
+import { MemberDTO } from "../_classes/member";
+import { shareReplay } from "rxjs/operators";
+import { environment } from "src/environments/environment";
+import { NetworkSummary } from "../_classes/network";
+import { LiquidityProvider } from "../_classes/liquidity-provider";
 
 export interface MimirResponse {
   [key: string]: number;
@@ -29,7 +29,7 @@ export interface ThorchainQueue {
 }
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class MidgardService {
   private v2BasePath: string;
@@ -39,14 +39,14 @@ export class MidgardService {
 
   constructor(private http: HttpClient) {
     this.v2BasePath =
-      environment.network === 'testnet'
-        ? 'https://testnet.midgard.thorchain.info/v2'
-        : 'https://midgard.thorchain.info/v2';
+      environment.network === "testnet"
+        ? "https://testnet.midgard.thorchain.info/v2"
+        : "https://midgard.thorchain.info/v2";
 
     this._thornodeBasePath =
-      environment.network === 'testnet'
-        ? 'https://testnet.thornode.thorchain.info'
-        : 'https://thornode.thorchain.info';
+      environment.network === "testnet"
+        ? "https://testnet.thornode.thorchain.info"
+        : "https://thornode.thorchain.info";
 
     // cached since constants are constant
     this._constants$ = this.http
@@ -93,17 +93,22 @@ export class MidgardService {
 
   getTransaction(txId: string): Observable<TransactionDTO> {
     const params = new HttpParams()
-      .set('offset', '0')
-      .set('limit', '1')
-      .set('txid', txId);
+      .set("offset", "0")
+      .set("limit", "1")
+      .set("txid", txId);
     return this.http.get<TransactionDTO>(`${this.v2BasePath}/actions`, {
       params,
     });
   }
 
   getAddrTransactions(address: string): Observable<TransactionDTO> {
-    const params = new HttpParams().set('offset', '0').set('limit', '10').set('address', address);
-    return this.http.get<TransactionDTO>(`${this.v2BasePath}/actions`, {params});
+    const params = new HttpParams()
+      .set("offset", "0")
+      .set("limit", "10")
+      .set("address", address);
+    return this.http.get<TransactionDTO>(`${this.v2BasePath}/actions`, {
+      params,
+    });
   }
 
   getThornodeTransaction(hash: string): Observable<ThornodeTx> {

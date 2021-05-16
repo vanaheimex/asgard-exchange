@@ -1,11 +1,11 @@
-export type WalletType = 'keystore' | 'walletconnect' | 'ledger' | 'XDEFI';
-import { Client as BinanceClient } from '@xchainjs/xchain-binance';
-import { Client as BitcoinClient } from '@xchainjs/xchain-bitcoin';
-import { Client as ThorchainClient } from '@xchainjs/xchain-thorchain';
-import { Client as EthereumClient } from '@xchainjs/xchain-ethereum/lib';
-import { Client as LitecoinClient } from '@xchainjs/xchain-litecoin';
-import { Client as BitcoinCashClient } from '@xchainjs/xchain-bitcoincash';
-import { Balances } from '@xchainjs/xchain-client';
+export type WalletType = "keystore" | "walletconnect" | "ledger" | "XDEFI";
+import { Client as BinanceClient } from "@xchainjs/xchain-binance";
+import { Client as BitcoinClient } from "@xchainjs/xchain-bitcoin";
+import { Client as ThorchainClient } from "@xchainjs/xchain-thorchain";
+import { Client as EthereumClient } from "@xchainjs/xchain-ethereum/lib";
+import { Client as LitecoinClient } from "@xchainjs/xchain-litecoin";
+import { Client as BitcoinCashClient } from "@xchainjs/xchain-bitcoincash";
+import { Balances } from "@xchainjs/xchain-client";
 
 export interface AvailableClients {
   binance: BinanceClient;

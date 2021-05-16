@@ -1,19 +1,26 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { address } from 'bitcoinjs-lib';
-import { Subscription } from 'rxjs';
-import { getChainAsset } from 'src/app/_classes/asset';
-import { AssetAndBalance } from 'src/app/_classes/asset-and-balance';
-import { PoolAddressDTO } from 'src/app/_classes/pool-address';
-import { User } from 'src/app/_classes/user';
-import { OverlaysService } from 'src/app/_services/overlays.service';
-import { MidgardService } from 'src/app/_services/midgard.service';
-import { TransactionUtilsService } from 'src/app/_services/transaction-utils.service';
-import { UserService } from 'src/app/_services/user.service';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from "@angular/core";
+import { address } from "bitcoinjs-lib";
+import { Subscription } from "rxjs";
+import { getChainAsset } from "src/app/_classes/asset";
+import { AssetAndBalance } from "src/app/_classes/asset-and-balance";
+import { PoolAddressDTO } from "src/app/_classes/pool-address";
+import { User } from "src/app/_classes/user";
+import { OverlaysService } from "src/app/_services/overlays.service";
+import { MidgardService } from "src/app/_services/midgard.service";
+import { TransactionUtilsService } from "src/app/_services/transaction-utils.service";
+import { UserService } from "src/app/_services/user.service";
 
 @Component({
-  selector: 'app-send-asset',
-  templateUrl: './send-asset.component.html',
-  styleUrls: ['./send-asset.component.scss'],
+  selector: "app-send-asset",
+  templateUrl: "./send-asset.component.html",
+  styleUrls: ["./send-asset.component.scss"],
 })
 export class SendAssetComponent implements OnInit, OnDestroy {
   @Output() back: EventEmitter<null>;
@@ -31,8 +38,7 @@ export class SendAssetComponent implements OnInit, OnDestroy {
   }
   set amount(val: number) {
     this._amount = val;
-    if (!val)
-      this._amount = 0;
+    if (!val) this._amount = 0;
     this.checkSpendable();
   }
   private _amount: number;
@@ -50,12 +56,12 @@ export class SendAssetComponent implements OnInit, OnDestroy {
 
   constructor(
     private userService: UserService,
-    private overlaysService: OverlaysService, 
+    private overlaysService: OverlaysService,
     private midgardService: MidgardService,
     private txUtilsService: TransactionUtilsService
   ) {
-    this.recipientAddress = '';
-    this.memo = ''
+    this.recipientAddress = "";
+    this.memo = "";
     this.back = new EventEmitter<null>();
     this.confirmSend = new EventEmitter<{
       amount: number;
@@ -63,7 +69,7 @@ export class SendAssetComponent implements OnInit, OnDestroy {
       memo: string;
     }>();
     this.amountSpendable = false;
-    this.message = 'prepare';
+    this.message = "prepare";
   }
 
   ngOnInit(): void {
@@ -119,7 +125,7 @@ export class SendAssetComponent implements OnInit, OnDestroy {
       this.txUtilsService.calculateNetworkFee(
         getChainAsset(this.asset.asset.chain),
         this.inboundAddresses,
-        'EXTERNAL'
+        "EXTERNAL"
       )
     ) {
       return true;
@@ -138,15 +144,15 @@ export class SendAssetComponent implements OnInit, OnDestroy {
 
   mainButtonText(): string {
     if (!this.user) {
-      return 'Connect Wallet';
+      return "Connect Wallet";
     }
 
     if (!this.asset) {
-      return 'Prepare';
+      return "Prepare";
     }
 
     if (!this.inboundAddresses || !this.chainBalance) {
-      return 'Loading';
+      return "Loading";
     }
 
     const client = this.userService.getChainClient(
@@ -157,11 +163,19 @@ export class SendAssetComponent implements OnInit, OnDestroy {
       return `No ${this.asset.asset.chain} Client Found`;
     }
 
-    if (this.amount <= 0 || !this.amount || !this.recipientAddress || (this.recipientAddress && this.recipientAddress.length <= 10) ) {
-      return 'Prepare';
+    if (
+      this.amount <= 0 ||
+      !this.amount ||
+      !this.recipientAddress ||
+      (this.recipientAddress && this.recipientAddress.length <= 10)
+    ) {
+      return "Prepare";
     }
 
-    if (!client.validateAddress(this.recipientAddress) || client.getAddress() === this.recipientAddress) {
+    if (
+      !client.validateAddress(this.recipientAddress) ||
+      client.getAddress() === this.recipientAddress
+    ) {
       return `Invalid ${this.asset.asset.chain} Address`;
     }
 
@@ -171,7 +185,7 @@ export class SendAssetComponent implements OnInit, OnDestroy {
       this.txUtilsService.calculateNetworkFee(
         getChainAsset(this.asset.asset.chain),
         this.inboundAddresses,
-        'EXTERNAL'
+        "EXTERNAL"
       )
     ) {
       return `Insufficient ${this.asset.asset.chain}`;
@@ -181,41 +195,65 @@ export class SendAssetComponent implements OnInit, OnDestroy {
       return `INSUFFICIENT ${this.asset.asset.ticker}`;
     }
 
-    return 'Ready';
-
+    return "Ready";
   }
 
   isError(): boolean {
-
     if (
-      this.mainButtonText() === 'Ready'
-      || this.mainButtonText() === 'Prepare'
-      || this.mainButtonText() === 'Connect Wallet'
+      this.mainButtonText() === "Ready" ||
+      this.mainButtonText() === "Prepare" ||
+      this.mainButtonText() === "Connect Wallet"
     ) {
       return false;
     }
 
     return true;
-
   }
 
   checkSpendable(): void {
-    const maximumSpendableBalance = this.userService.maximumSpendableBalance(this.asset.asset, this.balance, this.inboundAddresses, 'EXTERNAL');
-    this.amountSpendable = (this.amount <= maximumSpendableBalance);
-    console.log('amount', this.amount)
-    console.log('max spend', maximumSpendableBalance)
-    this.message = this.amount > 0 && this.amountSpendable && this.recipientAddress.length > 12 ? 'ready' : 'prepare';
+    const maximumSpendableBalance = this.userService.maximumSpendableBalance(
+      this.asset.asset,
+      this.balance,
+      this.inboundAddresses,
+      "EXTERNAL"
+    );
+    this.amountSpendable = this.amount <= maximumSpendableBalance;
+    console.log("amount", this.amount);
+    console.log("max spend", maximumSpendableBalance);
+    this.message =
+      this.amount > 0 &&
+      this.amountSpendable &&
+      this.recipientAddress.length > 12
+        ? "ready"
+        : "prepare";
   }
 
   async navCaller(nav) {
-    this.address = await this.userService.getAdrressChain(this.asset.asset.chain);
+    this.address = await this.userService.getAdrressChain(
+      this.asset.asset.chain
+    );
 
-    if (nav === 'wallet')
-      this.overlaysService.setCurrentUserView({userView: 'Addresses', address: null, chain: null, asset: null});
-    else if (nav === 'chain')
-      this.overlaysService.setCurrentUserView({userView: 'Address', address: this.address, chain: this.asset.asset.chain, asset: null})
-    else if (nav === 'asset')
-      this.overlaysService.setCurrentUserView({userView: 'Address', address: this.address, chain: this.asset.asset.chain, asset: this.asset})
+    if (nav === "wallet")
+      this.overlaysService.setCurrentUserView({
+        userView: "Addresses",
+        address: null,
+        chain: null,
+        asset: null,
+      });
+    else if (nav === "chain")
+      this.overlaysService.setCurrentUserView({
+        userView: "Address",
+        address: this.address,
+        chain: this.asset.asset.chain,
+        asset: null,
+      });
+    else if (nav === "asset")
+      this.overlaysService.setCurrentUserView({
+        userView: "Address",
+        address: this.address,
+        chain: this.asset.asset.chain,
+        asset: this.asset,
+      });
   }
 
   ngOnDestroy() {

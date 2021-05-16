@@ -1,10 +1,21 @@
 <div *ngIf="data">
-
-  <div class="container-wrapper" *ngIf="txState == 'PENDING_CONFIRMATION' || txState == 'ERROR'">
+  <div
+    class="container-wrapper"
+    *ngIf="txState == 'PENDING_CONFIRMATION' || txState == 'ERROR'"
+  >
     <div class="container">
       <div class="main-container">
         <nav class="content-top">
-          <app-breadcrumb [path]="[{name: 'vanaheimex', call: 'swap'}, {name: 'Pools', call: 'pool'}, {name: 'Deposit', disable: true}]" [isError]="error" [message]="getMessage()" (funcCaller)="goToNav($event)"></app-breadcrumb>
+          <app-breadcrumb
+            [path]="[
+              { name: 'vanaheimex', call: 'swap' },
+              { name: 'Pools', call: 'pool' },
+              { name: 'Deposit', disable: true }
+            ]"
+            [isError]="error"
+            [message]="getMessage()"
+            (funcCaller)="goToNav($event)"
+          ></app-breadcrumb>
         </nav>
       </div>
       <app-asset-input
@@ -16,9 +27,9 @@
         [balance]="data.assetBalance"
         [hideMax]="true"
         [disableInput]="true"
-        
         [disabledMarketSelect]="true"
-        [isDeposit]="true">
+        [isDeposit]="true"
+      >
       </app-asset-input>
       <app-arrow [isPlus]="true"></app-arrow>
       <app-asset-input
@@ -31,28 +42,43 @@
         [hideMax]="true"
         [disableInput]="true"
         [disabledMarketSelect]="true"
-        
-        [isDeposit]="true">
+        [isDeposit]="true"
+      >
       </app-asset-input>
       <div class="swap-details">
         <div class="flex justify-between">
           <span class="tx-detail-label">Rates:</span>
-          <span>1 {{data.rune.asset.ticker}} = {{data.assetBasePrice | number:"1.2-4"}} {{data.asset.asset.ticker}}</span>
+          <span
+            >1 {{ data.rune.asset.ticker }} =
+            {{ data.assetBasePrice | number: "1.2-4" }}
+            {{ data.asset.asset.ticker }}</span
+          >
         </div>
         <div class="flex justify-between">
           <span class="tx-detail-label"></span>
-          <span>1 {{data.asset.asset.ticker}} = {{data.runeBasePrice | number:"1.2-4"}} {{data.rune.asset.ticker}}</span>
+          <span
+            >1 {{ data.asset.asset.ticker }} =
+            {{ data.runeBasePrice | number: "1.2-4" }}
+            {{ data.rune.asset.ticker }}</span
+          >
         </div>
         <div *ngIf="data.estimatedFee" class="flex justify-between">
           <span class="tx-detail-label">Fees:</span>
-          <span>{{data.estimatedFee | number:"0.0-8"}} {{data.asset.asset.ticker}}<span *ngIf="data.estimatedFee && data.runeFee"> + </span><span *ngIf="data.runeFee">{{data.runeFee | number:"0.0-4"}} RUNE</span></span>
+          <span
+            >{{ data.estimatedFee | number: "0.0-8" }}
+            {{ data.asset.asset.ticker
+            }}<span *ngIf="data.estimatedFee && data.runeFee"> + </span
+            ><span *ngIf="data.runeFee"
+              >{{ data.runeFee | number: "0.0-4" }} RUNE</span
+            ></span
+          >
         </div>
         <div class="flex justify-between">
           <div class="tx-detail-label">
             Estimated Transaction Time:
             <!-- <mat-icon style="transform: scale(.6)" matTooltip="Estimated Confirmation Time is the time it will take for THORChain to process your transaction.">info</mat-icon> -->
           </div>
-          <span><{{estimatedMinutes}} min</span>
+          <span><{{ estimatedMinutes }} min</span>
         </div>
         <div class="flex justify-between">
           <span class="tx-detail-label">Disclaimer:</span>
@@ -87,17 +113,30 @@
     </span>
   </div> -->
 
-  <app-transaction-ledger-confirm-modal *ngIf="txState == 'PENDING_LEDGER_CONFIRMATION'"></app-transaction-ledger-confirm-modal>
+  <app-transaction-ledger-confirm-modal
+    *ngIf="txState == 'PENDING_LEDGER_CONFIRMATION'"
+  ></app-transaction-ledger-confirm-modal>
 
   <app-transaction-processing-modal
     *ngIf="txState == 'SUBMITTING'"
     [asset]="[data.asset, data.rune]"
     [label]="['Depositing', 'Depositing']"
     [amount]="[data.assetAmount, data.runeAmount]"
-    transactionDetail="Depositing {{+data.assetAmount | number:'0.0-4'}} {{data.asset.asset.ticker}} + {{+data.runeAmount | number:'0.0-2'}} {{data.rune.asset.ticker}}"
+    transactionDetail="Depositing {{ +data.assetAmount | number: '0.0-4' }} {{
+      data.asset.asset.ticker
+    }} + {{ +data.runeAmount | number: '0.0-2' }} {{ data.rune.asset.ticker }}"
     (closeDialog)="closeDialog()"
-    [isPlus]="true">
-    <app-breadcrumb [path]="[{name: 'vanaheimex', call: 'swap'}, {name: 'Pools', disable: true}, {name: 'Deposit', disable: true}]" message="Transaction Processing" (funcCaller)="goToNav($event)"></app-breadcrumb>
+    [isPlus]="true"
+  >
+    <app-breadcrumb
+      [path]="[
+        { name: 'vanaheimex', call: 'swap' },
+        { name: 'Pools', disable: true },
+        { name: 'Deposit', disable: true }
+      ]"
+      message="Transaction Processing"
+      (funcCaller)="goToNav($event)"
+    ></app-breadcrumb>
   </app-transaction-processing-modal>
 
   <app-transaction-success-modal
@@ -109,11 +148,21 @@
     [amount]="[data.assetAmount, data.runeAmount]"
     (closeDialog)="closeToPool()"
     [externalTx]="true"
-    [isPlus]="true">
-    <app-breadcrumb [path]="[{name: 'vanaheimex', call: 'swap'}, {name: 'Pools', call: 'pool'}, {name: 'Deposit', call: 'deposit-back'}]" message="Success" (funcCaller)="goToNav($event)"></app-breadcrumb>
+    [isPlus]="true"
+  >
+    <app-breadcrumb
+      [path]="[
+        { name: 'vanaheimex', call: 'swap' },
+        { name: 'Pools', call: 'pool' },
+        { name: 'Deposit', call: 'deposit-back' }
+      ]"
+      message="Success"
+      (funcCaller)="goToNav($event)"
+    ></app-breadcrumb>
   </app-transaction-success-modal>
 
-  <app-retry-rune-deposit *ngIf="txState === 'RETRY_RUNE_DEPOSIT'"
+  <app-retry-rune-deposit
+    *ngIf="txState === 'RETRY_RUNE_DEPOSIT'"
     [asset]="data.asset.asset"
     [assetAmount]="data.assetAmount"
     [runeAmount]="data.runeAmount"
@@ -122,7 +171,7 @@
     [assetBalance]="data.assetBalance"
     (retrySuccess)="runeDepositSuccess($event)"
     (withdrawSuccess)="withdrawSuccess($event)"
-    (closeModal)="closeDialog()">
+    (closeModal)="closeDialog()"
+  >
   </app-retry-rune-deposit>
-
 </div>

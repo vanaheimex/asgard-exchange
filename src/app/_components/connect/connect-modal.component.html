@@ -1,4 +1,3 @@
-
 <!-- <div *ngIf="!selectedChain">
   <div class="modal-head">
     <h1 mat-dialog-title>Select Chain</h1>
@@ -18,8 +17,7 @@
 </div>
 
 <div *ngIf="selectedChain"> -->
-<div style="height: 100%;">
-
+<div style="height: 100%">
   <div *ngIf="!connectionView">
     <!-- <div class="modal-head">
       <div class="wallet-title outline-btn">
@@ -27,12 +25,17 @@
       </div>
     </div> -->
     <div class="content-top">
-      <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'connect', disable: true}]" message="select"></app-breadcrumb>
+      <app-breadcrumb
+        [path]="[
+          { name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap' },
+          { name: 'connect', disable: true }
+        ]"
+        message="select"
+      ></app-breadcrumb>
     </div>
 
     <div>
       <div class="keystore-content" mat-dialog-content>
-
         <!-- Connect Options -->
 
         <!-- <button class="connect-option" (click)="connectWalletConnect()" [disabled]="true">
@@ -47,7 +50,14 @@
         <button class="connect-option" (click)="createKeystore()">
           <div class="flex item items-center">
             <div class="add-icon">
-              <img [src]="isTestnet ?  '/assets/icons/plus-yellow.svg' : '/assets/icons/plus-green.svg'" alt="add icon">
+              <img
+                [src]="
+                  isTestnet
+                    ? '/assets/icons/plus-yellow.svg'
+                    : '/assets/icons/plus-green.svg'
+                "
+                alt="add icon"
+              />
             </div>
             <span class="item-text">Create New Keystore</span>
           </div>
@@ -56,44 +66,83 @@
         <button class="connect-option" (click)="connectKeystore()">
           <div class="flex item items-center">
             <div class="add-icon">
-              <img [src]="isTestnet ?  '/assets/icons/folder-icon-testnet.svg' : '/assets/icons/folder-icon.svg'" alt="folder icon">
+              <img
+                [src]="
+                  isTestnet
+                    ? '/assets/icons/folder-icon-testnet.svg'
+                    : '/assets/icons/folder-icon.svg'
+                "
+                alt="folder icon"
+              />
             </div>
             <span class="item-text">Connect To Existing Keystore</span>
           </div>
         </button>
-        
-        <button class="connect-option focus:outline-none justify-between" (click)="connectXDEFI()">
+
+        <button
+          class="connect-option focus:outline-none justify-between"
+          (click)="connectXDEFI()"
+        >
           <div class="flex item items-center">
             <div class="add-icon">
-              <img [src]="isTestnet ?  '/assets/icons/xdefi-icon-testnet.svg' : '/assets/icons/xdefi-icon.svg'" alt="xdefi icon">
+              <img
+                [src]="
+                  isTestnet
+                    ? '/assets/icons/xdefi-icon-testnet.svg'
+                    : '/assets/icons/xdefi-icon.svg'
+                "
+                alt="xdefi icon"
+              />
             </div>
-            <span class="item-text" *ngIf="isXDEFIConnected">Connect with XDEFI</span>
-            <span class="item-text" *ngIf="!isXDEFIConnected">Install XDEFI in Chrome/Brave</span>
+            <span class="item-text" *ngIf="isXDEFIConnected"
+              >Connect with XDEFI</span
+            >
+            <span class="item-text" *ngIf="!isXDEFIConnected"
+              >Install XDEFI in Chrome/Brave</span
+            >
           </div>
-          
         </button>
 
         <!-- close dialog -->
       </div>
     </div>
     <div class="bottom-actions">
-      <button class="close-btn" aria-label="Close Connect Wallet" (click)="close()">
+      <button
+        class="close-btn"
+        aria-label="Close Connect Wallet"
+        (click)="close()"
+      >
         <span>cancel</span>
       </button>
     </div>
   </div>
 
   <!-- KEYSTORE CREATE -->
-  <app-keystore-create *ngIf="connectionView == 'KEYSTORE_CREATE'" (back)="clearConnectionMethod()" (keystoreCreated)="storePhrasePrompt($event)" (closeModal)="close()"></app-keystore-create>
+  <app-keystore-create
+    *ngIf="connectionView == 'KEYSTORE_CREATE'"
+    (back)="clearConnectionMethod()"
+    (keystoreCreated)="storePhrasePrompt($event)"
+    (closeModal)="close()"
+  ></app-keystore-create>
 
   <!-- KEYSTORE CREATE - write down phrase prompt -->
-  <app-keystore-create-store-phrase *ngIf="connectionView == 'KEYSTORE_WRITE_PHRASE'" [phrase]="phrase" (closeModal)="close()"></app-keystore-create-store-phrase>
+  <app-keystore-create-store-phrase
+    *ngIf="connectionView == 'KEYSTORE_WRITE_PHRASE'"
+    [phrase]="phrase"
+    (closeModal)="close()"
+  ></app-keystore-create-store-phrase>
 
   <!-- KEYSTORE CONNECT -->
-  <app-keystore-connect *ngIf="connectionView == 'KEYSTORE_CONNECT'" (back)="clearConnectionMethod()" (closeModal)="close()"></app-keystore-connect>
+  <app-keystore-connect
+    *ngIf="connectionView == 'KEYSTORE_CONNECT'"
+    (back)="clearConnectionMethod()"
+    (closeModal)="close()"
+  ></app-keystore-connect>
 
   <!-- XDEFI CONNECT -->
-  <app-xdefi-connect *ngIf="connectionView == 'XDEFI'" (back)="clearConnectionMethod()" (closeModal)="close()"></app-xdefi-connect>
-
+  <app-xdefi-connect
+    *ngIf="connectionView == 'XDEFI'"
+    (back)="clearConnectionMethod()"
+    (closeModal)="close()"
+  ></app-xdefi-connect>
 </div>
-

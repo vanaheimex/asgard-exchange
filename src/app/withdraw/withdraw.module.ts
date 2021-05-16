@@ -1,22 +1,22 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { WithdrawComponent } from './withdraw.component';
-import { RouterModule } from '@angular/router';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatSliderModule } from '@angular/material/slider';
-import { FormsModule } from '@angular/forms';
-import { ConfirmWithdrawModalComponent } from './confirm-withdraw-modal/confirm-withdraw-modal.component';
-import { TransactionSuccessModalModule } from '../_components/transaction-success-modal/transaction-success-modal.module';
-import { TransactionProcessingModalModule } from '../_components/transaction-processing-modal/transaction-processing-modal.module';
-import { IconTickerModule } from '../_components/icon-ticker/icon-ticker.module';
-import { TransactionLedgerConfirmModalModule } from '../_components/transaction-ledger-confirm-modal/transaction-ledger-confirm-modal.module';
-import { DirectivesModule } from '../_directives/directives.module';
-import { SectionHeadModule } from '../_components/section-head/section-head.module';
-import { BreadcrumbModule } from '../_components/breadcrumb/breadcrumb.module';
-import { ArrowModule } from '../_components/arrow/arrow.module';
-import { DoubleAssetFieldModule } from '../_components/double-asset-field/double-asset-field.module';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { WithdrawComponent } from "./withdraw.component";
+import { RouterModule } from "@angular/router";
+import { MatIconModule } from "@angular/material/icon";
+import { MatButtonModule } from "@angular/material/button";
+import { MatSliderModule } from "@angular/material/slider";
+import { FormsModule } from "@angular/forms";
+import { ConfirmWithdrawModalComponent } from "./confirm-withdraw-modal/confirm-withdraw-modal.component";
+import { TransactionSuccessModalModule } from "../_components/transaction-success-modal/transaction-success-modal.module";
+import { TransactionProcessingModalModule } from "../_components/transaction-processing-modal/transaction-processing-modal.module";
+import { IconTickerModule } from "../_components/icon-ticker/icon-ticker.module";
+import { TransactionLedgerConfirmModalModule } from "../_components/transaction-ledger-confirm-modal/transaction-ledger-confirm-modal.module";
+import { DirectivesModule } from "../_directives/directives.module";
+import { SectionHeadModule } from "../_components/section-head/section-head.module";
+import { BreadcrumbModule } from "../_components/breadcrumb/breadcrumb.module";
+import { ArrowModule } from "../_components/arrow/arrow.module";
+import { DoubleAssetFieldModule } from "../_components/double-asset-field/double-asset-field.module";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @NgModule({
   declarations: [WithdrawComponent, ConfirmWithdrawModalComponent],
@@ -37,12 +37,12 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     DoubleAssetFieldModule,
     RouterModule.forChild([
       {
-        path: ':asset',
+        path: ":asset",
         component: WithdrawComponent,
       },
       {
-        path: '',
-        redirectTo: '/pool',
+        path: "",
+        redirectTo: "/pool",
       },
     ]),
   ],

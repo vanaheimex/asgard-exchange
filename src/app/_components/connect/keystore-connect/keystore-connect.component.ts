@@ -1,6 +1,6 @@
-import { Component, Output, EventEmitter } from '@angular/core';
-import { UserService } from 'src/app/_services/user.service';
-import { KeystoreService } from 'src/app/_services/keystore.service';
+import { Component, Output, EventEmitter } from "@angular/core";
+import { UserService } from "src/app/_services/user.service";
+import { KeystoreService } from "src/app/_services/keystore.service";
 
 export type Keystore = {
   address: string;
@@ -25,9 +25,9 @@ export type Keystore = {
 };
 
 @Component({
-  selector: 'app-keystore-connect',
-  templateUrl: './keystore-connect.component.html',
-  styleUrls: ['./keystore-connect.component.scss'],
+  selector: "app-keystore-connect",
+  templateUrl: "./keystore-connect.component.html",
+  styleUrls: ["./keystore-connect.component.scss"],
 })
 export class KeystoreConnectComponent {
   keystorePassword: string;
@@ -48,7 +48,7 @@ export class KeystoreConnectComponent {
   }
 
   clearKeystore() {
-    this.keystorePassword = '';
+    this.keystorePassword = "";
     this.keystoreFile = null;
     this.keystoreFileSelected = false;
     this.back.emit();
@@ -68,16 +68,16 @@ export class KeystoreConnectComponent {
       const onLoadHandler = () => {
         try {
           const key = JSON.parse(reader.result as string);
-          if (!('version' in key) || !('crypto' in key)) {
-            console.error('not a valid keystore file');
+          if (!("version" in key) || !("crypto" in key)) {
+            console.error("not a valid keystore file");
           } else {
             this.keystore = key;
           }
         } catch {
-          console.error('not a valid json file');
+          console.error("not a valid json file");
         }
       };
-      reader.addEventListener('load', onLoadHandler);
+      reader.addEventListener("load", onLoadHandler);
 
       await reader.readAsText(keystoreFile);
     }
@@ -99,7 +99,7 @@ export class KeystoreConnectComponent {
     this.keystoreError = false;
 
     try {
-      localStorage.setItem('keystore', JSON.stringify(this.keystore));
+      localStorage.setItem("keystore", JSON.stringify(this.keystore));
       const user = await this.keystoreService.unlockKeystore(
         this.keystore,
         this.keystorePassword

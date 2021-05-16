@@ -1,70 +1,93 @@
 <div *ngIf="!loading" class="container-wrapper">
   <div class="container">
-  
     <div class="main-container">
       <nav class="content-top">
-        <app-breadcrumb [path]="[{name: 'vanaheimex', call: 'swap'}, {name: 'Pools', call: 'pool'}, {name: 'Deposit', disable: true}]" [isError]="true" [message]="'THOR.RUNE DEPOSIT FAILED'" (funcCaller)="goToNav($event)"></app-breadcrumb>
+        <app-breadcrumb
+          [path]="[
+            { name: 'vanaheimex', call: 'swap' },
+            { name: 'Pools', call: 'pool' },
+            { name: 'Deposit', disable: true }
+          ]"
+          [isError]="true"
+          [message]="'THOR.RUNE DEPOSIT FAILED'"
+          (funcCaller)="goToNav($event)"
+        ></app-breadcrumb>
       </nav>
     </div>
-    
-      <app-asset-input
-        label="Deposited"
-        [(selectedAsset)]="asset"
-        [(assetUnit)]="assetAmount"
-        [disabledAssetSymbol]="asset.symbol"
-        [balance]="assetBalance"
-        [hideMax]="true"
-        [disableInput]="true"
-        [disabledMarketSelect]="true"
-        [isDeposit]="true">
-      </app-asset-input>
 
-      <app-arrow [isPlus]="true" [isGrey]="true"></app-arrow>
+    <app-asset-input
+      label="Deposited"
+      [(selectedAsset)]="asset"
+      [(assetUnit)]="assetAmount"
+      [disabledAssetSymbol]="asset.symbol"
+      [balance]="assetBalance"
+      [hideMax]="true"
+      [disableInput]="true"
+      [disabledMarketSelect]="true"
+      [isDeposit]="true"
+    >
+    </app-asset-input>
 
-      <app-asset-input
-        label="Deposit"
-        [(selectedAsset)]="rune"
-        [(assetUnit)]="runeAmount"
-        [disabledAssetSymbol]="rune.symbol"
-        [balance]="runeBalance"
-        [hideMax]="true"
-        [disableInput]="true"
-        [disabledMarketSelect]="true"
-        [isDeposit]="true"
-        [inputColor]="'var(--primary-red)'">
-      </app-asset-input>
+    <app-arrow [isPlus]="true" [isGrey]="true"></app-arrow>
 
-      <div *ngIf="asset && !resubmitError" class="swap-details">
-        <span style="color: var(--primary-red);">
-          It looks like the {{asset.chain}}.{{asset.ticker}} deposit succeeded, but there was an error depositing {{rune.chain}}.{{rune.ticker}}. <br />
-          The error is “. We use symmetrical deposits, which means THORChain is waiting for the <br />
-          {{rune.chain}}.{{rune.ticker}} deopsit to register you as a pool member.
-        </span>
-        <span *ngIf="resubmitError">It looks like resubmitting RUNE failed. The error is: <br /> "{{resubmitError}}"</span>
-      </div>
+    <app-asset-input
+      label="Deposit"
+      [(selectedAsset)]="rune"
+      [(assetUnit)]="runeAmount"
+      [disabledAssetSymbol]="rune.symbol"
+      [balance]="runeBalance"
+      [hideMax]="true"
+      [disableInput]="true"
+      [disabledMarketSelect]="true"
+      [isDeposit]="true"
+      [inputColor]="'var(--primary-red)'"
+    >
+    </app-asset-input>
 
-      <!-- close dialog -->
-      <div class="bottom-actions">
-        <div>
-          <button
-            (click)="resubmitRuneDeposit()"
-            class="next-btn graident-btn"
-            *ngIf="retryCount < 3"
-            [disabled]="loading"
-          >
-            <span>Retry {{rune.chain}}.{{rune.ticker}}</span>
-          </button>
-          <button *ngIf="retryCount >= 3" [disabled]="loading" (click)="closeModal.emit()" class="close-btn">
-            <span>Close</span>
-          </button>
-          <!-- TODO: Need to be added -->
-          <!-- <button *ngIf="!loading && retryCount >= 3" (click)="navigateDepositSymRecovery()" mat-flat-button color="primary" class="main-action-btn w-full">
+    <div *ngIf="asset && !resubmitError" class="swap-details">
+      <span style="color: var(--primary-red)">
+        It looks like the {{ asset.chain }}.{{ asset.ticker }} deposit
+        succeeded, but there was an error depositing {{ rune.chain }}.{{
+          rune.ticker
+        }}. <br />
+        The error is “. We use symmetrical deposits, which means THORChain is
+        waiting for the <br />
+        {{ rune.chain }}.{{ rune.ticker }} deopsit to register you as a pool
+        member.
+      </span>
+      <span *ngIf="resubmitError"
+        >It looks like resubmitting RUNE failed. The error is: <br />
+        "{{ resubmitError }}"</span
+      >
+    </div>
+
+    <!-- close dialog -->
+    <div class="bottom-actions">
+      <div>
+        <button
+          (click)="resubmitRuneDeposit()"
+          class="next-btn graident-btn"
+          *ngIf="retryCount < 3"
+          [disabled]="loading"
+        >
+          <span>Retry {{ rune.chain }}.{{ rune.ticker }}</span>
+        </button>
+        <button
+          *ngIf="retryCount >= 3"
+          [disabled]="loading"
+          (click)="closeModal.emit()"
+          class="close-btn"
+        >
+          <span>Close</span>
+        </button>
+        <!-- TODO: Need to be added -->
+        <!-- <button *ngIf="!loading && retryCount >= 3" (click)="navigateDepositSymRecovery()" mat-flat-button color="primary" class="main-action-btn w-full">
             <span>Navigate Sym Deposit Recovery</span>
           </button> -->
-        </div>
       </div>
     </div>
-    <!-- <div class="confirm-modal-head p-4">
+  </div>
+  <!-- <div class="confirm-modal-head p-4">
   
       <div class="flex justify-between items-center mb-4">
         <h1 mat-dialog-title class="mb-0">RUNE Deposit Failed</h1>
@@ -125,13 +148,25 @@
 
 <app-transaction-processing-modal
   *ngIf="loading"
-  [asset]="[{asset: asset, balance: assetBalance, assetPriceUSD: 0}, {asset: rune, balance: runeBalance, assetPriceUSD: 0}]"
+  [asset]="[
+    { asset: asset, balance: assetBalance, assetPriceUSD: 0 },
+    { asset: rune, balance: runeBalance, assetPriceUSD: 0 }
+  ]"
   [label]="['Deposited', 'Depositing']"
   [amount]="[assetAmount, runeAmount]"
   [transactionDetail]="processingMessage"
   (closeDialog)="closeModal.emit()"
-  [isPlus]="true">
-  <app-breadcrumb [path]="[{name: 'vanaheimex', call: 'swap'}, {name: 'Pools', disable: true}, {name: 'Deposit', disable: true}]" message="Resubmitting RUNE Deposit" (funcCaller)="goToNav($event)"></app-breadcrumb>
+  [isPlus]="true"
+>
+  <app-breadcrumb
+    [path]="[
+      { name: 'vanaheimex', call: 'swap' },
+      { name: 'Pools', disable: true },
+      { name: 'Deposit', disable: true }
+    ]"
+    message="Resubmitting RUNE Deposit"
+    (funcCaller)="goToNav($event)"
+  ></app-breadcrumb>
 </app-transaction-processing-modal>
 
 <!-- <app-transaction-processing-modal

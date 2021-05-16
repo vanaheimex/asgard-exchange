@@ -1,12 +1,12 @@
-import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
+import { waitForAsync, ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { SwapComponent } from './swap.component';
-import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { AssetInputModule } from '../_components/asset-input/asset-input.module';
-import { MatIconModule } from '@angular/material/icon';
+import { SwapComponent } from "./swap.component";
+import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
+import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { AssetInputModule } from "../_components/asset-input/asset-input.module";
+import { MatIconModule } from "@angular/material/icon";
 
-describe('SwapComponent', () => {
+describe("SwapComponent", () => {
   let component: SwapComponent;
   let fixture: ComponentFixture<SwapComponent>;
 
@@ -31,7 +31,7 @@ describe('SwapComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

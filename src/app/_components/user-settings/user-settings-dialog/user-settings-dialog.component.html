@@ -1,116 +1,195 @@
-<div
-  *ngIf="userView === 'Addresses'"
-  class="container-wrapper">
+<div *ngIf="userView === 'Addresses'" class="container-wrapper">
   <div class="container">
-
     <div class="content-top">
-      <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'wallet', disable: true}]" message="select"></app-breadcrumb>
-      <div class="top-right">
-      </div>
+      <app-breadcrumb
+        [path]="[
+          { name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap' },
+          { name: 'wallet', disable: true }
+        ]"
+        message="select"
+      ></app-breadcrumb>
+      <div class="top-right"></div>
     </div>
     <div>
       <div mat-dialog-content>
-
         <div>
           <div *ngIf="loading" class="icon-container">
-
-            <mat-progress-spinner mode="indeterminate" diameter="60"></mat-progress-spinner>
-
+            <mat-progress-spinner
+              mode="indeterminate"
+              diameter="60"
+            ></mat-progress-spinner>
           </div>
 
           <div class="wallets" *ngIf="!loading">
-
             <!-- THORChain -->
-            <div class="w-address" *ngIf="thorAddress" (click)="selectAddress(thorAddress, 'THOR')">
+            <div
+              class="w-address"
+              *ngIf="thorAddress"
+              (click)="selectAddress(thorAddress, 'THOR')"
+            >
               <div class="icon-addr">
                 <div class="asset-icon-container">
-                  <img class="asset-icon"
-                    src="/assets/icons/logo-thor-rune.svg" />
+                  <img
+                    class="asset-icon"
+                    src="/assets/icons/logo-thor-rune.svg"
+                  />
                 </div>
                 <label>THOR</label>
               </div>
               <div class="addr">
                 <!-- <input [value]="thorAddress.substring(0, 12) + '...' + thorAddress.substring(thorAddress.length - 12, thorAddress.length)" name="rune-address" [disabled]="true" /> -->
-                <span>{{thorAddress.substring(0, 12) + '...' + thorAddress.substring(thorAddress.length - 12, thorAddress.length)}}</span>
+                <span>{{
+                  thorAddress.substring(0, 12) +
+                    "..." +
+                    thorAddress.substring(
+                      thorAddress.length - 12,
+                      thorAddress.length
+                    )
+                }}</span>
               </div>
             </div>
 
             <!-- Bitcoin -->
-            <div class="w-address" *ngIf="bitcoinAddress" (click)="selectAddress(bitcoinAddress, 'BTC')">
+            <div
+              class="w-address"
+              *ngIf="bitcoinAddress"
+              (click)="selectAddress(bitcoinAddress, 'BTC')"
+            >
               <div class="icon-addr">
                 <div class="asset-icon-container">
-                  <img class="asset-icon"
-                    src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/binance/assets/BTCB-1DE/logo.png" />
+                  <img
+                    class="asset-icon"
+                    src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/binance/assets/BTCB-1DE/logo.png"
+                  />
                 </div>
                 <label>BTC</label>
               </div>
               <div class="addr">
                 <!-- <input [value]="bitcoinAddress.substring(0, 12) + '...' + bitcoinAddress.substring(bitcoinAddress.length - 12, bitcoinAddress.length)" name="btc-address" [disabled]="true" /> -->
-                <span>{{bitcoinAddress.substring(0, 12) + '...' + bitcoinAddress.substring(bitcoinAddress.length - 12, bitcoinAddress.length)}}</span>
+                <span>{{
+                  bitcoinAddress.substring(0, 12) +
+                    "..." +
+                    bitcoinAddress.substring(
+                      bitcoinAddress.length - 12,
+                      bitcoinAddress.length
+                    )
+                }}</span>
               </div>
             </div>
 
             <!-- Ethereum -->
-            <div class="w-address" *ngIf="ethereumAddress" (click)="selectAddress(ethereumAddress, 'ETH')">
+            <div
+              class="w-address"
+              *ngIf="ethereumAddress"
+              (click)="selectAddress(ethereumAddress, 'ETH')"
+            >
               <div class="icon-addr">
                 <div class="asset-icon-container">
-                  <img class="asset-icon"
-                    src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png" />
+                  <img
+                    class="asset-icon"
+                    src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/info/logo.png"
+                  />
                 </div>
                 <label>ETH</label>
               </div>
               <div class="addr">
                 <!-- <input [value]="ethereumAddress.substring(0, 12) + '...' + ethereumAddress.substring(ethereumAddress.length - 12, ethereumAddress.length)" name="eth-address" [disabled]="true" /> -->
-                <span>{{ethereumAddress.substring(0, 12) + '...' + ethereumAddress.substring(ethereumAddress.length - 12, ethereumAddress.length)}}</span>
+                <span>{{
+                  ethereumAddress.substring(0, 12) +
+                    "..." +
+                    ethereumAddress.substring(
+                      ethereumAddress.length - 12,
+                      ethereumAddress.length
+                    )
+                }}</span>
               </div>
             </div>
 
             <!-- Binance -->
-            <div class="w-address" *ngIf="binanceAddress" (click)="selectAddress(binanceAddress, 'BNB')">
+            <div
+              class="w-address"
+              *ngIf="binanceAddress"
+              (click)="selectAddress(binanceAddress, 'BNB')"
+            >
               <div class="icon-addr">
                 <div class="asset-icon-container">
-                  <img class="asset-icon" src="assets/images/token-icons/bnb.png" />
+                  <img
+                    class="asset-icon"
+                    src="assets/images/token-icons/bnb.png"
+                  />
                 </div>
                 <label>BNB</label>
               </div>
               <div class="addr">
                 <!-- <input [value]="binanceAddress.substring(0, 12) + '...' + binanceAddress.substring(binanceAddress.length - 12, binanceAddress.length)" name="binance-address" [disabled]="true" /> -->
-                <span>{{binanceAddress.substring(0, 12) + '...' + binanceAddress.substring(binanceAddress.length - 12, binanceAddress.length)}}</span>
+                <span>{{
+                  binanceAddress.substring(0, 12) +
+                    "..." +
+                    binanceAddress.substring(
+                      binanceAddress.length - 12,
+                      binanceAddress.length
+                    )
+                }}</span>
               </div>
             </div>
 
             <!-- Litecoin -->
-            <div class="w-address" *ngIf="litecoinAddress" (click)="selectAddress(litecoinAddress, 'LTC')">
+            <div
+              class="w-address"
+              *ngIf="litecoinAddress"
+              (click)="selectAddress(litecoinAddress, 'LTC')"
+            >
               <div class="icon-addr">
                 <div class="asset-icon-container">
-                  <img class="asset-icon" src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/litecoin/info/logo.png" />
+                  <img
+                    class="asset-icon"
+                    src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/litecoin/info/logo.png"
+                  />
                 </div>
                 <label>LTC</label>
               </div>
               <div class="addr">
                 <!-- <input [value]="litecoinAddress.substring(0, 12) + '...' + litecoinAddress.substring(litecoinAddress.length - 12, litecoinAddress.length)" name="litecoin-address" [disabled]="true" /> -->
-                <span>{{litecoinAddress.substring(0, 12) + '...' + litecoinAddress.substring(litecoinAddress.length - 12, litecoinAddress.length)}}</span>
+                <span>{{
+                  litecoinAddress.substring(0, 12) +
+                    "..." +
+                    litecoinAddress.substring(
+                      litecoinAddress.length - 12,
+                      litecoinAddress.length
+                    )
+                }}</span>
               </div>
             </div>
 
             <!-- Bitcoin Cash -->
-            <div class="w-address" *ngIf="bchAddress" (click)="selectAddress(bchAddress, 'BCH')">
+            <div
+              class="w-address"
+              *ngIf="bchAddress"
+              (click)="selectAddress(bchAddress, 'BCH')"
+            >
               <div class="icon-addr">
                 <div class="asset-icon-container">
-                  <img class="asset-icon" src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/bitcoincash/info/logo.png" />
+                  <img
+                    class="asset-icon"
+                    src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/bitcoincash/info/logo.png"
+                  />
                 </div>
                 <label>BCH</label>
               </div>
               <div class="addr">
                 <!-- <input [value]="bchAddress.substring(0, 12) + '...' + bchAddress.substring(bchAddress.length - 12, bchAddress.length)" name="bch-address" [disabled]="true" /> -->
-                <span>{{bchAddress.substring(0, 12) + '...' + bchAddress.substring(bchAddress.length - 12, bchAddress.length)}}</span>
+                <span>{{
+                  bchAddress.substring(0, 12) +
+                    "..." +
+                    bchAddress.substring(
+                      bchAddress.length - 12,
+                      bchAddress.length
+                    )
+                }}</span>
               </div>
             </div>
-
           </div>
-
         </div>
-
       </div>
 
       <!-- close dialog -->
@@ -132,14 +211,16 @@
   [pools]="pools"
   (back)="clearSelectedAddress()"
   (navigateToAsset)="selectAsset($event)"
-  (navigateToAddToken)="setMode('ADDRESS_ADD_TOKEN')">
+  (navigateToAddToken)="setMode('ADDRESS_ADD_TOKEN')"
+>
 </app-user-address>
 
 <app-user-address-add-token
   *ngIf="userView === 'ADDRESS_ADD_TOKEN'"
   [chain]="selectedChain"
   [chainAddress]="selectedAddress"
-  (back)="setMode('Address')">
+  (back)="setMode('Address')"
+>
 </app-user-address-add-token>
 
 <app-user-asset
@@ -149,14 +230,16 @@
   (back)="clearSelectedAsset()"
   (send)="setMode('Send')"
   (upgradeRune)="mode = 'UPGRADE_RUNE'"
-  (deposit)="mode = 'DEPOSIT'">
+  (deposit)="mode = 'DEPOSIT'"
+>
 </app-user-asset>
 
 <app-send-asset
   *ngIf="userView === 'Send'"
   [asset]="selectedAsset"
   (confirmSend)="confirmSend($event)"
-  (back)="setMode('Asset')">
+  (back)="setMode('Asset')"
+>
 </app-send-asset>
 
 <app-confim-send
@@ -168,5 +251,6 @@
   [memo]="memo"
   (back)="setMode('Send')"
   (close)="setMode('Asset')"
-  (transactionSuccessful)="transactionSuccessful()">
+  (transactionSuccessful)="transactionSuccessful()"
+>
 </app-confim-send>

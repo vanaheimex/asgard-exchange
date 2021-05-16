@@ -1,1 +1,1 @@
-export type WithdrawTypeOptions = 'SYM' | 'ASYM_ASSET' | 'ASYM_RUNE';
+export type WithdrawTypeOptions = "SYM" | "ASYM_ASSET" | "ASYM_RUNE";
