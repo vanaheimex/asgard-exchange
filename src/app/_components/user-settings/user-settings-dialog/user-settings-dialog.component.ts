@@ -11,6 +11,8 @@ import { TransactionStatusService } from 'src/app/_services/transaction-status.s
 import { UserService } from 'src/app/_services/user.service';
 import { CoinGeckoService } from 'src/app/_services/coin-gecko.service';
 import { environment } from 'src/environments/environment';
+import { CurrencyService } from 'src/app/_services/currency.service';
+import { Currency } from '../../account-settings/currency-converter/currency-converter.component';
 
 @Component({
   selector: "app-user-settings-dialog",
@@ -60,6 +62,7 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
   pools: PoolDTO[];
   chainUsdValue: { [chain: string]: { value: number, tokens: string[] } } = {};
   isTestnet: boolean;
+  currecny: Currency
 
   constructor(
     private userService: UserService,
@@ -67,7 +70,8 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
     private overlaysService: OverlaysService,
     private midgardService: MidgardService,
     private transactionStatusService: TransactionStatusService,
-    private cgService: CoinGeckoService
+    private cgService: CoinGeckoService,
+    private currencyService: CurrencyService
   ) {
     this.pools = [];
     this.pendingTxCount = 0;
@@ -135,6 +139,12 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getPools();
     this.getBalances();
+
+    this.currencyService.cur$.subscribe(
+      (cur) => {
+        this.currecny = cur;
+      }
+    )
   }
 
   getPools() {
