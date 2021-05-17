@@ -40,7 +40,7 @@ export class XDEFIConnectComponent implements OnInit {
     }
 
     if (!this.isValidNetwork) {
-      return { text: "Incorrect network!", isError: true };
+      return { text: `SET TO ${this.isTestnet ? 'TESTNET' : 'MAINNET'} IN XDEFI`, isError: true };
     }
 
     if (this.xdefiConnecting) {
