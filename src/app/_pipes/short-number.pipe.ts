@@ -1,3 +1,4 @@
+import { formatNumber } from '@angular/common';
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
@@ -31,6 +32,6 @@ export class ShortNumberPipe implements PipeTransform {
                 break;
             }
         }
-        return (isNegative ? '-' : '') + abs + key;
+        return (isNegative ? '-' : '') + formatNumber(abs, 'en-US', '0.0-2')  + key;
     }
 }

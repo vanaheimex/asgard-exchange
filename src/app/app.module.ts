@@ -96,6 +96,7 @@ import { from } from 'rxjs';
 import { CurrencyConverterComponent } from './_components/account-settings/currency-converter/currency-converter.component';
 import { ShortNumberPipe } from './_pipes/short-number.pipe';
 import { RuneYieldService } from './_services/rune-yield.service';
+import { ShortPipeModule } from './_pipes/short-number.module';
 
 
 @NgModule({
@@ -126,7 +127,7 @@ import { RuneYieldService } from './_services/rune-yield.service';
     UserAddressAddTokenComponent,
     AccountSettingsComponent,
     SeedPhraseComponent,
-    CurrencyConverterComponent,
+    CurrencyConverterComponent
     // KeystoreCreateStorePhraseComponent,
   ],
   imports: [
@@ -161,6 +162,7 @@ import { RuneYieldService } from './_services/rune-yield.service';
     NativeRunePromptModule,
     ModalSectionHeaderModule,
     PhraseWordsListModule,
+    ShortPipeModule
   ],
   providers: [
     BinanceService,

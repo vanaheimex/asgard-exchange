@@ -13,11 +13,10 @@ import { RightOptionModule } from '../_components/right-option/right-option.modu
 import { NoticeModule } from '../_components/notice/notice.module';
 import { TagModule } from '../_components/tag/tag.module';
 import { PoolListItemComponent } from './pool-list-item/pool-list-item.component';
-import { ShortNumberPipe } from '../_pipes/short-number.pipe';
-
+import { ShortPipeModule } from '../_pipes/short-number.module';
 
 @NgModule({
-  declarations: [PoolComponent, StakedPoolsListComponent, StakedPoolListItemComponent, PoolListItemComponent, ShortNumberPipe],
+  declarations: [PoolComponent, StakedPoolsListComponent, StakedPoolListItemComponent, PoolListItemComponent],
   imports: [
     CommonModule,
     MatButtonModule,
@@ -28,6 +27,7 @@ import { ShortNumberPipe } from '../_pipes/short-number.pipe';
     RightOptionModule,
     NoticeModule,
     TagModule,
+    ShortPipeModule,
     RouterModule.forChild([
       {
         path: '',
