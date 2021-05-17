@@ -72,28 +72,32 @@ import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatTooltipModule } from "@angular/material/tooltip";
 
 /** EXTERNAL */
-import { QRCodeModule } from "angularx-qrcode";
-import { ViewPhraseComponent } from "./_components/user-settings/user-settings-dialog/view-phrase/view-phrase.component";
-import { DepositComponent } from "./_components/user-settings/user-settings-dialog/deposit/deposit.component";
-import { DepositConfirmComponent } from "./_components/user-settings/user-settings-dialog/deposit/deposit-confirm/deposit-confirm.component";
-import { DepositFormComponent } from "./_components/user-settings/user-settings-dialog/deposit/deposit-form/deposit-form.component";
-import { TransactionSuccessModalModule } from "./_components/transaction-success-modal/transaction-success-modal.module";
-import { NativeRunePromptModule } from "./_components/native-rune-prompt/native-rune-prompt.module";
-import { UpgradeRuneModule } from "./_components/upgrade-rune/upgrade-rune.module";
-import { UpgradeRuneConfirmModule } from "./_components/upgrade-rune-confirm/upgrade-rune-confirm.module";
-import { SochainService } from "./_services/sochain.service";
-import { NoticeModule } from "./_components/notice/notice.module";
-import { AccountSettingsComponent } from "./_components/account-settings/account-settings.component";
-import { SeedPhraseComponent } from "./_components/account-settings/seed-phrase/seed-phrase.component";
-import { ThorchainPricesService } from "./_services/thorchain-prices.service";
-import { HaskoinService } from "./_services/haskoin.service";
-import { ModalSectionHeaderModule } from "./_components/modal-section-header/modal-section-header.module";
-import { ReconnectXDEFIDialogComponent } from "./_components/reconnect-xdefi-dialog/reconnect-xdefi-dialog.component";
-import { KeystoreCreateStorePhraseComponent } from "./_components/connect/keystore-create-store-phrase/keystore-create-store-phrase.component";
-import { from } from "rxjs";
-import { CurrencyConverterComponent } from "./_components/account-settings/currency-converter/currency-converter.component";
-import { ShortNumberPipe } from "./_pipes/short-number.pipe";
-import { RuneYieldService } from "./_services/rune-yield.service";
+import { QRCodeModule } from 'angularx-qrcode';
+import { ViewPhraseComponent } from './_components/user-settings/user-settings-dialog/view-phrase/view-phrase.component';
+import { DepositComponent } from './_components/user-settings/user-settings-dialog/deposit/deposit.component';
+import {
+  DepositConfirmComponent
+} from './_components/user-settings/user-settings-dialog/deposit/deposit-confirm/deposit-confirm.component';
+import { DepositFormComponent } from './_components/user-settings/user-settings-dialog/deposit/deposit-form/deposit-form.component';
+import { TransactionSuccessModalModule } from './_components/transaction-success-modal/transaction-success-modal.module';
+import { NativeRunePromptModule } from './_components/native-rune-prompt/native-rune-prompt.module';
+import { UpgradeRuneModule } from './_components/upgrade-rune/upgrade-rune.module';
+import { UpgradeRuneConfirmModule } from './_components/upgrade-rune-confirm/upgrade-rune-confirm.module';
+import { SochainService } from './_services/sochain.service';
+import { NoticeModule } from './_components/notice/notice.module';
+import { AccountSettingsComponent } from './_components/account-settings/account-settings.component';
+import { SeedPhraseComponent } from './_components/account-settings/seed-phrase/seed-phrase.component';
+import { ThorchainPricesService } from './_services/thorchain-prices.service';
+import { HaskoinService } from './_services/haskoin.service';
+import { ModalSectionHeaderModule } from './_components/modal-section-header/modal-section-header.module';
+import { ReconnectXDEFIDialogComponent } from './_components/reconnect-xdefi-dialog/reconnect-xdefi-dialog.component';
+import { KeystoreCreateStorePhraseComponent } from './_components/connect/keystore-create-store-phrase/keystore-create-store-phrase.component';
+import { from } from 'rxjs';
+import { CurrencyConverterComponent } from './_components/account-settings/currency-converter/currency-converter.component';
+import { ShortNumberPipe } from './_pipes/short-number.pipe';
+import { RuneYieldService } from './_services/rune-yield.service';
+import { ShortPipeModule } from './_pipes/short-number.module';
+
 
 @NgModule({
   declarations: [
@@ -123,7 +127,7 @@ import { RuneYieldService } from "./_services/rune-yield.service";
     UserAddressAddTokenComponent,
     AccountSettingsComponent,
     SeedPhraseComponent,
-    CurrencyConverterComponent,
+    CurrencyConverterComponent
     // KeystoreCreateStorePhraseComponent,
   ],
   imports: [
@@ -158,6 +162,7 @@ import { RuneYieldService } from "./_services/rune-yield.service";
     NativeRunePromptModule,
     ModalSectionHeaderModule,
     PhraseWordsListModule,
+    ShortPipeModule
   ],
   providers: [
     BinanceService,

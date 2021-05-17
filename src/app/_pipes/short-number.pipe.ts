@@ -1,4 +1,5 @@
-import { Pipe, PipeTransform } from "@angular/core";
+import { formatNumber } from '@angular/common';
+import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
   name: "shortNumber",
@@ -13,23 +14,31 @@ export class ShortNumberPipe implements PipeTransform {
     const isNegative = number < 0; // will also work for Negetive numbers
     let key = "";
 
-    const powers = [
-      { key: "Q", value: Math.pow(10, 15) },
-      { key: "T", value: Math.pow(10, 12) },
-      { key: "B", value: Math.pow(10, 9) },
-      { key: "M", value: Math.pow(10, 6) },
-      { key: "K", value: 1000 },
+    let powers = [
+        {key: 'Q', value: Math.pow(10, 15)},
+        {key: 'T', value: Math.pow(10, 12)},
+        {key: 'B', value: Math.pow(10, 9)},
+        {key: 'M', value: Math.pow(10, 6)},
+        {key: 'K', value: 1000}
     ];
 
-    for (let i = 0; i < powers.length; i++) {
-      let reduced = abs / powers[i].value;
-      reduced = Math.round(reduced * rounder) / rounder;
-      if (reduced >= 1) {
-        abs = reduced;
-        key = powers[i].key;
-        break;
-      }
+    if (args) {
+        powers = [
+            {key: 'Q', value: Math.pow(10, 15)},
+            {key: 'T', value: Math.pow(10, 12)},
+            {key: 'B', value: Math.pow(10, 9)}
+        ];
     }
-    return (isNegative ? "-" : "") + abs + key;
+
+    for (let i = 0; i < powers.length; i++) {
+        let reduced = abs / powers[i].value;
+        reduced = Math.round(reduced * rounder) / rounder;
+        if (reduced >= 1) {
+            abs = reduced;
+            key = powers[i].key;
+            break;
+        }
+    }
+    return (isNegative ? '-' : '') + formatNumber(abs, 'en-US', '0.0-2')  + key;
   }
 }

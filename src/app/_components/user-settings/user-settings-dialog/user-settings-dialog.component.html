@@ -22,12 +22,8 @@
 
           <div class="wallets" *ngIf="!loading">
             <!-- THORChain -->
-            <div
-              class="w-address"
-              *ngIf="thorAddress"
-              (click)="selectAddress(thorAddress, 'THOR')"
-            >
-              <div class="icon-addr">
+            <div class="w-address" *ngIf="thorAddress" (click)="selectAddress(thorAddress, 'THOR')">
+              <div class="icon-addr flex-grow">
                 <div class="asset-icon-container">
                   <img
                     class="asset-icon"
@@ -35,27 +31,16 @@
                   />
                 </div>
                 <label>THOR</label>
+                <span class="chain-usd" *ngIf="chainUsdValue['THOR'] && !isTestnet && chainUsdValue['THOR'].value !== 0">({{chainUsdValue['THOR'].value | shortNumber: true}} USD)</span>
               </div>
-              <div class="addr">
-                <!-- <input [value]="thorAddress.substring(0, 12) + '...' + thorAddress.substring(thorAddress.length - 12, thorAddress.length)" name="rune-address" [disabled]="true" /> -->
-                <span>{{
-                  thorAddress.substring(0, 12) +
-                    "..." +
-                    thorAddress.substring(
-                      thorAddress.length - 12,
-                      thorAddress.length
-                    )
-                }}</span>
+              <div class="addr flex-grow" style="min-width: initial; margin-left: 0;">
+                <span>{{thorAddress.substring(0, 6) + '...' + thorAddress.substring(thorAddress.length - 6, thorAddress.length)}}</span>
               </div>
             </div>
 
             <!-- Bitcoin -->
-            <div
-              class="w-address"
-              *ngIf="bitcoinAddress"
-              (click)="selectAddress(bitcoinAddress, 'BTC')"
-            >
-              <div class="icon-addr">
+            <div class="w-address" *ngIf="bitcoinAddress" (click)="selectAddress(bitcoinAddress, 'BTC')">
+              <div class="icon-addr flex-grow">
                 <div class="asset-icon-container">
                   <img
                     class="asset-icon"
@@ -63,27 +48,16 @@
                   />
                 </div>
                 <label>BTC</label>
+                <span class="chain-usd" *ngIf="chainUsdValue['BTC'] && !isTestnet && chainUsdValue['BTC'].value !== 0">({{chainUsdValue['BTC'].value | shortNumber: true}} USD)</span>
               </div>
-              <div class="addr">
-                <!-- <input [value]="bitcoinAddress.substring(0, 12) + '...' + bitcoinAddress.substring(bitcoinAddress.length - 12, bitcoinAddress.length)" name="btc-address" [disabled]="true" /> -->
-                <span>{{
-                  bitcoinAddress.substring(0, 12) +
-                    "..." +
-                    bitcoinAddress.substring(
-                      bitcoinAddress.length - 12,
-                      bitcoinAddress.length
-                    )
-                }}</span>
+              <div class="addr flex-grow" style="min-width: initial; margin-left: 0;">
+                <span>{{bitcoinAddress.substring(0, 6) + '...' + bitcoinAddress.substring(bitcoinAddress.length - 6, bitcoinAddress.length)}}</span>
               </div>
             </div>
 
             <!-- Ethereum -->
-            <div
-              class="w-address"
-              *ngIf="ethereumAddress"
-              (click)="selectAddress(ethereumAddress, 'ETH')"
-            >
-              <div class="icon-addr">
+            <div class="w-address" *ngIf="ethereumAddress" (click)="selectAddress(ethereumAddress, 'ETH')">
+              <div class="icon-addr flex-grow">
                 <div class="asset-icon-container">
                   <img
                     class="asset-icon"
@@ -91,27 +65,16 @@
                   />
                 </div>
                 <label>ETH</label>
+                <span class="chain-usd" *ngIf="chainUsdValue['ETH'] && !isTestnet && chainUsdValue['ETH'].value !== 0">({{chainUsdValue['ETH'].value | shortNumber: true}} USD)</span>
               </div>
-              <div class="addr">
-                <!-- <input [value]="ethereumAddress.substring(0, 12) + '...' + ethereumAddress.substring(ethereumAddress.length - 12, ethereumAddress.length)" name="eth-address" [disabled]="true" /> -->
-                <span>{{
-                  ethereumAddress.substring(0, 12) +
-                    "..." +
-                    ethereumAddress.substring(
-                      ethereumAddress.length - 12,
-                      ethereumAddress.length
-                    )
-                }}</span>
+              <div class="addr flex-grow" style="min-width: initial; margin-left: 0;">
+                <span>{{ethereumAddress.substring(0, 6) + '...' + ethereumAddress.substring(ethereumAddress.length - 6, ethereumAddress.length)}}</span>
               </div>
             </div>
 
             <!-- Binance -->
-            <div
-              class="w-address"
-              *ngIf="binanceAddress"
-              (click)="selectAddress(binanceAddress, 'BNB')"
-            >
-              <div class="icon-addr">
+            <div class="w-address" *ngIf="binanceAddress" (click)="selectAddress(binanceAddress, 'BNB')">
+              <div class="icon-addr flex-grow">
                 <div class="asset-icon-container">
                   <img
                     class="asset-icon"
@@ -119,27 +82,16 @@
                   />
                 </div>
                 <label>BNB</label>
+                <span class="chain-usd" *ngIf="chainUsdValue['BNB'] && !isTestnet && chainUsdValue['BNB'].value !== 0">({{chainUsdValue['BNB'].value | shortNumber: true}} USD)</span>
               </div>
-              <div class="addr">
-                <!-- <input [value]="binanceAddress.substring(0, 12) + '...' + binanceAddress.substring(binanceAddress.length - 12, binanceAddress.length)" name="binance-address" [disabled]="true" /> -->
-                <span>{{
-                  binanceAddress.substring(0, 12) +
-                    "..." +
-                    binanceAddress.substring(
-                      binanceAddress.length - 12,
-                      binanceAddress.length
-                    )
-                }}</span>
+              <div class="addr flex-grow" style="min-width: initial; margin-left: 0;">
+                <span>{{binanceAddress.substring(0, 6) + '...' + binanceAddress.substring(binanceAddress.length - 6, binanceAddress.length)}}</span>
               </div>
             </div>
 
             <!-- Litecoin -->
-            <div
-              class="w-address"
-              *ngIf="litecoinAddress"
-              (click)="selectAddress(litecoinAddress, 'LTC')"
-            >
-              <div class="icon-addr">
+            <div class="w-address" *ngIf="litecoinAddress" (click)="selectAddress(litecoinAddress, 'LTC')">
+              <div class="icon-addr flex-grow">
                 <div class="asset-icon-container">
                   <img
                     class="asset-icon"
@@ -147,27 +99,16 @@
                   />
                 </div>
                 <label>LTC</label>
+                <span class="chain-usd" *ngIf="chainUsdValue['LTC'] && !isTestnet && chainUsdValue['LTC'].value !== 0">({{chainUsdValue['LTC'].value | shortNumber: true}} USD)</span>
               </div>
-              <div class="addr">
-                <!-- <input [value]="litecoinAddress.substring(0, 12) + '...' + litecoinAddress.substring(litecoinAddress.length - 12, litecoinAddress.length)" name="litecoin-address" [disabled]="true" /> -->
-                <span>{{
-                  litecoinAddress.substring(0, 12) +
-                    "..." +
-                    litecoinAddress.substring(
-                      litecoinAddress.length - 12,
-                      litecoinAddress.length
-                    )
-                }}</span>
+              <div class="addr flex-grow" style="min-width: initial; margin-left: 0;">
+                <span>{{litecoinAddress.substring(0, 6) + '...' + litecoinAddress.substring(litecoinAddress.length - 6, litecoinAddress.length)}}</span>
               </div>
             </div>
 
             <!-- Bitcoin Cash -->
-            <div
-              class="w-address"
-              *ngIf="bchAddress"
-              (click)="selectAddress(bchAddress, 'BCH')"
-            >
-              <div class="icon-addr">
+            <div class="w-address" *ngIf="bchAddress" (click)="selectAddress(bchAddress, 'BCH')">
+              <div class="icon-addr flex-grow">
                 <div class="asset-icon-container">
                   <img
                     class="asset-icon"
@@ -175,17 +116,10 @@
                   />
                 </div>
                 <label>BCH</label>
+                <span class="chain-usd" *ngIf="chainUsdValue['BCH'] && !isTestnet && chainUsdValue['BCH'].value !== 0">({{chainUsdValue['BCH'].value | shortNumber: true}} USD)</span>
               </div>
-              <div class="addr">
-                <!-- <input [value]="bchAddress.substring(0, 12) + '...' + bchAddress.substring(bchAddress.length - 12, bchAddress.length)" name="bch-address" [disabled]="true" /> -->
-                <span>{{
-                  bchAddress.substring(0, 12) +
-                    "..." +
-                    bchAddress.substring(
-                      bchAddress.length - 12,
-                      bchAddress.length
-                    )
-                }}</span>
+              <div class="addr flex-grow" style="min-width: initial; margin-left: 0;">
+                <span>{{bchAddress.substring(0, 6) + '...' + bchAddress.substring(bchAddress.length - 6, bchAddress.length)}}</span>
               </div>
             </div>
           </div>
