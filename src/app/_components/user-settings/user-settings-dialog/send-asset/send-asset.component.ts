@@ -202,7 +202,8 @@ export class SendAssetComponent implements OnInit, OnDestroy {
     if (
       this.mainButtonText() === "Ready" ||
       this.mainButtonText() === "Prepare" ||
-      this.mainButtonText() === "Connect Wallet"
+      this.mainButtonText() === "Connect Wallet" ||
+      this.mainButtonText() === "Loading"
     ) {
       return false;
     }

@@ -175,7 +175,7 @@ export class AssetInputComponent implements OnInit, OnDestroy {
   }
 
   getMax() {
-    if (this.balance && this.selectedAsset) {
+    if (this.balance && this.selectedAsset && this.inboundAddresses) {
       return this.userService.maximumSpendableBalance(
         this.selectedAsset,
         this.balance,
