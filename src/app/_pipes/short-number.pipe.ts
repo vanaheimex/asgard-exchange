@@ -15,13 +15,21 @@ export class ShortNumberPipe implements PipeTransform {
         const isNegative = number < 0; // will also work for Negetive numbers
         let key = '';
 
-        const powers = [
+        let powers = [
             {key: 'Q', value: Math.pow(10, 15)},
             {key: 'T', value: Math.pow(10, 12)},
             {key: 'B', value: Math.pow(10, 9)},
             {key: 'M', value: Math.pow(10, 6)},
             {key: 'K', value: 1000}
         ];
+
+        if (args) {
+            powers = [
+                {key: 'Q', value: Math.pow(10, 15)},
+                {key: 'T', value: Math.pow(10, 12)},
+                {key: 'B', value: Math.pow(10, 9)}
+            ];
+        }
 
         for (let i = 0; i < powers.length; i++) {
             let reduced = abs / powers[i].value;

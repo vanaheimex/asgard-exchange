@@ -46,7 +46,7 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
 
   @Input() userSetting: boolean;
   pools: PoolDTO[];
-  chainUsdValue = {};
+  chainUsdValue: { [chain: string]: { value: number, tokens: string[] } } = {};
   isTestnet: boolean;
 
   constructor(
@@ -121,43 +121,46 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getPools();
+    this.getBalances();
   }
 
   getPools() {
     this.midgardService.getPools().subscribe( 
     (res) => {
       this.pools = res;
-      if (!this.isTestnet) {
-        this.getBalances();
-      }
     });
   }
 
   async getBalances() {
     var i = 0;
     const list = await this.cgService.getCoinList().toPromise(); 
+
+    // balance will be triggered multiple time even on one chain
     const balances$ = this.userService.userBalances$.subscribe(
       (balances) => {
-        this.chainUsdValue = {};
         console.log(i++)
         if (balances) {
           balances.forEach(
             async (balance) => {
               let id = this.cgService.getCoinIdBySymbol(balance.asset.ticker, list);
               if (id) {
-                let res = await this.cgService.getCurrencyConversion(id).toPromise();
-                for (const [_key, value] of Object.entries(res)) {
-                  if (this.chainUsdValue[balance.asset.chain] && !this.chainUsdValue[balance.asset.chain].tokens.find(el => el === balance.asset.ticker)) {
-                    this.chainUsdValue[balance.asset.chain].tokens = [...this.chainUsdValue[balance.asset.chain].tokens, balance.asset.ticker];
-                    this.chainUsdValue[balance.asset.chain].value += value.usd * baseToAsset(balance.amount).amount().toNumber();
+                this.cgService.getCurrencyConversion(id).subscribe(
+                  (res) => {
+                    for (const [_key, value] of Object.entries(res)) {
+                      if (this.chainUsdValue[balance.asset.chain] && !this.chainUsdValue[balance.asset.chain].tokens.includes(balance.asset.ticker)) {
+                        this.chainUsdValue[balance.asset.chain].tokens = [...this.chainUsdValue[balance.asset.chain].tokens, balance.asset.ticker];
+                        this.chainUsdValue[balance.asset.chain].value += value.usd * baseToAsset(balance.amount).amount().toNumber();
+                      }
+                      else if(!this.chainUsdValue[balance.asset.chain]) {
+                        this.chainUsdValue[balance.asset.chain] = {
+                          value: value.usd * baseToAsset(balance.amount).amount().toNumber(),
+                          tokens: [balance.asset.ticker]
+                        }
+                      }
+                    }
+                    console.log(this.chainUsdValue);
                   }
-                  else if(!this.chainUsdValue[balance.asset.chain]) {
-                    this.chainUsdValue[balance.asset.chain] = {}
-                    this.chainUsdValue[balance.asset.chain].value = value.usd * baseToAsset(balance.amount).amount().toNumber();
-                    this.chainUsdValue[balance.asset.chain].tokens = [balance.asset.ticker]
-                  }
-                  console.log(this.chainUsdValue, balance.asset.chain, balance.asset.ticker, value.usd, baseToAsset(balance.amount).amount().toNumber())
-                }
+                )
               }
             }
           )
