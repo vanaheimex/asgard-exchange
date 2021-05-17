@@ -646,7 +646,7 @@ export class SwapComponent implements OnInit, OnDestroy {
           assetToString(getChainAsset(this.selectedSourceAsset.chain))
         ]
     ) {
-      return `Insufficient ${this.selectedSourceAsset.chain}`;
+      return `Insufficient ${this.selectedSourceAsset.chain}.${this.userService.getFeeAsset(this.selectedSourceAsset.chain)} FOR FEE`;
     }
 
     /** Output Amount is less than network fees */
