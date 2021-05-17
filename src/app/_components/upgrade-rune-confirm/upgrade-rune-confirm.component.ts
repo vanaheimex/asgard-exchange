@@ -130,7 +130,7 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
 
       this.insufficientChainBalance = balance < this.networkFee;
       if (this.insufficientChainBalance) {
-        this.message = `Insufficient ${this.asset.asset.chain} to Cover Fees`;
+        this.message = `Insufficient ${this.asset.asset.chain}.${this.userService.getFeeAsset(this.asset.asset.chain)} to Cover Fees`;
         this.isError = true;
       }
     }
@@ -264,8 +264,8 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
         this.txState = TransactionConfirmationState.ERROR;
       }
     } catch (error) {
-      this.message = "an error occurred";
       console.error("error making transfer: ", error);
+      this.message = error.message;
       this.txState = TransactionConfirmationState.ERROR;
     }
   }
