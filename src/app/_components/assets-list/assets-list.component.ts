@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { Asset } from "src/app/_classes/asset";
 import { AssetAndBalance } from "src/app/_classes/asset-and-balance";
+import { MidgardService } from "src/app/_services/midgard.service";
 import { environment } from "src/environments/environment";
 
 @Component({
@@ -16,18 +17,43 @@ export class AssetsListComponent {
   @Output() selectAsset: EventEmitter<Asset>;
   @Output() addToken: EventEmitter<null>;
   @Input() noAssets: string = "NO ASSETS";
-
+  @Input() showApy: boolean = false;
+  
   // Wheter show the icon or not
   @Input() showIcons: boolean = true;
   @Input() expandable: "full" | "semi" = "full";
   safariExpand: boolean;
   isTestnet: boolean;
+  apys;
 
-  constructor() {
+  constructor(private midgardService: MidgardService) {
     this.selectAsset = new EventEmitter<Asset>();
     this.addToken = new EventEmitter<null>();
 
     this.isTestnet = environment.network === "testnet" ? true : false;
+  }
+
+  hasAPY(item: AssetAndBalance) {
+    if (!this.apys) {
+      return false;
+    }
+    return this.apys.find(
+      (el) => {
+        return item.asset.chain + '.' + item.asset.symbol === el.asset.toUpperCase();
+      }
+    )
+  }
+
+  addApy() {
+    this.midgardService.getPools().subscribe((res) => {
+      this.apys = res.map((el) => {
+        return{
+          asset: el.asset,
+          apy: +el.poolAPY
+        }
+      });
+      console.log(this.apys);
+    });
   }
 
   ngOnInit(): void {
@@ -41,5 +67,8 @@ export class AssetsListComponent {
     )
       ? true
       : false;
+
+    if(this.showApy)
+      this.addApy();
   }
 }

@@ -121,6 +121,16 @@
     .market-list-item__balance {
       color: var(--primary-dark-color);
     }
+
+    .side-asset {
+      color: var(--primary-dark-color);
+    }
+  }
+
+  .side-asset {
+    font-size: 20px;
+    margin-left: 10px;
+    color: var(--primary-grey-color);
   }
 
   &.disabled {

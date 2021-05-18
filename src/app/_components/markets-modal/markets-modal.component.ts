@@ -16,6 +16,7 @@ import { User } from "src/app/_classes/user";
 import { Balances } from "@xchainjs/xchain-client";
 import { AssetAndBalance } from "src/app/_classes/asset-and-balance";
 import { OverlaysService } from "src/app/_services/overlays.service";
+import { MidgardService } from "src/app/_services/midgard.service";
 
 @Component({
   selector: "app-markets-modal",
@@ -56,6 +57,8 @@ export class MarketsModalComponent implements OnInit, OnDestroy {
   @Input() selectedAsset: Asset;
   @Output() selectedAssetChange = new EventEmitter<Asset>();
   @Output() close = new EventEmitter<null>();
+
+  @Input() showApy: boolean = false;
 
   constructor(
     private userService: UserService,

@@ -103,6 +103,7 @@
         [selectableMarkets]="selectableMarkets"
         [disabledAssetSymbol]="rune.symbol"
         (close)="overlaysService.setCurrentDepositView('Deposit')"
+        [showApy]="true"
       >
         <app-breadcrumb
           [path]="[
