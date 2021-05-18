@@ -63,7 +63,7 @@ export class XDEFIService {
     },
   ];
 
-  private vaildNetwork = new BehaviorSubject<boolean>(false);
+  private vaildNetwork = new BehaviorSubject<boolean>(this.isValidNetwork());
   validNetwork$ = this.vaildNetwork.asObservable();
 
   constructor() {

@@ -1,4 +1,5 @@
 import { Component, Inject, OnInit } from "@angular/core";
+import { Subscription } from "rxjs";
 import {
   MainViewsEnum,
   OverlaysService,
@@ -19,6 +20,7 @@ export class ReconnectXDEFIDialogComponent implements OnInit {
   listProviders: typeof XDEFIService.listProvider;
   isValidNetwork: boolean;
   isTestnet: boolean;
+  subs: Subscription[];
   constructor(
     // @Inject(MAT_DIALOG_DATA) public data,
     // private dialogRef: MatDialogRef<ReconnectXDEFIDialogComponent>,
@@ -32,7 +34,9 @@ export class ReconnectXDEFIDialogComponent implements OnInit {
   ngOnInit(): void {
     setTimeout(() => {
       this.listProviders = this.xdefiService.listEnabledXDFIProviders();
-      this.isValidNetwork = this.xdefiService.isValidNetwork();
+      const vaildNetwork$ = this.xdefiService.validNetwork$.subscribe(res => this.isValidNetwork = res);
+
+      this.subs = [vaildNetwork$];
     }, 200);
   }
 
@@ -70,5 +74,11 @@ export class ReconnectXDEFIDialogComponent implements OnInit {
     localStorage.clear();
     this.overlaysService.setCurrentView(MainViewsEnum.Swap);
     // this.dialogRef.close();
+  }
+
+  ngOnDestroy() {
+    this.subs.forEach(
+      sub => sub.unsubscribe()
+    )
   }
 }
