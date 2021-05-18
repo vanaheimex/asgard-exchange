@@ -6,8 +6,8 @@
         { name: 'Connect', backFunc: true },
         { name: 'import phrase', disable: true }
       ]"
-      [isError]="error"
-      [message]="message"
+      [isError]="error || (password !== confirmPassword && confirmPassword)"
+      [message]="(confirmPassword !== password && confirmPassword) ? 'PASSWORDS DON\'T MATCH' : message"
       (backFunc)="back.emit()"
     ></app-breadcrumb>
     <div class="top-right"></div>
@@ -15,7 +15,7 @@
 
   <div mat-dialog-content>
     <div class="uni-input">
-      <label>Phrase</label>
+      <label>Phrase <span  style="color: var(--primary-grey-color)">(BIP39 words separated with a space)</span></label>
       <input
         autocomplete="off"
         class="password focus:ring-0"
@@ -30,7 +30,7 @@
     <app-arrow></app-arrow>
 
     <div class="uni-input">
-      <label>Backup Password</label>
+      <label>Password</label>
       <input
         class="password focus:ring-0"
         [(ngModel)]="password"
@@ -39,16 +39,16 @@
         type="password"
       />
     </div>
+
   </div>
 
   <div class="disclaimer swap-details">
     <span style="color: var(--primary-red)"
       >This will create and download a keystore to your computer. <br />
-      Please store this file offline in a safe place. <br />
-      Your BIP39 phrase word list should be seprated with a space.</span
+      Please store this file offline in a safe place.</span
     >
   </div>
-</div>
+</div>  
 
 <div class="bottom-actions two-btn">
   <div class="left-btn">
@@ -61,7 +61,7 @@
     <button
       class="next-btn"
       (click)="createKeystore()"
-      [disabled]="!phrase || !password || loading"
+      [disabled]="!phrase || !password || loading || password !== confirmPassword"
     >
       <span>Create</span>
     </button>

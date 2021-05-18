@@ -27,7 +27,7 @@ export class ImportPhraseComponent implements OnInit {
     private phraseConfirm: PhraseConfirmService
   ) {
     this.loading = false;
-    this.message = "import phrase";
+    this.message = "PREPARE";
     this.back = new EventEmitter<null>();
     this.closeModal = new EventEmitter<null>();
     this.keystoreCreated = new EventEmitter<string>();

@@ -15,6 +15,7 @@ import { PhraseWordsListModule } from "../phrase-words-list/phrase-words-list.mo
 import { NoticeModule } from "../notice/notice.module";
 import { FormsModule } from "@angular/forms";
 import { MatIconModule } from "@angular/material/icon";
+import { TextFieldModule } from "../text-field/text-field.module";
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { MatIconModule } from "@angular/material/icon";
     NoticeModule,
     FormsModule,
     MatIconModule,
+    TextFieldModule
   ],
   exports: [
     ConnectComponent,
