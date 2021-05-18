@@ -1,13 +1,22 @@
 <div class="container-wrapper" *ngIf="view !== 'Confirm'">
   <div class="container">
-
     <!-- <app-section-head sectionTitle="Create Pool" [displayBackBtn]="true" (back)="back()"></app-section-head> -->
     <div *ngIf="view === 'Create'">
       <div class="main-container">
         <nav class="content-top">
-          <app-breadcrumb [path]="[{name: 'vanaheimex', call: 'swap'}, {name: 'Pools', call: 'pool'}, {name: 'Create', disable: true}]" [isError]="mainButtonText() !== 'Ready' && mainButtonText() !== 'Prepare'" [message]="mainButtonText()" (funcCaller)="goToNav($event)"></app-breadcrumb>
-          <div class="top-right">
-          </div>
+          <app-breadcrumb
+            [path]="[
+              { name: 'vanaheimex', call: 'swap' },
+              { name: 'Pools', call: 'pool' },
+              { name: 'Create', disable: true }
+            ]"
+            [isError]="
+              mainButtonText() !== 'Ready' && mainButtonText() !== 'Prepare'
+            "
+            [message]="mainButtonText()"
+            (funcCaller)="goToNav($event)"
+          ></app-breadcrumb>
+          <div class="top-right"></div>
         </nav>
       </div>
       <div>
@@ -19,7 +28,7 @@
           [disabledAssetSymbol]="rune.symbol"
           [selectableMarkets]="selectableMarkets"
           (lunchMarket)="overlaysService.setCurrentCreatePoolView('Asset')"
-          >
+        >
         </app-asset-input>
 
         <app-arrow [isPlus]="true"></app-arrow>
@@ -32,13 +41,15 @@
           [hideMax]="true"
           [disabledMarketSelect]="true"
           [disabledAssetSymbol]="rune.symbol"
-          >
+        >
         </app-asset-input>
 
         <div class="swap-details">
           <div class="flex justify-between">
             <span class="tx-detail-label">Recommended RUNE Total:</span>
-            <span *ngIf="recommendedRuneAmount">{{ recommendedRuneAmount | number:"0.0-0" }}</span>
+            <span *ngIf="recommendedRuneAmount">{{
+              recommendedRuneAmount | number: "0.0-0"
+            }}</span>
             <span *ngIf="!recommendedRuneAmount">...</span>
           </div>
           <div class="flex justify-between">
@@ -47,12 +58,14 @@
           </div>
           <div class="flex justify-between">
             <span class="tx-detail-label">Fees</span>
-            <span *ngIf="networkFee">{{networkFee | number:"1.0-6"}} {{asset.chain}}</span>
+            <span *ngIf="networkFee"
+              >{{ networkFee | number: "1.0-6" }} {{ asset.chain }}</span
+            >
             <span *ngIf="!networkFee">-</span>
           </div>
           <div class="flex justify-between">
             <span class="tx-detail-label"></span>
-            <span *ngIf="runeFee">{{runeFee | number:"1.0-4"}} RUNE</span>
+            <span *ngIf="runeFee">{{ runeFee | number: "1.0-4" }} RUNE</span>
             <span *ngIf="!runeFee">-</span>
           </div>
           <div class="flex justify-between">
@@ -70,17 +83,21 @@
           <div class="divider"></div>
           <div class="right-btn">
             <app-approve-eth-contract
-              (approveClicked)="overlaysService.setCurrentCreatePoolView('Approve')"
+              (approveClicked)="
+                overlaysService.setCurrentCreatePoolView('Approve')
+              "
               *ngIf="ethContractApprovalRequired"
               [contractAddress]="ethRouter"
               [asset]="asset"
-              (approved)="contractApproved()">
+              (approved)="contractApproved()"
+            >
             </app-approve-eth-contract>
             <button
               *ngIf="!ethContractApprovalRequired"
               (click)="openConfirmationDialog()"
               class="next-btn graident-btn"
-              [disabled]="formDisabled()">
+              [disabled]="formDisabled()"
+            >
               <span>Create Pool</span>
             </button>
           </div>
@@ -88,20 +105,35 @@
       </div>
     </div>
 
-    <div class="overlay-container overlay-connect-wallet" *ngIf="view === 'Asset'">
+    <div
+      class="overlay-container overlay-connect-wallet"
+      *ngIf="view === 'Asset'"
+    >
       <app-markets-modal
         [(selectedAsset)]="asset"
         [selectableMarkets]="selectableMarkets"
         [disabledAssetSymbol]="rune.symbol"
         (close)="overlaysService.setCurrentCreatePoolView('Create')"
-        >
-        <app-breadcrumb [path]="[{name: 'vanaheimex', call: 'swap'}, {name: 'Pools', call: 'pool'}, {name: 'Create', call: 'create-back'}, {name: 'SEARCH', disable: true}]" message="SELECT" (funcCaller)="goToNav($event)"></app-breadcrumb>
+      >
+        <app-breadcrumb
+          [path]="[
+            { name: 'vanaheimex', call: 'swap' },
+            { name: 'Pools', call: 'pool' },
+            { name: 'Create', call: 'create-back' },
+            { name: 'SEARCH', disable: true }
+          ]"
+          message="SELECT"
+          (funcCaller)="goToNav($event)"
+        ></app-breadcrumb>
       </app-markets-modal>
     </div>
 
-    <div class="overlay-container overlay-connect-wallet" *ngIf="view === 'Approve'">
+    <div
+      class="overlay-container overlay-connect-wallet"
+      *ngIf="view === 'Approve'"
+    >
       <app-approve-eth-contract-modal
-        [data]="{asset: asset, contractAddress: ethRouter}"
+        [data]="{ asset: asset, contractAddress: ethRouter }"
         (approvedHash)="contractApproved()"
         (close)="overlaysService.setCurrentCreatePoolView('Create')"
         mode="create pool"
@@ -109,9 +141,7 @@
       </app-approve-eth-contract-modal>
     </div>
 
-
-
-      <!-- <div class="flex">
+    <!-- <div class="flex">
         <app-approve-eth-contract
           *ngIf="ethContractApprovalRequired"
           class="w-1/2 mr-2"
@@ -130,7 +160,6 @@
             {{mainButtonText()}}
         </button>
       </div> -->
-
   </div>
 </div>
 

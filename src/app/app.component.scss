@@ -3,7 +3,7 @@
   flex-direction: column;
   min-height: 100%;
   min-width: 1400px;
-	background-color: #000B12;
+  background-color: #000b12;
 }
 
 main {
@@ -21,12 +21,12 @@ footer {
   .footer-content {
     width: 100%;
     display: flex;
-    color: #4B5261;
+    color: #4b5261;
     justify-content: center;
     align-items: center;
     margin-top: 44px;
     font-size: 14px;
-    font-family: 'Roboto';
+    font-family: "Roboto";
 
     @media (min-width: 768px) {
       flex-flow: row;
@@ -40,7 +40,5 @@ footer {
         text-decoration: underline;
       }
     }
-
   }
-
 }

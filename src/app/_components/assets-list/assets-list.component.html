@@ -1,47 +1,95 @@
-<div class="asset-list-container" [ngClass]="{'safari-full': expandable === 'full', 'safari-semi': expandable === 'semi'}">
-  <div class="market-list-container"
-    [ngClass]="{'no-asset': (!loading && assetListItems && assetListItems.length == 0) || (!loading && !assetListItems), 'loading': loading}"
-    [ngStyle]="{'border-radius': assetListItems && ((expandable === 'full' && assetListItems.length > 6) || (expandable === 'semi' && assetListItems.length > 5) || (expandable === 'semi' && assetListItems.length > 4 &&  displayAddTokenButton)) ? '6px 6px 0 0' : '6px'}"
-    >
-
+<div
+  class="asset-list-container"
+  [ngClass]="{
+    'safari-full': expandable === 'full',
+    'safari-semi': expandable === 'semi'
+  }"
+>
+  <div
+    class="market-list-container"
+    [ngClass]="{
+      'no-asset':
+        (!loading && assetListItems && assetListItems.length == 0) ||
+        (!loading && !assetListItems),
+      loading: loading
+    }"
+    [ngStyle]="{
+      'border-radius':
+        assetListItems &&
+        ((expandable === 'full' && assetListItems.length > 6) ||
+          (expandable === 'semi' && assetListItems.length > 5) ||
+          (expandable === 'semi' &&
+            assetListItems.length > 4 &&
+            displayAddTokenButton))
+          ? '6px 6px 0 0'
+          : '6px'
+    }"
+  >
     <!-- <div *ngIf="loading" class="flex items-center justify-center" style="height: 100%; width: 100%"> -->
-      <!-- <mat-progress-spinner diameter="16" color="primary" mode="indeterminate"></mat-progress-spinner> -->
+    <!-- <mat-progress-spinner diameter="16" color="primary" mode="indeterminate"></mat-progress-spinner> -->
     <!-- </div> -->
     <span *ngIf="loading" class="loading">Loading</span>
     <!-- <div class="flex items-center justify-center " style="flex-direction: column; flex: 1 1 auto; height: 100%;" > -->
-    <span *ngIf="!loading && assetListItems && assetListItems.length == 0">{{noAssets}}</span>
+    <span *ngIf="!loading && assetListItems && assetListItems.length == 0">{{
+      noAssets
+    }}</span>
 
     <span *ngIf="!loading && !assetListItems">NO ASSET</span>
     <!-- </div> -->
-    <ul *ngIf="!loading && assetListItems && assetListItems.length > 0" class="market-list">
-
-      <li *ngIf="displayAddTokenButton" class="market-list-item" (click)="addToken.emit()">
+    <ul
+      *ngIf="!loading && assetListItems && assetListItems.length > 0"
+      class="market-list"
+    >
+      <li
+        *ngIf="displayAddTokenButton"
+        class="market-list-item"
+        (click)="addToken.emit()"
+      >
         <div class="flex flex-grow">
           <div class="flex item items-center">
             <div class="add-icon">
-              <img [src]="isTestnet ? '/assets/icons/plus-yellow.svg' : '/assets/icons/plus-green.svg'" alt="plus icon">
+              <img
+                [src]="
+                  isTestnet
+                    ? '/assets/icons/plus-yellow.svg'
+                    : '/assets/icons/plus-green.svg'
+                "
+                alt="plus icon"
+              />
             </div>
             <span class="item-text">ADD TOKEN</span>
           </div>
         </div>
       </li>
-      <li class="market-list-item" *ngFor="let item of assetListItems"
+      <li
+        class="market-list-item"
+        *ngFor="let item of assetListItems"
         (click)="selectAsset.emit(item.asset)"
-        [class.disabled]="item.asset.symbol == disabledAssetSymbol">
-
+        [class.disabled]="item.asset.symbol == disabledAssetSymbol"
+      >
         <!-- <div class="asset-icon-container" *ngIf="showIcons">
           <app-icon-ticker [chain]="item.asset.chain" [ticker]="item.asset.ticker" [iconPath]="item.asset.iconPath"></app-icon-ticker>
           <img *ngIf="item.asset.iconPath" class="asset-icon" [src]="item.asset.iconPath" appImgFallback />
           <mat-icon *ngIf="!item.asset.iconPath">help_outline</mat-icon>
         </div> -->
 
-        <div class="flex flex-grow justify-between" style="width:100%;">
+        <div class="flex flex-grow justify-between" style="width: 100%">
           <div class="flex items-center">
-            <app-icon-ticker [chain]="item.asset.chain" [ticker]="item.asset.ticker" [iconPath]="item.asset.iconPath"></app-icon-ticker>
-            <!-- <span class="market-list-item__symbol">{{item.asset.chain}}.{{item.asset.ticker}}</span> -->
+            <app-icon-ticker
+              [chain]="item.asset.chain"
+              [ticker]="item.asset.ticker"
+              [iconPath]="item.asset.iconPath"
+            ></app-icon-ticker>
+            <span *ngIf="showApy && hasAPY(item)" class="side-asset"> / {{+hasAPY(item).apy * 100 | number: '0.0-2'}}% APY</span>
           </div>
-          <div *ngIf="item.balance" class="flex text-right" style="text-align: right;">
-            <span class="market-list-item__balance">{{item.balance.amount().toNumber() | number: '1.2-6'}}</span>
+          <div
+            *ngIf="item.balance"
+            class="flex text-right"
+            style="text-align: right"
+          >
+            <span class="market-list-item__balance">{{
+              item.balance.amount().toNumber() | number: "1.2-6"
+            }}</span>
           </div>
 
           <!-- <span *ngIf="item.asset.chain === 'ETH' && item.asset.ticker !== 'ETH'" class="text-xs text-gray-400">{{item.asset.symbol.split('-')[1]}}</span> -->
@@ -52,10 +100,18 @@
         <button mat-flat-button color="accent" (click)="addToken.emit()">Add Token</button>
       </li> -->
     </ul>
-
   </div>
-  <div class="scroll-for-more" *ngIf="(assetListItems && assetListItems.length > 5) || (assetListItems && assetListItems.length > 4 && displayAddTokenButton)">
-    <img style="padding: 19px 0;" src="assets/images/mouse-scroll.svg" alt="scroll for more">
+  <div
+    class="scroll-for-more"
+    *ngIf="
+      (assetListItems && assetListItems.length > 5) ||
+      (assetListItems && assetListItems.length > 4 && displayAddTokenButton)
+    "
+  >
+    <img
+      style="padding: 19px 0"
+      src="assets/images/mouse-scroll.svg"
+      alt="scroll for more"
+    />
   </div>
 </div>
-

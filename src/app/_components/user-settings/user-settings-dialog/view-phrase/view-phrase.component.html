@@ -1,25 +1,44 @@
-<app-modal-section-header sectionTitle="View Wallet Phrase" [displayBackBtn]="true" (back)="back.emit()"></app-modal-section-header>
+<app-modal-section-header
+  sectionTitle="View Wallet Phrase"
+  [displayBackBtn]="true"
+  (back)="back.emit()"
+></app-modal-section-header>
 
 <div mat-dialog-content>
-
   <div class="p-4">
-
     <div *ngIf="!passwordAccepted">
       <div class="uni-input">
         <label>Password</label>
-        <input class="focus:outline-none focus:ring-0" [(ngModel)]="keystorePassword" name="keystore-password" placeholder="Please Enter Password" type="password" (keyup.enter)="unlock()" />
+        <input
+          class="focus:outline-none focus:ring-0"
+          [(ngModel)]="keystorePassword"
+          name="keystore-password"
+          placeholder="Please Enter Password"
+          type="password"
+          (keyup.enter)="unlock()"
+        />
       </div>
 
       <div class="flex justify-between items-center" style="height: 38px">
         <div>
-          <span *ngIf="keystoreError" style="font-size: 0.8rem; color: #2172e5">Keystore Login Incorrect</span>
+          <span *ngIf="keystoreError" style="font-size: 0.8rem; color: #2172e5"
+            >Keystore Login Incorrect</span
+          >
         </div>
         <div>
-          <button mat-flat-button color="accent" (click)="unlock()" [disabled]="keystoreConnecting">
+          <button
+            mat-flat-button
+            color="accent"
+            (click)="unlock()"
+            [disabled]="keystoreConnecting"
+          >
             <span>Unlock</span>
           </button>
-          <mat-progress-spinner mode="indeterminate" diameter="30" *ngIf="keystoreConnecting"></mat-progress-spinner>
-
+          <mat-progress-spinner
+            mode="indeterminate"
+            diameter="30"
+            *ngIf="keystoreConnecting"
+          ></mat-progress-spinner>
         </div>
       </div>
     </div>
@@ -27,7 +46,5 @@
     <div *ngIf="passwordAccepted">
       <app-phrase-words-list [phrase]="phrase"></app-phrase-words-list>
     </div>
-
   </div>
-
 </div>

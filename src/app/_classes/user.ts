@@ -1,13 +1,11 @@
-
-
-export type WalletType = 'keystore' | 'walletconnect' | 'ledger' | 'XDEFI';
-import { Client as BinanceClient } from '@xchainjs/xchain-binance';
-import { Client as BitcoinClient } from '@xchainjs/xchain-bitcoin';
-import { Client as ThorchainClient } from '@xchainjs/xchain-thorchain';
-import { Client as EthereumClient } from '@xchainjs/xchain-ethereum/lib';
-import { Client as LitecoinClient } from '@xchainjs/xchain-litecoin';
-import { Client as BitcoinCashClient } from '@xchainjs/xchain-bitcoincash';
-import { Balances } from '@xchainjs/xchain-client';
+export type WalletType = "keystore" | "walletconnect" | "ledger" | "XDEFI";
+import { Client as BinanceClient } from "@xchainjs/xchain-binance";
+import { Client as BitcoinClient } from "@xchainjs/xchain-bitcoin";
+import { Client as ThorchainClient } from "@xchainjs/xchain-thorchain";
+import { Client as EthereumClient } from "@xchainjs/xchain-ethereum/lib";
+import { Client as LitecoinClient } from "@xchainjs/xchain-litecoin";
+import { Client as BitcoinCashClient } from "@xchainjs/xchain-bitcoincash";
+import { Balances } from "@xchainjs/xchain-client";
 
 export interface AvailableClients {
   binance: BinanceClient;
@@ -26,10 +24,17 @@ export class User {
 
   // for Ledger
   ledger?: any;
-  hdPath?: number [];
+  hdPath?: number[];
   balances: Balances;
 
-  constructor(user: {type: WalletType, wallet: string, keystore?: any, ledger?: any, hdPath?: number[], clients?: AvailableClients}) {
+  constructor(user: {
+    type: WalletType;
+    wallet: string;
+    keystore?: any;
+    ledger?: any;
+    hdPath?: number[];
+    clients?: AvailableClients;
+  }) {
     this.type = user.type;
     this.wallet = user.wallet;
     this.keystore = user.keystore ?? null;
@@ -37,5 +42,4 @@ export class User {
     this.hdPath = user.hdPath ?? null;
     this.clients = user.clients;
   }
-
 }

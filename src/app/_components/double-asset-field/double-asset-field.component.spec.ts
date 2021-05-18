@@ -1,16 +1,15 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { DoubleAssetFieldComponent } from './double-asset-field.component';
+import { DoubleAssetFieldComponent } from "./double-asset-field.component";
 
-describe('DoubleAssetFieldComponent', () => {
+describe("DoubleAssetFieldComponent", () => {
   let component: DoubleAssetFieldComponent;
   let fixture: ComponentFixture<DoubleAssetFieldComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DoubleAssetFieldComponent ]
-    })
-    .compileComponents();
+      declarations: [DoubleAssetFieldComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -19,7 +18,7 @@ describe('DoubleAssetFieldComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

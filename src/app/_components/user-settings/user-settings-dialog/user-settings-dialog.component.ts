@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { Chain } from '@xchainjs/xchain-util';
+import { baseToAsset, Chain } from '@xchainjs/xchain-util';
 import { Subscription } from 'rxjs';
 import { AssetAndBalance } from 'src/app/_classes/asset-and-balance';
 import { PoolDTO } from 'src/app/_classes/pool';
@@ -9,14 +9,17 @@ import { MainViewsEnum, OverlaysService, UserViews } from 'src/app/_services/ove
 import { MidgardService } from 'src/app/_services/midgard.service';
 import { TransactionStatusService } from 'src/app/_services/transaction-status.service';
 import { UserService } from 'src/app/_services/user.service';
+import { CoinGeckoService } from 'src/app/_services/coin-gecko.service';
+import { environment } from 'src/environments/environment';
+import { CurrencyService } from 'src/app/_services/currency.service';
+import { Currency } from '../../account-settings/currency-converter/currency-converter.component';
 
 @Component({
-  selector: 'app-user-settings-dialog',
-  templateUrl: './user-settings-dialog.component.html',
-  styleUrls: ['./user-settings-dialog.component.scss']
+  selector: "app-user-settings-dialog",
+  templateUrl: "./user-settings-dialog.component.html",
+  styleUrls: ["./user-settings-dialog.component.scss"],
 })
 export class UserSettingsDialogComponent implements OnInit, OnDestroy {
-
   user: User;
   subs: Subscription[];
   binanceAddress: string;
@@ -27,10 +30,23 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
   bchAddress: string;
   loading: boolean;
   pendingTxCount: number;
-  mode: 'ADDRESSES' | 'ADDRESS' | 'PENDING_TXS'
-    | 'ASSET' | 'SEND' | 'CONFIRM_SEND' | 'UPGRADE_RUNE'
-    | 'CONFIRM_UPGRADE_RUNE' | 'VIEW_PHRASE' | 'DEPOSIT' | 'CONFIRM_DEPOSIT'
-    | 'ADDRESS_ADD_TOKEN' | 'PROCESSING' | 'SUCCESS' | 'CONFIRM_SEND' | 'ERROR';
+  mode:
+    | "ADDRESSES"
+    | "ADDRESS"
+    | "PENDING_TXS"
+    | "ASSET"
+    | "SEND"
+    | "CONFIRM_SEND"
+    | "UPGRADE_RUNE"
+    | "CONFIRM_UPGRADE_RUNE"
+    | "VIEW_PHRASE"
+    | "DEPOSIT"
+    | "CONFIRM_DEPOSIT"
+    | "ADDRESS_ADD_TOKEN"
+    | "PROCESSING"
+    | "SUCCESS"
+    | "CONFIRM_SEND"
+    | "ERROR";
   selectedAddress: string;
   selectedChain: Chain;
   selectedAsset: AssetAndBalance;
@@ -44,127 +60,184 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
 
   @Input() userSetting: boolean;
   pools: PoolDTO[];
+  chainUsdValue: { [chain: string]: { value: number, tokens: string[] } } = {};
+  isTestnet: boolean;
+  currecny: Currency
 
   constructor(
     private userService: UserService,
     private txStatusService: TransactionStatusService,
     private overlaysService: OverlaysService,
     private midgardService: MidgardService,
-    private transactionStatusService: TransactionStatusService
+    private transactionStatusService: TransactionStatusService,
+    private cgService: CoinGeckoService,
+    private currencyService: CurrencyService
   ) {
     this.pools = [];
     this.pendingTxCount = 0;
     this.mode = 'ADDRESSES';
+    this.isTestnet = environment.network === 'testnet' ? true : false;
 
     this.selectedAsset = null;
     this.selectedChain = null;
 
-    const user$ = this.userService.user$.subscribe(
-      async (user) => {
+    const user$ = this.userService.user$.subscribe(async (user) => {
+      if (user) {
+        this.loading = true;
 
-        if (user) {
+        this.user = user;
 
-          this.loading = true;
+        this.user = user;
 
-          this.user = user;
-
-          if (this.user.clients) {
-            this.binanceAddress = await this.user.clients.binance.getAddress();
-            this.bitcoinAddress = await this.user.clients.bitcoin.getAddress();
-            this.thorAddress = await this.user.clients.thorchain.getAddress();
-            this.ethereumAddress = await this.user.clients.ethereum.getAddress();
-            this.litecoinAddress = await this.user.clients.litecoin.getAddress();
-            this.bchAddress = await this.user.clients.bitcoinCash.getAddress();
-          }
-
-          this.loading = false;
-
-        } else {
-          this.pendingTxCount = 0;
+        if (this.user.clients) {
+          this.binanceAddress = await this.user.clients.binance.getAddress();
+          this.bitcoinAddress = await this.user.clients.bitcoin.getAddress();
+          this.thorAddress = await this.user.clients.thorchain.getAddress();
+          this.ethereumAddress = await this.user.clients.ethereum.getAddress();
+          this.litecoinAddress = await this.user.clients.litecoin.getAddress();
+          this.bchAddress = await this.user.clients.bitcoinCash.getAddress();
         }
 
+        this.loading = false;
+      } else {
+        this.pendingTxCount = 0;
       }
-    );
+    });
 
-    const txs$ = this.txStatusService.txs$.subscribe( (_) => {
+    const txs$ = this.txStatusService.txs$.subscribe((_) => {
       this.pendingTxCount = this.txStatusService.getPendingTxCount();
     });
 
-    const overlay$ = this.overlaysService.innerUserView.subscribe(val => {
+    const overlay$ = this.overlaysService.innerUserView.subscribe((val) => {
       this.userView = val.userView;
       this.selectedAddress = val.address;
       this.selectedChain = val.chain;
       this.selectedAsset = val.asset;
 
-      console.log('user tree is :', val);
-    })
+      console.log("user tree is :", val);
+    });
 
     this.subs = [user$, txs$, overlay$];
 
     // this.path = this.getPath();
   }
 
-  setMode(val: UserViews, address?: string, chain?: Chain, asset?: AssetAndBalance) {
+  setMode(
+    val: UserViews,
+    address?: string,
+    chain?: Chain,
+    asset?: AssetAndBalance
+  ) {
     this.overlaysService.setCurrentUserView({
-        userView: val,
-        address: address === undefined ? this.selectedAddress : address,
-        chain: chain === undefined ? this.selectedChain : chain,
-        asset: asset === undefined ? this.selectedAsset : asset
-      });
+      userView: val,
+      address: address === undefined ? this.selectedAddress : address,
+      chain: chain === undefined ? this.selectedChain : chain,
+      asset: asset === undefined ? this.selectedAsset : asset,
+    });
   }
 
   ngOnInit(): void {
     this.getPools();
+    this.getBalances();
+
+    this.currencyService.cur$.subscribe(
+      (cur) => {
+        this.currecny = cur;
+      }
+    )
   }
 
   getPools() {
-    this.midgardService.getPools().subscribe( (res) => this.pools = res );
+    this.midgardService.getPools().subscribe( 
+    (res) => {
+      this.pools = res;
+    });
+  }
+
+  async getBalances() {
+    var i = 0;
+    const list = await this.cgService.getCoinList().toPromise(); 
+
+    // balance will be triggered multiple time even on one chain
+    const balances$ = this.userService.userBalances$.subscribe(
+      (balances) => {
+        console.log(i++)
+        if (balances) {
+          balances.forEach(
+            async (balance) => {
+              let id = this.cgService.getCoinIdBySymbol(balance.asset.ticker, list);
+              if (id) {
+                this.cgService.getCurrencyConversion(id).subscribe(
+                  (res) => {
+                    for (const [_key, value] of Object.entries(res)) {
+                      if (this.chainUsdValue[balance.asset.chain] && !this.chainUsdValue[balance.asset.chain].tokens.includes(balance.asset.ticker)) {
+                        this.chainUsdValue[balance.asset.chain].tokens = [...this.chainUsdValue[balance.asset.chain].tokens, balance.asset.ticker];
+                        this.chainUsdValue[balance.asset.chain].value += value.usd * baseToAsset(balance.amount).amount().toNumber();
+                      }
+                      else if(!this.chainUsdValue[balance.asset.chain]) {
+                        this.chainUsdValue[balance.asset.chain] = {
+                          value: value.usd * baseToAsset(balance.amount).amount().toNumber(),
+                          tokens: [balance.asset.ticker]
+                        }
+                      }
+                    }
+                    console.log(this.chainUsdValue);
+                  }
+                )
+              }
+            }
+          )
+        }
+      }
+    );
+
+    this.subs.push(balances$);
   }
 
   selectAddress(address: string, chain: Chain) {
     this.selectedAddress = address;
     this.selectedChain = chain;
-    this.mode = 'ADDRESS';
-    this.setMode('Address', address, chain);
+    this.mode = "ADDRESS";
+    this.setMode("Address", address, chain);
   }
 
   clearSelectedAddress() {
     this.selectedAddress = null;
     this.selectedChain = null;
-    this.mode = 'ADDRESSES';
-    this.setMode('Addresses', null, null);
+    this.mode = "ADDRESSES";
+    this.setMode("Addresses", null, null);
   }
 
   selectAsset(asset: AssetAndBalance) {
     this.selectedAsset = asset;
-    this.mode = 'ASSET';
-    this.setMode('Asset', this.selectedAddress, this.selectedChain, asset);
+    this.mode = "ASSET";
+    this.setMode("Asset", this.selectedAddress, this.selectedChain, asset);
   }
 
   changeMessage(val: string) {
-    console.log(val)
+    console.log(val);
     this.message = val;
-    console.log(this.message)
+    console.log(this.message);
   }
 
-  confirmSend(p: {amount: number, recipientAddress: string, memo: string}) {
+  confirmSend(p: { amount: number; recipientAddress: string; memo: string }) {
     this.amountToSend = p.amount;
     this.recipient = p.recipientAddress;
     this.memo = p.memo;
-    this.mode = 'CONFIRM_SEND';
-    this.setMode('Confirm');
+    this.mode = "CONFIRM_SEND";
+    this.setMode("Confirm");
   }
 
-  confirmUpgradeRune(p: {amount: number}) {
+  confirmUpgradeRune(p: { amount: number }) {
     this.amountToSend = p.amount;
-    this.mode = 'CONFIRM_UPGRADE_RUNE';
+    this.mode = "CONFIRM_UPGRADE_RUNE";
     console.log(this.mode);
   }
 
   clearSelectedAsset() {
     this.selectedAsset = null;
-    this.mode = 'ADDRESS';
-    this.setMode('Address', this.selectedAddress, this.selectedChain, null)
+    this.mode = "ADDRESS";
+    this.setMode("Address", this.selectedAddress, this.selectedChain, null);
   }
 
   transactionSuccessful() {
@@ -183,7 +256,7 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
   }
 
   close() {
-    this.overlaysService.setViews(MainViewsEnum.Swap, 'Swap')
+    this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
   }
 
   // getPath() {
@@ -204,12 +277,9 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
   // }
 
   navCaller(nav) {
-    if (nav === 'wallet')
-      this.clearSelectedAddress();
-    else if (nav === 'address')
-      this.clearSelectedAsset()
-    else if (nav === 'asset')
-      this.mode = 'ASSET'
+    if (nav === "wallet") this.clearSelectedAddress();
+    else if (nav === "address") this.clearSelectedAsset();
+    else if (nav === "asset") this.mode = "ASSET";
   }
 
   ngOnDestroy(): void {
@@ -217,5 +287,4 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
       sub.unsubscribe();
     }
   }
-
 }

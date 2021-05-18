@@ -27,9 +27,15 @@
 }
 
 @keyframes jump {
-  0%   {bottom: 0px;}
-  20%  {bottom: 5px;}
-  40%  {bottom: 0px;}
+  0% {
+    bottom: 0px;
+  }
+  20% {
+    bottom: 5px;
+  }
+  40% {
+    bottom: 0px;
+  }
 }
 
 .expandable {
@@ -43,14 +49,18 @@
   align-items: center;
   padding: 2px;
   border: none;
-  background: linear-gradient(45deg, var(--primary-graident-bottom-left) 0%, var(--primary-graident-top-right) 100%);
+  background: linear-gradient(
+    45deg,
+    var(--primary-graident-bottom-left) 0%,
+    var(--primary-graident-top-right) 100%
+  );
 
   &.expanded {
     height: auto;
   }
 
   .address {
-    font-family: 'Roboto Mono';
+    font-family: "Roboto Mono";
     font-weight: 500;
     letter-spacing: -1px;
     text-align: center;
@@ -68,7 +78,7 @@
     height: 100%;
     border-radius: 6px;
     padding: 7px;
-    background: #000B13;
+    background: #000b13;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -83,20 +93,20 @@
       border-radius: 3px;
       width: 100%;
       cursor: pointer;
-      background: #000B13;
-      font-family: 'Roboto';
+      background: #000b13;
+      font-family: "Roboto";
 
       &:hover {
         background: var(--primary-default);
-        font-family: 'Roboto';
+        font-family: "Roboto";
 
         span {
-          color: #000B13;
+          color: #000b13;
           font-weight: 700;
         }
 
         &.red {
-          background: #FF4954;
+          background: #ff4954;
         }
       }
 

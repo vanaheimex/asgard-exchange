@@ -1,14 +1,14 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Injectable } from "@angular/core";
+import { BehaviorSubject } from "rxjs";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class PhraseConfirmService {
   private isUnderStood = new BehaviorSubject<boolean>(true);
   isUnderStood$ = this.isUnderStood.asObservable();
 
-  constructor() { }
+  constructor() {}
 
   getConfirmation() {
     return this.isUnderStood;
@@ -17,5 +17,4 @@ export class PhraseConfirmService {
   setConfirmation(val: boolean) {
     this.isUnderStood.next(val);
   }
-
 }

@@ -1,17 +1,16 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { UpgradeRuneComponent } from './upgrade-rune.component';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { UpgradeRuneComponent } from "./upgrade-rune.component";
 
-describe('UpgradeRuneComponent', () => {
+describe("UpgradeRuneComponent", () => {
   let component: UpgradeRuneComponent;
   let fixture: ComponentFixture<UpgradeRuneComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ UpgradeRuneComponent ],
-      imports: [ HttpClientTestingModule ]
-    })
-    .compileComponents();
+      declarations: [UpgradeRuneComponent],
+      imports: [HttpClientTestingModule],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -20,7 +19,7 @@ describe('UpgradeRuneComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

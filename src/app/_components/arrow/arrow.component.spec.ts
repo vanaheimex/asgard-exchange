@@ -1,16 +1,15 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { ArrowComponent } from './arrow.component';
+import { ArrowComponent } from "./arrow.component";
 
-describe('ArrowComponent', () => {
+describe("ArrowComponent", () => {
   let component: ArrowComponent;
   let fixture: ComponentFixture<ArrowComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ArrowComponent ]
-    })
-    .compileComponents();
+      declarations: [ArrowComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -19,7 +18,7 @@ describe('ArrowComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

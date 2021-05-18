@@ -3,8 +3,8 @@
 
 export const environment = {
   production: true,
-  network: 'testnet',
+  network: "testnet",
   etherscanKey: process.env.ETHERSCAN_KEY,
   infuraProjectId: process.env.INFURA_PROJET_ID,
-  appLocked: false
+  appLocked: false,
 };

@@ -1,16 +1,15 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { SeedPhraseComponent } from './seed-phrase.component';
+import { SeedPhraseComponent } from "./seed-phrase.component";
 
-describe('SeedPhraseComponent', () => {
+describe("SeedPhraseComponent", () => {
   let component: SeedPhraseComponent;
   let fixture: ComponentFixture<SeedPhraseComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SeedPhraseComponent ]
-    })
-    .compileComponents();
+      declarations: [SeedPhraseComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -19,7 +18,7 @@ describe('SeedPhraseComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

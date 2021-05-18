@@ -1,24 +1,49 @@
 <div class="top-bar">
-  <a *ngIf="isTestnet" href="https://thorchain.org" target="_blank">VISIT THE BRAND NEW THORCHAIN.ORG WEBSITE</a>
-  <a href="https://viewblock.io/thorchain/pools" target="_blank" class="gradient" [ngClass]="{'special-gradient': depositsDisabled}" *ngIf="!isTestnet">{{topbar}} <span *ngIf="depositsDisabled">(CAP REACHED)</span></a>
+  <a *ngIf="isTestnet" href="https://thorchain.org" target="_blank"
+    >VISIT THE BRAND NEW THORCHAIN.ORG WEBSITE</a
+  >
+  <a
+    href="https://viewblock.io/thorchain/pools"
+    target="_blank"
+    class="gradient"
+    [ngClass]="{ 'special-gradient': depositsDisabled }"
+    *ngIf="!isTestnet"
+    >{{ topbar }} <span *ngIf="depositsDisabled">(CAP REACHED)</span></a
+  >
 </div>
 <header>
   <h1>
-    <a class="flex items-center" [routerLink]="isUnderstood ? ['/', 'swap'] : null" (click)="gotoSwap()">
+    <a
+      class="flex items-center"
+      [routerLink]="isUnderstood ? ['/', 'swap'] : null"
+      (click)="gotoSwap()"
+    >
       <!-- <img style="width: 36.61px; height: 42px; margin-right: 8px" src="assets/images/vanaheimex-green.svg" />
       <span class="title">ASGARDEX
         <span class="tag" *ngIf="!isTestnet">MAINNET</span>
         <span class="tag" *ngIf="isTestnet">TESTNET</span>
       </span> -->
-      <img *ngIf="!isTestnet" src="/assets/images/vanaheimex-logo-chaosnet.svg" alt="">
-      <img *ngIf="isTestnet" src="/assets/images/vanaheimex-logo-testnet.svg" alt="">
+      <img
+        *ngIf="!isTestnet"
+        src="/assets/images/vanaheimex-logo-chaosnet.svg"
+        alt=""
+      />
+      <img
+        *ngIf="isTestnet"
+        src="/assets/images/vanaheimex-logo-testnet.svg"
+        alt=""
+      />
     </a>
   </h1>
   <ng-container *ngIf="user && isUnderstood">
     <app-native-rune-prompt></app-native-rune-prompt>
   </ng-container>
   <div class="header-right">
-    <app-user-settings *ngIf="user && isUnderstood" [user]="user" [(overlay)]="overlay"></app-user-settings>
+    <app-user-settings
+      *ngIf="user && isUnderstood"
+      [user]="user"
+      [(overlay)]="overlay"
+    ></app-user-settings>
     <!-- <span id="testnet-indicator" *ngIf="isTestnet">Testnet</span> -->
     <div class="flex thorchain-indicator">
       <app-last-block-indicator></app-last-block-indicator>

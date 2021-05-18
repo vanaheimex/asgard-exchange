@@ -1,16 +1,15 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { TestnetWarningComponent } from './testnet-warning.component';
+import { TestnetWarningComponent } from "./testnet-warning.component";
 
-describe('TestnetWarningComponent', () => {
+describe("TestnetWarningComponent", () => {
   let component: TestnetWarningComponent;
   let fixture: ComponentFixture<TestnetWarningComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TestnetWarningComponent ]
-    })
-    .compileComponents();
+      declarations: [TestnetWarningComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -19,7 +18,7 @@ describe('TestnetWarningComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

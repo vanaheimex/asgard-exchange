@@ -4,62 +4,66 @@
   height: 632px;
   border-radius: 20px;
   padding: 2px;
-  background: linear-gradient(to top right,var(--primary-graident-bottom-left), var(--primary-graident-top-right));
+  background: linear-gradient(
+    to top right,
+    var(--primary-graident-bottom-left),
+    var(--primary-graident-top-right)
+  );
 }
 
 .container {
-    border-radius: 20px;
+  border-radius: 20px;
 
-    &.pending {
-      border: 2px solid #F3BA2F;
-    }
+  &.pending {
+    border: 2px solid #f3ba2f;
+  }
 
-    &.submit {
-      border: 2px solid #00CCFF;
-    }
+  &.submit {
+    border: 2px solid #00ccff;
+  }
 
-    &.success {
-      border: 2px solid #FFF;
-    }
+  &.success {
+    border: 2px solid #fff;
+  }
 }
 
 .processing {
-    color: #00CCFF;
-    border-color: #00CCFF;
+  color: #00ccff;
+  border-color: #00ccff;
 }
 
 .confirm-box {
-    flex-flow: column;
-    max-height: 113px;
-    min-height: 113px;
-    font-size: 14px;
+  flex-flow: column;
+  max-height: 113px;
+  min-height: 113px;
+  font-size: 14px;
 
-    .label-box {
-      display: flex;
-      width: 100%;
-      line-height: 24px;
+  .label-box {
+    display: flex;
+    width: 100%;
+    line-height: 24px;
+  }
+
+  .input-box {
+    display: flex;
+    padding: 2px 0;
+    width: 100%;
+
+    .priceInput {
+      font-size: 22px;
+      line-height: 30px;
     }
 
-    .input-box {
-        display: flex;
-        padding: 2px 0;
-        width: 100%;
+    .launch-markets-btn {
+      padding-right: 0;
 
-        .priceInput {
-          font-size: 22px;
-          line-height: 30px;
+      .asset-selector {
+        padding-right: 0;
+
+        &:hover {
+          background-color: transparent;
         }
-
-        .launch-markets-btn {
-            padding-right: 0;
-
-            .asset-selector {
-                padding-right: 0;
-
-                &:hover {
-                    background-color: transparent;
-                }
-            }
-        }
+      }
     }
+  }
 }

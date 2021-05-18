@@ -3,8 +3,8 @@
     <app-breadcrumb
       [path]="[
         { name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap' },
-        { name: 'settings',  backFunc: true},
-        { name: 'slippage tolerance', disable: true}
+        { name: 'settings', backFunc: true },
+        { name: 'slippage tolerance', disable: true }
       ]"
       [message]="message"
       (backFunc)="close.emit()"
@@ -13,19 +13,33 @@
   </div>
   <div>
     <div mat-dialog-content>
-      <app-text-field [placeHolder]="[tolerance]" selectedType="Number" label="Percentage" [(textOfField)]="customTolerance" name="custom-tolerance"></app-text-field>
+      <app-text-field
+        [placeHolder]="[tolerance]"
+        selectedType="Number"
+        label="Percentage"
+        [(textOfField)]="customTolerance"
+        name="custom-tolerance"
+      ></app-text-field>
     </div>
 
     <!-- close dialog -->
     <div class="bottom-actions two-btn">
       <div class="left-btn">
-        <button class="close-btn" (click)="close.emit()">
+        <button class="close-btn" (click)="closeDialog()">
           <span>cancel</span>
         </button>
       </div>
       <div class="divider"></div>
       <div class="right-btn">
-        <button class="next-btn" [disabled]="tolerance == customTolerance || !customTolerance || !(customTolerance <= 100 && customTolerance > 0)" (click)="setSlippage()">
+        <button
+          class="next-btn"
+          [disabled]="
+            tolerance == customTolerance ||
+            !customTolerance ||
+            !(customTolerance <= 100 && customTolerance > 0)
+          "
+          (click)="setSlippage()"
+        >
           <span>Save</span>
         </button>
       </div>

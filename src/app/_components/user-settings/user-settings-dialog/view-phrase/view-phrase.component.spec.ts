@@ -1,16 +1,15 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { ViewPhraseComponent } from './view-phrase.component';
+import { ViewPhraseComponent } from "./view-phrase.component";
 
-describe('ViewPhraseComponent', () => {
+describe("ViewPhraseComponent", () => {
   let component: ViewPhraseComponent;
   let fixture: ComponentFixture<ViewPhraseComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ViewPhraseComponent ]
-    })
-    .compileComponents();
+      declarations: [ViewPhraseComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -19,7 +18,7 @@ describe('ViewPhraseComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

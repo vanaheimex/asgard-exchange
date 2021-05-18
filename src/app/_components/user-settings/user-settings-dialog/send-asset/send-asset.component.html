@@ -1,48 +1,79 @@
 <div class="container-wrapper">
   <div class="container">
     <div class="content-top">
-      <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'wallet', call: 'wallet'}, {name: asset.asset.chain, call: 'chain'}, {name: asset.asset.chain + '.' + asset.asset.ticker, call: 'asset'}, {name: 'send', disable: true}]" [isError]="isError()" [message]="mainButtonText()" (funcCaller)="navCaller($event)"></app-breadcrumb>
-      <div class="top-right">
-      </div>
+      <app-breadcrumb
+        [path]="[
+          { name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap' },
+          { name: 'wallet', call: 'wallet' },
+          { name: asset.asset.chain, call: 'chain' },
+          { name: asset.asset.chain + '.' + asset.asset.ticker, call: 'asset' },
+          { name: 'send', disable: true }
+        ]"
+        [isError]="isError()"
+        [message]="mainButtonText()"
+        (funcCaller)="navCaller($event)"
+      ></app-breadcrumb>
+      <div class="top-right"></div>
     </div>
     <div mat-dialog-content *ngIf="asset">
-
       <div>
         <div>
           <app-asset-input
             label="Send"
-            
             [(selectedAsset)]="asset.asset"
             [(assetUnit)]="amount"
             [balance]="asset.balance.amount().toNumber()"
             [disabledAssetSymbol]="asset.asset.symbol"
             [disabledMarketSelect]="true"
-            [selectableMarkets]="[asset]">
+            [selectableMarkets]="[asset]"
+            txType="EXTERNAL"
+          >
           </app-asset-input>
         </div>
 
         <app-arrow></app-arrow>
 
-        <app-text-field *ngIf="asset.asset.chain !== 'BNB'" selectedType="Text" mode="Single" label="Recipient Address" [(textOfField)]="recipientAddress"></app-text-field>
-        <app-text-field *ngIf="asset.asset.chain === 'BNB'" selectedType="Text" mode="Double" typeTwo="text" label="Recipient Address" labelTwo="Memo" [(textOfField)]="recipientAddress" [(textOfFieldTwo)]="memo"></app-text-field>
-
+        <app-text-field
+          *ngIf="asset.asset.chain !== 'BNB'"
+          selectedType="Text"
+          mode="Single"
+          label="Recipient Address"
+          [(textOfField)]="recipientAddress"
+        ></app-text-field>
+        <app-text-field
+          *ngIf="asset.asset.chain === 'BNB'"
+          selectedType="Text"
+          mode="Double"
+          typeTwo="text"
+          label="Recipient Address"
+          labelTwo="Memo"
+          [(textOfField)]="recipientAddress"
+          [(textOfFieldTwo)]="memo"
+        ></app-text-field>
       </div>
-
     </div>
 
-    <div class="bottom-actions" style="display: flex; margin-top: 58px;">
-      <div style="width: 50%;">
-        <div style="margin-right: 6px;">
+    <div class="bottom-actions" style="display: flex; margin-top: 58px">
+      <div style="width: 50%">
+        <div style="margin-right: 6px">
           <button class="close-btn" (click)="back.emit()">
             <span>CANCEL</span>
           </button>
         </div>
       </div>
-      <div style="width: 50%;">
-        <div style="margin-left: 6px;">
-          <button class="next-btn graident-btn"
-          (click)="confirmSend.next({amount: amount, recipientAddress: recipientAddress, memo: memo})"
-          [disabled]="nextDisabled()">
+      <div style="width: 50%">
+        <div style="margin-left: 6px">
+          <button
+            class="next-btn graident-btn"
+            (click)="
+              confirmSend.next({
+                amount: amount,
+                recipientAddress: recipientAddress,
+                memo: memo
+              })
+            "
+            [disabled]="nextDisabled()"
+          >
             <span>Send</span>
           </button>
         </div>

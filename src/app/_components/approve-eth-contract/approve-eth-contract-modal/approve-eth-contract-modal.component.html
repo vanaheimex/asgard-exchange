@@ -1,15 +1,27 @@
 <div class="overlay-of-content">
-
   <div class="content-top">
-    <app-breadcrumb [path]="path" [isError]="insufficientEthBalance" [message]="insufficientEthBalance ? 'Insufficient ETH.ETH balance' : 'approve'" (funcCaller)="back($event)" ></app-breadcrumb>
+    <app-breadcrumb
+      [path]="path"
+      [isError]="insufficientEthBalance"
+      [message]="
+        insufficientEthBalance ? 'Insufficient ETH.ETH balance' : 'approve'
+      "
+      (funcCaller)="back($event)"
+    ></app-breadcrumb>
     <div class="top-right">
-      <div class="right-option">
-      </div>
+      <div class="right-option"></div>
     </div>
   </div>
 
   <app-notice [isMono]="true">
-    <span text style="font-family: inherit;">{{data.contractAddress.substring(0, 16) + '...' + data.contractAddress.substring(data.contractAddress.length - 16, data.contractAddress.length)}}</span>
+    <span text style="font-family: inherit">{{
+      data.contractAddress.substring(0, 16) +
+        "..." +
+        data.contractAddress.substring(
+          data.contractAddress.length - 16,
+          data.contractAddress.length
+        )
+    }}</span>
     <ng-container tags>
       <app-tag>
         <div (click)="copyToClipboard()">
@@ -17,10 +29,15 @@
           <span *ngIf="copied">COPIED</span>
         </div>
       </app-tag>
-      <div style="width: 5px;"></div>
+      <div style="width: 5px"></div>
       <app-tag>
         <div>
-          <a target="_blank" style="text-decoration: none; color: inherit;" [href]="explorerPath()">Explore</a>
+          <a
+            target="_blank"
+            style="text-decoration: none; color: inherit"
+            [href]="explorerPath()"
+            >Explore</a
+          >
         </div>
       </app-tag>
     </ng-container>
@@ -33,7 +50,7 @@
     </div>
     <div class="flex justify-between">
       <span class="tx-detail-label">Estimated ETH Fee:</span>
-      <span *ngIf="fee">{{ (fee) }} ETH</span>
+      <span *ngIf="fee">{{ fee }} ETH</span>
       <span *ngIf="!fee">...</span>
     </div>
   </div>
@@ -46,14 +63,18 @@
     </div>
     <div class="divider"></div>
     <div class="right-btn">
-      <button class="next-btn" (click)="approve()" [disabled]="insufficientEthBalance || loading">
+      <button
+        class="next-btn"
+        (click)="approve()"
+        [disabled]="insufficientEthBalance || loading"
+      >
         <span>Approve</span>
       </button>
     </div>
   </div>
 </div>
 
-  <!-- <div>
+<!-- <div>
 
     <small>
       <span>Approve {{data.asset.ticker}} to be used by</span> <br />

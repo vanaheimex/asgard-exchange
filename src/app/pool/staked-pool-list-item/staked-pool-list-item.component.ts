@@ -1,25 +1,30 @@
-import { Component, Input, OnChanges } from '@angular/core';
-import { getPoolShare, PoolData, UnitData } from '@thorchain/asgardex-util';
-import { baseAmount } from '@xchainjs/xchain-util';
-import BigNumber from 'bignumber.js';
-import { Subscription } from 'rxjs';
-import { Asset } from 'src/app/_classes/asset';
-import { MemberPool } from 'src/app/_classes/member';
-import { PoolDTO } from 'src/app/_classes/pool';
-import { Currency } from 'src/app/_components/account-settings/currency-converter/currency-converter.component';
-import { PoolDetailService } from 'src/app/_services/pool-detail.service';
-import { RuneYieldPoolResponse, RuneYieldService } from 'src/app/_services/rune-yield.service';
-import { TransactionStatusService, Tx } from 'src/app/_services/transaction-status.service';
-import { UserService } from 'src/app/_services/user.service';
-import { environment } from 'src/environments/environment';
+import { Component, Input, OnChanges } from "@angular/core";
+import { getPoolShare, PoolData, UnitData } from "@thorchain/asgardex-util";
+import { baseAmount } from "@xchainjs/xchain-util";
+import BigNumber from "bignumber.js";
+import { Subscription } from "rxjs";
+import { Asset } from "src/app/_classes/asset";
+import { MemberPool } from "src/app/_classes/member";
+import { PoolDTO } from "src/app/_classes/pool";
+import { Currency } from "src/app/_components/account-settings/currency-converter/currency-converter.component";
+import { PoolDetailService } from "src/app/_services/pool-detail.service";
+import {
+  RuneYieldPoolResponse,
+  RuneYieldService,
+} from "src/app/_services/rune-yield.service";
+import {
+  TransactionStatusService,
+  Tx,
+} from "src/app/_services/transaction-status.service";
+import { UserService } from "src/app/_services/user.service";
+import { environment } from "src/environments/environment";
 
 @Component({
-  selector: 'app-staked-pool-list-item',
-  templateUrl: './staked-pool-list-item.component.html',
-  styleUrls: ['./staked-pool-list-item.component.scss']
+  selector: "app-staked-pool-list-item",
+  templateUrl: "./staked-pool-list-item.component.html",
+  styleUrls: ["./staked-pool-list-item.component.scss"],
 })
 export class StakedPoolListItemComponent implements OnChanges {
-
   expanded: boolean;
 
   @Input() activate: boolean;
@@ -64,11 +69,14 @@ export class StakedPoolListItemComponent implements OnChanges {
   assetDepth: number;
   gainLoss: number;
 
-  constructor(private poolDetailService : PoolDetailService, private txStatusService: TransactionStatusService) {
+  constructor(
+    private poolDetailService: PoolDetailService,
+    private txStatusService: TransactionStatusService
+  ) {
     this.expanded = false;
     this.activate = false;
 
-    this.isTestnet = environment.network === 'testnet' ? true : false;
+    this.isTestnet = environment.network === "testnet" ? true : false;
   }
 
   ngOnChanges() {
@@ -79,27 +87,32 @@ export class StakedPoolListItemComponent implements OnChanges {
     const poolDetail$ = this.poolDetailService.activatedAsset$.subscribe(
       (asset) => {
         if (asset && this.asset) {
-          this.activate = asset.symbol === this.asset.symbol && asset.chain === this.asset.chain;
+          this.activate =
+            asset.symbol === this.asset.symbol &&
+            asset.chain === this.asset.chain;
           this.getPoolShare();
         }
-      })
+      }
+    );
 
-      const pendingTx$ = this.txStatusService.txs$.subscribe(
-        (tx) => {
-          this.isPending = this.txStatusService.getPoolPedingTx().find( (tx) => {
-            return tx.symbol === this.asset.symbol
-          });
-        }
-      );
+    const pendingTx$ = this.txStatusService.txs$.subscribe((tx) => {
+      this.isPending = this.txStatusService.getPoolPedingTx().find((tx) => {
+        return tx.symbol === this.asset.symbol;
+      });
+    });
 
-      this.assetDepth = ((new BigNumber(+this.poolData.assetDepth).div(10 ** 8).toNumber()) * +this.poolData.assetPriceUSD + (new BigNumber(+this.poolData.runeDepth).div(10 ** 8).toNumber()) * +this.poolData.runePrice) * this.currency.value
+    this.assetDepth =
+      (new BigNumber(+this.poolData.assetDepth).div(10 ** 8).toNumber() *
+        +this.poolData.assetPriceUSD +
+        new BigNumber(+this.poolData.runeDepth).div(10 ** 8).toNumber() *
+          +this.poolData.runePrice) *
+      this.currency.value;
 
-      this.subs = [poolDetail$, pendingTx$]
+    this.subs = [poolDetail$, pendingTx$];
   }
 
   toggleExpanded() {
-    if (!this.isPending)
-      this.poolDetailService.setActivatedAsset(this.asset);
+    if (!this.isPending) this.poolDetailService.setActivatedAsset(this.asset);
   }
 
   setAsset(): void {
@@ -110,36 +123,62 @@ export class StakedPoolListItemComponent implements OnChanges {
 
   getPoolShare(): void {
     if (this.memberPoolData && this.poolData) {
-
       const unitData: UnitData = {
         stakeUnits: baseAmount(this.memberPoolData.liquidityUnits),
-        totalUnits: baseAmount(this.poolData.units)
+        totalUnits: baseAmount(this.poolData.units),
       };
 
       const poolData: PoolData = {
         assetBalance: baseAmount(this.poolData.assetDepth),
-        runeBalance: baseAmount(this.poolData.runeDepth)
+        runeBalance: baseAmount(this.poolData.runeDepth),
       };
 
       const poolShare = getPoolShare(unitData, poolData);
 
-      this.pooledRune = poolShare.rune.amount().div(10 ** 8).toNumber();
-      this.pooledAsset = poolShare.asset.amount().div(10 ** 8).toNumber();
-      this.poolShare = Number(this.memberPoolData.liquidityUnits) / Number(this.poolData.units);
+      this.pooledRune = poolShare.rune
+        .amount()
+        .div(10 ** 8)
+        .toNumber();
+      this.pooledAsset = poolShare.asset
+        .amount()
+        .div(10 ** 8)
+        .toNumber();
+      this.poolShare =
+        Number(this.memberPoolData.liquidityUnits) /
+        Number(this.poolData.units);
 
-      let currentValue = new BigNumber((this.poolShare * +this.poolData.runeDepth * this.poolData.runePrice) + (this.poolShare * +this.poolData.assetDepth * +this.poolData.assetPriceUSD)).div(10 ** 8).toNumber()
-      let addedValue = new BigNumber(this.runeYieldPool?.find(p => p.pool === this.memberPoolData.pool)?.totalstakedusd).div(10 ** 8).toNumber();
+      let currentValue = new BigNumber(
+        this.poolShare * +this.poolData.runeDepth * this.poolData.runePrice +
+          this.poolShare *
+            +this.poolData.assetDepth *
+            +this.poolData.assetPriceUSD
+      )
+        .div(10 ** 8)
+        .toNumber();
+      let addedValue = new BigNumber(
+        this.runeYieldPool?.find(
+          (p) => p.pool === this.memberPoolData.pool
+        )?.totalstakedusd
+      )
+        .div(10 ** 8)
+        .toNumber();
       if (!addedValue) {
-        this.gainLoss = 0
-        return
+        this.gainLoss = 0;
+        return;
       }
-      this.gainLoss = ((currentValue - addedValue) / addedValue) * 100; 
-      
+      this.gainLoss = ((currentValue - addedValue) / addedValue) * 100;
+
       if (this.activate) {
-        this.poolDetailService.setPooledDetails('member', this.pooledRune, this.pooledAsset, this.poolShare, this.asset.ticker, this.asset.chain);
+        this.poolDetailService.setPooledDetails(
+          "member",
+          this.pooledRune,
+          this.pooledAsset,
+          this.poolShare,
+          this.asset.ticker,
+          this.asset.chain
+        );
       }
     }
-
   }
 
   ngOnDestroy(): void {
@@ -148,8 +187,6 @@ export class StakedPoolListItemComponent implements OnChanges {
     }
 
     // guard to see the staked list item goes away
-    if (this.activate)
-      this.poolDetailService.setActivatedAsset(null);
+    if (this.activate) this.poolDetailService.setActivatedAsset(null);
   }
-
 }

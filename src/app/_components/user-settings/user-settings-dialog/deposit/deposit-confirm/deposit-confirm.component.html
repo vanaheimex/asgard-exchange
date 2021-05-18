@@ -1,48 +1,69 @@
 <div *ngIf="txState === 'PENDING_CONFIRMATION'">
-
-  <app-modal-section-header sectionTitle="Manual Memo" sectionTitleIcon="warning" [displayBackBtn]="true" (back)="back.emit()"></app-modal-section-header>
+  <app-modal-section-header
+    sectionTitle="Manual Memo"
+    sectionTitleIcon="warning"
+    [displayBackBtn]="true"
+    (back)="back.emit()"
+  ></app-modal-section-header>
 
   <div mat-dialog-content>
-
     <div class="p-4">
       <div class="uni-input">
         <label>Memo</label>
         <textarea type="text" [ngModel]="memo" disabled></textarea>
       </div>
 
-      <div class="uni-input" *ngIf="action != 'WITHDRAW' && action != 'LEAVE' && action != 'UNBOND'">
+      <div
+        class="uni-input"
+        *ngIf="action != 'WITHDRAW' && action != 'LEAVE' && action != 'UNBOND'"
+      >
         <label>Amount</label>
         <input type="text" [value]="depositAmount" disabled />
       </div>
 
-      <div class="uni-input" *ngIf="action == 'WITHDRAW' || action == 'LEAVE' || action === 'UNBOND'">
+      <div
+        class="uni-input"
+        *ngIf="action == 'WITHDRAW' || action == 'LEAVE' || action === 'UNBOND'"
+      >
         <label>Amount</label>
-        <input type="text" [value]="'0'" disabled>
+        <input type="text" [value]="'0'" disabled />
       </div>
 
       <small>
         <b>This area is for advanced users only!</b> <br />
         You are about to submit a manual memo transaction. <br />
         If your memo is incorrect, there is a risk of losing funds. <br />
-        <b>Asgardex is not liable for loss of funds due to submitting an incorrect memo.</b> <br />
+        <b
+          >Asgardex is not liable for loss of funds due to submitting an
+          incorrect memo.</b
+        >
+        <br />
         Submit manual memos at your own risk.
       </small>
 
-      <button (click)="submitTransaction()" mat-flat-button color="primary" class="main-action-btn w-full">Submit</button>
-
+      <button
+        (click)="submitTransaction()"
+        mat-flat-button
+        color="primary"
+        class="main-action-btn w-full"
+      >
+        Submit
+      </button>
     </div>
-
   </div>
-
 </div>
 
 <app-transaction-processing-modal
   *ngIf="txState == 'SUBMITTING'"
-  transactionDetail="Depositing {{memo}}"
-  (closeDialog)="transactionSubmitted.next()">
+  transactionDetail="Depositing {{ memo }}"
+  (closeDialog)="transactionSubmitted.next()"
+>
 </app-transaction-processing-modal>
 
-<div *ngIf="txState === 'ERROR'" class="flex flex-col items-center py-8 text-sm">
+<div
+  *ngIf="txState === 'ERROR'"
+  class="flex flex-col items-center py-8 text-sm"
+>
   <mat-icon>warning</mat-icon>
-  {{error}}
+  {{ error }}
 </div>

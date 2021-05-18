@@ -1,19 +1,19 @@
-import { TestBed } from '@angular/core/testing';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { TestBed } from "@angular/core/testing";
+import { MatSnackBarModule } from "@angular/material/snack-bar";
 
-import { CopyService } from './copy.service';
+import { CopyService } from "./copy.service";
 
-describe('CopyService', () => {
+describe("CopyService", () => {
   let service: CopyService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ MatSnackBarModule ]
+      imports: [MatSnackBarModule],
     });
     service = TestBed.inject(CopyService);
   });
 
-  it('should be created', () => {
+  it("should be created", () => {
     expect(service).toBeTruthy();
   });
 });

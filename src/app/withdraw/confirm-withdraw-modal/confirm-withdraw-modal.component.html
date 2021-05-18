@@ -1,15 +1,26 @@
-<div class="container-wrapper" *ngIf="data && txState === 'PENDING_CONFIRMATION' || txState === 'ERROR'">
+<div
+  class="container-wrapper"
+  *ngIf="(data && txState === 'PENDING_CONFIRMATION') || txState === 'ERROR'"
+>
   <div class="container">
-
     <div class="main-container">
       <nav class="content-top">
-        <app-breadcrumb [path]="[{name: 'vanaheimex', call: 'swap'}, {name: 'Pools', call: 'pool'}, {name: 'Withdraw', disable: true}]" [isError]="txState === 'ERROR'" [message]="txState === 'ERROR' ? 'Error' : 'Confirm'" (funcCaller)="goToNav($event)"></app-breadcrumb>
+        <app-breadcrumb
+          [path]="[
+            { name: 'vanaheimex', call: 'swap' },
+            { name: 'Pools', call: 'pool' },
+            { name: 'Withdraw', disable: true }
+          ]"
+          [isError]="txState === 'ERROR'"
+          [message]="txState === 'ERROR' ? 'Error' : 'Confirm'"
+          (funcCaller)="goToNav($event)"
+        ></app-breadcrumb>
       </nav>
     </div>
 
     <div class="percent-container">
       <span class="percent-label">Percentage</span>
-      <span class="unstake-percent">{{data.unstakePercent}}%</span>
+      <span class="unstake-percent">{{ data.unstakePercent }}%</span>
       <mat-slider
         class="slider"
         [disabled]="true"
@@ -17,7 +28,8 @@
         [min]="0"
         step="1"
         [tickInterval]="25"
-        [(ngModel)]="data.unstakePercent">
+        [(ngModel)]="data.unstakePercent"
+      >
       </mat-slider>
     </div>
 
@@ -33,23 +45,39 @@
     <div class="swap-details">
       <div class="flex justify-between">
         <span class="tx-detail-label">Prices:</span>
-        <span>1 {{data.rune.ticker}} = {{data.assetBasePrice | number:"1.2-4"}} {{data.asset.ticker}}</span>
+        <span
+          >1 {{ data.rune.ticker }} =
+          {{ data.assetBasePrice | number: "1.2-4" }}
+          {{ data.asset.ticker }}</span
+        >
       </div>
 
       <div class="flex justify-between">
         <span class="tx-detail-label"></span>
-        <span>1 {{data.asset.ticker}} = {{data.runeBasePrice | number:"1.2-4"}} {{data.rune.ticker}}</span>
+        <span
+          >1 {{ data.asset.ticker }} =
+          {{ data.runeBasePrice | number: "1.2-4" }}
+          {{ data.rune.ticker }}</span
+        >
       </div>
 
-      <div *ngIf="data.withdrawType !== 'ASYM_ASSET'" class="flex justify-between">
+      <div
+        *ngIf="data.withdrawType !== 'ASYM_ASSET'"
+        class="flex justify-between"
+      >
         <span class="tx-detail-label">Fees:</span>
-        <span *ngIf="data.runeFee">{{data.runeFee}} RUNE</span>
+        <span *ngIf="data.runeFee">{{ data.runeFee }} RUNE</span>
         <span *ngIf="!data.runeFee">...</span>
       </div>
 
-      <div *ngIf="data.withdrawType === 'ASYM_ASSET'" class="flex justify-between items-center">
+      <div
+        *ngIf="data.withdrawType === 'ASYM_ASSET'"
+        class="flex justify-between items-center"
+      >
         <span class="tx-detail-label">Fees:</span>
-        <span *ngIf="data.networkFee">{{data.networkFee | number:"1.0-4"}} {{data.asset.ticker}}</span>
+        <span *ngIf="data.networkFee"
+          >{{ data.networkFee | number: "1.0-4" }} {{ data.asset.ticker }}</span
+        >
         <span *ngIf="!data.networkFee">...</span>
       </div>
 
@@ -58,7 +86,7 @@
           Estimated Tx Time
           <!-- <mat-icon style="transform: scale(.6)" matTooltip="Estimated Confirmation Time is the time it will take for THORChain to process your transaction.">info</mat-icon> -->
         </div>
-        <span class="flex items-end"><{{estimatedMinutes}} min</span>
+        <span class="flex items-end"><{{ estimatedMinutes }} min</span>
       </div>
     </div>
 
@@ -70,10 +98,7 @@
       </div>
       <div class="divider"></div>
       <div class="right-btn">
-        <button
-          (click)="submitTransaction()"
-          class="next-btn"
-        >
+        <button (click)="submitTransaction()" class="next-btn">
           <span>Confirm</span>
         </button>
       </div>
@@ -83,22 +108,39 @@
 
 <div class="flex flex-col items-center p-8 text-sm" *ngIf="txState === 'ERROR'">
   <mat-icon>warning</mat-icon>
-  <span *ngIf="error">{{error}}</span>
+  <span *ngIf="error">{{ error }}</span>
   <span *ngIf="!error">Something went wrong</span>
 </div>
 
-<app-transaction-ledger-confirm-modal *ngIf="txState == 'PENDING_LEDGER_CONFIRMATION'"></app-transaction-ledger-confirm-modal>
+<app-transaction-ledger-confirm-modal
+  *ngIf="txState == 'PENDING_LEDGER_CONFIRMATION'"
+></app-transaction-ledger-confirm-modal>
 
 <app-transaction-processing-modal
   *ngIf="txState == 'SUBMITTING'"
   [isWithdraw]="true"
   [label]="['Withdrawing']"
-  [asset]="[{asset: data.asset, balance: 0, assetPriceUSD: 0},{asset: data.rune, balance: 0, assetPriceUSD: 0}]"
+  [asset]="[
+    { asset: data.asset, balance: 0, assetPriceUSD: 0 },
+    { asset: data.rune, balance: 0, assetPriceUSD: 0 }
+  ]"
   [amount]="[data.assetAmount, data.runeAmount]"
   [percentage]="data.unstakePercent"
-  transactionDetail="Withdrawing {{data.assetAmount}} {{data.asset.ticker}} + {{data.runeAmount}} {{data.rune.ticker}}"
-  (closeDialog)="closeDialog()">
-  <app-breadcrumb [path]="[{name: 'vanaheimex', call: 'swap'}, {name: 'Pools', call: 'pool'}, {name: 'Withdraw', disable: true}]" [isError]="" [message]="'TRANSACTION PROCESSING'" (funcCaller)="goToNav($event)"></app-breadcrumb>
+  transactionDetail="Withdrawing {{ data.assetAmount }} {{
+    data.asset.ticker
+  }} + {{ data.runeAmount }} {{ data.rune.ticker }}"
+  (closeDialog)="closeDialog()"
+>
+  <app-breadcrumb
+    [path]="[
+      { name: 'vanaheimex', call: 'swap' },
+      { name: 'Pools', call: 'pool' },
+      { name: 'Withdraw', disable: true }
+    ]"
+    [isError]=""
+    [message]="'TRANSACTION PROCESSING'"
+    (funcCaller)="goToNav($event)"
+  ></app-breadcrumb>
 </app-transaction-processing-modal>
 
 <app-transaction-success-modal
@@ -106,10 +148,23 @@
   [isWithdraw]="true"
   chain="THOR"
   [hash]="hash"
-  [asset]="[{asset: data.asset, balance: 0, assetPriceUSD: 0},{asset: data.rune, balance: 0, assetPriceUSD: 0}]"
+  [asset]="[
+    { asset: data.asset, balance: 0, assetPriceUSD: 0 },
+    { asset: data.rune, balance: 0, assetPriceUSD: 0 }
+  ]"
   [amount]="[data.assetAmount, data.runeAmount]"
   [percentage]="data.unstakePercent"
   [label]="['Withdrawn']"
-  (closeDialog)="closeToPool()">
-  <app-breadcrumb [path]="[{name: 'vanaheimex', call: 'swap'}, {name: 'Pools', call: 'pool'}, {name: 'Withdraw', disable: true}]" [isError]="" [message]="'SUCCESS'" (funcCaller)="goToNav($event)"></app-breadcrumb>
+  (closeDialog)="closeToPool()"
+>
+  <app-breadcrumb
+    [path]="[
+      { name: 'vanaheimex', call: 'swap' },
+      { name: 'Pools', call: 'pool' },
+      { name: 'Withdraw', disable: true }
+    ]"
+    [isError]=""
+    [message]="'SUCCESS'"
+    (funcCaller)="goToNav($event)"
+  ></app-breadcrumb>
 </app-transaction-success-modal>

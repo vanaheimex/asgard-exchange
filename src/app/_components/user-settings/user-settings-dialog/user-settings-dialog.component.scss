@@ -29,8 +29,19 @@
     // border: 1px solid white;
     background: var(--primary-default);
 
-    label, input {
+    label,
+    input {
       color: #000;
     }
   }
+}
+
+.chain-usd {
+  align-items: center;
+  font-family: 'Roboto';
+  font-weight: 500;
+  font-size: 22px;
+  color: var(--primary-grey-color);
+  line-height: 30px;
+  margin-left: 5px;
 }

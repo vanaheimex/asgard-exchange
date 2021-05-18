@@ -10,7 +10,8 @@
   [(withdrawAmount)]="withdrawAmount"
   [(memoAmount)]="memoAmount"
   (confirm)="depositState = 'CONFIRM'"
-  (back)="onBack()">
+  (back)="onBack()"
+>
 </app-deposit-form>
 
 <app-deposit-confirm
@@ -19,15 +20,15 @@
   [action]="action"
   [depositAmount]="depositAmount"
   (back)="onBack()"
-  (transactionSubmitted)="transactionSubmitted($event)">
+  (transactionSubmitted)="transactionSubmitted($event)"
+>
 </app-deposit-confirm>
 
 <div *ngIf="depositState === 'TX_SUBMITTED'">
-
   <app-transaction-success-modal
     (closeDialog)="depositState = 'FORM'"
     [hash]="txHash"
-    [chain]="asset.asset.chain">
+    [chain]="asset.asset.chain"
+  >
   </app-transaction-success-modal>
-
 </div>

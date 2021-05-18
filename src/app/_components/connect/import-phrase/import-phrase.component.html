@@ -1,0 +1,70 @@
+<div class="dialog-content">
+  <div class="content-top">
+    <app-breadcrumb
+      [path]="[
+        { name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap' },
+        { name: 'Connect', backFunc: true },
+        { name: 'Create wallet from phrase', disable: true }
+      ]"
+      [isError]="error || (password !== confirmPassword && confirmPassword)"
+      [message]="(confirmPassword !== password && confirmPassword) ? 'PASSWORDS DON\'T MATCH' : message"
+      (backFunc)="back.emit()"
+    ></app-breadcrumb>
+    <div class="top-right"></div>
+  </div>
+
+  <div mat-dialog-content>
+    <div class="uni-input">
+      <label>Phrase <span  style="color: var(--primary-grey-color)">(BIP39 words separated with a space)</span></label>
+      <input
+        autocomplete="off"
+        class="password focus:ring-0"
+        style="font-size: 'Roboto'"
+        [(ngModel)]="phrase"
+        name="keystore-phrase"
+        placeholder="________________________________________"
+        type="text"
+      />
+    </div>
+
+    <app-arrow></app-arrow>
+
+    <app-text-field
+      mode="Double"
+      label="Password"
+      [(textOfField)]="password"
+      selectedType="password"
+      name="keystore-password"
+      [(textOfFieldTwo)]="confirmPassword"
+      typeTwo="password"
+      labelTwo="Confirm Password"
+      nameTwo="confirm-password"    
+    >
+    </app-text-field>
+
+  </div>
+
+  <div class="disclaimer swap-details">
+    <span style="color: var(--primary-red)"
+      >This will create and download a keystore to your computer. Please store it offline safely.</span
+    >
+  </div>
+</div>  
+
+<div class="bottom-actions two-btn">
+  <div class="left-btn">
+    <button class="close-btn" (click)="back.emit()">
+      <span>cancel</span>
+    </button>
+  </div>
+  <div class="divider"></div>
+  <div class="right-btn">
+    <button
+      class="next-btn"
+      (click)="createKeystore()"
+      [disabled]="!phrase || !password || loading || (password !== confirmPassword && confirmPassword)"
+    >
+      <span>Create</span>
+    </button>
+  </div>
+</div>

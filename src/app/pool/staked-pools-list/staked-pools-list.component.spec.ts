@@ -1,16 +1,15 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { StakedPoolsListComponent } from './staked-pools-list.component';
+import { StakedPoolsListComponent } from "./staked-pools-list.component";
 
-describe('StakedPoolsListComponent', () => {
+describe("StakedPoolsListComponent", () => {
   let component: StakedPoolsListComponent;
   let fixture: ComponentFixture<StakedPoolsListComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ StakedPoolsListComponent ]
-    })
-    .compileComponents();
+      declarations: [StakedPoolsListComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -19,7 +18,7 @@ describe('StakedPoolsListComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

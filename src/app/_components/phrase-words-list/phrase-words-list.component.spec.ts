@@ -1,16 +1,15 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { PhraseWordsListComponent } from './phrase-words-list.component';
+import { PhraseWordsListComponent } from "./phrase-words-list.component";
 
-describe('PhraseWordsListComponent', () => {
+describe("PhraseWordsListComponent", () => {
   let component: PhraseWordsListComponent;
   let fixture: ComponentFixture<PhraseWordsListComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PhraseWordsListComponent ]
-    })
-    .compileComponents();
+      declarations: [PhraseWordsListComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -19,7 +18,7 @@ describe('PhraseWordsListComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

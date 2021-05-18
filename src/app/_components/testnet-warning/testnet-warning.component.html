@@ -1,4 +1,7 @@
 <div class="testnet-warning" *ngIf="isTestnet">
   <mat-icon>warning</mat-icon>
-  <div>This is a <span *ngIf="chain && chain === 'ETH'">Ropsten</span> testnet wallet. <br />Only send testnet tokens to this address.</div>
+  <div>
+    This is a <span *ngIf="chain && chain === 'ETH'">Ropsten</span> testnet
+    wallet. <br />Only send testnet tokens to this address.
+  </div>
 </div>

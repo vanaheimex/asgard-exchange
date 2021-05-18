@@ -19,10 +19,14 @@
                 <span>slippage tolerance</span>
               </div>
               <div class="right-sec">
-                <span class="p-0">{{slippageTolerance}}%</span>
+                <span class="p-0">{{ slippageTolerance }}%</span>
               </div>
             </div>
-            <div *ngIf="user?.type == 'keystore'" class="list-item" (click)="setSettingView('PHRASE')">
+            <div
+              *ngIf="user?.type == 'keystore'"
+              class="list-item"
+              (click)="setSettingView('PHRASE')"
+            >
               <div class="left-sec">
                 <span>seed phrase</span>
               </div>
@@ -33,7 +37,7 @@
                 <span>conversion currency</span>
               </div>
               <div class="right-sec">
-                <span class="p-0">{{currency.code}}</span>
+                <span class="p-0">{{ currency.code }}</span>
               </div>
             </div>
           </div>
@@ -54,9 +58,13 @@
     <app-seed-phrase (close)="setSettingView('ACCOUNT')"></app-seed-phrase>
   </ng-container>
   <ng-container *ngIf="getSettingView() === 'SLIP'">
-    <app-slippage-tolerance (close)="setSettingView('ACCOUNT')"></app-slippage-tolerance>
+    <app-slippage-tolerance
+      (close)="setSettingView('ACCOUNT')"
+    ></app-slippage-tolerance>
   </ng-container>
   <ng-container *ngIf="getSettingView() === 'CURRENCY'">
-    <app-currency-converter (close)="setSettingView('ACCOUNT')"></app-currency-converter>
+    <app-currency-converter
+      (close)="setSettingView('ACCOUNT')"
+    ></app-currency-converter>
   </ng-container>
 </div>

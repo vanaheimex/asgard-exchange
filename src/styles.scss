@@ -1,68 +1,67 @@
 //Colors
 :root {
-  --primary-default: #28F4AE;
-  --primary-graident-bottom-left: #00CCFF;
-  --primary-graident-top-right: #33FF99;
-  --primary-grey-color: #474E5D;
-  --primary-grey-background: #0D1B23;
-  --primary-dark-color: #000B12;
-  --primary-yellow: #F3BA2F;
-  --primary-red: #FF4954;
+  --primary-default: #28f4ae;
+  --primary-graident-bottom-left: #00ccff;
+  --primary-graident-top-right: #33ff99;
+  --primary-grey-color: #474e5d;
+  --primary-grey-background: #0d1b23;
+  --primary-dark-color: #000b12;
+  --primary-yellow: #f3ba2f;
+  --primary-red: #ff4954;
 }
 
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=VT323&display=swap');
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+@import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=VT323&display=swap");
 // Roboto Mono Font from Google API
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap");
 // Roboto Font
 // @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 // Exo Font
-@import url('https://fonts.googleapis.com/css2?family=Exo+2&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Exo+2&display=swap");
 // Other Fonts
 // @import './assets/fonts/fontImport.scss';
 @font-face {
-  font-family: 'Roboto';
+  font-family: "Roboto";
   font-weight: normal;
-  src: url(assets/fonts/RobotoMono-Regular.ttf) format('truetype');
+  src: url(assets/fonts/RobotoMono-Regular.ttf) format("truetype");
   unicode-range: U+30-39;
 }
 @font-face {
-  font-family: 'Roboto';
+  font-family: "Roboto";
   font-weight: 500;
-  src: url(assets/fonts/RobotoMono-Medium.ttf) format('truetype');
+  src: url(assets/fonts/RobotoMono-Medium.ttf) format("truetype");
   unicode-range: U+30-39;
 }
 @font-face {
-  font-family: 'Roboto';
+  font-family: "Roboto";
   font-weight: bold;
-  src: url(assets/fonts/RobotoMono-Bold.ttf) format('truetype');
+  src: url(assets/fonts/RobotoMono-Bold.ttf) format("truetype");
   unicode-range: U+30-39;
 }
 @font-face {
-  font-family: 'Roboto';
+  font-family: "Roboto";
   font-weight: normal;
-  src: url(assets/fonts/Roboto-Regular.ttf) format('truetype');
+  src: url(assets/fonts/Roboto-Regular.ttf) format("truetype");
   unicode-range: U+0-2f, U+3A-10FFFF;
 }
 @font-face {
-  font-family: 'Roboto';
+  font-family: "Roboto";
   font-weight: bold;
-  src: url(assets/fonts/Roboto-Bold.ttf) format('truetype');
+  src: url(assets/fonts/Roboto-Bold.ttf) format("truetype");
   unicode-range: U+0-2f, U+3A-10FFFF;
 }
 @font-face {
-  font-family: 'Roboto';
+  font-family: "Roboto";
   font-weight: 500;
-  src: url(assets/fonts/Roboto-Medium.ttf) format('truetype');
+  src: url(assets/fonts/Roboto-Medium.ttf) format("truetype");
   unicode-range: U+0-2f, U+3A-10FFFF;
 }
-
 
 // Custom Theming for Angular Material
 // For more information: https://material.angular.io/guide/theming
-@import '~@angular/material/theming';
+@import "~@angular/material/theming";
 // Plus imports for other components in your app.
 
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
@@ -75,21 +74,21 @@ $uniswap-primary: (
   50: #309476,
   contrast: (
     50: white,
-  )
+  ),
 );
 
 $uniswap-secondary: (
   50: #309476,
   contrast: (
-    50:white
-  )
+    50: white,
+  ),
 );
 
 // $font-family: 'Inter var, sans-serif',
 $custom-typography: mat-typography-config(
-  $font-family: 'Roboto, sans-serif',
+  $font-family: "Roboto, sans-serif",
   $headline: mat-typography-level(32px, 48px, 700),
-  $body-1: mat-typography-level(16px, 24px, 500)
+  $body-1: mat-typography-level(16px, 24px, 500),
 );
 
 $asgard-exchange-primary: mat-palette($uniswap-primary, 50);
@@ -99,7 +98,11 @@ $asgard-exchange-accent: mat-palette($uniswap-secondary, 50);
 $asgard-exchange-warn: mat-palette($mat-red);
 
 // Create the theme object (a Sass map containing all of the palettes).
-$asgard-exchange-theme: mat-light-theme($asgard-exchange-primary, $asgard-exchange-accent, $asgard-exchange-warn);
+$asgard-exchange-theme: mat-light-theme(
+  $asgard-exchange-primary,
+  $asgard-exchange-accent,
+  $asgard-exchange-warn
+);
 
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
@@ -110,7 +113,6 @@ $asgard-exchange-theme: mat-light-theme($asgard-exchange-primary, $asgard-exchan
 // have to load a single css file for Angular Material in your app.
 // Be sure that you only ever include this mixin once!
 @include mat-core($custom-typography);
-
 
 * {
   box-sizing: border-box;
@@ -123,11 +125,14 @@ html {
 }
 
 // Roboto Added to all font-families
-html, input, textarea, button {
+html,
+input,
+textarea,
+button {
   // font-family: "Inter var", sans-serif;
   // font-family: 'VT323', monospace;
   // font-family: 'Source Code Pro', monospace;
-  font-family: Roboto, 'DM Mono', monospace;
+  font-family: Roboto, "DM Mono", monospace;
 }
 
 /* override browser default */
@@ -144,18 +149,24 @@ body {
   // min-height: 100vh;
   // background-position: 0px -30vh;
   // background-repeat: repeat;
-	background-color: #000B12;
+  background-color: #000b12;
   // background-color: slategray;
   // background-image: url('assets/noisy-texture-transparent.png');
   // background-image: radial-gradient(25% 50% at 75% 50%, rgba(33, 114, 229, 0.1) 0%, rgba(33, 36, 41, 0) 20%);
   color: white;
-  font-family: 'Roboto';
+  font-family: "Roboto";
 }
 
-html, body { height: 100%; }
-body { margin: 0; }
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+}
 
-ul, ol {
+ul,
+ol {
   list-style-type: none;
   padding: 0;
   margin: 0;
@@ -183,16 +194,17 @@ button {
  * Material Overrides
  */
 
- /**
+/**
   * Material Dialog
   */
-.mat-dialog-container, .overlay-container {
+.mat-dialog-container,
+.overlay-container {
   // padding: 0 !important;
   // box-shadow: none;
   // border-radius: 8px !important;
   position: relative;
   // background-color: #212A26;
-  background-color: #000B12;
+  background-color: #000b12;
   color: white;
   overflow-x: hidden !important;
   min-height: 634px;
@@ -216,8 +228,8 @@ button {
     margin: auto;
     // width: 397px;
     height: 365px;
-    background-color: #0D1B23;
-    border: 1px solid #0D1B23;
+    background-color: #0d1b23;
+    border: 1px solid #0d1b23;
     border-radius: 6px;
     padding: 13px 10px 0 10px;
   }
@@ -246,7 +258,6 @@ button {
     min-height: 0px;
     margin-bottom: 0;
   }
-
 }
 
 /** XDEFI checkmarks */
@@ -254,16 +265,16 @@ button {
   display: flex;
 
   img {
-      margin-right: 10px;
+    margin-right: 10px;
   }
 
   .not-checked {
-      width: 24px;
-      height: 24px;
-      background: var(--primary-dark-color);
-      border-radius: 50%;
-      align-self: center;
-      margin-right: 10px;
+    width: 24px;
+    height: 24px;
+    background: var(--primary-dark-color);
+    border-radius: 50%;
+    align-self: center;
+    margin-right: 10px;
   }
 }
 
@@ -343,7 +354,7 @@ button {
   justify-content: start;
   align-items: flex-start;
   // background-color: rgba(255, 255, 255, 0.02);
-  border: 2px solid #0D1B23;
+  border: 2px solid #0d1b23;
 
   &:focus {
     outline: none;
@@ -359,7 +370,8 @@ button {
     color: white;
   }
 
-  input, textarea {
+  input,
+  textarea {
     background-color: transparent;
     border: none;
     width: 100%;
@@ -374,7 +386,8 @@ button {
     padding: 0;
     // appearance: textfield;
 
-    &::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    &::placeholder {
+      /* Chrome, Firefox, Opera, Safari 10.1+ */
       color: darken(#c3c5cb, 20%);
       opacity: 1; /* Firefox */
       text-overflow: unset;
@@ -392,11 +405,11 @@ button {
   textarea {
     // word-wrap: normal;
     white-space: normal;
-    resize: none;;
+    resize: none;
   }
 
   &--file {
-    background-color: #0D1B23;
+    background-color: #0d1b23;
     color: #fff;
     flex-flow: row;
     justify-content: center;
@@ -411,7 +424,6 @@ button {
       text-align: center;
     }
   }
-
 }
 
 // $char-w: 1ch;
@@ -458,7 +470,7 @@ button {
   }
 
   .password {
-    font-family: 'Roboto Mono';
+    font-family: "Roboto Mono";
     color: var(--primary-default);
     font-size: 22px;
     line-height: 30px;
@@ -478,7 +490,7 @@ button {
 .swap-input {
   flex-flow: row;
   min-height: 112px;
-  border: 2px solid #0D1B23;
+  border: 2px solid #0d1b23;
   background-color: transparent;
 }
 
@@ -517,7 +529,7 @@ button {
 .usd-est {
   top: -8px;
   position: relative;
-  font-family: 'Roboto Mono';
+  font-family: "Roboto Mono";
   font-weight: 500;
   line-height: 24px;
   font-size: 10px;
@@ -558,16 +570,18 @@ button {
   }
 }
 
-.wallets, .transactions, .lists {
+.wallets,
+.transactions,
+.lists {
   display: flex;
   flex-direction: column;
   height: 365px;
-  background-color: #0D1B23;
+  background-color: #0d1b23;
   border-radius: 6px;
   padding: 10px;
   overflow: auto;
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 
   &::-webkit-scrollbar {
     display: none;
@@ -626,13 +640,15 @@ button {
 
     &:hover {
       background: var(--primary-default);
-      .right-sec span, .left-sec span {
+      .right-sec span,
+      .left-sec span {
         color: var(--primary-dark-color);
       }
 
       &.not-hoverable {
         background: inherit;
-        .right-sec input, .left-sec span {
+        .right-sec input,
+        .left-sec span {
           color: inherit;
           cursor: initial;
         }
@@ -689,8 +705,7 @@ button {
         line-height: 30px;
         text-overflow: ellipsis;
         cursor: pointer;
-        font-family: 'Roboto Mono';
-
+        font-family: "Roboto Mono";
       }
     }
 
@@ -702,7 +717,9 @@ button {
 
     &:not(.non-hover):hover {
       background: var(--primary-default);
-      span, input, label {
+      span,
+      input,
+      label {
         color: var(--primary-dark-color);
       }
 
@@ -713,7 +730,9 @@ button {
 
     &.active {
       background: var(--primary-default);
-      span, input, label {
+      span,
+      input,
+      label {
         color: var(--primary-dark-color);
       }
 
@@ -723,9 +742,12 @@ button {
     }
   }
 
-
-  .w-address, .list-item {
-    span, input, label, img {
+  .w-address,
+  .list-item {
+    span,
+    input,
+    label,
+    img {
       cursor: pointer;
     }
   }
@@ -740,8 +762,9 @@ button {
   border: 2px solid var(--primary-graident-top-right);
   height: 48px;
 
-  label, .wallet-address {
-    font-family: 'Roboto Mono';
+  label,
+  .wallet-address {
+    font-family: "Roboto Mono";
     font-size: 14px;
     width: 148px;
   }
@@ -759,7 +782,7 @@ input::-webkit-inner-spin-button {
 }
 
 /* Firefox */
-input[type=number] {
+input[type="number"] {
   -moz-appearance: textfield;
 }
 
@@ -767,12 +790,18 @@ input[type=number] {
  * Material Buttons
  */
 
- button.mat-primary, a.mat-primary {
+button.mat-primary,
+a.mat-primary {
   background-color: rgba(21, 163, 111, 0.44);
   color: white !important;
- }
+}
 
-.mat-button, .mat-raised-button, .mat-icon-button, .mat-stroked-button, .mat-flat-button, .mat-fab {
+.mat-button,
+.mat-raised-button,
+.mat-icon-button,
+.mat-stroked-button,
+.mat-flat-button,
+.mat-fab {
   font-size: 0.8rem;
   color: white;
   background-color: transparent;
@@ -783,14 +812,18 @@ input[type=number] {
   color: white !important;
   margin-top: 1rem !important;
   padding: 10px !important;
-  background-image: linear-gradient(90deg,darken(#3f9, 20%), darken(#31c099, 20%)),linear-gradient(90deg,darken(#0cf, 20%),#282c34);
+  background-image: linear-gradient(
+      90deg,
+      darken(#3f9, 20%),
+      darken(#31c099, 20%)
+    ),
+    linear-gradient(90deg, darken(#0cf, 20%), #282c34);
 
   &:disabled {
     color: rgba(245, 158, 11, 1) !important;
     border: 1px solid rgba(245, 158, 11, 1);
     background-image: none;
   }
-
 }
 
 .outline-btn {
@@ -820,14 +853,15 @@ input[type=number] {
   justify-content: center;
   align-items: center;
   width: 100%;
-  background-color: #FF4954;
+  background-color: #ff4954;
   color: var(--primary-dark-color);
   text-transform: uppercase;
   border-radius: 6px;
   height: 56px;
 
-  &:disabled, .disabled {
-    background-color: #0D1B23;
+  &:disabled,
+  .disabled {
+    background-color: #0d1b23;
     background-image: unset;
   }
 
@@ -846,19 +880,28 @@ input[type=number] {
   align-items: center;
   width: 100%;
   background-color: #fff;
-  color: var(--primary-dark-color) ;
+  color: var(--primary-dark-color);
   text-transform: uppercase;
   border-radius: 6px;
   height: 56px;
 
   &.graident-btn {
     background-color: #0cf;
-    background: linear-gradient(to top right,var(--primary-graident-bottom-left), var(--primary-graident-top-right));
+    background: linear-gradient(
+      to top right,
+      var(--primary-graident-bottom-left),
+      var(--primary-graident-top-right)
+    );
   }
 
   &.upgrade {
     background-color: #0cf;
-    background: linear-gradient(to right, #FFFD00 0%, #F625F0 49.98%, #01F6EE 100%);
+    background: linear-gradient(
+      to right,
+      #fffd00 0%,
+      #f625f0 49.98%,
+      #01f6ee 100%
+    );
   }
 
   &.bug-btn {
@@ -870,7 +913,8 @@ input[type=number] {
     justify-content: center;
     align-items: center;
 
-    .mat-progress-spinner circle, .mat-spinner circle {
+    .mat-progress-spinner circle,
+    .mat-spinner circle {
       stroke: var(--primary-default);
     }
   }
@@ -882,9 +926,10 @@ input[type=number] {
     line-height: 32px;
   }
 
-  &:disabled, &.disabled {
+  &:disabled,
+  &.disabled {
     // border: 2px solid #fff;
-    background-color: #0D1B23;
+    background-color: #0d1b23;
     background-image: unset;
   }
 
@@ -897,12 +942,12 @@ input[type=number] {
 .disclaimer {
   font-size: 14px;
   line-height: 24px;
-  color: #FFF;
+  color: #fff;
   text-align: left;
 }
 
-.mat-progress-spinner, .mat-spinner {
-
+.mat-progress-spinner,
+.mat-spinner {
   circle {
     stroke: #2172e5;
   }
@@ -914,11 +959,10 @@ input[type=number] {
       stroke: white !important;
     }
   }
-
 }
 
 .mono {
-  font-family: 'Roboto Mono' !important;
+  font-family: "Roboto Mono" !important;
 }
 
 .grey-text {
@@ -967,10 +1011,11 @@ input[type=number] {
   padding: 0 20px;
   font-size: 14px;
   font-weight: 400;
-  color: #474E5D;
+  color: #474e5d;
 }
 
-.adjust, .pool {
+.adjust,
+.pool {
   padding: 2px;
   border-radius: 3px;
   cursor: pointer;
@@ -988,11 +1033,10 @@ input[type=number] {
   padding: 40px;
   background-color: rgba(243, 132, 30, 0.05);
   font-weight: 400;
-  font-size: .8rem;
+  font-size: 0.8rem;
   color: #f3841e;
   text-align: center;
 }
-
 
 main {
   display: flex;
@@ -1007,26 +1051,33 @@ main {
   .container-wrapper {
     border-radius: 20px;
     padding: 2px;
-    background: linear-gradient(to top right, var(--primary-graident-bottom-left), var(--primary-graident-top-right));
+    background: linear-gradient(
+      to top right,
+      var(--primary-graident-bottom-left),
+      var(--primary-graident-top-right)
+    );
     width: 730px;
     height: 632px;
 
     .tag-space {
-
       &--between {
         margin: 0 10px;
       }
     }
 
     &.upgrade {
-      background: linear-gradient(to right, #FFFD00 0%, #F625F0 49.98%, #01F6EE 100%);
+      background: linear-gradient(
+        to right,
+        #fffd00 0%,
+        #f625f0 49.98%,
+        #01f6ee 100%
+      );
     }
-
   }
 
   .container {
     position: relative;
-    background: #000B12;
+    background: #000b12;
     padding: 50px;
     border-radius: 20px;
     width: 100%;
@@ -1041,6 +1092,14 @@ main {
       justify-content: space-between;
       margin-bottom: 30px;
       height: 48px;
+      overflow: auto;
+
+      -ms-overflow-style: none; /* IE and Edge */
+      scrollbar-width: none; /* Firefox */
+    
+      &::-webkit-scrollbar {
+        display: none;
+      }
     }
 
     .bottom-actions {
@@ -1053,7 +1112,8 @@ main {
       &.two-btn {
         display: flex;
 
-        .right-btn, .left-btn {
+        .right-btn,
+        .left-btn {
           flex: 0 0 calc(50% - 5px);
         }
 
@@ -1062,19 +1122,15 @@ main {
           width: 10px;
         }
       }
-
     }
   }
-
 }
 
 .confirm-modal-head {
-
   h1 {
     font-size: 20px;
     font-weight: 500;
   }
-
 }
 
 .confirm-modal-content {
@@ -1090,11 +1146,10 @@ main {
   height: 200px;
 
   &--sent {
-
     mat-icon {
       height: auto;
       width: auto;
-      font-size: 5.0rem;
+      font-size: 5rem;
       color: #2172e5 !important;
     }
   }
@@ -1132,7 +1187,9 @@ main {
   background-color: rgb(195, 197, 203);
 }
 
-.mat-accent .mat-slider-track-fill, .mat-accent .mat-slider-thumb, .mat-accent .mat-slider-thumb-label {
+.mat-accent .mat-slider-track-fill,
+.mat-accent .mat-slider-thumb,
+.mat-accent .mat-slider-thumb-label {
   background-color: rgb(195, 197, 203);
 }
 
@@ -1163,7 +1220,8 @@ main {
 }
 
 // Customized Slider
-.mat-slider-track-background, .mat-slider-track-fill {
+.mat-slider-track-background,
+.mat-slider-track-fill {
   background-color: var(--primary-grey-background) !important;
 }
 
@@ -1187,10 +1245,10 @@ main {
     transform: initial !important;
   }
 
-  .mat-slider-thumb-container, .mat-slider-track-background {
+  .mat-slider-thumb-container,
+  .mat-slider-track-background {
     transition: none !important;
   }
-
 }
 
 .percent-container {
@@ -1224,7 +1282,8 @@ main {
 }
 
 //overwirte button focus outline
-button:focus, input:focus {
+button:focus,
+input:focus {
   outline: none !important;
 }
 

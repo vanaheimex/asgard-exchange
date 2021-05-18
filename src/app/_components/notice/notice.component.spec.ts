@@ -1,16 +1,15 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { NoticeComponent } from './notice.component';
+import { NoticeComponent } from "./notice.component";
 
-describe('NoticeComponent', () => {
+describe("NoticeComponent", () => {
   let component: NoticeComponent;
   let fixture: ComponentFixture<NoticeComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ NoticeComponent ]
-    })
-    .compileComponents();
+      declarations: [NoticeComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -19,7 +18,7 @@ describe('NoticeComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

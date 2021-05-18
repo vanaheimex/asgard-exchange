@@ -1,24 +1,26 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { Asset } from 'src/app/_classes/asset';
-import { Subscription } from 'rxjs';
-import { AssetAndBalance } from 'src/app/_classes/asset-and-balance';
-import { MidgardService } from 'src/app/_services/midgard.service';
-import { MainViewsEnum, OverlaysService } from 'src/app/_services/overlays.service';
-import { ThorchainPricesService } from 'src/app/_services/thorchain-prices.service';
-import { UserService } from 'src/app/_services/user.service';
-import { assetAmount } from '@xchainjs/xchain-util';
+import { Component, Inject, OnInit } from "@angular/core";
+import { Asset } from "src/app/_classes/asset";
+import { Subscription } from "rxjs";
+import { AssetAndBalance } from "src/app/_classes/asset-and-balance";
+import { MidgardService } from "src/app/_services/midgard.service";
+import {
+  MainViewsEnum,
+  OverlaysService,
+} from "src/app/_services/overlays.service";
+import { ThorchainPricesService } from "src/app/_services/thorchain-prices.service";
+import { UserService } from "src/app/_services/user.service";
+import { assetAmount } from "@xchainjs/xchain-util";
 
 @Component({
-  selector: 'app-native-rune-prompt-modal',
-  templateUrl: './native-rune-prompt-modal.component.html',
-  styleUrls: ['./native-rune-prompt-modal.component.scss']
+  selector: "app-native-rune-prompt-modal",
+  templateUrl: "./native-rune-prompt-modal.component.html",
+  styleUrls: ["./native-rune-prompt-modal.component.scss"],
 })
-export class NativeRunePromptModalComponent implements OnInit {
-
+export class NativeRunePromptModalComponent {
   assets: AssetAndBalance[];
   loading: boolean;
   subs: Subscription[];
-  mode: 'SELECT_ASSET' | 'UPGRADE_ASSET' | 'CONFIRM' | 'SUCCESS';
+  mode: "SELECT_ASSET" | "UPGRADE_ASSET" | "CONFIRM" | "SUCCESS";
   selectedAsset: AssetAndBalance;
   amountToSend: number;
   successfulTxHash: string;
@@ -33,35 +35,34 @@ export class NativeRunePromptModalComponent implements OnInit {
   ) {
     this.nonNativeRuneAssets = [];
     this.loading = true;
-    this.mode = 'SELECT_ASSET';
+    this.mode = "SELECT_ASSET";
 
-    const balances$ = this.userService.userBalances$.subscribe(
-      (balances) => {
-
-        if (balances) {
-          const nonNativeRuneAssets = balances
+    const balances$ = this.userService.userBalances$.subscribe((balances) => {
+      if (balances) {
+        const nonNativeRuneAssets = balances
           // get ETH.RUNE and BNB.RUNE
-          .filter( (balance) => {
-
-            return (balance.asset.chain === 'BNB' && balance.asset.ticker === 'RUNE')
-              || (balance.asset.chain === 'ETH' && balance.asset.ticker === 'RUNE');
-
+          .filter((balance) => {
+            return (
+              (balance.asset.chain === "BNB" &&
+                balance.asset.ticker === "RUNE") ||
+              (balance.asset.chain === "ETH" && balance.asset.ticker === "RUNE")
+            );
           })
           // filter out 0 amounts
-          .filter( balance => balance.amount.amount().isGreaterThan(0))
+          .filter((balance) => balance.amount.amount().isGreaterThan(0))
           // create Asset
-          .map( (balance) => ({
-            asset: new Asset(`${balance.asset.chain}.${balance.asset.symbol}`)
+          .map((balance) => ({
+            asset: new Asset(`${balance.asset.chain}.${balance.asset.symbol}`),
           }));
 
-          this.nonNativeRuneAssets = this.userService.sortMarketsByUserBalance(balances, nonNativeRuneAssets);
-
-        } else {
-          this.nonNativeRuneAssets = [];
-        }
-
+        this.nonNativeRuneAssets = this.userService.sortMarketsByUserBalance(
+          balances,
+          nonNativeRuneAssets
+        );
+      } else {
+        this.nonNativeRuneAssets = [];
       }
-    );
+    });
 
     this.subs = [balances$];
 
@@ -69,76 +70,81 @@ export class NativeRunePromptModalComponent implements OnInit {
   }
 
   getNativeRune(): void {
-    const user$ = this.userService.userBalances$.subscribe(
-      (balances) => {
-        const nativeRune = balances
+    const user$ = this.userService.userBalances$.subscribe((balances) => {
+      const nativeRune = balances
         //get THOR.RUNE
-        .filter( (balance) => {
-          return (balance.asset.chain === 'THOR' && balance.asset.ticker === "RUNE")
+        .filter((balance) => {
+          return (
+            balance.asset.chain === "THOR" && balance.asset.ticker === "RUNE"
+          );
         })
         // Create asset
-        .map( (balance) => ({
+        .map((balance) => ({
           asset: new Asset(`${balance.asset.chain}.${balance.asset.symbol}`),
-        }))
+        }));
 
-        // in case that happens when thorchain won't gave any asset init
-        if (nativeRune && nativeRune.length !== 0)
-          this.nativeRune = this.userService.sortMarketsByUserBalance(balances, nativeRune)[0];
-        else {
-          this.nativeRune = {
-            asset: new Asset('THOR.RUNE'),
-            balance: assetAmount(0)
-          }
-        }
-        console.log(nativeRune)
-        console.log(this.nativeRune)
+      // in case that happens when thorchain won't gave any asset init
+      if (nativeRune && nativeRune.length !== 0)
+        this.nativeRune = this.userService.sortMarketsByUserBalance(
+          balances,
+          nativeRune
+        )[0];
+      else {
+        this.nativeRune = {
+          asset: new Asset("THOR.RUNE"),
+          balance: assetAmount(0),
+        };
+      }
+      console.log(nativeRune);
+      console.log(this.nativeRune);
 
+      //Adding USD value
+      this.midgardService.getPools().subscribe(
+        (res) => {
+          const availablePools = res.filter(
+            (pool) => pool.status === "available"
+          );
+          const runePrice =
+            this.thorchainPricesService.estimateRunePrice(availablePools);
 
-        //Adding USD value
-        this.midgardService.getPools().subscribe(
-          (res) => {
+          this.nonNativeRuneAssets = this.nonNativeRuneAssets.map((asset) => {
+            return { ...asset, assetPriceUSD: runePrice };
+          });
 
-            const availablePools = res.filter( (pool) => pool.status === 'available' );
-            const runePrice = this.thorchainPricesService.estimateRunePrice(availablePools);
+          this.nativeRune = { ...this.nativeRune, assetPriceUSD: runePrice };
 
-            this.nonNativeRuneAssets = this.nonNativeRuneAssets.map( (asset) => {
-              return { ...asset, assetPriceUSD: runePrice }
-            })
-
-            this.nativeRune = { ...this.nativeRune, assetPriceUSD: runePrice }
-
-            this.assets = this.nonNativeRuneAssets;
-            this.loading = false;
-          },
-          (err) => console.error('error fetching pools:', err)
-        );
-
+          this.assets = this.nonNativeRuneAssets;
+          this.loading = false;
+        },
+        (err) => console.error("error fetching pools:", err)
+      );
     });
 
     this.subs.push(user$);
   }
 
-  ngOnInit(): void {
-  }
-
   selectAsset(asset: Asset) {
-    const withBalance = this.assets.find( (anb) => `${anb.asset.chain}.${anb.asset.symbol}` === `${asset.chain}.${asset.symbol}` );
+    const withBalance = this.assets.find(
+      (anb) =>
+        `${anb.asset.chain}.${anb.asset.symbol}` ===
+        `${asset.chain}.${asset.symbol}`
+    );
     this.selectedAsset = withBalance;
-    this.mode = 'UPGRADE_ASSET';
+    this.mode = "UPGRADE_ASSET";
   }
 
   transactionSuccessful(hash: string) {
     this.successfulTxHash = hash;
-    this.mode = 'SUCCESS';
+    this.mode = "SUCCESS";
   }
 
-  confirmUpgradeRune(p: {amount: number}) {
+  confirmUpgradeRune(p: { amount: number }) {
     this.amountToSend = p.amount;
-    this.mode = 'CONFIRM';
+    this.mode = "CONFIRM";
   }
 
   close() {
-    this.overlaysService.setViews(MainViewsEnum.Swap, 'Swap');
+    this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
   }
 
   ngOnDestroy(): void {

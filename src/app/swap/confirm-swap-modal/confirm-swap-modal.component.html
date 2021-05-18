@@ -5,8 +5,14 @@
   [isSending]="false"
   [asset]="[swapData.sourceAsset, swapData.targetAsset]"
   [amount]="[swapData.inputValue, swapData.outputValue]"
-  >
-  <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'Swap', swapView: 'Swap', mainView: 'Swap'}]" message="TRANSACTION PROCESSING"></app-breadcrumb>
+>
+  <app-breadcrumb
+    [path]="[
+      { name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap' },
+      { name: 'Swap', swapView: 'Swap', mainView: 'Swap' }
+    ]"
+    message="TRANSACTION PROCESSING"
+  ></app-breadcrumb>
 </app-transaction-processing-modal>
 
 <app-transaction-success-modal
@@ -19,28 +25,64 @@
   [isSending]="false"
   [hasOutbound]="true"
   [hashOutbound]="outboundHash"
-  (closeDialog)="closeDialog(true)">
-  <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap', call: 'sucSwap'}, {name: 'Swap', swapView: 'Swap', mainView: 'Swap', call: 'sucSwap'}]" message="SUCCESS" (funcCaller)="navCaller($event)"></app-breadcrumb>
+  (closeDialog)="closeDialog(true)"
+>
+  <app-breadcrumb
+    [path]="[
+      {
+        name: 'vanaheimex',
+        swapView: 'Swap',
+        mainView: 'Swap',
+        call: 'sucSwap'
+      },
+      { name: 'Swap', swapView: 'Swap', mainView: 'Swap', call: 'sucSwap' }
+    ]"
+    message="SUCCESS"
+    (funcCaller)="navCaller($event)"
+  ></app-breadcrumb>
 </app-transaction-success-modal>
 
-<div class="overlay-container-wrapper" *ngIf="txState === 'PENDING_CONFIRMATION' || txState === 'ERROR'">
+<div
+  class="overlay-container-wrapper"
+  *ngIf="txState === 'PENDING_CONFIRMATION' || txState === 'ERROR'"
+>
   <div class="container" *ngIf="swapData">
     <div>
       <div class="content-top">
-        <div
-          *ngIf="txState === 'PENDING_CONFIRMATION'"
-        >
-          <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap'}, {name: 'Swap', swapView: 'Swap', mainView: 'Swap'}]" message="confirm"></app-breadcrumb>
+        <div *ngIf="txState === 'PENDING_CONFIRMATION'">
+          <app-breadcrumb
+            [path]="[
+              { name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap' },
+              { name: 'Swap', swapView: 'Swap', mainView: 'Swap' }
+            ]"
+            message="confirm"
+          ></app-breadcrumb>
         </div>
-        <div
-          *ngIf="txState === 'ERROR'"
-        >
-          <app-breadcrumb [path]="[{name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap', call: 'sucSwap'}, {name: 'Swap', swapView: 'Swap', mainView: 'Swap', call: 'sucSwap'}]" [message]="error" [isError]="true" (funcCaller)="navCaller($event)"></app-breadcrumb>
+        <div *ngIf="txState === 'ERROR'">
+          <app-breadcrumb
+            [path]="[
+              {
+                name: 'vanaheimex',
+                swapView: 'Swap',
+                mainView: 'Swap',
+                call: 'sucSwap'
+              },
+              {
+                name: 'Swap',
+                swapView: 'Swap',
+                mainView: 'Swap',
+                call: 'sucSwap'
+              }
+            ]"
+            [message]="error"
+            [isError]="true"
+            (funcCaller)="navCaller($event)"
+          ></app-breadcrumb>
         </div>
       </div>
 
       <app-asset-input
-        label='Send'
+        label="Send"
         [(selectedAsset)]="swapData.sourceAsset.asset"
         [(assetUnit)]="swapData.inputValue"
         [balance]="swapData.balance"
@@ -49,40 +91,64 @@
         [priceInput]="swapData.sourceAsset.assetPriceUSD"
         [disabledMarketSelect]="true"
         [hideMax]="true"
-        
       ></app-asset-input>
 
       <app-arrow></app-arrow>
 
       <app-asset-input
-          label='Receive'
-          [(selectedAsset)]="swapData.targetAsset.asset"
-          [(assetUnit)]="swapData.outputValue"
-          [disableInput]="true"
-          [disabledAssetSymbol]="swapData.targetAsset.asset.symbol"
-          [priceInput]="swapData.targetAsset.assetPriceUSD"
-          [disabledMarketSelect]="true"
-          [hideMax]="true"
-          extraLabel="(estimated)"
-          [showBalance]="false"
+        label="Receive"
+        [(selectedAsset)]="swapData.targetAsset.asset"
+        [(assetUnit)]="swapData.outputValue"
+        [disableInput]="true"
+        [disabledAssetSymbol]="swapData.targetAsset.asset.symbol"
+        [priceInput]="swapData.targetAsset.assetPriceUSD"
+        [disabledMarketSelect]="true"
+        [hideMax]="true"
+        extraLabel="(estimated)"
+        [showBalance]="false"
       ></app-asset-input>
 
-
-    <div>
+      <div>
         <div class="swap-details">
           <div class="flex justify-between">
             <span class="tx-detail-label">Price:</span>
             <span
               >{{ swapData.basePrice | number: "1.2-4" }}
               {{ swapData.sourceAsset.asset.ticker }} per
-              {{ swapData.targetAsset.asset.ticker }}<span *ngIf="swapData.sourceAsset.assetPriceUSD" class="mono" style="margin-left: 5px;">({{swapData.sourceAsset.assetPriceUSD * currency.value * swapData.basePrice | number: '0.2-2'}} {{currency.code}})</span></span
+              {{ swapData.targetAsset.asset.ticker
+              }}<span
+                *ngIf="swapData.sourceAsset.assetPriceUSD"
+                class="mono"
+                style="margin-left: 5px"
+                >({{
+                  swapData.sourceAsset.assetPriceUSD *
+                    currency.value *
+                    swapData.basePrice | number: "0.2-2"
+                }}
+                {{ currency.code }})</span
+              ></span
             >
           </div>
 
           <div *ngIf="swapData.networkFeeInSource" class="flex justify-between">
             <span class="tx-detail-label">Total Fee:</span>
-            <span>{{swapData.networkFeeInSource | number:"1.0-8"}} {{swapData.sourceAsset.asset.chain}}.{{swapData.sourceAsset.asset.ticker}}<span *ngIf="swapData.sourceAsset.assetPriceUSD" class="mono" style="margin-left: 5px;">({{swapData.sourceAsset.assetPriceUSD * currency.value * swapData.networkFeeInSource | number: '0.2-2'}} {{currency.code}})</span></span>
-          </div> 
+            <span
+              >{{ swapData.networkFeeInSource | number: "1.0-8" }}
+              {{ swapData.sourceAsset.asset.chain }}.{{
+                swapData.sourceAsset.asset.ticker
+              }}<span
+                *ngIf="swapData.sourceAsset.assetPriceUSD"
+                class="mono"
+                style="margin-left: 5px"
+                >({{
+                  swapData.sourceAsset.assetPriceUSD *
+                    currency.value *
+                    swapData.networkFeeInSource | number: "0.2-2"
+                }}
+                {{ currency.code }})</span
+              ></span
+            >
+          </div>
 
           <!-- <div *ngIf="swapData.sourceAsset.asset.chain === 'THOR'" class="flex justify-between">
             <span class="tx-detail-label">Total Fee:</span>
@@ -91,7 +157,27 @@
 
           <div class="flex justify-between">
             <span class="tx-detail-label">Slip:</span>
-            <span [ngStyle]="{'color': (swapData.slip * 100) > slippageTolerance ? '#FF4954' : 'var(--primary-default)'}">{{ swapData.slip | percent: "0.2-4" }}<span *ngIf="swapData.sourceAsset.assetPriceUSD" class="mono" style="margin-left: 5px;">({{(swapData.sourceAsset.assetPriceUSD * currency.value * swapData.inputValue) * swapData.slip | number: '1.2-2'}} {{currency.code}})</span></span>
+            <span
+              [ngStyle]="{
+                color:
+                  swapData.slip * 100 > slippageTolerance
+                    ? '#FF4954'
+                    : 'var(--primary-default)'
+              }"
+              >{{ swapData.slip | percent: "0.2-4"
+              }}<span
+                *ngIf="swapData.sourceAsset.assetPriceUSD"
+                class="mono"
+                style="margin-left: 5px"
+                >({{
+                  swapData.sourceAsset.assetPriceUSD *
+                    currency.value *
+                    swapData.inputValue *
+                    swapData.slip | number: "1.2-2"
+                }}
+                {{ currency.code }})</span
+              ></span
+            >
           </div>
 
           <!-- <div class="flex justify-between">
@@ -104,36 +190,37 @@
               Estimated Transaction Time:
               <!-- <mat-icon style="transform: scale(.6)" matTooltip="Estimated Confirmation Time is the time it will take for THORChain to process your transaction.">info</mat-icon> -->
             </div>
-            <span><{{estimatedMinutes}} min</span>
+            <span><{{ estimatedMinutes }} min</span>
           </div>
         </div>
 
-      <div class="bottom-actions two-btn">
-        <ng-container>
-          <div class="left-btn">
-            <button
-              class="close-btn"
-              aria-label="Close Markets Dialog"
-              (click)="closeDialog(false)"
-            >
-              <span>close</span>
-            </button>
-          </div>
-          <div class="divider"></div>
-          <div class="right-btn">
-            <button
-              (click)="submitTransaction()"
-              class="next-btn"
-              [disabled]="insufficientChainBalance"
-            >
-              <span *ngIf="!insufficientChainBalance">Confirm</span>
-              <span *ngIf="insufficientChainBalance">Insufficient {{swapData.sourceAsset.asset.chain}}</span>
-            </button>
-          </div>
-        </ng-container>
+        <div class="bottom-actions two-btn">
+          <ng-container>
+            <div class="left-btn">
+              <button
+                class="close-btn"
+                aria-label="Close Markets Dialog"
+                (click)="closeDialog(false)"
+              >
+                <span>close</span>
+              </button>
+            </div>
+            <div class="divider"></div>
+            <div class="right-btn">
+              <button
+                (click)="submitTransaction()"
+                class="next-btn"
+                [disabled]="insufficientChainBalance"
+              >
+                <span *ngIf="!insufficientChainBalance">Confirm</span>
+                <span *ngIf="insufficientChainBalance"
+                  >Insufficient {{ swapData.sourceAsset.asset.chain }}</span
+                >
+              </button>
+            </div>
+          </ng-container>
+        </div>
       </div>
-
     </div>
   </div>
-
 </div>

@@ -1,3 +1,10 @@
-<div *ngIf="phraseWords" class="grid grid-cols-3" style="margin: 0 -5px;">
-  <app-notice *ngFor="let word of phraseWords; let i = index" style="margin: 5px;" [isTag]="false" [isMono]="true" [isGray]="true"><span text>{{(i) + 1}}) {{word}}</span></app-notice>
+<div *ngIf="phraseWords" class="grid grid-cols-3" style="margin: 0 -5px">
+  <app-notice
+    *ngFor="let word of phraseWords; let i = index"
+    style="margin: 5px"
+    [isTag]="false"
+    [isMono]="true"
+    [isGray]="true"
+    ><span text>{{ i + 1 }}) {{ word }}</span></app-notice
+  >
 </div>
