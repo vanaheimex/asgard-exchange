@@ -22,6 +22,8 @@ import { AssetETH, assetToString } from "@xchainjs/xchain-util";
 import { toUtf8Bytes } from "@ethersproject/strings";
 import { Address } from "@xchainjs/xchain-client";
 import { hexlify } from "@ethersproject/bytes";
+import { links } from "../_const/links";
+import { BehaviorSubject } from "rxjs";
 
 @Injectable({
   providedIn: "root",
@@ -60,7 +62,24 @@ export class XDEFIService {
       enabled: true,
     },
   ];
-  constructor() {}
+
+  private vaildNetwork = new BehaviorSubject<boolean>(false);
+  validNetwork$ = this.vaildNetwork.asObservable();
+
+  constructor() {
+    (window as any).xfi.thorchain.on("chainChanged", (obj) => {
+      console.log("changed", obj);
+      const envNetwork =
+        environment.network === "testnet" ? "testnet" : "mainnet";
+      if(this.isValidNetwork()) {
+        this.vaildNetwork.next(this.isValidNetwork())
+      }
+      if (obj.network !== envNetwork) {
+        // let changeUrl = envNetwork === 'testnet' ? links.appUrl : links.testnetAppUrl;
+        // location.href = changeUrl;
+      }
+    });
+  }
 
   isValidNetwork() {
     const invalidNetworkProvider = XDEFIService.listProvider.find(
@@ -604,16 +623,6 @@ export class XDEFIService {
         ethereum: userEthereumClient,
         litecoin: userLtcClient,
       },
-    });
-
-    (window as any).xfi.thorchain.on("chainChanged", (obj) => {
-      console.log("changed", obj);
-      const envNetwork =
-        environment.network === "testnet" ? "testnet" : "mainnet";
-      if (obj.network !== envNetwork) {
-        // alert("XDEFI: Incorrect network, Reloading");
-        location.reload();
-      }
     });
 
     return newUser;

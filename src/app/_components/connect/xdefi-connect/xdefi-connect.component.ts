@@ -1,4 +1,5 @@
 import { Component, OnInit, Output, EventEmitter } from "@angular/core";
+import { Subscription } from "rxjs";
 import { UserService } from "src/app/_services/user.service";
 import { XDEFIService } from "src/app/_services/xdefi.service";
 import { environment } from "src/environments/environment";
@@ -17,6 +18,7 @@ export class XDEFIConnectComponent implements OnInit {
   @Output() back: EventEmitter<null>;
   @Output() closeModal: EventEmitter<null>;
   isTestnet: boolean;
+  subs: Subscription[];
 
   message: string;
 
@@ -31,7 +33,13 @@ export class XDEFIConnectComponent implements OnInit {
 
   ngOnInit(): void {
     this.listProviders = this.xdefiService.listEnabledXDFIProviders();
-    this.isValidNetwork = this.xdefiService.isValidNetwork();
+    const validNetwork$ = this.xdefiService.validNetwork$.subscribe(
+      (res) => {
+        this.isValidNetwork = res;
+      }
+    );
+
+    this.subs = [validNetwork$]
   }
 
   getBreadcrumbText() {
@@ -80,5 +88,13 @@ export class XDEFIConnectComponent implements OnInit {
 
   backClicked() {
     this.back.emit();
+  }
+
+  ngOnDestroy() {
+    this.subs.forEach(
+      (sub) => {
+        sub.unsubscribe();
+      }
+    )
   }
 }

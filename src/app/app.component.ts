@@ -35,7 +35,7 @@ export class AppComponent implements OnInit, OnDestroy {
   chainBalanceErrors: Chain[];
   nonNativeRuneAssets: AssetAndBalance[];
   appLocked: boolean;
-  appUrl: string;
+  mainnetUrl: string;
 
   constructor(
     private midgardService: MidgardService,
@@ -45,7 +45,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private userService: UserService
   ) {
     this.isTestnet = environment.network === "testnet";
-    this.appUrl = this.isTestnet ? links.appUrl : links.testnetUrl;
+    this.mainnetUrl = this.isTestnet ? links.mainnetUrl : links.testnetUrl;
     this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
     const overlay$ = this.overlaysService.currentView.subscribe((val) => {
       this.currentView = val;
