@@ -98,7 +98,7 @@
           <div>
             <button
               class="next-btn"
-              (click)="initConnect()"
+              (click)="initUnlock()"
               [disabled]="connecting || !isValidNetwork"
             >
               <span>Connect</span>
@@ -140,7 +140,7 @@
           class="flex flex-row"
           mat-flat-button
           color="accent"
-          (click)="initConnect()"
+          (click)="initUnlock()"
           [disabled]="!isValidNetwork"
         >
           <span>Re-connect to XDEFI</span>

@@ -40,9 +40,21 @@ export class ReconnectXDEFIDialogComponent implements OnInit {
     }, 200);
   }
 
+  async initUnlock() {
+    if (this.connecting) {
+      return;
+    }
+    
+    this.connecting = true;
+
+    setTimeout(() => {
+      this.initConnect();
+      this.connecting = false;
+    }, 100);
+  }
+
   async initConnect() {
     try {
-      this.connecting = true;
       const user = await this.xdefiService.connectXDEFI();
       this.userService.setUser(user);
       // this.dialogRef.close();

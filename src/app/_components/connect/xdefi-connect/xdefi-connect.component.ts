@@ -19,7 +19,7 @@ export class XDEFIConnectComponent implements OnInit {
   @Output() closeModal: EventEmitter<null>;
   isTestnet: boolean;
   subs: Subscription[];
-
+  loading: boolean = false;
   message: string;
 
   constructor(
@@ -63,11 +63,13 @@ export class XDEFIConnectComponent implements OnInit {
   }
 
   async initUnlock() {
+    this.loading = true;
     if (this.xdefiConnecting) {
       return;
     }
     setTimeout(() => {
       this.xdefiConnect();
+      this.loading = false;
     }, 100);
   }
 
@@ -79,10 +81,12 @@ export class XDEFIConnectComponent implements OnInit {
       console.log("xdefiConnect::got user", user);
       this.userService.setUser(user);
       localStorage.setItem("XDEFI_CONNECTED", "true");
+      this.loading = false;
       this.closeModal.emit();
     } catch (error) {
       this.xdefiError = true;
-      console.error(error);
+      this.loading = false;
+      console.error(error.message);
     }
   }
 
