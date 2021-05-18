@@ -4,7 +4,7 @@
       [path]="[
         { name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap' },
         { name: 'Connect', backFunc: true },
-        { name: 'import phrase', disable: true }
+        { name: 'Create wallet from phrase', disable: true }
       ]"
       [isError]="error || (password !== confirmPassword && confirmPassword)"
       [message]="(confirmPassword !== password && confirmPassword) ? 'PASSWORDS DON\'T MATCH' : message"
