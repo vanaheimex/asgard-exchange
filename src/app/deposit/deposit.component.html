@@ -30,6 +30,7 @@
         [selectableMarkets]="selectableMarkets"
         [isDeposit]="true"
         (lunchMarket)="overlaysService.setCurrentDepositView('Asset')"
+        (maxError)="setMaxError($event)"
       >
       </app-asset-input>
 

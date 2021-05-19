@@ -50,6 +50,7 @@ export class SendAssetComponent implements OnInit, OnDestroy {
   subs: Subscription[];
   explorerPath: string;
   address: string;
+  isMaxError: boolean;
 
   memo: string;
   inboundAddresses: PoolAddressDTO[];
@@ -163,6 +164,10 @@ export class SendAssetComponent implements OnInit, OnDestroy {
       return `No ${this.asset.asset.chain} Client Found`;
     }
 
+    if (this.isMaxError) {
+      return "Input Amount Less Than Fees";
+    }
+
     if (
       this.amount <= 0 ||
       !this.amount ||
@@ -209,6 +214,16 @@ export class SendAssetComponent implements OnInit, OnDestroy {
     }
 
     return true;
+  }
+
+  setMaxError(val) {
+    this.isMaxError = val;
+
+    setTimeout(
+      () => {
+        this.isMaxError = false;
+      }
+    , 2000)
   }
 
   checkSpendable(): void {

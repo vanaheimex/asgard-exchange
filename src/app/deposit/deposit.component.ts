@@ -62,7 +62,7 @@ export class DepositComponent implements OnInit, OnDestroy {
             this.balances,
             this.asset
           );
-          this.assetAmount = 0;
+          this.assetAmount = undefined;
         }
       }
     }
@@ -111,6 +111,7 @@ export class DepositComponent implements OnInit, OnDestroy {
 
   haltedChains: string[];
   isHalted: boolean;
+  isMaxError: boolean;
 
   view: DepositViews;
   // saving data of confirm in variable to pass it to the confirm
@@ -257,6 +258,17 @@ export class DepositComponent implements OnInit, OnDestroy {
     });
   }
 
+  setMaxError(val) {
+    this.isMaxError = val;
+
+    setTimeout(
+      () => {
+        this.isMaxError = false;
+      }
+    , 2000)
+  }
+
+
   contractApproved() {
     this.ethContractApprovalRequired = false;
   }
@@ -402,6 +414,10 @@ export class DepositComponent implements OnInit, OnDestroy {
     /** Wallet not connected */
     if (!this.balances) {
       return "Please connect wallet";
+    }
+
+    if (this.isMaxError) {
+      return "Input Amount Less Than Fees";
     }
 
     if (this.balances && (!this.runeAmount || !this.assetAmount)) {

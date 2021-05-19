@@ -128,6 +128,7 @@ export class SwapComponent implements OnInit, OnDestroy {
   private _selectedSourceAsset: Asset;
   selectedSourceBalance: number;
   sourcePoolDetail: PoolDetail;
+  isMaxError: boolean;
 
   /**
    * To
@@ -633,6 +634,10 @@ export class SwapComponent implements OnInit, OnDestroy {
       return "Min 3 RUNE in Wallet Required";
     }
 
+    if (this.isMaxError) {
+      return "Input Amount Less Than Fees";
+    }
+
     /** No source amount set */
     if (!this.sourceAssetUnit) {
       return "Enter an amount";
@@ -803,6 +808,16 @@ export class SwapComponent implements OnInit, OnDestroy {
     }
   }
 
+  setMaxError(val) {
+    this.isMaxError = val;
+
+    setTimeout(
+      () => {
+        this.isMaxError = false;
+      }
+    , 2000)
+  }
+
   reverseTransaction() {
     if (this.selectedSourceAsset && this.selectedTargetAsset) {
       const source = this.selectedSourceAsset;
@@ -884,13 +899,10 @@ export class SwapComponent implements OnInit, OnDestroy {
         this.outboundFees[assetToString(this.selectedTargetAsset)];
       const outboundFeeInSourceVal = this.basePrice * outboundFee;
 
-      console.log("inboundFee :", inboundFee);
-      console.log("outboundFee :", outboundFee);
-
       this.networkFeeInSource = inboundFee + outboundFeeInSourceVal;
 
       /**
-       * Total output amount in target units minus 1 RUNE
+       * Total output amount in target units minus RUNE Fee
        */
       const swapOutput = getSwapOutput(
         baseAmount(
@@ -908,6 +920,11 @@ export class SwapComponent implements OnInit, OnDestroy {
           .amount()
           .minus(assetToBase(assetAmount(outboundFee)).amount())
       );
+
+      console.log(inboundFee, assetToBase(assetAmount(inboundFee)).amount().toNumber());
+      console.log(outboundFee, assetToBase(assetAmount(outboundFee)).amount().toNumber());
+      console.log('Outbound in rune', outboundFeeInSourceVal);
+      console.log(totalAmount.amount().toNumber());
 
       if (this.sourceAssetUnit) {
         this.targetAssetUnit = totalAmount.amount().isLessThan(0)
