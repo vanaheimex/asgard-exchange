@@ -32,6 +32,7 @@
           "
           [selectableMarkets]="selectableMarkets"
           (lunchMarket)="overlaysService.setCurrentSwapView('SourceAsset')"
+          (maxError)="setMaxError($event)"
         >
         </app-asset-input>
 

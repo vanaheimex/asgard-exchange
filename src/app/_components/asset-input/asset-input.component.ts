@@ -57,6 +57,7 @@ export class AssetInputComponent implements OnInit, OnDestroy {
     return this._assetUnit;
   }
   @Output() assetUnitChange = new EventEmitter<number>();
+  @Output() maxError = new EventEmitter<boolean>();
   _assetUnit: number;
 
   @Input() label: string;
@@ -199,6 +200,9 @@ export class AssetInputComponent implements OnInit, OnDestroy {
       if (max) {
         this.assetUnitChange.emit(max);
       } else {
+        if (max === 0 && this.balance > 0) {
+          this.maxError.emit(true);
+        } 
         console.error("max undefined");
       }
     }

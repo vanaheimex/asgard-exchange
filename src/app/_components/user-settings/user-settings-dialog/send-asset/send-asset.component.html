@@ -27,6 +27,7 @@
             [disabledMarketSelect]="true"
             [selectableMarkets]="[asset]"
             txType="EXTERNAL"
+            (maxError)="setMaxError($event)"
           >
           </app-asset-input>
         </div>
