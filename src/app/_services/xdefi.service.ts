@@ -24,6 +24,7 @@ import { Address } from "@xchainjs/xchain-client";
 import { hexlify } from "@ethersproject/bytes";
 import { links } from "../_const/links";
 import { BehaviorSubject } from "rxjs";
+import { UserService } from "./user.service";
 
 @Injectable({
   providedIn: "root",
@@ -66,7 +67,7 @@ export class XDEFIService {
   private vaildNetwork = new BehaviorSubject<boolean>(this.isValidNetwork());
   validNetwork$ = this.vaildNetwork.asObservable();
 
-  constructor() {
+  constructor(private userService: UserService) {
     (window as any).xfi.thorchain.on("chainChanged", (obj) => {
       console.log("changed", obj);
       const envNetwork =
@@ -79,6 +80,19 @@ export class XDEFIService {
         // location.href = changeUrl;
       }
     });
+
+    (window as any).ethereum.on('accountsChanged', (accounts) => {
+      // Time to reload your interface with accounts[0]!
+      console.log((window as any).ethereum);
+      this.connectXDEFI().then(
+        (user) => {
+          console.log('new user account', user);
+          if (user)
+            this.userService.setUser(user);
+        }
+      );
+    });
+    
   }
 
   isValidNetwork() {
