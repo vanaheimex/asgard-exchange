@@ -1,8 +1,10 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { Asset } from "src/app/_classes/asset";
 import { AssetAndBalance } from "src/app/_classes/asset-and-balance";
+import { CurrencyService } from "src/app/_services/currency.service";
 import { MidgardService } from "src/app/_services/midgard.service";
 import { environment } from "src/environments/environment";
+import { Currency } from "../account-settings/currency-converter/currency-converter.component";
 
 @Component({
   selector: "app-assets-list",
@@ -25,10 +27,17 @@ export class AssetsListComponent {
   safariExpand: boolean;
   isTestnet: boolean;
   apys;
+  currency: Currency;
 
-  constructor(private midgardService: MidgardService) {
+  constructor(private midgardService: MidgardService, private currencyService: CurrencyService) {
     this.selectAsset = new EventEmitter<Asset>();
     this.addToken = new EventEmitter<null>();
+
+    this.currencyService.cur$.subscribe(
+      (cur) => {
+        this.currency = cur;
+      }
+    )
 
     this.isTestnet = environment.network === "testnet" ? true : false;
   }
