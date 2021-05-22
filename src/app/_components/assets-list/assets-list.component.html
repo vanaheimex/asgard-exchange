@@ -90,7 +90,7 @@
             <span class="market-list-item__balance">{{
               item.balance.amount().toNumber() | number: "1.2-6"
             }} 
-            <span *ngIf="item.assetPriceUSD">({{item.assetPriceUSD * currency.value | shortNumber: showApy ? false : true}} {{currency.code}})</span>
+            <span *ngIf="item.assetPriceUSD && showPrice">({{item.assetPriceUSD * item.balance.amount().toNumber() * currency.value | shortNumber: showApy ? false : true}} {{currency.code}})</span>
             </span>
           </div>
 

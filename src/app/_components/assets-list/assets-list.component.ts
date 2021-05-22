@@ -20,6 +20,7 @@ export class AssetsListComponent {
   @Output() addToken: EventEmitter<null>;
   @Input() noAssets: string = "NO ASSETS";
   @Input() showApy: boolean = false;
+  @Input() showPrice: boolean = false;
   
   // Wheter show the icon or not
   @Input() showIcons: boolean = true;
