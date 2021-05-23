@@ -42,6 +42,7 @@ import { environment } from "src/environments/environment";
 import { CurrencyService } from "../_services/currency.service";
 import { Currency } from "../_components/account-settings/currency-converter/currency-converter.component";
 import { debounceTime, retry, switchMap } from "rxjs/operators";
+import { SwapServiceService } from "../_services/swap-service.service";
 
 export enum SwapType {
   DOUBLE_SWAP = "double_swap",
@@ -228,7 +229,8 @@ export class SwapComponent implements OnInit, OnDestroy {
     private networkQueueService: NetworkQueueService,
     private currencyService: CurrencyService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private swapService: SwapServiceService
   ) {
     this.ethContractApprovalRequired = false;
     this.selectableMarkets = undefined;
@@ -289,6 +291,16 @@ export class SwapComponent implements OnInit, OnDestroy {
     const curs$ = this.currencyService.cur$.subscribe((cur) => {
       this.currency = cur;
     });
+
+    let sourceAmount = this.swapService.getSourceAmount();
+    let targetAmount = this.swapService.getTargetAmount();
+
+    if (sourceAmount && targetAmount) {
+      this.sourceAssetUnit = sourceAmount;
+      this.targetAssetUnit = targetAmount;
+      this.swapService.setSource(0);
+      this.swapService.setTarget(new BigNumber(0));
+    }
 
     this.subs = [balances$, user$, slippageTolerange$, queue$, curs$];
 
@@ -434,6 +446,9 @@ export class SwapComponent implements OnInit, OnDestroy {
       "SLIP",
       true
     );
+
+    this.swapService.setSource(this.sourceAssetUnit);
+    this.swapService.setTarget(this.targetAssetUnit);
   }
 
   transactionSuccess() {

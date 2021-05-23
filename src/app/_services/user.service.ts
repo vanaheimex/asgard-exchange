@@ -409,11 +409,13 @@ export class UserService {
             balMap[`${mItem.asset.chain}.${mItem.asset.symbol}`.toUpperCase()]
               .amount
           ),
+          assetPriceUSD: mItem.assetPriceUSD ?? 0
         };
       } else {
         return {
           asset: mItem.asset,
           balance: assetAmount(0),
+          assetPriceUSD: mItem.assetPriceUSD ?? 0
         };
       }
     });

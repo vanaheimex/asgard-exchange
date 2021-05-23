@@ -119,6 +119,12 @@ export class TransactionStatusService {
       pendingTx.hash = pendingTx.hash.substr(2);
     }
 
+    /** Add date to the TX */
+    pendingTx = {
+      ...pendingTx,
+      date: new Date(),
+    };
+
     this._txs.unshift(pendingTx);
 
     if (pendingTx.status === TxStatus.PENDING) {
