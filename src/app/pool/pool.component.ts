@@ -188,8 +188,8 @@ export class PoolComponent implements OnInit, OnDestroy {
   }
 
   getPoolCap() {
-    const mimir$ = this.midgardService.getMimir();
-    const network$ = this.midgardService.getNetwork();
+    const mimir$ = this.midgardService.mimir$;
+    const network$ = this.midgardService.network$;
     const combined = combineLatest([mimir$, network$]);
     const sub = combined.subscribe(([mimir, network]) => {
       // prettier-ignore
