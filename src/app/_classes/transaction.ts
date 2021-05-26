@@ -22,6 +22,7 @@ export interface TransactionDetail {
 
 export class Transaction {
   pool: string;
+  pools: string[];
   type: string; // TODO -> enum this
   status: string; // TODO -> enum this
   in: TransactionDetail[];
