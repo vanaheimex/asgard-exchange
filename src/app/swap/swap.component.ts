@@ -715,7 +715,7 @@ export class SwapComponent implements OnInit, OnDestroy {
       this.sourceAssetUnit <= this.sourceBalance &&
       this.selectedTargetAsset
     ) {
-      return "Swap";
+      return "Ready";
     } else {
       console.warn("error creating main button text");
     }

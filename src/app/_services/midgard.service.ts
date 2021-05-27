@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { BehaviorSubject, Observable, timer } from "rxjs";
 import { MidgardConstants } from "../_classes/midgard-constants";
 import { PoolAddressDTO } from "../_classes/pool-address";
 import { TransactionDTO } from "../_classes/transaction";
@@ -37,6 +37,12 @@ export class MidgardService {
   private _constants$: Observable<MidgardConstants>;
   private _mimir$: Observable<MimirResponse>;
 
+  private mimirSource = new BehaviorSubject<MimirResponse>(null);
+  mimir$ = this.mimirSource.asObservable();
+
+  private networkSource = new BehaviorSubject<NetworkSummary>(null);
+  network$ = this.networkSource.asObservable();
+
   constructor(private http: HttpClient) {
     this.v2BasePath =
       environment.network === "testnet"
@@ -71,6 +77,10 @@ export class MidgardService {
 
   getNetwork(): Observable<NetworkSummary> {
     return this.http.get<NetworkSummary>(`${this.v2BasePath}/network`);
+  }
+
+  setNetwork(res: NetworkSummary) {
+    this.networkSource.next(res);
   }
 
   getInboundAddresses(): Observable<PoolAddressDTO[]> {
@@ -123,6 +133,14 @@ export class MidgardService {
 
   getMimir(): Observable<MimirResponse> {
     return this._mimir$;
+  }
+
+  setMimir(res: MimirResponse) {
+    this.mimirSource.next(res);
+  }
+
+  updateMimir(): Observable<MimirResponse> {
+    return this.http.get<MimirResponse>(`${this._thornodeBasePath}/thorchain/mimir`);
   }
 
   getThorchainLiquidityProviders(

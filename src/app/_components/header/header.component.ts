@@ -79,13 +79,13 @@ export class HeaderComponent implements OnDestroy {
   }
 
   getPoolCap() {
-    const mimir$ = this.midgardService.getMimir();
-    const network$ = this.midgardService.getNetwork();
+    const mimir$ = this.midgardService.mimir$;
+    const network$ = this.midgardService.network$;
     const combined = combineLatest([mimir$, network$]);
 
     this.topbar = "LOADING CAPS";
     const sub = combined.subscribe(([mimir, network]) => {
-      this.totalPooledRune = +network.totalPooledRune / 10 ** 8;
+      this.totalPooledRune = +network?.totalPooledRune / 10 ** 8;
 
       if (mimir && mimir["mimir//MAXIMUMLIQUIDITYRUNE"]) {
         this.maxLiquidityRune = mimir["mimir//MAXIMUMLIQUIDITYRUNE"] / 10 ** 8;
