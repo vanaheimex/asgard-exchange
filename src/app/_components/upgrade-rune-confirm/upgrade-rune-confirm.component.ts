@@ -15,6 +15,7 @@ import { PoolAddressDTO } from "src/app/_classes/pool-address";
 import { User } from "src/app/_classes/user";
 import { TransactionConfirmationState } from "src/app/_const/transaction-confirmation-state";
 import { CopyService } from "src/app/_services/copy.service";
+import { CurrencyService } from "src/app/_services/currency.service";
 import { EthUtilsService } from "src/app/_services/eth-utils.service";
 import { ExplorerPathsService } from "src/app/_services/explorer-paths.service";
 import { MidgardService } from "src/app/_services/midgard.service";
@@ -29,6 +30,7 @@ import {
 } from "src/app/_services/transaction-status.service";
 import { TransactionUtilsService } from "src/app/_services/transaction-utils.service";
 import { UserService } from "src/app/_services/user.service";
+import { Currency } from "../account-settings/currency-converter/currency-converter.component";
 
 @Component({
   selector: "app-upgrade-rune-confirm",
@@ -57,6 +59,7 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
   message: string;
   isError: boolean = false;
   loading: boolean = false;
+  currency: Currency
 
   constructor(
     private midgardService: MidgardService,
@@ -66,7 +69,8 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
     private copyService: CopyService,
     private explorerPathsService: ExplorerPathsService,
     private oveylaysService: OverlaysService,
-    private txUtilsService: TransactionUtilsService
+    private txUtilsService: TransactionUtilsService,
+    private curService: CurrencyService
   ) {
     this.insufficientChainBalance = false;
     this.back = new EventEmitter<null>();
@@ -92,7 +96,17 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
     this.binanceExplorerUrl = `${this.explorerPathsService.binanceExplorerUrl}/tx`;
     this.ethereumExplorerUrl = `${this.explorerPathsService.ethereumExplorerUrl}/tx`;
 
-    this.subs = [user$, balances$];
+    const cur$ = this.curService.cur$.subscribe(
+      (cur) => {
+        this.currency = cur;
+      }
+    )
+
+    this.subs = [user$, balances$, cur$];
+  }
+
+  getChainAssetCaller(asset: Asset) {
+    return getChainAsset(asset.chain);
   }
 
   copyToClipboard(): void {

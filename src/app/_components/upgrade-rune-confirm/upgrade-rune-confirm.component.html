@@ -95,8 +95,9 @@
               <span class="tx-detail-label">Fees:</span>
               <span class="text-sm" *ngIf="networkFee && asset"
                 >{{ networkFee | number: "0.0-8" }}
-                {{ asset.asset.chain }}</span
-              >
+                {{ getChainAssetCaller(asset.asset).chain }}.{{getChainAssetCaller(asset.asset).ticker}}
+              <span *ngIf="currency && asset.assetPriceUSD">({{currency.value * networkFee * asset.assetPriceUSD | number: '0.0-2'}} {{currency.code}})</span>
+              </span>
               <span class="text-sm" *ngIf="!networkFee || !asset">...</span>
             </div>
             <div class="disclaimer">

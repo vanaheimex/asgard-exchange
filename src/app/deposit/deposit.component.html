@@ -52,17 +52,18 @@
 
       <div class="swap-details">
         <div class="flex justify-between">
-          <span class="tx-detail-label">Network Fee:</span>
+          <span class="tx-detail-label">Fees:</span>
           <span *ngIf="networkFee"
             >{{ networkFee | number: "1.0-8" }} {{ asset.ticker }}.{{
               asset.chain
-            }}</span
-          >
+            }} 
+            <span *ngIf="currency && assetPrice">({{this.currency.value * networkFee * assetPrice | number: '0.0-2'}} {{currency.code}})</span>
+          </span>
           <span *ngIf="!networkFee">...</span>
         </div>
         <div class="flex justify-between">
-          <span class="tx-detail-label">RUNE Fee:</span>
-          <span *ngIf="runeFee">{{ runeFee | number: "1.0-4" }} RUNE</span>
+          <span class="tx-detail-label"></span>
+          <span *ngIf="runeFee">{{ runeFee | number: "1.0-4" }} RUNE <span *ngIf="currency && runePrice">({{this.currency.value * runePrice * runeFee | number: '0.0-2'}} {{currency.code}})</span></span>
           <span *ngIf="!runeFee">...</span>
         </div>
       </div>
