@@ -26,6 +26,12 @@ import { links } from "../_const/links";
 import { BehaviorSubject } from "rxjs";
 import { UserService } from "./user.service";
 
+declare global {
+  interface Window {
+    xfi: any
+    ethereum: any
+  }
+}
 @Injectable({
   providedIn: "root",
 })
@@ -68,31 +74,32 @@ export class XDEFIService {
   validNetwork$ = this.vaildNetwork.asObservable();
 
   constructor(private userService: UserService) {
-    (window as any).xfi.thorchain.on("chainChanged", (obj) => {
-      console.log("changed", obj);
-      const envNetwork =
-        environment.network === "testnet" ? "testnet" : "mainnet";
-      if(this.isValidNetwork()) {
-        this.vaildNetwork.next(this.isValidNetwork())
-      }
-      if (obj.network !== envNetwork) {
-        // let changeUrl = envNetwork === 'testnet' ? links.appUrl : links.testnetAppUrl;
-        // location.href = changeUrl;
-      }
-    });
-
-    (window as any).ethereum.on('accountsChanged', (accounts) => {
-      // Time to reload your interface with accounts[0]!
-      console.log((window as any).ethereum);
-      this.connectXDEFI().then(
-        (user) => {
-          console.log('new user account', user);
-          if (user)
-            this.userService.setUser(user);
+    if (typeof window === 'object' && window?.xfi) {
+      (window as any).xfi.thorchain.on("chainChanged", (obj) => {
+        console.log("changed", obj);
+        const envNetwork =
+          environment.network === "testnet" ? "testnet" : "mainnet";
+        if(this.isValidNetwork()) {
+          this.vaildNetwork.next(this.isValidNetwork());
         }
-      );
-    });
-    
+        if (obj.network !== envNetwork) {
+          // let changeUrl = envNetwork === 'testnet' ? links.appUrl : links.testnetAppUrl;
+          // location.href = changeUrl;
+        }
+      });
+
+      (window as any).ethereum.on('accountsChanged', (accounts) => {
+        // Time to reload your interface with accounts[0]!
+        console.log((window as any).ethereum);
+        this.connectXDEFI().then(
+          (user) => {
+            console.log('new user account', user);
+            if (user)
+              this.userService.setUser(user);
+          }
+        );
+      });
+    }
   }
 
   isValidNetwork() {
