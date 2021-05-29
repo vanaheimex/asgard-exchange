@@ -128,7 +128,7 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
 
     this.txState = TransactionConfirmationState.SUBMITTING;
 
-    if (this.user.type === "keystore") {
+    if (this.user.type === "keystore" || this.user.type === 'XDEFI' ) {
       this.midgardService
         .getInboundAddresses()
         .subscribe((addresses) => this.submitKeystoreTransaction(addresses));

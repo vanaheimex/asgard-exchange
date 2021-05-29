@@ -32,6 +32,8 @@ import { ConfirmWithdrawModalComponent } from "./confirm-withdraw-modal/confirm-
 import { WithdrawTypeOptions } from "../_const/withdraw-type-options";
 import { Balances } from "@xchainjs/xchain-client";
 import { debounceTime } from "rxjs/operators";
+import { CurrencyService } from "../_services/currency.service";
+import { Currency } from "../_components/account-settings/currency-converter/currency-converter.component";
 
 @Component({
   selector: "app-withdraw",
@@ -94,6 +96,7 @@ export class WithdrawComponent implements OnInit {
   assetBalance: number;
   runeBalance: number;
   balances: Balances;
+  currency: Currency;
 
   constructor(
     private route: ActivatedRoute,
@@ -102,7 +105,8 @@ export class WithdrawComponent implements OnInit {
     private midgardService: MidgardService,
     private overlaysService: OverlaysService,
     private router: Router,
-    private txUtilsService: TransactionUtilsService
+    private txUtilsService: TransactionUtilsService,
+    private curService: CurrencyService
   ) {
     this.withdrawPercent = 0;
     this.removeAssetAmount = 0;
@@ -121,7 +125,13 @@ export class WithdrawComponent implements OnInit {
       this.checkCooldown();
     });
 
-    this.subs = [user$, lastBlock$];
+    const cur$ = this.curService.cur$.subscribe(
+      (cur) => {
+        this.currency = cur;
+      }
+    )
+
+    this.subs = [user$, lastBlock$, cur$];
   }
 
   ngOnInit(): void {

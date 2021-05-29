@@ -152,7 +152,7 @@ export class SendAssetComponent implements OnInit, OnDestroy {
       return "Prepare";
     }
 
-    if (!this.inboundAddresses || !this.chainBalance) {
+    if (!this.inboundAddresses || this.chainBalance == undefined) {
       return "Loading";
     }
 
@@ -193,7 +193,8 @@ export class SendAssetComponent implements OnInit, OnDestroy {
         "EXTERNAL"
       )
     ) {
-      return `Insufficient ${this.asset.asset.chain}`;
+      const chainAsset = getChainAsset(this.asset.asset.chain);
+      return `Insufficient ${chainAsset.chain}.${chainAsset.ticker} for fees`;
     }
 
     if (!this.amountSpendable) {

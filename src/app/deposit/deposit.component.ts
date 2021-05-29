@@ -27,6 +27,8 @@ import { ThorchainPricesService } from "../_services/thorchain-prices.service";
 import { TransactionUtilsService } from "../_services/transaction-utils.service";
 import { debounceTime } from "rxjs/operators";
 import { PoolAddressDTO } from "../_classes/pool-address";
+import { CurrencyService } from "../_services/currency.service";
+import { Currency } from "../_components/account-settings/currency-converter/currency-converter.component";
 
 @Component({
   selector: "app-deposit",
@@ -85,6 +87,8 @@ export class DepositComponent implements OnInit, OnDestroy {
   }
   private _assetAmount: number;
   assetPoolData: PoolData;
+  assetPrice: number;
+
 
   /**
    * Balances
@@ -118,6 +122,7 @@ export class DepositComponent implements OnInit, OnDestroy {
   depositData: ConfirmDepositData;
   //adding rune price for the input
   runePrice: number;
+  currency: Currency;
 
   constructor(
     private userService: UserService,
@@ -126,7 +131,8 @@ export class DepositComponent implements OnInit, OnDestroy {
     private midgardService: MidgardService,
     private thorchainPricesService: ThorchainPricesService,
     public overlaysService: OverlaysService,
-    private txUtilsService: TransactionUtilsService
+    private txUtilsService: TransactionUtilsService,
+    private curService: CurrencyService
   ) {
     this.poolNotFoundErr = false;
     this.ethContractApprovalRequired = false;
@@ -204,6 +210,9 @@ export class DepositComponent implements OnInit, OnDestroy {
           if (this.asset.chain === "ETH" && this.asset.ticker !== "ETH") {
             this.checkContractApproved(this.asset);
           }
+
+          this.assetPrice = this.selectableMarkets.find(item => item.asset.chain === this.asset.chain && item.asset.ticker === this.asset.ticker).assetPriceUSD;
+
         }
       }
     );
@@ -212,10 +221,16 @@ export class DepositComponent implements OnInit, OnDestroy {
       this.view = view;
     });
 
+    const cur$ = this.curService.cur$.subscribe(
+      (cur) => {
+        this.currency = cur
+      }
+    )
+
     this.getPools();
     this.getEthRouter();
     this.getPoolCap();
-    this.subs.push(sub, depositView$);
+    this.subs.push(sub, depositView$, cur$);
   }
 
   setSourceChainBalance() {
@@ -470,7 +485,8 @@ export class DepositComponent implements OnInit, OnDestroy {
           this.inboundAddresses
         )
     ) {
-      return `Insufficient ${this.asset.chain}`;
+      const chainAsset = getChainAsset(this.asset.chain);
+      return `Insufficient ${chainAsset.chain}.${chainAsset.ticker} for Fees`;
     }
 
     /** Amount is too low, considered "dusting" */
