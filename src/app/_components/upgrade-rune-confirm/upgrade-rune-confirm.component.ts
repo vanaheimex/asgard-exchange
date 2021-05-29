@@ -9,7 +9,7 @@ import {
 import { Balances } from "@xchainjs/xchain-client";
 import { assetAmount, assetToBase } from "@xchainjs/xchain-util";
 import { Subscription } from "rxjs";
-import { Asset } from "src/app/_classes/asset";
+import { Asset, getChainAsset } from "src/app/_classes/asset";
 import { AssetAndBalance } from "src/app/_classes/asset-and-balance";
 import { PoolAddressDTO } from "src/app/_classes/pool-address";
 import { User } from "src/app/_classes/user";
@@ -56,6 +56,7 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
 
   message: string;
   isError: boolean = false;
+  loading: boolean = false;
 
   constructor(
     private midgardService: MidgardService,
@@ -100,6 +101,7 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
 
   async ngOnInit(): Promise<void> {
     this.message = "Confirm";
+    this.loading = true;
     await this.estimateFees();
     this.checkSufficientFunds();
   }
@@ -130,9 +132,12 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
 
       this.insufficientChainBalance = balance < this.networkFee;
       if (this.insufficientChainBalance) {
-        this.message = `Insufficient ${this.asset.asset.chain}.${this.userService.getFeeAsset(this.asset.asset.chain)} to Cover Fees`;
+        const chainAsset = getChainAsset(this.asset.asset.chain);
+        this.message = `Insufficient ${chainAsset.chain}.${chainAsset.ticker} for Fees`;
         this.isError = true;
       }
+
+      this.loading = false;
     }
   }
 

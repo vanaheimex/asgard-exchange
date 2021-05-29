@@ -122,7 +122,7 @@
               <div class="right-btn">
                 <button
                   class="next-btn"
-                  [disabled]="insufficientChainBalance"
+                  [disabled]="insufficientChainBalance || loading"
                   (click)="submitTransaction()"
                 >
                   <span>confirm</span>
