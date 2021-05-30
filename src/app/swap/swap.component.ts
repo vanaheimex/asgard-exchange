@@ -598,7 +598,7 @@ export class SwapComponent implements OnInit, OnDestroy {
       this.mainButtonText() == "Select" ||
       this.mainButtonText() == "Connect wallet" ||
       this.mainButtonText() == "Enter an amount" ||
-      this.mainButtonText() == "Swap" ||
+      this.mainButtonText() == "Ready" ||
       this.mainButtonText() == "LOADING BALANCE" ||
       this.mainButtonText() == "Maintenance Enabled"
     ) {

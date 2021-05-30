@@ -211,7 +211,9 @@ export class DepositComponent implements OnInit, OnDestroy {
             this.checkContractApproved(this.asset);
           }
 
-          this.assetPrice = this.selectableMarkets.find(item => item.asset.chain === this.asset.chain && item.asset.ticker === this.asset.ticker).assetPriceUSD;
+          if (this.selectableMarkets) {
+            this.assetPrice = this.selectableMarkets.find(item => item.asset.chain === this.asset.chain && item.asset.ticker === this.asset.ticker).assetPriceUSD;
+          }
 
         }
       }
@@ -414,7 +416,7 @@ export class DepositComponent implements OnInit, OnDestroy {
        */
       (assetToString(getChainAsset(this.asset.chain)) ===
         assetToString(this.asset) &&
-        this.assetAmount <
+        this.assetAmount >=
           this.userService.maximumSpendableBalance(
             this.asset,
             this.sourceChainBalance,
@@ -478,7 +480,7 @@ export class DepositComponent implements OnInit, OnDestroy {
     if (
       assetToString(getChainAsset(this.asset.chain)) ===
         assetToString(this.asset) &&
-      this.assetAmount <
+      this.assetAmount >=
         this.userService.maximumSpendableBalance(
           this.asset,
           this.sourceChainBalance,

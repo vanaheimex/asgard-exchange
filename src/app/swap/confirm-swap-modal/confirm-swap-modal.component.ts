@@ -86,6 +86,7 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
   balances: Balances;
   outboundHash: string;
   currency: Currency;
+  isDoubleSwap: boolean = false;
 
   constructor(
     // @Inject(MAT_DIALOG_DATA) public swapData: SwapData,
@@ -133,12 +134,22 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.estimateTime();
+
+    this.isDoubleSwap =
+      this.isRune(this.swapData.sourceAsset.asset) ||
+      this.isRune(this.swapData.targetAsset.asset)
+        ? false
+        : true;
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes["swapData"]) {
       console.log(this.swapData);
     }
+  }
+
+  isRune(asset: Asset): boolean {
+    return asset && asset.ticker === "RUNE"; // covers BNB and native
   }
 
   navCaller(val) {

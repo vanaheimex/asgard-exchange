@@ -145,7 +145,7 @@
 
 <app-transaction-success-modal
   *ngIf="txState === 'SUCCESS'"
-  [isWithdraw]="true"
+  modalType="WITHDRAW"
   chain="THOR"
   [hash]="hash"
   [asset]="[
