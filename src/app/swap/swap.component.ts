@@ -716,18 +716,6 @@ export class SwapComponent implements OnInit, OnDestroy {
       return "Enter an amount";
     }
 
-    /** Input Amount is less than network fees */
-    if (
-      this.sourceChainBalance <
-      1.05 *
-        this.inboundFees[
-          assetToString(getChainAsset(this.selectedSourceAsset.chain))
-        ]
-    ) {
-      const chainAsset = getChainAsset(this.selectedSourceAsset.chain);
-      return `Insufficient ${chainAsset.chain}.${chainAsset.ticker} for Fees`;
-    }
-
     /** Output Amount is less than network fees */
     if (
       this.targetAssetUnitDisplay <
@@ -750,6 +738,18 @@ export class SwapComponent implements OnInit, OnDestroy {
       )
     ) {
       return `Insufficient ${this.selectedSourceAsset.chain}.${this.selectedSourceAsset.ticker} balance`;
+    }
+
+    /** Input Amount is less than network fees */
+    if (
+      this.sourceChainBalance <
+      1.05 *
+        this.inboundFees[
+          assetToString(getChainAsset(this.selectedSourceAsset.chain))
+        ]
+    ) {
+      const chainAsset = getChainAsset(this.selectedSourceAsset.chain);
+      return `Insufficient ${chainAsset.chain}.${chainAsset.ticker} for Fees`;
     }
 
     /** Amount is too low, considered "dusting" */
@@ -778,6 +778,18 @@ export class SwapComponent implements OnInit, OnDestroy {
     } else {
       console.warn("error creating main button text");
     }
+  }
+
+  swapTextButton() {
+    /** CHECK that there is non wallet address that the user wants to send */
+    if (this.selectedTargetAsset && this.user) {
+      const targetClientAddress = this.userService.getChainClient(this.user, this.selectedTargetAsset?.chain)?.getAddress();
+      if (targetClientAddress && this.targetAddress !== targetClientAddress) {
+        return `SWAP + SEND TO ${this.targetAddress.substring(0, 6)}...${this.targetAddress.substring(this.targetAddress.length -6, this.targetAddress.length)}`
+      }
+    }
+
+    return 'SWAP'
   }
 
   getBalance() {

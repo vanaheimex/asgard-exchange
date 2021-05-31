@@ -93,22 +93,29 @@
 .target-address {
   align-items: center;
   position: absolute;
-  right: 5px;
+  right: 0px;
   height: 24px;
 
   .expand-more {
     margin-left: 5px;
   }
-
+  
   > span {
     color: var(--primary-grey-color); 
     font-size: 15px;
-
+    
   }
   
   .address {
     color: #fff;
   }
+
+}
+
+.clickable-span {
+  padding: 2px 5px;
+  margin-left: 5px;
+  height: 24px;
 
   &:not(.disabled):hover {
     .address {
