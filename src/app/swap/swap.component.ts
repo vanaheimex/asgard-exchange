@@ -716,18 +716,6 @@ export class SwapComponent implements OnInit, OnDestroy {
       return "Enter an amount";
     }
 
-    /** Input Amount is less than network fees */
-    if (
-      this.sourceChainBalance <
-      1.05 *
-        this.inboundFees[
-          assetToString(getChainAsset(this.selectedSourceAsset.chain))
-        ]
-    ) {
-      const chainAsset = getChainAsset(this.selectedSourceAsset.chain);
-      return `Insufficient ${chainAsset.chain}.${chainAsset.ticker} for Fees`;
-    }
-
     /** Output Amount is less than network fees */
     if (
       this.targetAssetUnitDisplay <
@@ -750,6 +738,18 @@ export class SwapComponent implements OnInit, OnDestroy {
       )
     ) {
       return `Insufficient ${this.selectedSourceAsset.chain}.${this.selectedSourceAsset.ticker} balance`;
+    }
+
+    /** Input Amount is less than network fees */
+    if (
+      this.sourceChainBalance <
+      1.05 *
+        this.inboundFees[
+          assetToString(getChainAsset(this.selectedSourceAsset.chain))
+        ]
+    ) {
+      const chainAsset = getChainAsset(this.selectedSourceAsset.chain);
+      return `Insufficient ${chainAsset.chain}.${chainAsset.ticker} for Fees`;
     }
 
     /** Amount is too low, considered "dusting" */
