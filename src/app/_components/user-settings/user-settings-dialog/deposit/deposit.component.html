@@ -28,6 +28,7 @@
   <app-transaction-success-modal
     (closeDialog)="depositState = 'FORM'"
     [hash]="txHash"
+    modalType="DEPOSIT"
     [chain]="asset.asset.chain"
   >
   </app-transaction-success-modal>

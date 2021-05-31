@@ -31,7 +31,14 @@ export class SeedPhraseComponent implements OnInit {
   copyToClipboard() {
     let result = this.copyService.copyToClipboard(this.phrase);
 
-    if (result == true) this.copied = true;
+    if (result == true) {
+      this.copied = true;
+      setTimeout(
+        () => {
+          this.copied = false;
+        }
+      , 1500)
+    }
   }
 
   async downloadKeystore() {

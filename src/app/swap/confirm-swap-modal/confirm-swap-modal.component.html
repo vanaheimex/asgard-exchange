@@ -22,10 +22,10 @@
   [amount]="[swapData.inputValue, swapData.outputValue]"
   [chain]="swapData.sourceAsset.asset.chain"
   [hash]="hash"
-  [isSending]="false"
-  [hasOutbound]="true"
+  [hasOutbound]="isDoubleSwap"
   [hashOutbound]="outboundHash"
   (closeDialog)="closeDialog(true)"
+  modalType="SWAP"
 >
   <app-breadcrumb
     [path]="[

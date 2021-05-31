@@ -28,7 +28,8 @@ import { TransactionUtilsService } from "../_services/transaction-utils.service"
 import { debounceTime } from "rxjs/operators";
 import { PoolAddressDTO } from "../_classes/pool-address";
 import { toLegacyAddress } from '@xchainjs/xchain-bitcoincash';
-
+import { CurrencyService } from "../_services/currency.service";
+import { Currency } from "../_components/account-settings/currency-converter/currency-converter.component";
 
 @Component({
   selector: "app-deposit",
@@ -64,7 +65,7 @@ export class DepositComponent implements OnInit, OnDestroy {
             this.balances,
             this.asset
           );
-          this.assetAmount = 0;
+          this.assetAmount = undefined;
         }
       }
     }
@@ -87,6 +88,8 @@ export class DepositComponent implements OnInit, OnDestroy {
   }
   private _assetAmount: number;
   assetPoolData: PoolData;
+  assetPrice: number;
+
 
   /**
    * Balances
@@ -113,12 +116,14 @@ export class DepositComponent implements OnInit, OnDestroy {
 
   haltedChains: string[];
   isHalted: boolean;
+  isMaxError: boolean;
 
   view: DepositViews;
   // saving data of confirm in variable to pass it to the confirm
   depositData: ConfirmDepositData;
   //adding rune price for the input
   runePrice: number;
+  currency: Currency;
 
   bchLegacyPooled: boolean;
 
@@ -129,7 +134,8 @@ export class DepositComponent implements OnInit, OnDestroy {
     private midgardService: MidgardService,
     private thorchainPricesService: ThorchainPricesService,
     public overlaysService: OverlaysService,
-    private txUtilsService: TransactionUtilsService
+    private txUtilsService: TransactionUtilsService,
+    private curService: CurrencyService
   ) {
     this.poolNotFoundErr = false;
     this.ethContractApprovalRequired = false;
@@ -213,6 +219,11 @@ export class DepositComponent implements OnInit, OnDestroy {
           if (this.asset.chain === "ETH" && this.asset.ticker !== "ETH") {
             this.checkContractApproved(this.asset);
           }
+
+          if (this.selectableMarkets) {
+            this.assetPrice = this.selectableMarkets.find(item => item.asset.chain === this.asset.chain && item.asset.ticker === this.asset.ticker).assetPriceUSD;
+          }
+
         }
       }
     );
@@ -221,10 +232,16 @@ export class DepositComponent implements OnInit, OnDestroy {
       this.view = view;
     });
 
+    const cur$ = this.curService.cur$.subscribe(
+      (cur) => {
+        this.currency = cur
+      }
+    )
+
     this.getPools();
     this.getEthRouter();
     this.getPoolCap();
-    this.subs.push(sub, depositView$);
+    this.subs.push(sub, depositView$, cur$);
   }
 
   /**
@@ -269,8 +286,8 @@ export class DepositComponent implements OnInit, OnDestroy {
   }
 
   getPoolCap() {
-    const mimir$ = this.midgardService.getMimir();
-    const network$ = this.midgardService.getNetwork();
+    const mimir$ = this.midgardService.mimir$;
+    const network$ = this.midgardService.network$;
     const combined = combineLatest([mimir$, network$]);
     const sub = combined.subscribe(([mimir, network]) => {
       // prettier-ignore
@@ -294,6 +311,17 @@ export class DepositComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  setMaxError(val) {
+    this.isMaxError = val;
+
+    setTimeout(
+      () => {
+        this.isMaxError = false;
+      }
+    , 2000)
+  }
+
 
   contractApproved() {
     this.ethContractApprovalRequired = false;
@@ -440,6 +468,10 @@ export class DepositComponent implements OnInit, OnDestroy {
       return "Please connect wallet";
     }
 
+    if (this.isMaxError) {
+      return "Input Amount Less Than Fees";
+    }
+
     if (this.balances && (!this.runeAmount || !this.assetAmount)) {
       return "Prepare";
     }
@@ -494,7 +526,8 @@ export class DepositComponent implements OnInit, OnDestroy {
           this.inboundAddresses
         )
     ) {
-      return `Insufficient ${this.asset.chain}`;
+      const chainAsset = getChainAsset(this.asset.chain);
+      return `Insufficient ${chainAsset.chain}.${chainAsset.ticker} for Fees`;
     }
 
     /** Amount is too low, considered "dusting" */

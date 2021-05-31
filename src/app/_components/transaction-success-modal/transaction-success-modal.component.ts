@@ -23,8 +23,7 @@ export class TransactionSuccessModalComponent {
   @Output() closeDialog: EventEmitter<null>;
 
   //added by the new reskin
-  @Input() isSending: boolean = false;
-  @Input() isWithdraw: boolean = false;
+  @Input() modalType: 'SWAP' | 'DEPOSIT' | 'WITHDRAW' | 'SEND' | 'UPGRADE';
   @Input() asset: Array<AssetAndBalance>;
   @Input() label: Array<string>;
   @Input() amount: Array<number | BigNumber>;

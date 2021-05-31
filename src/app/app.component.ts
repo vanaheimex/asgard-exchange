@@ -4,7 +4,7 @@ import { Subject, timer, of, Subscription } from "rxjs";
 import { catchError, switchMap, takeUntil } from "rxjs/operators";
 import { LastBlock } from "src/app/_classes/last-block";
 import { LastBlockService } from "src/app/_services/last-block.service";
-import { MidgardService } from "src/app/_services/midgard.service";
+import { MidgardService, MimirResponse } from "src/app/_services/midgard.service";
 import { OverlaysService, MainViewsEnum } from "./_services/overlays.service";
 import { UserService } from "./_services/user.service";
 import { Chain } from "@xchainjs/xchain-util";
@@ -14,6 +14,7 @@ import { ReconnectXDEFIDialogComponent } from "./_components/reconnect-xdefi-dia
 import { environment } from "src/environments/environment";
 import { links } from "src/app/_const/links";
 import { Router } from "@angular/router";
+import { NetworkSummary } from "./_classes/network";
 
 @Component({
   selector: "app-root",
@@ -91,6 +92,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   async ngOnInit(): Promise<void> {
     this.pollLastBlock();
+    this.pollCap();
 
     const keystoreString = localStorage.getItem("keystore");
     const XDEFIConnected = localStorage.getItem("XDEFI_CONNECTED");
@@ -188,6 +190,34 @@ export class AppComponent implements OnInit, OnDestroy {
         }
       });
     this.subs.push(refreshInterval$);
+  }
+
+  pollCap(): void {
+    const mimirInterval$ = timer(0, 15000)
+      .pipe(
+        // This kills the request if the user closes the component
+        takeUntil(this.killPolling),
+        // switchMap cancels the last request, if no response have been received since last tick
+        switchMap(() => this.midgardService.updateMimir()),
+        // catchError handles http throws
+        catchError((error) => of(error))
+      )
+      .subscribe(async (res: MimirResponse) => {
+        this.midgardService.setMimir(res);
+      });
+    const networkInterval$ = timer(0, 15000)
+      .pipe(
+        // This kills the request if the user closes the component
+        takeUntil(this.killPolling),
+        // switchMap cancels the last request, if no response have been received since last tick
+        switchMap(() => this.midgardService.getNetwork()),
+        // catchError handles http throws
+        catchError((error) => of(error))
+      )
+      .subscribe(async (res: NetworkSummary) => {
+        this.midgardService.setNetwork(res);
+      });
+    this.subs.push(mimirInterval$, networkInterval$);
   }
 
   ngOnDestroy(): void {

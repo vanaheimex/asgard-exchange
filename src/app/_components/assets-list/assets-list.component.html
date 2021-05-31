@@ -89,7 +89,9 @@
           >
             <span class="market-list-item__balance">{{
               item.balance.amount().toNumber() | number: "1.2-6"
-            }}</span>
+            }} 
+            <span *ngIf="item.assetPriceUSD && showPrice">({{item.assetPriceUSD * item.balance.amount().toNumber() * currency.value | shortNumber: showApy ? false : true}} {{currency.code}})</span>
+            </span>
           </div>
 
           <!-- <span *ngIf="item.asset.chain === 'ETH' && item.asset.ticker !== 'ETH'" class="text-xs text-gray-400">{{item.asset.symbol.split('-')[1]}}</span> -->

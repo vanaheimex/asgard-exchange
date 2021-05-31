@@ -124,11 +124,20 @@ export class PendingTxsModalComponent implements OnDestroy {
       let date = new Date(+transaction.date / 1000000);
       console.log(date);
 
-      if (transaction.out.length > 0 && transaction.type == "swap") {
+      if (transaction.out.length > 0 && transaction.type == 'swap') {
         const outboundAsset = new Asset(transaction.out[0].coins[0].asset);
 
         outbound = {
           hash: transaction.out[0].txID,
+          asset: outboundAsset,
+        };
+      }
+
+      if (transaction.type == 'addLiquidity') {
+        const outboundAsset = new Asset(transaction.pools[0]);
+
+        outbound = {
+          hash: transaction.in[1].txID,
           asset: outboundAsset,
         };
       }

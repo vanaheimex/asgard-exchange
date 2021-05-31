@@ -18,6 +18,7 @@ import { PhraseConfirmService } from "src/app/_services/phrase-confirm.service";
 import { UserService } from "src/app/_services/user.service";
 import { environment } from "src/environments/environment";
 import { DecimalPipe } from "@angular/common";
+import { HttpErrorResponse } from "@angular/common/http";
 
 @Component({
   selector: "app-header",
@@ -36,6 +37,7 @@ export class HeaderComponent implements OnDestroy {
   totalPooledRune: number;
   maxLiquidityRune: number;
   depositsDisabled: boolean;
+  error: boolean;
 
   private _overlay: boolean;
   get overlay(): boolean {
@@ -52,7 +54,7 @@ export class HeaderComponent implements OnDestroy {
     public overlaysService: OverlaysService,
     private phraseConfirm: PhraseConfirmService,
     private midgardService: MidgardService,
-    private _decimalPipe: DecimalPipe
+    private _decimalPipe: DecimalPipe,
   ) {
     this.isTestnet = environment.network === "testnet" ? true : false;
 
@@ -79,15 +81,23 @@ export class HeaderComponent implements OnDestroy {
   }
 
   getPoolCap() {
-    const mimir$ = this.midgardService.getMimir();
-    const network$ = this.midgardService.getNetwork();
+    const mimir$ = this.midgardService.mimir$;
+    const network$ = this.midgardService.network$;
     const combined = combineLatest([mimir$, network$]);
 
     this.topbar = "LOADING CAPS";
     const sub = combined.subscribe(([mimir, network]) => {
-      this.totalPooledRune = +network.totalPooledRune / 10 ** 8;
+      if (network instanceof HttpErrorResponse) {
+        this.topbar = 'Midgard seems in trouble, please try again';
+        this.depositsDisabled = false;
+        this.error = true;
+        return
+      }
 
-      if (mimir && mimir["mimir//MAXIMUMLIQUIDITYRUNE"]) {
+      this.error = false;
+      this.totalPooledRune = +network?.totalPooledRune / 10 ** 8;
+
+      if (mimir && mimir["mimir//MAXIMUMLIQUIDITYRUNE"] && this.totalPooledRune != null) {
         this.maxLiquidityRune = mimir["mimir//MAXIMUMLIQUIDITYRUNE"] / 10 ** 8;
         this.depositsDisabled =
           this.totalPooledRune / this.maxLiquidityRune >= 0.9;

@@ -87,6 +87,7 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
   balances: Balances;
   outboundHash: string;
   currency: Currency;
+  isDoubleSwap: boolean = false;
 
   constructor(
     // @Inject(MAT_DIALOG_DATA) public swapData: SwapData,
@@ -134,12 +135,22 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.estimateTime();
+
+    this.isDoubleSwap =
+      this.isRune(this.swapData.sourceAsset.asset) ||
+      this.isRune(this.swapData.targetAsset.asset)
+        ? false
+        : true;
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes["swapData"]) {
       console.log(this.swapData);
     }
+  }
+
+  isRune(asset: Asset): boolean {
+    return asset && asset.ticker === "RUNE"; // covers BNB and native
   }
 
   navCaller(val) {
@@ -513,6 +524,9 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
       .getOutboundHash(this.hash)
       .subscribe((res: Transaction) => {
         this.outboundHash = res.out[0]?.txID;
+        console.log(res.out[0]?.coins[0]?.amount)
+        if (assetAmount(res.out[0]?.coins[0]?.amount).amount().div(10 ** 8).toNumber() > 0)
+          this.swapData.outputValue = assetAmount(res.out[0]?.coins[0]?.amount).amount().div(10 ** 8);
 
         if (!this.outboundHash && res.status == "success") {
           this.outboundHash = "success";

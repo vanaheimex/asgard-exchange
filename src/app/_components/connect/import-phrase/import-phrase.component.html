@@ -4,7 +4,7 @@
       [path]="[
         { name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap' },
         { name: 'Connect', backFunc: true },
-        { name: 'import phrase', disable: true }
+        { name: 'Create wallet from phrase', disable: true }
       ]"
       [isError]="error || (password !== confirmPassword && confirmPassword)"
       [message]="(confirmPassword !== password && confirmPassword) ? 'PASSWORDS DON\'T MATCH' : message"
@@ -29,23 +29,24 @@
 
     <app-arrow></app-arrow>
 
-    <div class="uni-input">
-      <label>Password</label>
-      <input
-        class="password focus:ring-0"
-        [(ngModel)]="password"
-        name="keystore-password"
-        placeholder="________________________________________"
-        type="password"
-      />
-    </div>
+    <app-text-field
+      mode="Double"
+      label="Password"
+      [(textOfField)]="password"
+      selectedType="password"
+      name="keystore-password"
+      [(textOfFieldTwo)]="confirmPassword"
+      typeTwo="password"
+      labelTwo="Confirm Password"
+      nameTwo="confirm-password"    
+    >
+    </app-text-field>
 
   </div>
 
   <div class="disclaimer swap-details">
     <span style="color: var(--primary-red)"
-      >This will create and download a keystore to your computer. <br />
-      Please store this file offline in a safe place.</span
+      >This will create and download a keystore to your computer. Please store it offline safely.</span
     >
   </div>
 </div>  
@@ -61,7 +62,7 @@
     <button
       class="next-btn"
       (click)="createKeystore()"
-      [disabled]="!phrase || !password || loading || password !== confirmPassword"
+      [disabled]="!phrase || !password || loading || (password !== confirmPassword && confirmPassword)"
     >
       <span>Create</span>
     </button>

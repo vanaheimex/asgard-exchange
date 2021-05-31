@@ -409,11 +409,13 @@ export class UserService {
             balMap[`${mItem.asset.chain}.${mItem.asset.symbol}`.toUpperCase()]
               .amount
           ),
+          assetPriceUSD: mItem.assetPriceUSD ?? 0
         };
       } else {
         return {
           asset: mItem.asset,
           balance: assetAmount(0),
+          assetPriceUSD: mItem.assetPriceUSD ?? 0
         };
       }
     });
@@ -500,28 +502,4 @@ export class UserService {
     throw new Error(`no matching client for chain: ${chain}`);
   }
 
-  getFeeAsset(chain: Chain) {
-    switch (chain) {
-      case "BTC":
-        return 'BTC';
-
-      case "ETH":
-        return 'ETH';
-
-      case "BNB":
-        return 'BNB';
-
-      case "BCH":
-        return 'BCH';
-
-      case "LTC":
-        return 'LTC';
-
-      case "THOR":
-        return 'RUNE';
-
-      default:
-        return chain.toString();
-    }
-  }
 }

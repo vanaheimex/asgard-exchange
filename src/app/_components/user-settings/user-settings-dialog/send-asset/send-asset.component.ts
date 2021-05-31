@@ -50,6 +50,7 @@ export class SendAssetComponent implements OnInit, OnDestroy {
   subs: Subscription[];
   explorerPath: string;
   address: string;
+  isMaxError: boolean;
 
   memo: string;
   inboundAddresses: PoolAddressDTO[];
@@ -151,7 +152,7 @@ export class SendAssetComponent implements OnInit, OnDestroy {
       return "Prepare";
     }
 
-    if (!this.inboundAddresses || !this.chainBalance) {
+    if (!this.inboundAddresses || this.chainBalance == undefined) {
       return "Loading";
     }
 
@@ -161,6 +162,10 @@ export class SendAssetComponent implements OnInit, OnDestroy {
     );
     if (!client) {
       return `No ${this.asset.asset.chain} Client Found`;
+    }
+
+    if (this.isMaxError) {
+      return "Input Amount Less Than Fees";
     }
 
     if (
@@ -188,7 +193,8 @@ export class SendAssetComponent implements OnInit, OnDestroy {
         "EXTERNAL"
       )
     ) {
-      return `Insufficient ${this.asset.asset.chain}`;
+      const chainAsset = getChainAsset(this.asset.asset.chain);
+      return `Insufficient ${chainAsset.chain}.${chainAsset.ticker} for fees`;
     }
 
     if (!this.amountSpendable) {
@@ -209,6 +215,16 @@ export class SendAssetComponent implements OnInit, OnDestroy {
     }
 
     return true;
+  }
+
+  setMaxError(val) {
+    this.isMaxError = val;
+
+    setTimeout(
+      () => {
+        this.isMaxError = false;
+      }
+    , 2000)
   }
 
   checkSpendable(): void {

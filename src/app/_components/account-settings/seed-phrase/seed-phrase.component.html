@@ -75,10 +75,17 @@
       </div>
     </div>
 
-    <div class="bottom-actions">
-      <div>
+    <div class="bottom-actions two-btn">
+      <div class="left-btn">
         <button class="close-btn" (click)="close.emit()">
           <span>close</span>
+        </button>
+      </div>
+      <div class="divider"></div>
+      <div class="right-btn" (click)="copyToClipboard()">
+        <button class="next-btn" [disabled]="copied">
+          <span *ngIf="!copied">Copy</span>
+          <span *ngIf="copied">Copied</span>
         </button>
       </div>
     </div>
