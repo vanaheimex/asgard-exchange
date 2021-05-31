@@ -22,6 +22,7 @@ import { TransactionSuccessModalModule } from "../_components/transaction-succes
 import { TransactionLedgerConfirmModalModule } from "../_components/transaction-ledger-confirm-modal/transaction-ledger-confirm-modal.module";
 import { MarketsModalModule } from "../_components/markets-modal/markets-modal.module";
 import { from } from "rxjs";
+import { UpdateTargetAddressModalComponent } from './update-target-address-modal/update-target-address-modal.component';
 
 import { ApproveEthContractModule } from "../_components/approve-eth-contract/approve-eth-contract.module";
 import { DirectivesModule } from "../_directives/directives.module";
@@ -33,7 +34,11 @@ import { RightOptionModule } from "../_components/right-option/right-option.modu
 import { PhraseWordsListModule } from "../_components/phrase-words-list/phrase-words-list.module";
 import { ApproveEthContractModalModule } from "../_components/approve-eth-contract/approve-eth-contract-modal/approve-eth-contract-modal.module";
 @NgModule({
-  declarations: [SwapComponent, ConfirmSwapModalComponent],
+  declarations: [
+    SwapComponent,
+    ConfirmSwapModalComponent,
+    UpdateTargetAddressModalComponent,
+  ],
   imports: [
     CommonModule,
     AssetInputModule,

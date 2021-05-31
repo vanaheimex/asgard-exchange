@@ -64,6 +64,23 @@
         >
         </app-asset-input>
 
+        <!-- THIS IS THE TARGET ADDRESS -->
+        <!-- <div class="flex justify-between swap-details h-7">
+          <span *ngIf="selectedTargetAsset">To {{selectedTargetAsset.chain}} Address:</span>
+          <span *ngIf="!selectedTargetAsset">To - Address:</span>
+          <div class="flex items-center" *ngIf="targetAddress.length > 0">
+            {{targetAddress.substring(0, 8)}}...{{targetAddress.substring(targetAddress.length - 4, targetAddress.length)}}
+            <div class="w-4">
+              <mat-icon style="transform: scale(0.7);" class="cursor-pointer text-white" (click)="launchEditTargetAddressModal()">edit</mat-icon>
+            </div>
+          </div>
+          <div *ngIf="!targetAddress || targetAddress.length <= 0" class="flex justify-center"> -
+            <div class="w-4">
+              <mat-icon style="transform: scale(0.7);" [ngClass]="{user: 'text-white cursor-pointer'}" (click)="launchEditTargetAddressModal()">edit</mat-icon>
+            </div>
+          </div>
+        </div> -->
+
         <div class="swap-details">
           <div class="flex justify-between">
             <span class="tx-detail-label">Price:</span>

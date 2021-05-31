@@ -8,7 +8,7 @@
     <div mat-dialog-content>
       <div
         class="modal-head confirm-modal-head"
-        *ngIf="isSending && !isWithdraw"
+        *ngIf="modalType === 'SEND'"
       >
         <app-asset-input
           [label]="label[0]"
@@ -65,7 +65,7 @@
         </app-notice>
       </div>
 
-      <div *ngIf="!isSending && !isWithdraw">
+      <div *ngIf="modalType === 'SWAP' || modalType === 'DEPOSIT' || modalType === 'UPGRADE'">
         <app-asset-input
           [label]="label[0]"
           [(selectedAsset)]="asset[0].asset"
@@ -112,9 +112,9 @@
         <ng-container *ngIf="!hasOutbound">
           <app-notice [isMono]="true">
             <span text style="font-family: inherit">{{
-              hash.substring(0, 16) +
+              hash.substring(0, 12) +
                 "..." +
-                hash.substring(hash.length - 16, hash.length)
+                hash.substring(hash.length - 12, hash.length)
             }}</span>
             <ng-container tags>
               <app-tag>
@@ -127,13 +127,40 @@
               <app-tag>
                 <div>
                   <a
+                    *ngIf="modalType === 'SWAP'"
+                    target="_blank"
+                    style="text-decoration: none; color: inherit"
+                    [href]="explorerPath(hash, asset[0].asset.chain)"
+                    >{{asset[0].asset.chain}} TX</a
+                  >
+                  <a
+                    *ngIf="modalType !== 'SWAP'"
                     target="_blank"
                     style="text-decoration: none; color: inherit"
                     [href]="explorerPath()"
-                    >Explore</a
+                    >EXPLORE</a
                   >
                 </div>
               </app-tag>
+              <ng-container *ngIf="modalType === 'SWAP'">
+                <div style="width: 5px"></div>
+                <app-tag>
+                  <div>
+                    <a
+                      *ngIf="hashOutbound"
+                      target="_blank"
+                      style="text-decoration: none; color: inherit"
+                      [href]="explorerPath(hash, asset[1].asset.chain)"
+                      >{{asset[1].asset.chain}} TX</a
+                    >
+                    <a
+                      *ngIf="!hashOutbound"
+                      tyle="text-decoration: none; color: inherit"
+                    >WAITING
+                    </a>
+                  </div>
+                </app-tag>
+              </ng-container>
             </ng-container>
           </app-notice>
         </ng-container>
@@ -232,7 +259,7 @@
         </ng-container>
       </div>
 
-      <div *ngIf="isWithdraw && !isSending">
+      <div *ngIf="modalType == 'WITHDRAW'">
         <div class="percent-container">
           <span class="percent-label">Percentage</span>
           <span class="unstake-percent">{{ percentage }}%</span>
