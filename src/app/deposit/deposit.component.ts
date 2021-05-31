@@ -27,6 +27,8 @@ import { ThorchainPricesService } from "../_services/thorchain-prices.service";
 import { TransactionUtilsService } from "../_services/transaction-utils.service";
 import { debounceTime } from "rxjs/operators";
 import { PoolAddressDTO } from "../_classes/pool-address";
+import { toLegacyAddress } from '@xchainjs/xchain-bitcoincash';
+
 
 @Component({
   selector: "app-deposit",
@@ -118,6 +120,8 @@ export class DepositComponent implements OnInit, OnDestroy {
   //adding rune price for the input
   runePrice: number;
 
+  bchLegacyPooled: boolean;
+
   constructor(
     private userService: UserService,
     private router: Router,
@@ -135,6 +139,7 @@ export class DepositComponent implements OnInit, OnDestroy {
     this.depositsDisabled = false;
     this.haltedChains = [];
     this.isHalted = false;
+    this.bchLegacyPooled = false;
   }
 
   ngOnInit(): void {
@@ -159,13 +164,6 @@ export class DepositComponent implements OnInit, OnDestroy {
 
         // User
         this.user = user;
-        if (
-          this.asset &&
-          this.asset.chain === "ETH" &&
-          this.asset.ticker !== "ETH"
-        ) {
-          this.checkContractApproved(this.asset);
-        }
 
         // Balance
         this.balances = balances;
@@ -184,6 +182,18 @@ export class DepositComponent implements OnInit, OnDestroy {
 
         if (asset) {
           this.asset = new Asset(asset);
+
+          if (
+            this.asset &&
+            this.asset.chain === 'ETH' &&
+            this.asset.ticker !== 'ETH'
+          ) {
+            this.checkContractApproved(this.asset);
+          }
+
+          if (asset === 'BCH.BCH') {
+            this.checkLegacyBch();
+          }
 
           this.isHalted = this.haltedChains.includes(this.asset.chain);
 
@@ -215,6 +225,34 @@ export class DepositComponent implements OnInit, OnDestroy {
     this.getEthRouter();
     this.getPoolCap();
     this.subs.push(sub, depositView$);
+  }
+
+  /**
+   * This prevents user from depositing BCH with their Cash Address
+   * if they have a current deposit/pending deposit with a Legacy Address
+   * This prevents users from going through with a new deposit, potentially losing funds.
+   */
+  async checkLegacyBch() {
+    if (!this.user) {
+      return;
+    }
+
+    const client = this.user.clients?.bitcoinCash;
+    if (!client) {
+      return;
+    }
+
+    const cashAddress = client.getAddress();
+    const legacyAddress = toLegacyAddress(cashAddress);
+    console.log('legacy address is: ', legacyAddress);
+    const bchLps = await this.midgardService
+      .getThorchainLiquidityProviders('BCH.BCH')
+      .toPromise();
+
+    const match = bchLps.find((lp) => lp.asset_address === legacyAddress);
+    if (match) {
+      this.bchLegacyPooled = true;
+    }
   }
 
   setSourceChainBalance() {
@@ -342,13 +380,11 @@ export class DepositComponent implements OnInit, OnDestroy {
           // filter out until we can add support
           .filter(
             (pool) =>
-              pool.asset.chain === "BNB" ||
-              pool.asset.chain === "BTC" ||
-              pool.asset.chain === "ETH" ||
-              pool.asset.chain === "LTC"
-
-            // temporarily disable bch due to https://github.com/asgardex/asgard-exchange/issues/379
-            // pool.asset.chain === 'BCH'
+              pool.asset.chain === 'BNB' ||
+              pool.asset.chain === 'BTC' ||
+              pool.asset.chain === 'ETH' ||
+              pool.asset.chain === 'LTC' ||
+              pool.asset.chain === 'BCH'
           )
 
           // filter out non-native RUNE tokens
@@ -387,7 +423,7 @@ export class DepositComponent implements OnInit, OnDestroy {
        */
       (assetToString(getChainAsset(this.asset.chain)) ===
         assetToString(this.asset) &&
-        this.assetAmount <
+        this.assetAmount >=
           this.userService.maximumSpendableBalance(
             this.asset,
             this.sourceChainBalance,
@@ -410,6 +446,10 @@ export class DepositComponent implements OnInit, OnDestroy {
 
     if (this.depositsDisabled) {
       return "CAPS REACHED";
+    }
+
+    if (this.bchLegacyPooled) {
+      return "Pooled BCH with a legacy address"
     }
 
     if (!this.asset) {
@@ -447,7 +487,7 @@ export class DepositComponent implements OnInit, OnDestroy {
     if (
       assetToString(getChainAsset(this.asset.chain)) ===
         assetToString(this.asset) &&
-      this.assetAmount <
+      this.assetAmount >=
         this.userService.maximumSpendableBalance(
           this.asset,
           this.sourceChainBalance,

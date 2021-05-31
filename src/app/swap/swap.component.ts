@@ -42,6 +42,7 @@ import { environment } from "src/environments/environment";
 import { CurrencyService } from "../_services/currency.service";
 import { Currency } from "../_components/account-settings/currency-converter/currency-converter.component";
 import { debounceTime, retry, switchMap } from "rxjs/operators";
+import { UpdateTargetAddressModalComponent } from './update-target-address-modal/update-target-address-modal.component';
 
 export enum SwapType {
   DOUBLE_SWAP = "double_swap",
@@ -166,6 +167,8 @@ export class SwapComponent implements OnInit, OnDestroy {
         `${asset.chain}.${asset.symbol}`,
       ]);
     }
+
+    this.setTargetAddress();
   }
   private _selectedTargetAsset: Asset;
   targetPoolDetail: PoolDetail;
@@ -195,6 +198,7 @@ export class SwapComponent implements OnInit, OnDestroy {
   inboundFees: { [key: string]: number } = {};
 
   outboundFees: { [key: string]: number } = {};
+  targetAddress: string;
 
   /**
    * ETH specific
@@ -232,6 +236,7 @@ export class SwapComponent implements OnInit, OnDestroy {
     this.ethContractApprovalRequired = false;
     this.selectableMarkets = undefined;
     this.haltedChains = [];
+    this.targetAddress = '';
 
     const balances$ = this.userService.userBalances$
       .pipe(debounceTime(500))
@@ -274,6 +279,8 @@ export class SwapComponent implements OnInit, OnDestroy {
         this.targetBalance = undefined;
         this.balances = undefined;
       }
+      
+      this.setTargetAddress();
     });
 
     const queue$ = this.networkQueueService.networkQueue$.subscribe(
@@ -374,9 +381,24 @@ export class SwapComponent implements OnInit, OnDestroy {
     this.subs.push(sub);
   }
 
+  setTargetAddress() {
+    if (
+      this.selectedTargetAsset != null &&
+      ((this.user != null &&
+        this.user?.type &&
+        this.user?.type === 'keystore') ||
+        this.user?.type === 'XDEFI')
+    ) {
+      this.targetAddress = this.userService.getTokenAddress(
+        this.user,
+        this.selectedTargetAsset.chain
+      );
+    }
+  }
+
   setSourceChainBalance() {
     if (this.selectedSourceAsset && this.balances) {
-      const sourceChainAsset = getChainAsset(this.selectedSourceAsset.chain);
+      const sourceChainAsset = getChainAsset(this.selectedSourceAsset?.chain);
       const sourceChainBalance = this.userService.findBalance(
         this.balances,
         sourceChainAsset
@@ -385,6 +407,29 @@ export class SwapComponent implements OnInit, OnDestroy {
     } else {
       this.sourceChainBalance = 0;
     }
+  }
+
+  launchEditTargetAddressModal() {
+    if (!this.selectedTargetAsset || !this.user) {
+      return;
+    }
+
+    const dialogRef = this.dialog.open(UpdateTargetAddressModalComponent, {
+      minWidth: '260px',
+      maxWidth: '420px',
+      width: '50vw',
+      data: {
+        chain: this.selectedTargetAsset.chain,
+        targetAddress: this.targetAddress,
+        user: this.user,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((newAddress: string) => {
+      if (newAddress && newAddress.length > 0) {
+        this.targetAddress = newAddress;
+      }
+    });
   }
 
   setNetworkFees() {
@@ -739,6 +784,7 @@ export class SwapComponent implements OnInit, OnDestroy {
       balance: this.sourceBalance,
       runePrice: this.runePrice,
       networkFeeInSource: this.networkFeeInSource,
+      targetAddress: this.targetAddress
     };
 
     this.overlaysService.setCurrentSwapView("Confirm");
