@@ -1015,14 +1015,23 @@ a.mat-primary {
 }
 
 .adjust,
-.pool {
+.pool,
+.clickable-span {
   padding: 2px;
   border-radius: 3px;
   cursor: pointer;
 
-  &:hover {
+  &.disabled {
+    cursor: initial;
+  }
+
+  &:not(.disabled):hover {
     color: var(--primary-dark-color);
     background: var(--primary-default);
+
+    .expand-more {
+      fill: var(--primary-dark-color);
+    }
   }
 }
 

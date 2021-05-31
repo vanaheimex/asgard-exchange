@@ -222,6 +222,7 @@ export class SwapComponent implements OnInit, OnDestroy {
   sourceChainBalance: number;
 
   haltedChains: string[];
+  targetAddressData: any;
 
   constructor(
     private dialog: MatDialog,
@@ -428,22 +429,34 @@ export class SwapComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const dialogRef = this.dialog.open(UpdateTargetAddressModalComponent, {
-      minWidth: '260px',
-      maxWidth: '420px',
-      width: '50vw',
-      data: {
-        chain: this.selectedTargetAsset.chain,
-        targetAddress: this.targetAddress,
-        user: this.user,
-      },
-    });
+    this.targetAddressData = {
+      chain: this.selectedTargetAsset.chain,
+      targetAddress: this.targetAddress,
+      user: this.user,
+    }
 
-    dialogRef.afterClosed().subscribe((newAddress: string) => {
-      if (newAddress && newAddress.length > 0) {
-        this.targetAddress = newAddress;
-      }
-    });
+    this.overlaysService.setCurrentSwapView('Update-target');
+
+    // const dialogRef = this.dialog.open(UpdateTargetAddressModalComponent, {
+    //   minWidth: '260px',
+    //   maxWidth: '420px',
+    //   width: '50vw',
+    //   data: {
+    //     chain: this.selectedTargetAsset.chain,
+    //     targetAddress: this.targetAddress,
+    //     user: this.user,
+    //   },
+    // });
+
+    // dialogRef.afterClosed().subscribe((newAddress: string) => {
+    // });
+  }
+
+  editTargetAddressClose(newAddress: string) {
+    console.log(newAddress);
+    if (newAddress && newAddress.length > 0) {
+      this.targetAddress = newAddress;
+    }
   }
 
   setNetworkFees() {

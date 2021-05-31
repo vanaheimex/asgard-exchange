@@ -1,7 +1,7 @@
-import { Component, Output, EventEmitter, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, Output, EventEmitter, Input } from '@angular/core';
 import { Chain } from '@xchainjs/xchain-util';
 import { User } from 'src/app/_classes/user';
+import { OverlaysService } from 'src/app/_services/overlays.service';
 import { UserService } from 'src/app/_services/user.service';
 
 @Component({
@@ -10,25 +10,21 @@ import { UserService } from 'src/app/_services/user.service';
   styleUrls: ['./update-target-address-modal.component.scss'],
 })
 export class UpdateTargetAddressModalComponent {
-  @Output() back: EventEmitter<null>;
+  @Output() back: EventEmitter<string> = new EventEmitter<string>();
+  @Input() data: any;
   targetAddress: string;
   user: User;
   chain: Chain;
 
   constructor(
     private userService: UserService,
-    @Inject(MAT_DIALOG_DATA)
-    public data: {
-      chain: Chain;
-      targetAddress: string;
-      user: User;
-    },
-    public dialogRef: MatDialogRef<UpdateTargetAddressModalComponent>
-  ) {
-    this.user = data?.user ?? null;
-    this.chain = data?.chain ?? null;
-    this.back = new EventEmitter<null>();
-    this.targetAddress = data?.targetAddress ?? '';
+    private oveService: OverlaysService
+  ) {}
+
+  ngOnInit() {
+    this.user = this.data?.user ?? null;
+    this.chain = this.data?.chain ?? null;
+    this.targetAddress = this.data?.targetAddress ?? '';
   }
 
   updateAddress() {
@@ -45,7 +41,7 @@ export class UpdateTargetAddressModalComponent {
       return;
     }
 
-    this.dialogRef.close(this.targetAddress);
+    this.close();
   }
 
   formDisabled(): boolean {
@@ -79,10 +75,15 @@ export class UpdateTargetAddressModalComponent {
       return `Invalid ${this.chain} Address`;
     }
 
-    return 'Set Address';
+    return 'PREPARE';
   }
 
   close() {
-    this.dialogRef.close();
+    this.back.emit(this.targetAddress);
+    this.oveService.setCurrentSwapView('Swap');
+  }
+
+  backEmit() {
+    this.oveService.setCurrentSwapView('Swap');
   }
 }

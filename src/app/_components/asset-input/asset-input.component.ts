@@ -101,6 +101,8 @@ export class AssetInputComponent implements OnInit, OnDestroy {
   @Input() priceInput: number;
   @Input() inputColor: string;
   @Input() txType?: TxType;
+  @Input() targetAddress?: string;
+  @Output() launchEditTargetAsset = new EventEmitter<null>();
 
   usdValue: number;
   user: User;
@@ -183,6 +185,12 @@ export class AssetInputComponent implements OnInit, OnDestroy {
         this.inboundAddresses,
         this.txType ?? "INBOUND"
       );
+    }
+  }
+
+  openTargetAddress() {
+    if (!this.disabledMarketSelect) {
+      this.launchEditTargetAsset.emit();
     }
   }
 

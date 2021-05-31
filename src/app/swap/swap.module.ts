@@ -33,6 +33,7 @@ import { NoticeModule } from "../_components/notice/notice.module";
 import { RightOptionModule } from "../_components/right-option/right-option.module";
 import { PhraseWordsListModule } from "../_components/phrase-words-list/phrase-words-list.module";
 import { ApproveEthContractModalModule } from "../_components/approve-eth-contract/approve-eth-contract-modal/approve-eth-contract-modal.module";
+import { TextFieldModule } from "../_components/text-field/text-field.module";
 @NgModule({
   declarations: [
     SwapComponent,
@@ -57,6 +58,7 @@ import { ApproveEthContractModalModule } from "../_components/approve-eth-contra
     ApproveEthContractModalModule,
     ArrowModule,
     BreadcrumbModule,
+    TextFieldModule,
     TagModule,
     NoticeModule,
     RightOptionModule,
