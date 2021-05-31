@@ -12,7 +12,19 @@
         (backFunc)="close.emit()"
         [message]="message"
       ></app-breadcrumb>
-      <div class="top-right"></div>
+      <div class="top-right">
+        <div
+          class="uni-input"
+          style="height: 48px; width: 160.38px !important; padding: 0 17px"
+        >
+          <input
+            class="search-input focus:ring-0"
+            [(ngModel)]="searchTerm"
+            name="currecny"
+            placeholder="search here..."
+          />
+        </div>
+      </div>
     </div>
     <div class="lists-wrapper">
       <div
@@ -23,7 +35,7 @@
         <!-- TODO: Refund tx might need to be added to the txs -->
         <div
           class="w-address"
-          *ngFor="let currency of currencies; let i = index"
+          *ngFor="let currency of filterdCurrencies; let i = index"
           (click)="activeIndex = i"
           [ngClass]="{ active: i == activeIndex }"
         >

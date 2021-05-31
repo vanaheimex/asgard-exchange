@@ -22,6 +22,25 @@ export class CurrencyConverterComponent implements OnInit {
   activeIndex: number;
   message: string;
 
+  /** Search feature for currency list */
+  get searchTerm(): string {
+    return this._searchTerm;
+  }
+  set searchTerm(term: string) {
+    this._searchTerm = term;
+
+    if (term && term.length > 0) {
+      this.filterdCurrencies = this.currencies.filter((item) => {
+        const search = term.toUpperCase();
+        return item.code.toUpperCase().includes(search) || item.name.toUpperCase().includes(search);
+      });
+    } else {
+      this.filterdCurrencies = this.currencies;
+    }
+  }
+  _searchTerm: string;
+  filterdCurrencies: Currency[];
+
   constructor(private currencyService: CurrencyService) {
     this.currencies = [] as Currency[];
 
@@ -54,6 +73,8 @@ export class CurrencyConverterComponent implements OnInit {
 
   ngOnInit(): void {
     this.message = "select";
+
+    this.filterdCurrencies = this.currencies;
   }
 
   ngOnDestroy(): void {
