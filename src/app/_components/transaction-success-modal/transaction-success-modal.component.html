@@ -77,7 +77,7 @@
           [hideMax]="true"
           [showPrice]="false"
           [disableUser]="false"
-          [isWallet]="true"
+          [isWallet]="sourceBalance ? true : false"
         >
         </app-asset-input>
 
@@ -103,7 +103,8 @@
           [hideMax]="true"
           [showPrice]="false"
           [disableUser]="false"
-          [isWallet]="true"
+          [isWallet]="sourceBalance ? true : false"
+          [targetAddress]="targetAddress"
         >
         </app-asset-input>
 

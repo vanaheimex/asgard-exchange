@@ -55,6 +55,8 @@
           [disabledAssetSymbol]="
             selectedSourceAsset ? selectedSourceAsset.symbol : null
           "
+          [targetAddress]="targetAddress"
+          (launchEditTargetAsset)="launchEditTargetAddressModal()"
           [loading]="calculatingTargetAsset"
           [hideMax]="true"
           [error]="poolDetailTargetError || poolDetailSourceError"
@@ -283,6 +285,16 @@
         (close)="overlaysService.setCurrentSwapView('Swap')"
       >
       </app-approve-eth-contract-modal>
+    </div>
+
+    <div
+      class="overlay-container overlay-connect-wallet"
+      *ngIf="overlaysService.getCurrentSwapView() == 'Update-target'"
+    >
+      <app-update-target-address-modal
+        [data]="targetAddressData"
+        (back)="editTargetAddressClose($event)"
+      ></app-update-target-address-modal>
     </div>
   </div>
 </div>

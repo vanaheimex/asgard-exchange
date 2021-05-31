@@ -90,6 +90,37 @@
   }
 }
 
+.target-address {
+  align-items: center;
+  position: absolute;
+  right: 5px;
+  height: 24px;
+
+  .expand-more {
+    margin-left: 5px;
+  }
+
+  > span {
+    color: var(--primary-grey-color); 
+    font-size: 15px;
+
+  }
+  
+  .address {
+    color: #fff;
+  }
+
+  &:not(.disabled):hover {
+    .address {
+      color: var(--primary-dark-color);
+    }
+
+    .expand-more {
+      fill: var(--primary-dark-color);
+    }
+  }
+}
+
 .launch-markets-btn {
   padding: 0;
   color: white;

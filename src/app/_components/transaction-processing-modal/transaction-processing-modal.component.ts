@@ -18,6 +18,7 @@ export class TransactionProcessingModalComponent {
   @Input() percentage: number;
   @Input() isPlus: boolean = false;
   @Input() memo: string;
+  @Input() targetAddress?: string;
 
   constructor() {
     this.closeDialog = new EventEmitter<null>();

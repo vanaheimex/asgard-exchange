@@ -5,6 +5,7 @@
   [isSending]="false"
   [asset]="[swapData.sourceAsset, swapData.targetAsset]"
   [amount]="[swapData.inputValue, swapData.outputValue]"
+  [targetAddress]="swapData.targetAddress"
 >
   <app-breadcrumb
     [path]="[
@@ -21,6 +22,7 @@
   [asset]="[swapData.sourceAsset, swapData.targetAsset]"
   [amount]="[swapData.inputValue, swapData.outputValue]"
   [chain]="swapData.sourceAsset.asset.chain"
+  [targetAddress]="swapData.targetAddress"
   [hash]="hash"
   [hasOutbound]="isDoubleSwap"
   [hashOutbound]="outboundHash"
@@ -103,6 +105,7 @@
         [disabledAssetSymbol]="swapData.targetAsset.asset.symbol"
         [priceInput]="swapData.targetAsset.assetPriceUSD"
         [disabledMarketSelect]="true"
+        [targetAddress]="swapData.targetAddress"
         [hideMax]="true"
         extraLabel="(estimated)"
         [showBalance]="false"

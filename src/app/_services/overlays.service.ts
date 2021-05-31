@@ -18,7 +18,8 @@ export type SwapViews =
   | "SourceAsset"
   | "Connect"
   | "Confirm"
-  | "Approve";
+  | "Approve"
+  | 'Update-target';
 export type UserViews =
   | "Addresses"
   | "Address"

@@ -32,6 +32,7 @@ export class TransactionSuccessModalComponent {
   @Input() isPlus: boolean = false;
   @Input() hasOutbound: boolean = false;
   @Input() hashOutbound: string = "";
+  @Input() targetAddress?: string;
 
   binanceExplorerUrl: string;
   bitcoinExplorerUrl: string;

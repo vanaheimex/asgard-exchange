@@ -25,6 +25,7 @@ import { CurrencyService } from "src/app/_services/currency.service";
 import { Currency } from "../account-settings/currency-converter/currency-converter.component";
 import { PoolAddressDTO } from "src/app/_classes/pool-address";
 import { TxType } from "src/app/_const/tx-type";
+import { take } from "rxjs/operators";
 
 @Component({
   selector: "app-asset-input",
@@ -101,6 +102,8 @@ export class AssetInputComponent implements OnInit, OnDestroy {
   @Input() priceInput: number;
   @Input() inputColor: string;
   @Input() txType?: TxType;
+  @Input() targetAddress?: string;
+  @Output() launchEditTargetAsset = new EventEmitter<null>();
 
   usdValue: number;
   user: User;
@@ -108,6 +111,7 @@ export class AssetInputComponent implements OnInit, OnDestroy {
   inputUsdValue: number;
   currency: Currency;
   inboundAddresses: PoolAddressDTO[];
+  hasWallet: boolean;
 
   constructor(
     private userService: UserService,
@@ -129,6 +133,19 @@ export class AssetInputComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.setPoolAddresses();
+    
+    /** Check if the wallet have any asset of the asset-input to show */
+    if (this.isWallet) {
+      this.userService.userBalances$.pipe(take(1)).subscribe(
+        (balances) => {
+          this.hasWallet = balances.filter(
+            (balance) =>
+              balance.asset.chain === this.selectedAsset.chain &&
+              balance.asset.ticker === this.selectedAsset.ticker
+          )[0] ? true : false;
+        }
+      )
+    }
   }
 
   setPoolAddresses() {
@@ -186,6 +203,12 @@ export class AssetInputComponent implements OnInit, OnDestroy {
     }
   }
 
+  openTargetAddress() {
+    if (!this.disabledMarketSelect) {
+      this.launchEditTargetAsset.emit();
+    }
+  }
+
   async setMax(): Promise<void> {
     this.loading = true;
 
@@ -223,6 +246,10 @@ export class AssetInputComponent implements OnInit, OnDestroy {
               balance.asset.chain === this.selectedAsset.chain &&
               balance.asset.ticker === this.selectedAsset.ticker
           )[0];
+
+          if (!balance) {
+            return
+          }
 
           const assetString = `${balance.asset.chain}.${balance.asset.symbol}`;
           const asset = new Asset(
