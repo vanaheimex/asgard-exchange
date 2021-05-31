@@ -453,7 +453,6 @@ export class SwapComponent implements OnInit, OnDestroy {
   }
 
   editTargetAddressClose(newAddress: string) {
-    console.log(newAddress);
     if (newAddress && newAddress.length > 0) {
       this.targetAddress = newAddress;
     }
@@ -839,7 +838,6 @@ export class SwapComponent implements OnInit, OnDestroy {
           `${pool.asset.chain}.${pool.asset.ticker}` ===
           `${this._selectedSourceAsset.chain}.${this._selectedSourceAsset.ticker}`
       ).assetPriceUSD;
-      console.log(this.sourceAssetPrice);
     }
 
     // Getting the source asset price from selected pools
@@ -996,11 +994,6 @@ export class SwapComponent implements OnInit, OnDestroy {
           .amount()
           .minus(assetToBase(assetAmount(outboundFee)).amount())
       );
-
-      console.log(inboundFee, assetToBase(assetAmount(inboundFee)).amount().toNumber());
-      console.log(outboundFee, assetToBase(assetAmount(outboundFee)).amount().toNumber());
-      console.log('Outbound in rune', outboundFeeInSourceVal);
-      console.log(totalAmount.amount().toNumber());
 
       if (this.sourceAssetUnit) {
         this.targetAssetUnit = totalAmount.amount().isLessThan(0)
