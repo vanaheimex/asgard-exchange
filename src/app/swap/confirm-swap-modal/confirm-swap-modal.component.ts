@@ -137,7 +137,6 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
     this.estimateTime();
 
     this.isDoubleSwap =
-      this.isRune(this.swapData.sourceAsset.asset) ||
       this.isRune(this.swapData.targetAsset.asset)
         ? false
         : true;

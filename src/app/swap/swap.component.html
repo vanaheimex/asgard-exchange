@@ -179,7 +179,7 @@
               formInvalid() || !balances || ethContractApprovalRequired
             "
           >
-            <span>Swap</span>
+            <span>{{swapTextButton()}}</span>
           </button>
 
           <app-connect *ngIf="!user && !appLocked"></app-connect>

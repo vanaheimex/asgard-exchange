@@ -780,6 +780,18 @@ export class SwapComponent implements OnInit, OnDestroy {
     }
   }
 
+  swapTextButton() {
+    /** CHECK that there is non wallet address that the user wants to send */
+    if (this.selectedTargetAsset && this.user) {
+      const targetClientAddress = this.userService.getChainClient(this.user, this.selectedTargetAsset?.chain)?.getAddress();
+      if (targetClientAddress && this.targetAddress !== targetClientAddress) {
+        return `SWAP + SEND TO ${this.targetAddress.substring(0, 6)}...${this.targetAddress.substring(this.targetAddress.length -6, this.targetAddress.length)}`
+      }
+    }
+
+    return 'SWAP'
+  }
+
   getBalance() {
     return (
       this.selectedSourceAsset &&
