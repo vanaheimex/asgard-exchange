@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { baseToAsset, Chain } from '@xchainjs/xchain-util';
+import { assetToString, baseToAsset, Chain } from '@xchainjs/xchain-util';
 import { Subscription } from 'rxjs';
 import { AssetAndBalance } from 'src/app/_classes/asset-and-balance';
 import { PoolDTO } from 'src/app/_classes/pool';
@@ -13,6 +13,7 @@ import { CoinGeckoService } from 'src/app/_services/coin-gecko.service';
 import { environment } from 'src/environments/environment';
 import { CurrencyService } from 'src/app/_services/currency.service';
 import { Currency } from '../../account-settings/currency-converter/currency-converter.component';
+import { AnalyticsService } from 'src/app/_services/analytics.service';
 
 @Component({
   selector: "app-user-settings-dialog",
@@ -71,7 +72,8 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
     private midgardService: MidgardService,
     private transactionStatusService: TransactionStatusService,
     private cgService: CoinGeckoService,
-    private currencyService: CurrencyService
+    private currencyService: CurrencyService,
+    private analyticsService: AnalyticsService
   ) {
     this.pools = [];
     this.pendingTxCount = 0;
@@ -224,6 +226,7 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
     this.amountToSend = p.amount;
     this.recipient = p.recipientAddress;
     this.memo = p.memo;
+    this.analyticsService.eventEmitter('send_asset', 'send_page', assetToString(this.selectedAsset.asset), this.amountToSend);
     this.mode = "CONFIRM_SEND";
     this.setMode("Confirm");
   }
@@ -231,7 +234,6 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
   confirmUpgradeRune(p: { amount: number }) {
     this.amountToSend = p.amount;
     this.mode = "CONFIRM_UPGRADE_RUNE";
-    console.log(this.mode);
   }
 
   clearSelectedAsset() {

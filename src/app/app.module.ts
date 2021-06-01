@@ -97,6 +97,7 @@ import { CurrencyConverterComponent } from './_components/account-settings/curre
 import { ShortNumberPipe } from './_pipes/short-number.pipe';
 import { RuneYieldService } from './_services/rune-yield.service';
 import { ShortPipeModule } from './_pipes/short-number.module';
+import { AnalyticsService } from './_services/analytics.service';
 
 
 @NgModule({
@@ -185,6 +186,7 @@ import { ShortPipeModule } from './_pipes/short-number.module';
     ThorchainRpcService,
     CurrencyService,
     RuneYieldService,
+    AnalyticsService
   ],
   bootstrap: [AppComponent],
 })

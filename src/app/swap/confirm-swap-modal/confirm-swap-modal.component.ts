@@ -41,7 +41,7 @@ import { Balances } from "@xchainjs/xchain-client";
 import { Transaction } from "src/app/_classes/transaction";
 import { CurrencyService } from "src/app/_services/currency.service";
 import { Currency } from "src/app/_components/account-settings/currency-converter/currency-converter.component";
-
+import { AnalyticsService } from 'src/app/_services/analytics.service';
 export interface SwapData {
   sourceAsset: AssetAndBalance;
   targetAsset: AssetAndBalance;
@@ -100,7 +100,8 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
     public overlaysService: OverlaysService,
     private explorerPathsService: ExplorerPathsService,
     private copyService: CopyService,
-    private currencyService: CurrencyService
+    private currencyService: CurrencyService,
+    private analyticsService: AnalyticsService
   ) {
     this.txState = TransactionConfirmationState.PENDING_CONFIRMATION;
     this.insufficientChainBalance = false;
@@ -199,6 +200,7 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
 
   submitTransaction() {
     this.txState = TransactionConfirmationState.SUBMITTING;
+    this.analyticsService.eventEmitter('swap_confirm', 'swap_page', `${assetToString(this.swapData.sourceAsset.asset)}_${assetToString(this.swapData.targetAsset.asset)}`, this.swapData.inputValue * this.swapData.sourceAsset.assetPriceUSD);
 
     // Source asset is not RUNE
     if (

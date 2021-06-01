@@ -44,6 +44,7 @@ import { Currency } from "../_components/account-settings/currency-converter/cur
 import { debounceTime, retry, switchMap } from "rxjs/operators";
 import { UpdateTargetAddressModalComponent } from './update-target-address-modal/update-target-address-modal.component';
 import { SwapServiceService } from "../_services/swap-service.service";
+import { AnalyticsService } from '../_services/analytics.service';
 
 
 export enum SwapType {
@@ -236,7 +237,8 @@ export class SwapComponent implements OnInit, OnDestroy {
     private currencyService: CurrencyService,
     private router: Router,
     private route: ActivatedRoute,
-    private swapService: SwapServiceService
+    private swapService: SwapServiceService,
+    private analyticsService: AnalyticsService
   ) {
     this.ethContractApprovalRequired = false;
     this.selectableMarkets = undefined;
@@ -833,7 +835,8 @@ export class SwapComponent implements OnInit, OnDestroy {
       targetAddress: this.targetAddress
     };
 
-    this.overlaysService.setCurrentSwapView("Confirm");
+    this.overlaysService.setCurrentSwapView('Confirm');
+    this.analyticsService.eventEmitter('swap_assets', 'swap_page', `${assetToString(this.selectedSourceAsset)}_${assetToString(this.selectedTargetAsset)}`, this.sourceAssetUnit * this.sourceAssetPrice);
   }
 
   updateSwapDetails() {
