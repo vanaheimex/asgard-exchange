@@ -200,7 +200,7 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
 
   submitTransaction() {
     this.txState = TransactionConfirmationState.SUBMITTING;
-    this.analyticsService.eventEmitter('swap_confirm', 'swap_page', `${assetToString(this.swapData.sourceAsset.asset)}_${assetToString(this.swapData.targetAsset.asset)}`, this.swapData.inputValue);
+    this.analyticsService.eventEmitter('swap_confirm', 'swap_page', `${assetToString(this.swapData.sourceAsset.asset)}_${assetToString(this.swapData.targetAsset.asset)}`, this.swapData.inputValue * this.swapData.sourceAsset.assetPriceUSD);
 
     // Source asset is not RUNE
     if (

@@ -34,6 +34,7 @@ import { Balances } from "@xchainjs/xchain-client";
 import { debounceTime } from "rxjs/operators";
 import { CurrencyService } from "../_services/currency.service";
 import { Currency } from "../_components/account-settings/currency-converter/currency-converter.component";
+import { AnalyticsService } from "../_services/analytics.service";
 
 @Component({
   selector: "app-withdraw",
@@ -106,7 +107,8 @@ export class WithdrawComponent implements OnInit {
     private overlaysService: OverlaysService,
     private router: Router,
     private txUtilsService: TransactionUtilsService,
-    private curService: CurrencyService
+    private curService: CurrencyService,
+    private analyticsService: AnalyticsService
   ) {
     this.withdrawPercent = 0;
     this.removeAssetAmount = 0;
@@ -572,6 +574,7 @@ export class WithdrawComponent implements OnInit {
       withdrawType: this.withdrawType,
     };
 
+    this.analyticsService.eventEmitter('withdraw', 'withdraw_page', assetToString(this.asset), this.removeAssetAmount * this.assetPrice + this.removeRuneAmount * this.runePrice) 
     this.overlaysService.setCurrentWithdrawView("Confirm");
   }
 

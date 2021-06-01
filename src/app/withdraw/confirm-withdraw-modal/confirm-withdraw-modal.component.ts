@@ -24,6 +24,7 @@ import { Asset } from "src/app/_classes/asset";
 import { WithdrawTypeOptions } from "src/app/_const/withdraw-type-options";
 import { TransactionUtilsService } from "src/app/_services/transaction-utils.service";
 import { MidgardService } from "src/app/_services/midgard.service";
+import { AnalyticsService } from "src/app/_services/analytics.service";
 
 // TODO: this is the same as ConfirmStakeData in confirm stake modal
 export interface ConfirmWithdrawData {
@@ -67,7 +68,8 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
     private router: Router,
     private overlaysService: OverlaysService,
     private ethUtilsService: EthUtilsService,
-    private midgardService: MidgardService
+    private midgardService: MidgardService,
+    private analyticsService: AnalyticsService
   ) {
     this.close = new EventEmitter<boolean>();
     this.txState = TransactionConfirmationState.PENDING_CONFIRMATION;
@@ -113,6 +115,8 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
   }
 
   async runeWithdraw(memo: string) {
+    this.analyticsService.eventEmitter('withdraw', 'withdraw_page', assetToString(this.data.asset), this.data.assetAmount * this.data.assetPrice + this.data.runeAmount * this.data.runePrice) 
+
     // withdraw RUNE
     try {
       const txCost = assetToBase(assetAmount(0.00000001));

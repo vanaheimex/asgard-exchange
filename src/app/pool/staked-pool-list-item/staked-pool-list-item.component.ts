@@ -1,12 +1,13 @@
 import { Component, Input, OnChanges } from "@angular/core";
 import { getPoolShare, PoolData, UnitData } from "@thorchain/asgardex-util";
-import { baseAmount } from "@xchainjs/xchain-util";
+import { assetToString, baseAmount } from "@xchainjs/xchain-util";
 import BigNumber from "bignumber.js";
 import { Subscription } from "rxjs";
 import { Asset } from "src/app/_classes/asset";
 import { MemberPool } from "src/app/_classes/member";
 import { PoolDTO } from "src/app/_classes/pool";
 import { Currency } from "src/app/_components/account-settings/currency-converter/currency-converter.component";
+import { AnalyticsService } from "src/app/_services/analytics.service";
 import { PoolDetailService } from "src/app/_services/pool-detail.service";
 import {
   RuneYieldPoolResponse,
@@ -71,7 +72,8 @@ export class StakedPoolListItemComponent implements OnChanges {
 
   constructor(
     private poolDetailService: PoolDetailService,
-    private txStatusService: TransactionStatusService
+    private txStatusService: TransactionStatusService,
+    private analyticsService: AnalyticsService
   ) {
     this.expanded = false;
     this.activate = false;
@@ -113,6 +115,7 @@ export class StakedPoolListItemComponent implements OnChanges {
 
   toggleExpanded() {
     if (!this.isPending) this.poolDetailService.setActivatedAsset(this.asset);
+    this.analyticsService.eventEmitter('pool_select', 'pool_page', assetToString(this.asset));
   }
 
   setAsset(): void {

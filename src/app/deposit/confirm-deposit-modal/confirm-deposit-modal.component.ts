@@ -27,6 +27,7 @@ import { Balances } from "@xchainjs/xchain-client";
 import { AssetAndBalance } from "src/app/_classes/asset-and-balance";
 import { KeystoreDepositService } from "src/app/_services/keystore-deposit.service";
 import { Asset } from "src/app/_classes/asset";
+import { AnalyticsService } from "src/app/_services/analytics.service";
 
 // assets should be added for asset-input as designed.
 export interface ConfirmDepositData {
@@ -71,7 +72,8 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private overlaysService: OverlaysService,
     private router: Router,
-    private keystoreDepositService: KeystoreDepositService
+    private keystoreDepositService: KeystoreDepositService,
+    private analyticsService: AnalyticsService
   ) {
     this.loading = true;
     this.txState = TransactionConfirmationState.PENDING_CONFIRMATION;
@@ -121,6 +123,7 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
   }
 
   async deposit(pools: PoolAddressDTO[]) {
+    this.analyticsService.eventEmitter('deposit_confirm', 'deposit_page', assetToString(this.data.asset.asset), this.data.assetAmount * this.data.assetPrice);
     const clients = this.data.user.clients;
     const asset = this.data.asset.asset;
     const thorClient = clients.thorchain;

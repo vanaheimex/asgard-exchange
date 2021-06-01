@@ -30,6 +30,7 @@ import { PoolAddressDTO } from "../_classes/pool-address";
 import { toLegacyAddress } from '@xchainjs/xchain-bitcoincash';
 import { CurrencyService } from "../_services/currency.service";
 import { Currency } from "../_components/account-settings/currency-converter/currency-converter.component";
+import { AnalyticsService } from "../_services/analytics.service";
 
 @Component({
   selector: "app-deposit",
@@ -135,7 +136,8 @@ export class DepositComponent implements OnInit, OnDestroy {
     private thorchainPricesService: ThorchainPricesService,
     public overlaysService: OverlaysService,
     private txUtilsService: TransactionUtilsService,
-    private curService: CurrencyService
+    private curService: CurrencyService,
+    private analyticsService: AnalyticsService
   ) {
     this.poolNotFoundErr = false;
     this.ethContractApprovalRequired = false;
@@ -602,6 +604,7 @@ export class DepositComponent implements OnInit, OnDestroy {
       assetPrice,
     };
 
+    this.analyticsService.eventEmitter('deposit', 'deposit_page', assetToString(this.asset), this.assetAmount * this.assetPrice);
     if (this.depositData) this.overlaysService.setCurrentDepositView("Confirm");
   }
 

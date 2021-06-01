@@ -836,7 +836,7 @@ export class SwapComponent implements OnInit, OnDestroy {
     };
 
     this.overlaysService.setCurrentSwapView('Confirm');
-    this.analyticsService.eventEmitter('swap_assets', 'swap_page', `${assetToString(this.selectedSourceAsset)}_${assetToString(this.selectedTargetAsset)}`, this.sourceAssetUnit);
+    this.analyticsService.eventEmitter('swap_assets', 'swap_page', `${assetToString(this.selectedSourceAsset)}_${assetToString(this.selectedTargetAsset)}`, this.sourceAssetUnit * this.sourceAssetPrice);
   }
 
   updateSwapDetails() {
