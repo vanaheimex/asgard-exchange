@@ -14,6 +14,7 @@ import { AssetAndBalance } from "src/app/_classes/asset-and-balance";
 import { PoolAddressDTO } from "src/app/_classes/pool-address";
 import { User } from "src/app/_classes/user";
 import { TransactionConfirmationState } from "src/app/_const/transaction-confirmation-state";
+import { AnalyticsService } from "src/app/_services/analytics.service";
 import { CopyService } from "src/app/_services/copy.service";
 import { CurrencyService } from "src/app/_services/currency.service";
 import { EthUtilsService } from "src/app/_services/eth-utils.service";
@@ -70,7 +71,8 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
     private explorerPathsService: ExplorerPathsService,
     private oveylaysService: OverlaysService,
     private txUtilsService: TransactionUtilsService,
-    private curService: CurrencyService
+    private curService: CurrencyService,
+    private analyticsService: AnalyticsService
   ) {
     this.insufficientChainBalance = false;
     this.back = new EventEmitter<null>();
@@ -192,6 +194,7 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
         .getInboundAddresses()
         .toPromise();
 
+      this.analyticsService.eventEmitter('upgrade_confirm', 'upgrade_page', this.asset.asset.chain, this.amount);
       if (
         thorchainClient &&
         runeAddress &&

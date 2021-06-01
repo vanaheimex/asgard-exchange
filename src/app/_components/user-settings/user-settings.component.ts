@@ -16,6 +16,7 @@ import {
   OverlaysService,
 } from "src/app/_services/overlays.service";
 import { Router } from "@angular/router";
+import { AnalyticsService } from "src/app/_services/analytics.service";
 
 @Component({
   selector: "app-user-settings",
@@ -48,7 +49,8 @@ export class UserSettingsComponent implements OnDestroy {
     private txStatusService: TransactionStatusService,
     private router: Router,
     private userService: UserService,
-    public overlaysService: OverlaysService
+    public overlaysService: OverlaysService,
+    private analyticsService: AnalyticsService
   ) {
     this.pendingTxCount = 0;
     this.showMenu = false;
@@ -75,6 +77,7 @@ export class UserSettingsComponent implements OnDestroy {
       chain: null,
       asset: null,
     });
+    this.analyticsService.eventEmitter('menu_wallet_open', 'menu');
     this.overlaysService.setSettingViews(MainViewsEnum.UserSetting, "ACCOUNT");
   }
 
@@ -83,6 +86,7 @@ export class UserSettingsComponent implements OnDestroy {
     //   this.overlaysService.setCurrentView(MainViewsEnum.Swap)
     // else
     this.overlaysService.setSettingView("ACCOUNT");
+    this.analyticsService.eventEmitter('menu_account_open', 'menu');
     this.overlaysService.setCurrentView(MainViewsEnum.AccountSetting);
   }
 
@@ -90,11 +94,13 @@ export class UserSettingsComponent implements OnDestroy {
     // if (this.currentView == MainViewsEnum.Transaction)
     //   this.overlaysService.setCurrentView(MainViewsEnum.Swap)
     // else
+    this.analyticsService.eventEmitter('menu_transactions_open', 'menu');
     this.overlaysService.setCurrentView(MainViewsEnum.Transaction);
   }
 
   disconnect() {
     this.userService.setUser(null);
+    this.analyticsService.eventEmitter('menu_disconnect', 'menu');
     this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
 
     // add this guard in case the route is not in the swap change it to the swap

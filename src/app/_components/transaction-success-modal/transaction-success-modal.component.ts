@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import { baseAmount, baseToAsset, Chain } from "@xchainjs/xchain-util";
+import { assetToString, baseAmount, baseToAsset, Chain } from "@xchainjs/xchain-util";
 import { AssetAndBalance } from "src/app/_classes/asset-and-balance";
 import { CopyService } from "src/app/_services/copy.service";
 import { ExplorerPathsService } from "src/app/_services/explorer-paths.service";
@@ -8,6 +8,7 @@ import { UserService } from "src/app/_services/user.service";
 import { Balances } from "@xchainjs/xchain-client";
 import { Subscription } from "rxjs";
 import { environment } from "src/environments/environment";
+import { AnalyticsService } from "src/app/_services/analytics.service";
 
 @Component({
   selector: "app-transaction-success-modal",
@@ -50,7 +51,8 @@ export class TransactionSuccessModalComponent {
   constructor(
     private explorerPathsService: ExplorerPathsService,
     private copyService: CopyService,
-    private userService: UserService
+    private userService: UserService,
+    private analyticsService: AnalyticsService
   ) {
     this.closeDialog = new EventEmitter<null>();
     this.binanceExplorerUrl = `${this.explorerPathsService.binanceExplorerUrl}/tx`;
@@ -165,5 +167,8 @@ export class TransactionSuccessModalComponent {
     for (const sub of this.subs) {
       sub.unsubscribe();
     }
+
+    if (this.modalType === 'SWAP')
+      this.analyticsService.eventEmitter('swap_success_close', 'swap_page', `${assetToString(this.asset[0].asset)}_${assetToString(this.asset[1].asset)}`);
   }
 }
