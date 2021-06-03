@@ -686,7 +686,7 @@ export class SwapComponent implements OnInit, OnDestroy {
 
     /** THORChain is backed up */
     if (this.queue && this.queue.outbound >= 12) {
-      return "THORChain Network Latency";
+      return "THORChain TX QUEUE FILLED";
     }
 
     /** No target asset selected */

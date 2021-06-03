@@ -88,7 +88,7 @@ export class HeaderComponent implements OnDestroy {
     this.topbar = "LOADING CAPS";
     const sub = combined.subscribe(([mimir, network]) => {
       if (network instanceof HttpErrorResponse) {
-        this.topbar = 'Midgard seems in trouble, please try again';
+        this.topbar = 'THE MIDGARD DATABASE IS HAVING ISSUES. PLEASE TRY LATER';
         this.depositsDisabled = false;
         this.error = true;
         return
@@ -96,8 +96,9 @@ export class HeaderComponent implements OnDestroy {
 
       this.error = false;
       this.totalPooledRune = +network?.totalPooledRune / 10 ** 8;
+      console.log(this.totalPooledRune)
 
-      if (mimir && mimir["mimir//MAXIMUMLIQUIDITYRUNE"] && this.totalPooledRune != null) {
+      if (mimir && mimir["mimir//MAXIMUMLIQUIDITYRUNE"] && this.totalPooledRune != null && this.totalPooledRune != NaN) {
         this.maxLiquidityRune = mimir["mimir//MAXIMUMLIQUIDITYRUNE"] / 10 ** 8;
         this.depositsDisabled =
           this.totalPooledRune / this.maxLiquidityRune >= 0.9;
@@ -108,7 +109,10 @@ export class HeaderComponent implements OnDestroy {
         )} / ${this._decimalPipe.transform(
           this.maxLiquidityRune,
           "0.0-0"
-        )} RUNE POOLED`;
+        )} RUNE POOLED (${this._decimalPipe.transform(
+          this.totalPooledRune / this.maxLiquidityRune * 100,
+          "0.2-2"
+        )} % FILLED${this.depositsDisabled ? ' • CAPS REACHED': ''})`;
       }
     });
 
