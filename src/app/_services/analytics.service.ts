@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 
-declare let gtag:Function;
-
 @Injectable({
   providedIn: 'root'
 })
@@ -14,7 +12,7 @@ export class AnalyticsService {
     eventCategory?: string, 
     eventLabel?: string,  
     eventValue?: number ){ 
-      gtag('event', eventAction, { 
+      (window as any).gtag('event', eventAction, { 
         'event_category': eventCategory, 
         'event_label': eventLabel, 
         'value': eventValue
