@@ -60,6 +60,10 @@ export class Asset {
                 this.ticker
               );
             }
+
+            if (this.ticker === "ALCX") {
+              this.iconPath = "https://etherscan.io/token/images/Alchemix_32.png";
+            }
           }
           break;
 
