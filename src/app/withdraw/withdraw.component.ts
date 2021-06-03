@@ -493,7 +493,7 @@ export class WithdrawComponent implements OnInit {
     /** THORChain is backed up */
     if (this.queue && this.queue.outbound >= 12) {
       this.isError = true;
-      return "THORChain Network Latency. Try Later";
+      return "THORChain TX QUEUE FILLED. Try Later";
     }
 
     /** When amount is only zero */

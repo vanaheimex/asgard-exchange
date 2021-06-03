@@ -4,7 +4,7 @@ import { Chain } from "@xchainjs/xchain-util";
 import { BehaviorSubject } from "rxjs";
 import { AssetAndBalance } from "../_classes/asset-and-balance";
 
-export type DepositViews = "Deposit" | "Confirm" | "Asset" | "Approve";
+export type DepositViews = "Deposit" | "Confirm" | "Asset" | "Approve" | "Connect";
 export type WithdrawViews = "Withdraw" | "Confirm" | "Asset";
 export type CreatePoolViews = "Create" | "Approve" | "Asset" | "Confirm";
 export type MainViews =
@@ -28,6 +28,7 @@ export type UserViews =
   | "Confirm"
   | "ADDRESS_ADD_TOKEN";
 export type SettingViews = "ACCOUNT" | "PHRASE" | "SLIP" | "CURRENCY";
+export type PoolViews = "Pool" | "Connect";
 export type UserOverlay = {
   userView: UserViews;
   address?: string;
@@ -66,6 +67,11 @@ export class OverlaysService {
     "Create"
   );
   createPoolView = this.currentCreatePoolViewSource.asObservable();
+
+  private currentPoolViewSource = new BehaviorSubject<PoolViews>(
+    "Pool"
+  );
+  PoolView = this.currentPoolViewSource.asObservable();
 
   private innerSwapView: SwapViews = "Swap";
 
@@ -111,6 +117,14 @@ export class OverlaysService {
 
   setCurrentDepositView(val: DepositViews) {
     this.currentDepositViewSource.next(val);
+  }
+
+  getCurrentPoolView() {
+    return this.currentPoolViewSource;
+  }
+
+  setCurrentPoolView(val: PoolViews) {
+    this.currentPoolViewSource.next(val);
   }
 
   getCurrentView() {

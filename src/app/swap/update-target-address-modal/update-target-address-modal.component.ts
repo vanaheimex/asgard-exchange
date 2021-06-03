@@ -63,19 +63,19 @@ export class UpdateTargetAddressModalComponent {
 
   updateAddressBtnText() {
     if (!this.user?.clients) {
-      return 'No User found';
+      return {text: 'No User found', isError: true};
     }
 
     const client = this.userService.getChainClient(this.user, this.chain);
     if (!client) {
-      return `No ${this.chain} Client Found`;
+      return {text: `No ${this.chain} Client Found`, isError: true};
     }
 
     if (!client.validateAddress(this.targetAddress)) {
-      return `Invalid ${this.chain} Address`;
+      return {text: `Invalid ${this.chain} Address`, isError: true};
     }
 
-    return 'PREPARE';
+    return {text: 'PREPARE', isError: false};
   }
 
   close() {

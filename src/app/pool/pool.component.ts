@@ -16,6 +16,7 @@ import { isNonNativeRuneToken } from "../_classes/asset";
 import { ThorchainPricesService } from "../_services/thorchain-prices.service";
 import { CurrencyService } from "../_services/currency.service";
 import { Currency } from "../_components/account-settings/currency-converter/currency-converter.component";
+import { OverlaysService, PoolViews } from "../_services/overlays.service";
 
 @Component({
   selector: "app-pool",
@@ -45,6 +46,7 @@ export class PoolComponent implements OnInit, OnDestroy {
   totalPooledRune: number;
   depositsDisabled: boolean;
   txStreamInitSuccess: boolean;
+  mode: PoolViews;
 
   constructor(
     private userService: UserService,
@@ -53,7 +55,8 @@ export class PoolComponent implements OnInit, OnDestroy {
     private poolDetailService: PoolDetailService,
     private router: Router,
     private thorchainPricesService: ThorchainPricesService,
-    private currencyService: CurrencyService
+    private currencyService: CurrencyService,
+    public ovrService: OverlaysService
   ) {
     this.subs = [];
     this.memberPools = [];
@@ -115,13 +118,20 @@ export class PoolComponent implements OnInit, OnDestroy {
       this.currency = cur;
     });
 
+    const ovr$ = this.ovrService.PoolView.subscribe(
+      (ovr) => {
+        this.mode = ovr;
+      }
+    )
+
     this.subs.push(
       user$,
       balances$,
       pendingTx$,
       poolDeatil$,
       activePool$,
-      cur$
+      cur$,
+      ovr$
     );
   }
 

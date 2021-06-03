@@ -11,7 +11,7 @@
         ><span style="color: #474e5d"> {{ extraLabel }}</span></label
       >
       <div class="flex target-address" *ngIf="targetAddress" (click)="openTargetAddress()">
-        <span>Send to</span> 
+        <span>{{targetLabel ? targetLabel: 'Receive at'}}</span>
         <div class=" flex clickable-span items-center" [ngClass]="{'disabled': disabledMarketSelect}">
           <span class="address mono">{{targetAddress.substring(0,7)}}...{{targetAddress.substring(targetAddress.length - 7, targetAddress.length)}}</span>
           <svg

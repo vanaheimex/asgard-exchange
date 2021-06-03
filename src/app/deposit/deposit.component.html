@@ -1,6 +1,6 @@
 <div
   class="container-wrapper"
-  *ngIf="view === 'Asset' || view === 'Deposit' || view === 'Approve'"
+  *ngIf="view === 'Asset' || view === 'Deposit' || view === 'Approve' || view === 'Connect'"
 >
   <div class="container">
     <div *ngIf="view === 'Deposit'">
@@ -13,7 +13,7 @@
               { name: 'Deposit', disable: true }
             ]"
             [isError]="
-              mainButtonText() !== 'Ready' && mainButtonText() !== 'Prepare'
+              mainButtonText() !== 'Ready' && mainButtonText() !== 'Prepare' && mainButtonText() !== 'connect wallet'
             "
             [message]="mainButtonText()"
             (funcCaller)="goToNav($event)"
@@ -68,7 +68,7 @@
         </div>
       </div>
 
-      <div class="bottom-actions two-btn">
+      <div *ngIf="user" class="bottom-actions two-btn">
         <div class="left-btn">
           <button class="close-btn" (click)="back()">
             <span>Cancel</span>
@@ -94,6 +94,27 @@
           </app-approve-eth-contract>
         </div>
       </div>
+
+      <div *ngIf="!user" class="bottom-actions two-btn">
+        <div class="left-btn">
+          <button class="close-btn" (click)="back()">
+            <span>Cancel</span>
+          </button>
+        </div>
+        <div class="divider"></div>
+        <div class="right-btn">
+          <button class="next-btn" (click)="overlaysService.setCurrentDepositView('Connect')">
+            <span>Connect</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div 
+      class="overlay-container overlay-connect-wallet"
+      *ngIf="view === 'Connect'"
+    >
+      <app-connect-modal (closeEvent)="overlaysService.setCurrentDepositView('Deposit')"></app-connect-modal>
     </div>
 
     <div

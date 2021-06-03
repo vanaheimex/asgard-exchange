@@ -103,6 +103,7 @@ export class AssetInputComponent implements OnInit, OnDestroy {
   @Input() inputColor: string;
   @Input() txType?: TxType;
   @Input() targetAddress?: string;
+  @Input() targetLabel?: string;
   @Output() launchEditTargetAsset = new EventEmitter<null>();
 
   usdValue: number;
