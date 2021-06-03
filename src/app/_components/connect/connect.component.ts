@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, Output, EventEmitter } from "@angular/core";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { environment } from "src/environments/environment";
 import { OverlaysService } from "src/app/_services/overlays.service";
@@ -42,6 +42,8 @@ export class ConnectModal {
   isTestnet: boolean;
   isXDEFIConnected: boolean;
   phrase: string;
+
+  @Output() closeEvent = new EventEmitter<null>();
 
   constructor(public overlaysService: OverlaysService) {
     this.isTestnet = environment.network === "testnet" ? true : false;
@@ -87,7 +89,7 @@ export class ConnectModal {
   close() {
     // this.dialogRef.close();
     // this.overlayChange.emit(false);
-    this.overlaysService.setCurrentSwapView("Swap");
+    this.closeEvent.emit();
     this.phrase = null;
   }
 }

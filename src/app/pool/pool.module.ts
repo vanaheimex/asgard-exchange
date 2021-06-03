@@ -14,6 +14,7 @@ import { NoticeModule } from '../_components/notice/notice.module';
 import { TagModule } from '../_components/tag/tag.module';
 import { PoolListItemComponent } from './pool-list-item/pool-list-item.component';
 import { ShortPipeModule } from '../_pipes/short-number.module';
+import { ConnectModule } from '../_components/connect/connect.module';
 
 @NgModule({
   declarations: [PoolComponent, StakedPoolsListComponent, StakedPoolListItemComponent, PoolListItemComponent],
@@ -28,6 +29,7 @@ import { ShortPipeModule } from '../_pipes/short-number.module';
     NoticeModule,
     TagModule,
     ShortPipeModule,
+    ConnectModule,
     RouterModule.forChild([
       {
         path: "",

@@ -257,7 +257,7 @@
       class="overlay-container overlay-connect-wallet"
       *ngIf="overlaysService.getCurrentSwapView() == 'Connect'"
     >
-      <app-connect-modal></app-connect-modal>
+      <app-connect-modal (closeEvent)="overlaysService.setCurrentSwapView('Swap')"></app-connect-modal>
     </div>
 
     <div
