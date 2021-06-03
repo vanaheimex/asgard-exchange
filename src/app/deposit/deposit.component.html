@@ -95,10 +95,18 @@
         </div>
       </div>
 
-      <div *ngIf="!user" class="bottom-actions">
-        <button class="next-btn" (click)="overlaysService.setCurrentDepositView('Connect')">
-          <span>Connect Wallet</span>
-        </button>
+      <div *ngIf="!user" class="bottom-actions two-btn">
+        <div class="left-btn">
+          <button class="close-btn" (click)="back()">
+            <span>Cancel</span>
+          </button>
+        </div>
+        <div class="divider"></div>
+        <div class="right-btn">
+          <button class="next-btn" (click)="overlaysService.setCurrentDepositView('Connect')">
+            <span>Connect</span>
+          </button>
+        </div>
       </div>
     </div>
 
