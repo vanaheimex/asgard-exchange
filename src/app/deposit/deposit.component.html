@@ -13,7 +13,7 @@
               { name: 'Deposit', disable: true }
             ]"
             [isError]="
-              mainButtonText() !== 'Ready' && mainButtonText() !== 'Prepare'
+              mainButtonText() !== 'Ready' && mainButtonText() !== 'Prepare' && mainButtonText() !== 'connect wallet'
             "
             [message]="mainButtonText()"
             (funcCaller)="goToNav($event)"

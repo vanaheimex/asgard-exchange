@@ -467,7 +467,7 @@ export class DepositComponent implements OnInit, OnDestroy {
   mainButtonText(): string {
     /** Wallet not connected */
     if (!this.balances) {
-      return "Please connect wallet";
+      return "connect wallet";
     }
 
     if (this.isMaxError) {
