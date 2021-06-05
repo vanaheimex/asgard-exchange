@@ -95,8 +95,6 @@ export class NativeRunePromptModalComponent {
           balance: assetAmount(0),
         };
       }
-      console.log(nativeRune);
-      console.log(this.nativeRune);
 
       //Adding USD value
       this.midgardService.getPools().subscribe(

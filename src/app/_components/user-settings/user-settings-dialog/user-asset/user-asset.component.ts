@@ -96,8 +96,6 @@ export class UserAssetComponent {
       );
     });
 
-    console.log(txsPage);
-
     this.subs.push(user$);
   }
 
@@ -158,7 +156,6 @@ export class UserAssetComponent {
   }
 
   navCaller(nav) {
-    console.log(this.asset);
     if (nav === "wallet")
       this.overlaysService.setCurrentUserView({
         userView: "Addresses",

@@ -62,7 +62,6 @@ export class AssetsListComponent {
           apy: +el.poolAPY
         }
       });
-      console.log(this.apys);
     });
   }
 

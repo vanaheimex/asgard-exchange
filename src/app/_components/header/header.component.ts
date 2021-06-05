@@ -96,7 +96,6 @@ export class HeaderComponent implements OnDestroy {
 
       this.error = false;
       this.totalPooledRune = +network?.totalPooledRune / 10 ** 8;
-      console.log(this.totalPooledRune)
 
       if (mimir && mimir["mimir//MAXIMUMLIQUIDITYRUNE"] && this.totalPooledRune != null && this.totalPooledRune != NaN) {
         this.maxLiquidityRune = mimir["mimir//MAXIMUMLIQUIDITYRUNE"] / 10 ** 8;
@@ -123,7 +122,6 @@ export class HeaderComponent implements OnDestroy {
     for (const propName in changes) {
       const changedProp = changes[propName];
       const to = JSON.stringify(changedProp.currentValue);
-      console.log(to);
     }
   }
 

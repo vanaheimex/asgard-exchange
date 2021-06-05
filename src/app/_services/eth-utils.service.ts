@@ -164,8 +164,7 @@ export class EthUtilsService {
       );
       await testnetRuneContract.functions.giveMeRUNE();
     } catch (error) {
-      console.log("error getting testnet RUNE");
-      console.log(error);
+      console.error(error);
     }
   }
 

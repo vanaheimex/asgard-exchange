@@ -127,7 +127,6 @@ export class DoubleAssetFieldComponent implements OnInit {
                 balance: baseToAsset(balance.amount),
               };
             }
-            console.log("this is being run", assetBalance);
             const address = await this.userService.getAdrressChain(
               inputAsset.chain
             );
