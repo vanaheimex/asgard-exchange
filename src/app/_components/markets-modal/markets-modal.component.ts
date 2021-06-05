@@ -117,7 +117,6 @@ export class MarketsModalComponent implements OnInit, OnDestroy {
   selectItem(item: Asset) {
     if (item.symbol !== "") {
       // this.dialogRef.close(item);
-      console.log(item);
       if (this.disabledAssetSymbol != item.symbol) {
         this.selectedAssetChange.emit(item);
         // this.overlay = false;

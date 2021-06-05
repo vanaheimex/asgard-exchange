@@ -65,7 +65,6 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     const user$ = this.userService.user$;
     const balances$ = this.userService.userBalances$;
-    const inboundAddresses$ = this.midgardService.getInboundAddresses();
 
     this.path = [{ name: "vanaheimex", swapView: "Swap", mainView: "Swap" }];
     if (this.mode == "swap") {
@@ -86,15 +85,16 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
       );
     }
 
-    const combined = combineLatest([user$, balances$, inboundAddresses$]);
+    const combined = combineLatest([user$, balances$]);
 
-    const sub = combined.subscribe(([user, balances, inboundAddresses]) => {
+    const sub = combined.subscribe(([user, balances]) => {
       this.user = user;
       this.ethBalance = this.userService.findBalance(
         balances,
         new Asset("ETH.ETH")
       );
-      this.estimateApprovalFee(inboundAddresses);
+
+      this.loading = false;
     });
 
     this.subs.push(sub);
@@ -102,39 +102,6 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
 
   back(val): void {
     if (val == "back") this.closeDialog();
-  }
-
-  async estimateApprovalFee(addresses: PoolAddressDTO[]) {
-    const ethInboundAddress = addresses.find(
-      (address) => address.chain === "ETH"
-    );
-    const { asset, contractAddress } = this.data;
-    const assetAddress = asset.symbol.slice(asset.ticker.length + 1);
-    const strip0x = assetAddress.substr(2);
-
-    if (!ethInboundAddress) {
-      console.error("no eth inbound address found");
-      return;
-    }
-
-    if (!this.user) {
-      console.error("no user found");
-      return;
-    }
-
-    try {
-      const fee = await this.user.clients.ethereum.estimateApprove({
-        spender: contractAddress,
-        sender: strip0x,
-        amount: baseAmount(bn(2).pow(96).minus(1)),
-      });
-      this.fee = ethers.utils.formatEther(fee.toString());
-      this.insufficientEthBalance = +this.fee > this.ethBalance;
-    } catch (error) {
-      console.error("error estimating approve fee: ", error);
-    }
-
-    this.loading = false;
   }
 
   async approve() {
@@ -147,6 +114,7 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
       const assetAddress = asset.symbol.slice(asset.ticker.length + 1);
       const strip0x = assetAddress.substr(2);
       const approve = await this.user.clients.ethereum.approve({
+        walletIndex: 0,
         spender: contractAddress,
         sender: strip0x,
         amount: baseAmount(bn(2).pow(96).minus(1)),

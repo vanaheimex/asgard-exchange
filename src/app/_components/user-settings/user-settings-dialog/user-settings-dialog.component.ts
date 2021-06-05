@@ -116,7 +116,6 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
       this.selectedChain = val.chain;
       this.selectedAsset = val.asset;
 
-      console.log("user tree is :", val);
     });
 
     this.subs = [user$, txs$, overlay$];
@@ -163,7 +162,6 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
     // balance will be triggered multiple time even on one chain
     const balances$ = this.userService.userBalances$.subscribe(
       (balances) => {
-        console.log(i++)
         if (balances) {
           balances.forEach(
             async (balance) => {
@@ -183,7 +181,6 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
                         }
                       }
                     }
-                    console.log(this.chainUsdValue);
                   }
                 )
               }
@@ -217,9 +214,7 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
   }
 
   changeMessage(val: string) {
-    console.log(val);
     this.message = val;
-    console.log(this.message);
   }
 
   confirmSend(p: { amount: number; recipientAddress: string; memo: string }) {

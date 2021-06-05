@@ -168,8 +168,6 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
           (pool) => pool.chain === this.asset.asset.chain
         );
 
-        console.log("matching pool is: ", matchingPool);
-
         if (matchingPool) {
           if (this.user.type === "keystore") {
             this.keystoreTransfer(matchingPool);

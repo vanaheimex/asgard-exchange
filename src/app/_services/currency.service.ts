@@ -35,10 +35,6 @@ export class CurrencyService {
     if (localStorage.getItem(`active_currency`)) {
       this.getDailyCurrencyValue().subscribe((curs) => {
         let usdBased = curs["usd"];
-        console.log(
-          "new value is:",
-          parseFloat(usdBased[this._activeCurrency.code.toLocaleLowerCase()])
-        );
         this._activeCurrency.value = parseFloat(
           usdBased[this._activeCurrency.code.toLocaleLowerCase()]
         );

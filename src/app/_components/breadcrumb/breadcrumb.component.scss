@@ -32,6 +32,7 @@
     background: var(--primary-default);
     width: 8px;
     height: 16px;
+    animation: blink 1s step-end infinite;
   }
 
   &.error {
@@ -43,4 +44,9 @@
       background: #ff4954;
     }
   }
+}
+
+@keyframes blink {
+  from, to { background: transparent }
+  50% { background: var(--primary-default); }
 }

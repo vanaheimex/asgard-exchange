@@ -143,12 +143,6 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
         : true;
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes["swapData"]) {
-      console.log(this.swapData);
-    }
-  }
-
   isRune(asset: Asset): boolean {
     return asset && asset.ticker === "RUNE"; // covers BNB and native
   }
@@ -533,7 +527,6 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
           this.outboundHash = "success";
         }
 
-        console.log(res);
       });
 
     this.subs.push(outbound$);

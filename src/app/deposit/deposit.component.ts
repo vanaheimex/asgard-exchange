@@ -127,6 +127,7 @@ export class DepositComponent implements OnInit, OnDestroy {
   currency: Currency;
 
   bchLegacyPooled: boolean;
+  loading: boolean;
 
   constructor(
     private userService: UserService,
@@ -156,37 +157,21 @@ export class DepositComponent implements OnInit, OnDestroy {
     const user$ = this.userService.user$.pipe(debounceTime(500));
     const inboundAddresses$ = this.midgardService.getInboundAddresses();
 
-    const combined = combineLatest([
-      params$,
-      user$,
-      balances$,
-      inboundAddresses$,
-    ]);
-    const sub = combined.subscribe(
-      ([params, user, balances, inboundAddresses]) => {
+    const combinedUser = combineLatest([user$, balances$]);
+
+    const combinedPoolData = combineLatest([inboundAddresses$, params$]);
+
+    const combinedPoolSub = combinedPoolData.subscribe(
+      ([inboundAddresses, params]) => {
         // Inbound Addresses
         this.inboundAddresses = inboundAddresses;
         this.haltedChains = this.inboundAddresses
           .filter((address) => address.halted)
           .map((address) => address.chain);
 
-        // User
-        this.user = user;
-
-        // Balance
-        this.balances = balances;
-        this.runeBalance = this.userService.findBalance(
-          this.balances,
-          this.rune
-        );
-        this.assetBalance = this.userService.findBalance(
-          this.balances,
-          this.asset
-        );
-
-        // Asset
+        const asset = params.get('asset');
+        this.assetAmount = 0;
         this.ethContractApprovalRequired = false;
-        const asset = params.get("asset");
 
         if (asset) {
           this.asset = new Asset(asset);
@@ -230,6 +215,19 @@ export class DepositComponent implements OnInit, OnDestroy {
       }
     );
 
+    const userSub = combinedUser.subscribe(([user, balances]) => {
+      // User
+      this.user = user;
+
+      // Balance
+      this.balances = balances;
+      this.runeBalance = this.userService.findBalance(this.balances, this.rune);
+      this.assetBalance = this.userService.findBalance(
+        this.balances,
+        this.asset
+      );
+    });
+
     const depositView$ = this.overlaysService.depositView.subscribe((view) => {
       this.view = view;
     });
@@ -243,7 +241,7 @@ export class DepositComponent implements OnInit, OnDestroy {
     this.getPools();
     this.getEthRouter();
     this.getPoolCap();
-    this.subs.push(sub, depositView$, cur$);
+    this.subs.push(userSub, combinedPoolSub, depositView$, cur$);
   }
 
   /**
@@ -361,6 +359,8 @@ export class DepositComponent implements OnInit, OnDestroy {
       return;
     }
 
+    this.loading = true;
+
     this.midgardService.getPool(asset).subscribe(
       (res) => {
         if (res) {
@@ -389,6 +389,8 @@ export class DepositComponent implements OnInit, OnDestroy {
             "INBOUND",
             res
           );
+
+          this.loading = false;
         }
       },
       (err) => {

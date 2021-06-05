@@ -122,7 +122,6 @@ export class PendingTxsModalComponent implements OnDestroy {
       let status = this.getStatus(transaction.status);
       let action = this.getAction(transaction.type);
       let date = new Date(+transaction.date / 1000000);
-      console.log(date);
 
       if (transaction.out.length > 0 && transaction.type == 'swap') {
         const outboundAsset = new Asset(transaction.out[0].coins[0].asset);
@@ -191,8 +190,6 @@ export class PendingTxsModalComponent implements OnDestroy {
     //     return JSON.stringify(obj) === _thing;
     //   });
     // });
-
-    console.log(this.transactions);
   }
 
   getIconPath(tx: Tx) {
@@ -257,7 +254,6 @@ export class PendingTxsModalComponent implements OnDestroy {
   }
 
   goToExternal(url: string) {
-    console.log(url);
     window.open(url, "_blank");
   }
 

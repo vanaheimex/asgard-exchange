@@ -132,10 +132,6 @@ export class SendAssetComponent implements OnInit, OnDestroy {
       return true;
     }
 
-    if (client.getAddress() === this.recipientAddress) {
-      return true;
-    }
-
     return (
       !this.amountSpendable ||
       !client.validateAddress(this.recipientAddress) ||

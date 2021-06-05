@@ -275,8 +275,6 @@ export class TransactionStatusService {
                     tx.hash.toUpperCase() == resTx.in[0].txID.toUpperCase()
                 );
 
-                console.log(tx_number);
-
                 this._txs[tx_number].outbound.hash = resTx.out[0].txID;
 
                 this.transactionSource.next(this._txs);
@@ -315,7 +313,6 @@ export class TransactionStatusService {
           this.killTxPolling[hash].next();
         } else {
           console.log("still pending...");
-          console.log("res");
         }
       });
   }
