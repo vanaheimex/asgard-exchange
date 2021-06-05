@@ -41,7 +41,13 @@ import { NetworkQueueService } from "../_services/network-queue.service";
 import { environment } from "src/environments/environment";
 import { CurrencyService } from "../_services/currency.service";
 import { Currency } from "../_components/account-settings/currency-converter/currency-converter.component";
-import { debounceTime, retry, switchMap } from "rxjs/operators";
+import {
+  debounceTime,
+  delay,
+  retryWhen,
+  switchMap,
+  take,
+} from 'rxjs/operators';
 import { UpdateTargetAddressModalComponent } from './update-target-address-modal/update-target-address-modal.component';
 import { SwapServiceService } from "../_services/swap-service.service";
 import { AnalyticsService } from '../_services/analytics.service';
@@ -328,7 +334,7 @@ export class SwapComponent implements OnInit, OnDestroy {
       .pipe(
         // combined
         switchMap(() => combined),
-        retry()
+        retryWhen((errors) => errors.pipe(delay(10000), take(10)))
       )
       .subscribe(([inboundAddresses, pools, params]) => {
         this.inboundAddresses = inboundAddresses;
