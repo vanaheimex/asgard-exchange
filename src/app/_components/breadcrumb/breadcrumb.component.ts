@@ -42,17 +42,6 @@ export class BreadcrumbComponent implements OnInit {
     this.funcCaller = new EventEmitter<string>();
   }
 
-  ngAfterViewInit() {
-    setInterval(() => {
-      let cursorEl = this.cursor.nativeElement;
-      if (cursorEl.style.display === "none") {
-        cursorEl.style.display = "block";
-      } else {
-        cursorEl.style.display = "none";
-      }
-    }, 500);
-  }
-
   ngOnInit(): void {}
 
   changePath(path: Path) {

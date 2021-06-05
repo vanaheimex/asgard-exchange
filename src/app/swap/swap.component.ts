@@ -178,6 +178,9 @@ export class SwapComponent implements OnInit, OnDestroy {
       ]);
     }
 
+    this.targetClientAddress = this.userService.getChainClient(this.user, this.selectedTargetAsset?.chain)?.getAddress();
+
+
     this.setTargetAddress();
   }
   private _selectedTargetAsset: Asset;
@@ -230,6 +233,7 @@ export class SwapComponent implements OnInit, OnDestroy {
 
   haltedChains: string[];
   targetAddressData: any;
+  targetClientAddress: string;
 
   constructor(
     private dialog: MatDialog,
@@ -326,17 +330,16 @@ export class SwapComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getEthRouter();
-    const params$ = this.route.paramMap;
     const inboundAddresses$ = this.midgardService.getInboundAddresses();
     const pools$ = this.midgardService.getPools();
-    const combined = combineLatest([inboundAddresses$, pools$, params$]);
+    const combined = combineLatest([inboundAddresses$, pools$]);
     const sub = timer(0, 30000)
       .pipe(
         // combined
         switchMap(() => combined),
         retryWhen((errors) => errors.pipe(delay(10000), take(10)))
       )
-      .subscribe(([inboundAddresses, pools, params]) => {
+      .subscribe(([inboundAddresses, pools]) => {
         this.inboundAddresses = inboundAddresses;
 
         // check for halted chains
@@ -354,51 +357,6 @@ export class SwapComponent implements OnInit, OnDestroy {
         // update network fees
         this.setNetworkFees();
 
-        // update network fees
-        this.setNetworkFees();
-
-        // on init, set target asset
-        const sourceAssetName = params.get("sourceAsset");
-        const targetAssetName = params.get("targetAsset");
-
-        if (
-          sourceAssetName &&
-          targetAssetName &&
-          sourceAssetName == targetAssetName
-        ) {
-          this.router.navigate(["/", "swap", "THOR.RUNE", "BTC.BTC"]);
-          return;
-        } else if (
-          this.selectableMarkets &&
-          !this.selectedSourceAsset &&
-          !this.selectedTargetAsset
-        ) {
-          if (sourceAssetName && sourceAssetName !== "no-asset") {
-            let asset = new Asset(sourceAssetName);
-            if (
-              this.selectableMarkets.find(
-                (market) =>
-                  market.asset.chain === asset.chain &&
-                  market.asset.symbol === asset.symbol
-              )
-            ) {
-              this.selectedSourceAsset = asset;
-            }
-          }
-
-          if (targetAssetName && targetAssetName !== "no-asset") {
-            let assetTarget = new Asset(targetAssetName);
-            if (
-              this.selectableMarkets.find(
-                (market) =>
-                  market.asset.chain === assetTarget.chain &&
-                  market.asset.symbol === assetTarget.symbol
-              )
-            ) {
-              this.selectedTargetAsset = assetTarget;
-            }
-          }
-        }
       });
 
     this.subs.push(sub);
@@ -581,6 +539,53 @@ export class SwapComponent implements OnInit, OnDestroy {
           this.availablePools
         ),
       });
+
+      // on init, set target asset
+      this.route.paramMap.subscribe(
+        (params) => {
+          const sourceAssetName = params.get("sourceAsset");
+          const targetAssetName = params.get("targetAsset");
+
+          if (
+            sourceAssetName &&
+            targetAssetName &&
+            sourceAssetName == targetAssetName
+          ) {
+            this.router.navigate(["/", "swap", "THOR.RUNE", "BTC.BTC"]);
+            return;
+          } else if (
+            this.selectableMarkets &&
+            !this.selectedSourceAsset &&
+            !this.selectedTargetAsset
+          ) {
+            if (sourceAssetName && sourceAssetName !== "no-asset") {
+              let asset = new Asset(sourceAssetName);
+              if (
+                this.selectableMarkets.find(
+                  (market) =>
+                    market.asset.chain === asset.chain &&
+                    market.asset.symbol === asset.symbol
+                )
+              ) {
+                this.selectedSourceAsset = asset;
+              }
+            }
+
+            if (targetAssetName && targetAssetName !== "no-asset") {
+              let assetTarget = new Asset(targetAssetName);
+              if (
+                this.selectableMarkets.find(
+                  (market) =>
+                    market.asset.chain === assetTarget.chain &&
+                    market.asset.symbol === assetTarget.symbol
+                )
+              ) {
+                this.selectedTargetAsset = assetTarget;
+              }
+            }
+          }    
+        }
+      );
     }
   }
 
@@ -790,8 +795,7 @@ export class SwapComponent implements OnInit, OnDestroy {
   swapTextButton() {
     /** CHECK that there is non wallet address that the user wants to send */
     if (this.selectedTargetAsset && this.user) {
-      const targetClientAddress = this.userService.getChainClient(this.user, this.selectedTargetAsset?.chain)?.getAddress();
-      if (targetClientAddress && this.targetAddress !== targetClientAddress) {
+      if (this.targetClientAddress && this.targetAddress !== this.targetClientAddress) {
         return `SWAP + RECEIVE AT ${this.targetAddress.substring(0, 6)}...${this.targetAddress.substring(this.targetAddress.length -6, this.targetAddress.length)}`
       }
     }
