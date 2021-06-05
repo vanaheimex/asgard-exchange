@@ -42,6 +42,7 @@
 
     .cursor {
       background: #ff4954;
+      animation: blink-red 1s step-end infinite;
     }
   }
 }
@@ -49,4 +50,9 @@
 @keyframes blink {
   from, to { background: transparent }
   50% { background: var(--primary-default); }
+}
+
+@keyframes blink-red {
+  from, to { background: transparent }
+  50% { background: #ff4954; }
 }
