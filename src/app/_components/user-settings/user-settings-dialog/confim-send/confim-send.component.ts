@@ -415,6 +415,7 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
             recipient: this.recipientAddress,
             feeRate: +matchingAddress.gas_rate,
           });
+          this.hash = hash;
           this.pushTxStatus(hash, this.asset.asset, false);
           this.transactionSuccessful.next();
           this.mode = "SUCCESS";
