@@ -16,6 +16,7 @@ import { OverlaysService } from "src/app/_services/overlays.service";
 import { MidgardService } from "src/app/_services/midgard.service";
 import { TransactionUtilsService } from "src/app/_services/transaction-utils.service";
 import { UserService } from "src/app/_services/user.service";
+import { XChainClient } from "@xchainjs/xchain-client";
 
 @Component({
   selector: "app-send-asset",
@@ -42,7 +43,14 @@ export class SendAssetComponent implements OnInit, OnDestroy {
     this.checkSpendable();
   }
   private _amount: number;
-  recipientAddress: string;
+  _recipientAddress: string;
+  get recipientAddress() {
+    return this._recipientAddress;
+  }
+  set recipientAddress(addr: string) {
+
+    this._recipientAddress = addr;
+  }
   chainBalance: number;
   balance: number;
   amountSpendable: boolean;
@@ -51,6 +59,7 @@ export class SendAssetComponent implements OnInit, OnDestroy {
   explorerPath: string;
   address: string;
   isMaxError: boolean;
+  client: XChainClient;
 
   memo: string;
   inboundAddresses: PoolAddressDTO[];
@@ -89,6 +98,11 @@ export class SendAssetComponent implements OnInit, OnDestroy {
       const user$ = this.userService.user$.subscribe((user) => {
         this.user = user;
       });
+
+      this.client = this.userService.getChainClient(
+        this.user,
+        this.asset.asset.chain
+      );
 
       this.subs = [balances$, user$];
     }
@@ -139,29 +153,26 @@ export class SendAssetComponent implements OnInit, OnDestroy {
     );
   }
 
-  mainButtonText(): string {
+  mainButtonText() {
     if (!this.user) {
-      return "Connect Wallet";
+      return {text: "Connect Wallet", isError: false};
     }
 
     if (!this.asset) {
-      return "Prepare";
+      return {text: "Prepare", isError: false};
     }
 
     if (!this.inboundAddresses || this.chainBalance == undefined) {
-      return "Loading";
+      return {text: "Loading", isError: false};
     }
 
-    const client = this.userService.getChainClient(
-      this.user,
-      this.asset.asset.chain
-    );
-    if (!client) {
-      return `No ${this.asset.asset.chain} Client Found`;
+
+    if (!this.client) {
+      return {text: `No ${this.asset.asset.chain} Client Found`, isError: true};
     }
 
     if (this.isMaxError) {
-      return "Input Amount Less Than Fees";
+      return {text: "Input Amount Less Than Fees", isError: true};
     }
 
     if (
@@ -170,14 +181,14 @@ export class SendAssetComponent implements OnInit, OnDestroy {
       !this.recipientAddress ||
       (this.recipientAddress && this.recipientAddress.length <= 10)
     ) {
-      return "Prepare";
+      return {text: "Prepare", isError: false};
     }
 
     if (
-      !client.validateAddress(this.recipientAddress) ||
-      client.getAddress() === this.recipientAddress
+      !this.client.validateAddress(this.recipientAddress) ||
+      this.client.getAddress() === this.recipientAddress
     ) {
-      return `Invalid ${this.asset.asset.chain} Address`;
+      return {text: `Invalid ${this.asset.asset.chain} Address`, isError: true};
     }
 
     /** Insufficient Chain balance */
@@ -190,27 +201,14 @@ export class SendAssetComponent implements OnInit, OnDestroy {
       )
     ) {
       const chainAsset = getChainAsset(this.asset.asset.chain);
-      return `Insufficient ${chainAsset.chain}.${chainAsset.ticker} for fees`;
+      return {text: `Insufficient ${chainAsset.chain}.${chainAsset.ticker} for fees`, isError: true};
     }
 
     if (!this.amountSpendable) {
-      return `INSUFFICIENT ${this.asset.asset.ticker}`;
+      return {text: `INSUFFICIENT ${this.asset.asset.ticker}`, isError: true};
     }
 
-    return "Ready";
-  }
-
-  isError(): boolean {
-    if (
-      this.mainButtonText() === "Ready" ||
-      this.mainButtonText() === "Prepare" ||
-      this.mainButtonText() === "Connect Wallet" ||
-      this.mainButtonText() === "Loading"
-    ) {
-      return false;
-    }
-
-    return true;
+    return {text: "Ready", isError: false};
   }
 
   setMaxError(val) {

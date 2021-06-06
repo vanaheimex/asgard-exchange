@@ -107,6 +107,7 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
     this.transactionSuccessful = new EventEmitter<null>();
     this.txState = TransactionConfirmationState.PENDING_CONFIRMATION;
     this.insufficientChainBalance = false;
+    this.hash = "No Txid !"
 
     const user$ = this.userService.user$.subscribe(
       (user) => (this.user = user)
@@ -197,7 +198,7 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
           this.txState = TransactionConfirmationState.SUCCESS;
         } catch (error) {
           console.error("error making transfer: ", error);
-          this.error = error;
+          this.error = error.message;
           this.txState = TransactionConfirmationState.ERROR;
           this.mode = "ERROR";
           this.modeChange.emit(this.mode);
@@ -219,7 +220,7 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
           this.txState = TransactionConfirmationState.SUCCESS;
         } catch (error) {
           console.error("error making transfer: ", error);
-          this.error = error;
+          this.error = error.message;
           this.txState = TransactionConfirmationState.ERROR;
           this.mode = "ERROR";
           this.modeChange.emit(this.mode);
@@ -269,7 +270,7 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
           this.txState = TransactionConfirmationState.SUCCESS;
         } catch (error) {
           console.error("error making transfer: ", error);
-          this.error = error;
+          this.error = error.message;
           this.txState = TransactionConfirmationState.ERROR;
           this.mode = "ERROR";
           this.modeChange.emit(this.mode);
@@ -319,7 +320,7 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
           this.txState = TransactionConfirmationState.SUCCESS;
         } catch (error) {
           console.error("error making transfer: ", error);
-          this.error = error;
+          this.error = error.message;
           this.txState = TransactionConfirmationState.ERROR;
           this.mode = "ERROR";
           this.modeChange.emit(this.mode);
@@ -372,7 +373,7 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
           this.txState = TransactionConfirmationState.SUCCESS;
         } catch (error) {
           console.error("error making transfer: ", error);
-          this.error = "Insufficient amount. Try sending slightly less.";
+          this.error = error.message
           this.txState = TransactionConfirmationState.ERROR;
           this.mode = "ERROR";
           this.modeChange.emit(this.mode);
@@ -415,13 +416,14 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
             recipient: this.recipientAddress,
             feeRate: +matchingAddress.gas_rate,
           });
+          this.hash = hash;
           this.pushTxStatus(hash, this.asset.asset, false);
           this.transactionSuccessful.next();
           this.mode = "SUCCESS";
           this.txState = TransactionConfirmationState.SUCCESS;
         } catch (error) {
           console.error("error making transfer: ", error);
-          this.error = "Insufficient amount. Try sending slightly less.";
+          this.error = error.message
           this.txState = TransactionConfirmationState.ERROR;
           this.mode = "ERROR";
           this.modeChange.emit(this.mode);
