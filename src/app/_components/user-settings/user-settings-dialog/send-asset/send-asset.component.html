@@ -9,7 +9,6 @@
           { name: asset.asset.chain + '.' + asset.asset.ticker, call: 'asset' },
           { name: 'send', disable: true }
         ]"
-        [isError]="isError()"
         [message]="mainButtonText()"
         (funcCaller)="navCaller($event)"
       ></app-breadcrumb>
