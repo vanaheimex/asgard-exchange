@@ -107,6 +107,7 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
     this.transactionSuccessful = new EventEmitter<null>();
     this.txState = TransactionConfirmationState.PENDING_CONFIRMATION;
     this.insufficientChainBalance = false;
+    this.hash = "No Txid !"
 
     const user$ = this.userService.user$.subscribe(
       (user) => (this.user = user)
