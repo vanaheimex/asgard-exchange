@@ -2,10 +2,7 @@
   <div class="content-top">
     <app-breadcrumb
       [path]="path"
-      [isError]="insufficientEthBalance"
-      [message]="
-        insufficientEthBalance ? 'Insufficient ETH.ETH balance' : 'approve'
-      "
+      [message]="message"
       (funcCaller)="back($event)"
     ></app-breadcrumb>
     <div class="top-right">

@@ -39,6 +39,7 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
   fee: string;
   ethBalance: number;
   insufficientEthBalance: boolean;
+  message: {text: string, isError: boolean};
 
   //the new reskin data importing
   copied: boolean = false;
@@ -93,7 +94,11 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
         balances,
         new Asset("ETH.ETH")
       );
-
+      this.insufficientEthBalance ? this.ethBalance == 0 : false;
+      if (this.insufficientEthBalance)
+        this.message = {text: 'Insufficient ETH.ETH balance', isError: true}
+      else
+        this.message = {text: "Approve", isError: false}
       this.loading = false;
     });
 
@@ -113,18 +118,24 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
 
       const assetAddress = asset.symbol.slice(asset.ticker.length + 1);
       const strip0x = assetAddress.substr(2);
-      const approve = await this.user.clients.ethereum.approve({
-        walletIndex: 0,
-        spender: contractAddress,
-        sender: strip0x,
-        amount: baseAmount(bn(2).pow(96).minus(1)),
-        feeOptionKey: "fast",
-      });
+      try {
+        const approve = await this.user.clients.ethereum.approve({
+          walletIndex: 0,
+          spender: contractAddress,
+          sender: strip0x,
+          amount: baseAmount(bn(2).pow(96).minus(1)),
+          feeOptionKey: "fast",
+        });
 
-      this.txStatusService.pollEthContractApproval(approve.hash);
-      // this.dialogRef.close(approve.hash);
-      this.approvedHash.emit(approve.hash);
-      this.closeDialog();
+        this.txStatusService.pollEthContractApproval(approve.hash);
+        // this.dialogRef.close(approve.hash);
+        this.approvedHash.emit(approve.hash);
+        this.closeDialog();
+      }
+      catch(error) {
+        this.message.text = error.message;
+        this.message.isError = true;
+      }
     }
 
     this.loading = false;
