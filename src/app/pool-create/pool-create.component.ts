@@ -330,19 +330,19 @@ export class PoolCreateComponent implements OnInit, OnDestroy {
     );
   }
 
-  mainButtonText(): string {
+  mainButtonText() {
     if (!this.balances) {
-      return "Please connect wallet";
+      return {text: "connect wallet", isError: false};
     } else if (this.ethContractApprovalRequired) {
-      return "Ready";
+      return {text: "Ready", isError: false};
     } else if (this.depositsDisabled) {
-      return "CAPS REACHED";
+      return {text: "CAPS REACHED", isError: true};
     } else if (this.ethContractApprovalRequired) {
-      return "Create Pool";
+      return {text: "Create Pool", isError: false};
     } else if (this.balances && (!this.runeAmount || !this.assetAmount)) {
-      return "Prepare";
+      return {text: "Prepare", isError: false};
     } else if (!this.inboundAddresses) {
-      return "Loading";
+      return {text: "Loading", isError: false};
     } else if (
       this.balances &&
       (this.runeAmount > this.runeBalance ||
@@ -354,13 +354,13 @@ export class PoolCreateComponent implements OnInit, OnDestroy {
           ))
     ) {
       if (this.runeAmount > this.runeBalance)
-        return `Insufficient ${this.rune.chain}.${this.rune.ticker} balance`;
+        return {text: `Insufficient ${this.rune.chain}.${this.rune.ticker} balance`, isError: true};
       else
-        return `Insufficient ${this.asset.chain}.${this.asset.ticker} balance`;
+        return {text: `Insufficient ${this.asset.chain}.${this.asset.ticker} balance`, isError: true};
     } else if (this.chainBalance <= this.networkFee) {
-      return `Insufficient ${this.asset.chain}`;
+      return {text: `Insufficient ${this.asset.chain}.${this.asset.ticker}`, isError: true};
     } else if (this.runeAmount < this.minRuneDepositAmount) {
-      return "Not enough RUNE to create pool";
+      return {text: "Not enough RUNE to create pool", isError: true};
     } else if (
       this.balances &&
       this.runeAmount &&
@@ -368,7 +368,7 @@ export class PoolCreateComponent implements OnInit, OnDestroy {
       this.runeAmount <= this.runeBalance &&
       this.assetAmount <= this.assetBalance
     ) {
-      return "Ready";
+      return {text: "Ready", isError: false};
     } else {
       console.warn("mismatch case for main button text");
       return;
@@ -435,8 +435,6 @@ export class PoolCreateComponent implements OnInit, OnDestroy {
         strip0x,
         baseAmount(1)
       );
-
-      console.log(isApproved);
 
       this.ethContractApprovalRequired = !isApproved;
     }

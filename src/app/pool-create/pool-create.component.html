@@ -10,9 +10,6 @@
               { name: 'Pools', call: 'pool' },
               { name: 'Create', disable: true }
             ]"
-            [isError]="
-              mainButtonText() !== 'Ready' && mainButtonText() !== 'Prepare'
-            "
             [message]="mainButtonText()"
             (funcCaller)="goToNav($event)"
           ></app-breadcrumb>
@@ -27,6 +24,7 @@
           [balance]="assetBalance"
           [disabledAssetSymbol]="rune.symbol"
           [selectableMarkets]="selectableMarkets"
+          [priceInput]="assetUsdValue"
           (lunchMarket)="overlaysService.setCurrentCreatePoolView('Asset')"
         >
         </app-asset-input>
@@ -41,6 +39,7 @@
           [hideMax]="true"
           [disabledMarketSelect]="true"
           [disabledAssetSymbol]="rune.symbol"
+          [priceInput]="runeUsdValue"
         >
         </app-asset-input>
 
