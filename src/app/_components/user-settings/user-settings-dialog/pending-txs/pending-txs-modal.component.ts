@@ -38,6 +38,7 @@ export class PendingTxsModalComponent implements OnDestroy {
   user: User;
   transactions: TransactionDTO;
   activeIndex: number;
+  loading: boolean;
 
   constructor(
     // public dialogRef: MatDialogRef<PendingTxsModalComponent>,
@@ -163,6 +164,8 @@ export class PendingTxsModalComponent implements OnDestroy {
   }
 
   async getThorchainTxs() {
+    this.loading = true;
+  
     if (!this.user && !this.user.clients && !this.user.clients.thorchain)
       return;
 
@@ -184,6 +187,7 @@ export class PendingTxsModalComponent implements OnDestroy {
       this.txStatusService.addHistoryTransaction(tx);
     });
 
+    this.loading = false;
     // this.txs = this.txs.filter((thing, index) => {
     //   const _thing = JSON.stringify(thing);
     //   return index === this.txs.findIndex(obj => {

@@ -121,11 +121,19 @@
         </div>
       </div>
 
-      <div class="wallets disable" *ngIf="txs.length == 0">
+      <div class="wallets disable" *ngIf="txs.length == 0 && !loading">
         <span
           class="no-item"
           style="text-transform: uppercase; text-align: center"
           >NO TRANSACTIONS <br />THIS SESSION</span
+        >
+      </div>
+
+      <div class="wallets disable" *ngIf="txs.length == 0 && loading">
+        <span
+          class="no-item"
+          style="text-transform: uppercase; text-align: center"
+          >LOADING HISTORICAL TRANSACTIONS</span
         >
       </div>
 

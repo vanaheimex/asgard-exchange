@@ -50,6 +50,9 @@ export class UserService {
   private killRunePolling: Subject<void> = new Subject();
 
   asgardexBncClient: BinanceClient;
+  private pendingBalancesSource = new BehaviorSubject<boolean>(true);
+  pendingBalances$ = this.pendingBalancesSource.asObservable();
+  private _pendingBalances: boolean;
 
   constructor(
     private midgardService: MidgardService,
@@ -77,18 +80,29 @@ export class UserService {
     this._balances = [];
     this._chainBalanceErrors = [];
     this.chainBalanceErrorsSource.next([]);
+    const promises = [];
+    this._pendingBalances = true;
+    this.pendingBalancesSource.next(this._pendingBalances);
 
     if (this._user && this._user.clients) {
       for (const [key, _value] of Object.entries(this._user.clients)) {
         if (key === "binance") {
-          this.getBinanceBalances();
+          promises.push(this.getBinanceBalances());
         } else if (key === "ethereum") {
-          this.getEthereumBalances();
+          promises.push(this.getEthereumBalances());
         } else {
-          this.getGeneralBalance(key);
+          promises.push(this.getGeneralBalance(key));
         }
       }
     }
+
+    // allSettled is not yet added into ts, need an update for this
+    (Promise as any).allSettled(promises).then(
+      (_) => {
+        this._pendingBalances = false;
+        this.pendingBalancesSource.next(this._pendingBalances);
+      }
+    )
   }
 
   // helper function to get the client name by chain name

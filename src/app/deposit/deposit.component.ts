@@ -156,8 +156,9 @@ export class DepositComponent implements OnInit, OnDestroy {
     const balances$ = this.userService.userBalances$;
     const user$ = this.userService.user$.pipe(debounceTime(500));
     const inboundAddresses$ = this.midgardService.getInboundAddresses();
+    const pendingBalances$ = this.userService.pendingBalances$;
 
-    const combinedUser = combineLatest([user$, balances$]);
+    const combinedUser = combineLatest([user$, balances$, pendingBalances$]);
 
     const combinedPoolData = combineLatest([inboundAddresses$, params$]);
 
@@ -190,8 +191,6 @@ export class DepositComponent implements OnInit, OnDestroy {
 
           this.isHalted = this.haltedChains.includes(this.asset.chain);
 
-          this.setSourceChainBalance();
-
           if (isNonNativeRuneToken(this.asset)) {
             this.back();
             return;
@@ -215,7 +214,7 @@ export class DepositComponent implements OnInit, OnDestroy {
       }
     );
 
-    const userSub = combinedUser.subscribe(([user, balances]) => {
+    const userSub = combinedUser.subscribe(([user, balances, pendingBalances]) => {
       // User
       this.user = user;
 
@@ -226,6 +225,13 @@ export class DepositComponent implements OnInit, OnDestroy {
         this.balances,
         this.asset
       );
+
+      if (pendingBalances) {
+        this.assetBalance = undefined;
+      } 
+      
+      this.setSourceChainBalance();
+
     });
 
     const depositView$ = this.overlaysService.depositView.subscribe((view) => {
@@ -466,54 +472,59 @@ export class DepositComponent implements OnInit, OnDestroy {
     );
   }
 
-  mainButtonText(): string {
+  mainButtonText() {
     /** Wallet not connected */
     if (!this.balances) {
-      return "connect wallet";
+      return {text: "connect wallet", isError: false};
     }
 
     if (this.isMaxError) {
-      return "Input Amount Less Than Fees";
+      return {text: "Input Amount Less Than Fees", isError: true};
+    }
+
+    if (this.assetBalance == undefined) {
+      return {text: "Loading the Balance", isError: false}
     }
 
     if (this.balances && (!this.runeAmount || !this.assetAmount)) {
-      return "Prepare";
+      return {text: "Prepare", isError: false};
     }
 
     if (this.depositsDisabled) {
-      return "CAPS REACHED";
+      return {text: "CAPS REACHED", isError: true};
     }
 
     if (this.bchLegacyPooled) {
-      return "Pooled BCH with a legacy address"
+      return {text: "Pooled BCH with a legacy address", isError: true}
     }
 
     if (!this.asset) {
-      return "There is no asset here!";
+      return {text: "There is no asset here!", isError: true};
     }
 
     if (this.isHalted) {
-      return "Pool Halted";
+      return {text: "Pool Halted", isError: true};
     }
 
     /** User either lacks asset balance or RUNE balance */
     if (this.balances && (!this.runeAmount || !this.assetAmount)) {
-      return "Enter an amount";
+      return {text: "Enter an amount", isError: false};
     }
 
     /** Asset amount is greater than balance */
     if (this.assetBalance < this.assetAmount) {
-      return `Insufficient ${this.asset.ticker}`;
+      return {text: `Insufficient ${this.asset.chain}.${this.asset.ticker}`, isError: true};
     }
 
     /** RUNE amount exceeds RUNE balance. Leave 3 RUNE in balance */
     if (this.runeBalance - this.runeAmount < 3) {
-      return "Min 3 RUNE in Wallet";
+      return {text: "Min 3 RUNE in Wallet", isError: true};
     }
 
     /** Checks sufficient chain balance for fee */
     if (this.sourceChainBalance <= this.chainNetworkFee) {
-      return `Insufficient ${this.asset.chain}`;
+      const chainAsset = getChainAsset(this.asset.chain);
+      return {text: `Insufficient ${chainAsset.chain}.${chainAsset.ticker} for Fees`, isError: true};
     }
 
     /**
@@ -531,12 +542,12 @@ export class DepositComponent implements OnInit, OnDestroy {
         )
     ) {
       const chainAsset = getChainAsset(this.asset.chain);
-      return `Insufficient ${chainAsset.chain}.${chainAsset.ticker} for Fees`;
+      return {text: `Insufficient ${chainAsset.chain}.${chainAsset.ticker} for Fees`, isError: true};
     }
 
     /** Amount is too low, considered "dusting" */
     if (this.assetAmount <= this.userService.minimumSpendable(this.asset)) {
-      return "Amount too low";
+      return {text: "Amount too low", isError: true};
     }
 
     /**
@@ -544,7 +555,7 @@ export class DepositComponent implements OnInit, OnDestroy {
      * Ensures sufficient amount to withdraw
      */
     if (this.assetAmount <= this.networkFee * 3 + this.networkFee) {
-      return "Amount too low";
+      return {text: "Amount too low", isError: true};
     }
 
     /** Good to go */
@@ -554,7 +565,7 @@ export class DepositComponent implements OnInit, OnDestroy {
       this.runeAmount <= this.runeBalance &&
       this.assetAmount <= this.assetBalance
     ) {
-      return "Ready";
+      return {text: "Ready", isError: false};
     } else {
       console.warn("mismatch case for main button text");
       return;
