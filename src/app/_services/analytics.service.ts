@@ -13,6 +13,7 @@ export class AnalyticsService {
     eventLabel?: string,  
     eventValue?: number ){ 
       (window as any).gtag('event', eventAction, { 
+        'send_to': 'G-QDG7Z69FRZ',
         'event_category': eventCategory, 
         'event_label': eventLabel, 
         'value': eventValue
