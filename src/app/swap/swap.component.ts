@@ -52,7 +52,6 @@ import { UpdateTargetAddressModalComponent } from './update-target-address-modal
 import { SwapServiceService } from "../_services/swap-service.service";
 import { AnalyticsService } from '../_services/analytics.service';
 
-
 export enum SwapType {
   DOUBLE_SWAP = "double_swap",
   SINGLE_SWAP = "single_swap",
@@ -132,8 +131,6 @@ export class SwapComponent implements OnInit, OnDestroy {
     if (this.sourceBalance < this.sourceAssetUnit) {
       this.sourceAssetUnit = this.sourceBalance;
     }
-
-    this.setSourceChainBalance();
   }
   private _selectedSourceAsset: Asset;
   selectedSourceBalance: number;
@@ -332,14 +329,15 @@ export class SwapComponent implements OnInit, OnDestroy {
     this.getEthRouter();
     const inboundAddresses$ = this.midgardService.getInboundAddresses();
     const pools$ = this.midgardService.getPools();
-    const combined = combineLatest([inboundAddresses$, pools$]);
+    const params$ = this.route.paramMap;
+    const combined = combineLatest([inboundAddresses$, pools$, params$]);
     const sub = timer(0, 30000)
       .pipe(
         // combined
         switchMap(() => combined),
         retryWhen((errors) => errors.pipe(delay(10000), take(10)))
       )
-      .subscribe(([inboundAddresses, pools]) => {
+      .subscribe(([inboundAddresses, pools, params]) => {
         this.inboundAddresses = inboundAddresses;
 
         // check for halted chains
@@ -357,9 +355,86 @@ export class SwapComponent implements OnInit, OnDestroy {
         // update network fees
         this.setNetworkFees();
 
+        // on init, set target asset
+        const sourceAssetName = params.get("sourceAsset");
+        const targetAssetName = params.get("targetAsset");
+
+        if (
+          sourceAssetName &&
+          targetAssetName &&
+          sourceAssetName == targetAssetName
+        ) {
+          this.router.navigate(["/", "swap", "THOR.RUNE", "BTC.BTC"]);
+          return;
+        } else if (
+          this.selectableMarkets &&
+          !this.selectedSourceAsset &&
+          !this.selectedTargetAsset
+        ) {
+          if (sourceAssetName && sourceAssetName !== "no-asset") {
+            this.setSelectedSourceAsset(
+              new Asset(sourceAssetName),
+              this.selectableMarkets
+            );
+          }
+
+          if (targetAssetName && targetAssetName !== "no-asset") {
+            this.setSelectedTargetAsset(
+              new Asset(targetAssetName),
+              this.selectableMarkets
+            );
+          }
+        }    
+
       });
 
     this.subs.push(sub);
+  }
+
+  setSelectedSourceAsset(asset: Asset, selectableMarkets: AssetAndBalance[]) {
+    // ensure match exists
+    const match = selectableMarkets.find(
+      (market) => assetToString(market.asset) === assetToString(asset)
+    );
+
+    if (match) {
+      this.ethContractApprovalRequired = false;
+      if (this.selectedSourceAsset) {
+        this.targetAssetUnit = null;
+        this.calculatingTargetAsset = true;
+      }
+      this._selectedSourceAsset = asset;
+      this.updateSwapDetails();
+      this.sourceBalance = this.userService.findBalance(this.balances, asset);
+      if (asset.chain === 'ETH' && asset.ticker !== 'ETH') {
+        this.checkContractApproved();
+      }
+
+      /**
+       * If input value is more than balance of newly selected asset
+       * set the input to the max
+       */
+      if (this.sourceBalance < this.sourceAssetUnit) {
+        this.sourceAssetUnit = this.sourceBalance;
+      }
+
+      this.setSourceChainBalance();
+    }
+  }
+
+  setSelectedTargetAsset(asset: Asset, selectableMarkets: AssetAndBalance[]) {
+    // ensure match exists
+    const match = selectableMarkets.find(
+      (market) => assetToString(market.asset) === assetToString(asset)
+    );
+    if (match) {
+      this._selectedTargetAsset = asset;
+      this.targetAssetUnit = null;
+      this.calculatingTargetAsset = true;
+      this.updateSwapDetails();
+      this.targetBalance = this.userService.findBalance(this.balances, asset);
+      this.setTargetAddress();
+    }
   }
 
   setTargetAddress() {
@@ -539,53 +614,7 @@ export class SwapComponent implements OnInit, OnDestroy {
           this.availablePools
         ),
       });
-
-      // on init, set target asset
-      this.route.paramMap.subscribe(
-        (params) => {
-          const sourceAssetName = params.get("sourceAsset");
-          const targetAssetName = params.get("targetAsset");
-
-          if (
-            sourceAssetName &&
-            targetAssetName &&
-            sourceAssetName == targetAssetName
-          ) {
-            this.router.navigate(["/", "swap", "THOR.RUNE", "BTC.BTC"]);
-            return;
-          } else if (
-            this.selectableMarkets &&
-            !this.selectedSourceAsset &&
-            !this.selectedTargetAsset
-          ) {
-            if (sourceAssetName && sourceAssetName !== "no-asset") {
-              let asset = new Asset(sourceAssetName);
-              if (
-                this.selectableMarkets.find(
-                  (market) =>
-                    market.asset.chain === asset.chain &&
-                    market.asset.symbol === asset.symbol
-                )
-              ) {
-                this.selectedSourceAsset = asset;
-              }
-            }
-
-            if (targetAssetName && targetAssetName !== "no-asset") {
-              let assetTarget = new Asset(targetAssetName);
-              if (
-                this.selectableMarkets.find(
-                  (market) =>
-                    market.asset.chain === assetTarget.chain &&
-                    market.asset.symbol === assetTarget.symbol
-                )
-              ) {
-                this.selectedTargetAsset = assetTarget;
-              }
-            }
-          }    
-        }
-      );
+      
     }
   }
 
@@ -881,7 +910,11 @@ export class SwapComponent implements OnInit, OnDestroy {
   }
 
   async calculateTargetUnits() {
-    if (this._sourceAssetTokenValue) {
+    if (
+      this._sourceAssetTokenValue &&
+      this.availablePools &&
+      this.availablePools.length > 0
+    ) {
       const swapType =
         this.isRune(this.selectedSourceAsset) ||
         this.isRune(this.selectedTargetAsset)
