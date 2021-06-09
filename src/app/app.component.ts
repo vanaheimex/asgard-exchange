@@ -15,6 +15,7 @@ import { environment } from "src/environments/environment";
 import { links } from "src/app/_const/links";
 import { Router } from "@angular/router";
 import { NetworkSummary } from "./_classes/network";
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: "app-root",
@@ -43,8 +44,11 @@ export class AppComponent implements OnInit, OnDestroy {
     private lastBlockService: LastBlockService,
     private overlaysService: OverlaysService,
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
+    translate: TranslateService
   ) {
+    translate.setDefaultLang('en');
+    translate.use('en');
     this.isTestnet = environment.network === "testnet";
     this.mainnetUrl = this.isTestnet ? links.mainnetUrl : links.testnetUrl;
     this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");

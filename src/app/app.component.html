@@ -31,22 +31,24 @@
 
   <footer>
     <div class="footer-content">
-      <span
-        ><span
+      <span>
+        <span
           [ngStyle]="{
             color: isTestnet ? 'inherit' : 'var(--primary-red)',
             'font-weight': isTestnet ? 'inherit' : 'bold'
           }"
-          >BETA product. Don’t swap/pool large.</span
         >
-        Powered by
-        <a class="footer-link" href="https://t.me/thorchain_org" target="_blank"
-          >THORChain</a
-        >. Go to
-        <a class="footer-link" [href]="mainnetUrl" *ngIf="!isTestnet">TestNet</a
-        ><a class="footer-link" [href]="mainnetUrl" *ngIf="isTestnet">ChaosNet</a>
-        app instead.</span
-      >
+          {{ 'footer.BETA' | translate }}
+        </span>
+        <span 
+          [innerHTML]="'footer.POWER' | translate"
+        >
+        </span>
+        <span
+          [innerHTML]="'footer.GOTO' | translate"
+        >
+        </span>
+      </span>
     </div>
   </footer>
 </div>

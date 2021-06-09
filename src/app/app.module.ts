@@ -40,6 +40,8 @@ import { TextFieldModule } from "./_components/text-field/text-field.module";
 import { BreadcrumbModule } from "./_components/breadcrumb/breadcrumb.module";
 import { TagModule } from "./_components/tag/tag.module";
 import { PhraseWordsListModule } from "./_components/phrase-words-list/phrase-words-list.module";
+import { TranslateLoader, TranslateModule } from "@ngx-translate/core";
+
 
 /** SERVICES */
 import { BinanceService } from "./_services/binance.service";
@@ -98,7 +100,7 @@ import { ShortNumberPipe } from './_pipes/short-number.pipe';
 import { RuneYieldService } from './_services/rune-yield.service';
 import { ShortPipeModule } from './_pipes/short-number.module';
 import { AnalyticsService } from './_services/analytics.service';
-
+import { LanguageLoader } from "./_classes/translate-loader";
 
 @NgModule({
   declarations: [
@@ -163,7 +165,11 @@ import { AnalyticsService } from './_services/analytics.service';
     NativeRunePromptModule,
     ModalSectionHeaderModule,
     PhraseWordsListModule,
-    ShortPipeModule
+    ShortPipeModule,
+    TranslateModule.forRoot({
+      loader: {provide: TranslateLoader, useClass: LanguageLoader},
+      defaultLanguage: 'en'
+    })
   ],
   providers: [
     BinanceService,
