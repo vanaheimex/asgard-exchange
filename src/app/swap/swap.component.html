@@ -5,11 +5,12 @@
         <nav class="content-top">
           <app-breadcrumb
             [path]="[
-              { name: 'vanaheimex', swapView: 'Swap', mainView: 'Swap' },
+              { name: 'vanaheimex', call: 'vanaheimex'},
               { name: 'swap', disable: true }
             ]"
             [isError]="isError()"
             [message]="mainButtonText()"
+            (funcCaller)="breadcrumbNav($event)"
           ></app-breadcrumb>
           <div class="top-right">
             <app-right-option

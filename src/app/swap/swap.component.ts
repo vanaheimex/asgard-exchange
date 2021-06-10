@@ -499,6 +499,12 @@ export class SwapComponent implements OnInit, OnDestroy {
     }
   }
 
+  breadcrumbNav(val: string) {
+    if (val === 'vanaheimex') {
+      this.overlaysService.setViews(MainViewsEnum.Swap, 'Swap');
+    }
+  }
+
   setNetworkFees() {
     if (!this.availablePools || !this.inboundAddresses) {
       return;
