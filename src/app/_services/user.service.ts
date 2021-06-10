@@ -24,6 +24,7 @@ import { PoolAddressDTO } from '../_classes/pool-address';
 import { TransactionUtilsService } from './transaction-utils.service';
 import { TxType } from '../_const/tx-type';
 import { ETH_DECIMAL } from '@xchainjs/xchain-ethereum';
+import { HttpClient, HttpParams } from "@angular/common/http";
 
 export interface MidgardData<T> {
   key: string;
@@ -56,7 +57,8 @@ export class UserService {
 
   constructor(
     private midgardService: MidgardService,
-    private txUtilsService: TransactionUtilsService
+    private txUtilsService: TransactionUtilsService,
+    private http: HttpClient
   ) {
     this._balances = [];
     this._chainBalanceErrors = [];
@@ -76,6 +78,32 @@ export class UserService {
     }
   }
 
+  async getBitcoinBalances() {
+    try {
+      const client = this._user.clients.bitcoin;
+      const address = await client.getAddress();
+      const btcBalances = await client.getBalance(address);
+      let balances;
+
+      if (environment.network === 'testnet') {
+        balances = btcBalances
+      }
+      else {
+        const HASKOIN_API_URL = 'https://api.haskoin.com/btc'
+        const { confirmed, unconfirmed } = await this.http.get(`${HASKOIN_API_URL}/address/${address}/balance`).toPromise() as any
+        const baseConfirmed = baseAmount(confirmed)
+        const baseUnconfirmed = baseAmount(unconfirmed)
+
+        balances = baseAmount(baseConfirmed.amount().plus(baseUnconfirmed.amount()))
+
+      }
+
+      this.pushBalances(balances);
+    } catch (error) {
+      console.error("error fetching binance balances: ", error);
+    }
+  }
+
   async fetchBalances(): Promise<void> {
     this._balances = [];
     this._chainBalanceErrors = [];
@@ -90,7 +118,10 @@ export class UserService {
           promises.push(this.getBinanceBalances());
         } else if (key === "ethereum") {
           promises.push(this.getEthereumBalances());
-        } else {
+        } else if (key === "bitcoin") {
+          promises.push(this.getBitcoinBalances())
+        }
+        else {
           promises.push(this.getGeneralBalance(key));
         }
       }
@@ -137,6 +168,8 @@ export class UserService {
       this.getBinanceBalances();
     } else if (key === "ethereum") {
       this.getEthereumBalances();
+    } else if (key === "bitcoin") {
+      this.getBitcoinBalances()
     } else {
       this.getGeneralBalance(key);
     }
