@@ -17,7 +17,7 @@
       >
     </div>
 
-    <span class="pending" *ngIf="">(STAGED {{ isPending.action }})</span>
+    <span class="pending" *ngIf="isPending">({{ isPending.action + 'ING' }})</span>
     <div class="flex justify-between" *ngIf="activate && !isPending">
       <app-tag>
         <a
