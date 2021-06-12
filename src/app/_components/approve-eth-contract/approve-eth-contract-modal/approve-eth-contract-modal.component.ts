@@ -67,7 +67,7 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
     const user$ = this.userService.user$;
     const balances$ = this.userService.userBalances$;
 
-    this.path = [{ name: "vanaheimex", swapView: "Swap", mainView: "Swap" }];
+    this.path = [{ name: 'skip', swapView: "Swap", mainView: "Swap" }];
     if (this.mode == "swap") {
       this.path.push(
         { name: "Swap", disable: false, call: "back" },

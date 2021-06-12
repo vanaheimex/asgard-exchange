@@ -1,6 +1,6 @@
 <div class="top-bar">
-  <a *ngIf="isTestnet" href="https://thorchain.org" target="_blank"
-    >VISIT THE BRAND NEW THORCHAIN.ORG WEBSITE</a
+  <a *ngIf="isTestnet"
+    >TESTNET • YOUR ASSETS WILL BE LOST IF YOU DON’T SEND TESTNET ASSETS TO YOUR THESE WALLETS • TESTNET</a
   >
   <a
     href="https://viewblock.io/thorchain/pools"
@@ -18,19 +18,14 @@
       [routerLink]="isUnderstood ? ['/', 'swap'] : null"
       (click)="gotoSwap()"
     >
-      <!-- <img style="width: 36.61px; height: 42px; margin-right: 8px" src="assets/images/vanaheimex-green.svg" />
-      <span class="title">ASGARDEX
-        <span class="tag" *ngIf="!isTestnet">MAINNET</span>
-        <span class="tag" *ngIf="isTestnet">TESTNET</span>
-      </span> -->
       <img
         *ngIf="!isTestnet"
-        src="/assets/images/vanaheimex-logo-chaosnet.svg"
+        src="/assets/images/logo-skip-chaosnet.svg"
         alt=""
       />
       <img
         *ngIf="isTestnet"
-        src="/assets/images/vanaheimex-logo-testnet.svg"
+        src="/assets/images/logo-skip-testnet.svg"
         alt=""
       />
     </a>
