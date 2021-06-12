@@ -1,5 +1,5 @@
 export const links = {
-  github: "https://github.com/vanaheimex/asgard-exchange",
+  github: "https://github.com/SKIPexchange/asgard-exchange",
   twitter: "https://twitter.com/SKIPswap",
   telegram: "https://t.me/SKIPexchange",
   mainnetUrl: "https://SKIP.exchange",
