@@ -500,7 +500,7 @@ export class SwapComponent implements OnInit, OnDestroy {
   }
 
   breadcrumbNav(val: string) {
-    if (val === 'vanaheimex') {
+    if (val === 'skip') {
       this.overlaysService.setViews(MainViewsEnum.Swap, 'Swap');
     }
   }
