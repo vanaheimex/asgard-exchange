@@ -47,7 +47,7 @@ export class UpdateTargetAddressModalComponent {
       return;
     }
 
-    this.analytics.eventEmitter('vanaheimex_swap', 'swap_receive_container_target_address_select', 'button_target_address_save', undefined, this.thorAddress)
+    this.analytics.event('swap_receive_container_target_address_select', 'button_target_address_save')
 
     this.close();
   }
@@ -88,13 +88,13 @@ export class UpdateTargetAddressModalComponent {
 
   close() {
     /** because this is only a component in swap page so the analytics are static */
-    this.analytics.eventEmitter('vanaheimex_swap', 'swap_receive_container_target_address_select', 'button_target_address_save_changed', undefined, this.thorAddress)
+    this.analytics.event('swap_receive_container_target_address_select', 'button_target_address_save_changed')
     this.back.emit(this.targetAddress);
     this.oveService.setCurrentSwapView('Swap');
   }
 
   backEmit() {
-    this.analytics.eventEmitter('vanaheimex_swap', 'swap_receive_container_target_address_select', 'button_target_address_cancel', undefined, this.thorAddress)
+    this.analytics.event('swap_receive_container_target_address_select', 'button_target_address_cancel')
     this.oveService.setCurrentSwapView('Swap');
   }
 }
