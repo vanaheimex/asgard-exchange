@@ -1,6 +1,8 @@
 import { Component, Output, EventEmitter } from "@angular/core";
 import { generatePhrase, encryptToKeyStore } from "@xchainjs/xchain-crypto";
+import { AnalyticsService } from "src/app/_services/analytics.service";
 import { KeystoreService } from "src/app/_services/keystore.service";
+import { MainViewsEnum, OverlaysService } from "src/app/_services/overlays.service";
 import { PhraseConfirmService } from "src/app/_services/phrase-confirm.service";
 import { UserService } from "src/app/_services/user.service";
 import { environment } from "src/environments/environment";
@@ -23,13 +25,26 @@ export class KeystoreCreateComponent {
   constructor(
     private userService: UserService,
     private keystoreService: KeystoreService,
-    private phraseConfirm: PhraseConfirmService
+    private phraseConfirm: PhraseConfirmService,
+    private overlaysService: OverlaysService,
+    private analytics: AnalyticsService
   ) {
     this.loading = false;
     this.phrase = generatePhrase();
     this.back = new EventEmitter<null>();
     this.closeModal = new EventEmitter<null>();
     this.keystoreCreated = new EventEmitter<string>();
+  }
+
+  breadcrumbNav(val: string) {
+    if (val === 'swap') {
+      this.analytics.event('connect_create_keystore', 'breadcrumb_skip')
+      this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
+    }
+    else if (val === 'connect') {
+      this.analytics.event('connect_create_keystore', 'breadcrumb_connect');
+      this.back.emit();
+    }
   }
 
   async createKeystore() {
@@ -71,10 +86,17 @@ export class KeystoreCreateComponent {
       a.click();
 
       this.keystoreCreated.emit(this.phrase);
+
+      this.analytics.event('connect_create_keystore', 'button_create');
     } catch (error) {
       console.error(error);
     }
 
     this.loading = false;
+  }
+
+  backNav() {
+    this.analytics.event('connect_create_keystore', 'button_cancel');
+    this.back.emit();
   }
 }

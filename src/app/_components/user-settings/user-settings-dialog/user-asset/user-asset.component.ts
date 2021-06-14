@@ -6,10 +6,11 @@ import { Asset } from "src/app/_classes/asset";
 import { AssetAndBalance } from "src/app/_classes/asset-and-balance";
 import { User } from "src/app/_classes/user";
 import { Currency } from "src/app/_components/account-settings/currency-converter/currency-converter.component";
+import { AnalyticsService, assetString } from "src/app/_services/analytics.service";
 import { CopyService } from "src/app/_services/copy.service";
 import { CurrencyService } from "src/app/_services/currency.service";
 import { ExplorerPathsService } from "src/app/_services/explorer-paths.service";
-import { OverlaysService } from "src/app/_services/overlays.service";
+import { MainViewsEnum, OverlaysService } from "src/app/_services/overlays.service";
 import { UserService } from "src/app/_services/user.service";
 
 @Component({
@@ -52,7 +53,8 @@ export class UserAssetComponent {
     private explorerPathsService: ExplorerPathsService,
     private overlaysService: OverlaysService,
     private currencyService: CurrencyService,
-    private userService: UserService
+    private userService: UserService,
+    private analytics: AnalyticsService
   ) {
     this.back = new EventEmitter();
     this.send = new EventEmitter();
@@ -109,6 +111,10 @@ export class UserAssetComponent {
       this.user,
       this.asset.asset.chain
     );
+    
+    /** Analytics section */
+    this.analytics.event('wallet_asset', 'tag_tx_list_send_*ASSET*_tag_txid_explore_*ASSET*', undefined, assetString(this.asset.asset), assetString(this.asset.asset))
+
     return client.getExplorerTxUrl(hash);
   }
 
@@ -155,29 +161,52 @@ export class UserAssetComponent {
     }
   }
 
-  navCaller(nav) {
-    if (nav === "wallet")
+  breadcrumbNav(nav: string) {
+    if (nav === 'swap') {
+      this.analytics.event('wallet_asset', 'breadcrumb_skip');
+      this.overlaysService.setViews(MainViewsEnum.Swap, 'Swap');
+    }
+    else if (nav === "wallet") {
+      this.analytics.event('wallet_asset', 'breadcrumb_wallet');
       this.overlaysService.setCurrentUserView({
         userView: "Addresses",
         address: null,
         chain: null,
         asset: null,
       });
-    else if (nav === "chain")
+    }
+    else if (nav === "chain") {
+      this.analytics.event('wallet_asset', 'breadcrumb_*WALLET*', undefined, this.chain);
       this.overlaysService.setCurrentUserView({
         userView: "Address",
         address: this.address,
         chain: this.chain,
         asset: null,
       });
+    }
   }
 
   copyToClipboard() {
     if (this.address) {
+      this.analytics.event('wallet_asset', 'tag_txid_copy_*WALLET*_*ASSET*', undefined, this.chain, assetString(this.asset.asset));
+      
       let result = this.copyService.copyToClipboard(this.address);
 
       if (result) this.copied = true;
     }
+  }
+
+  eventClick() {
+    this.analytics.event('wallet_asset', 'tag_txid_explore_*WALLET*_*ASSET*', undefined, this.chain, assetString(this.asset.asset));
+  }
+
+  sendNav() {
+    this.analytics.event('wallet_asset', 'button_send_*WALLET*_*ASSET*', undefined, this.chain, assetString(this.asset.asset));
+  }
+
+  backNav() {
+    this.analytics.event('wallet_asset', 'button_wallet_*WALLET*_*ASSET*', undefined, this.chain, assetString(this.asset.asset));
+    this.back.emit()
   }
 
   ngOnDestroy(): void {

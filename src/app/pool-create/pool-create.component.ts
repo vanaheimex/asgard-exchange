@@ -23,6 +23,7 @@ import {
 } from "../_services/overlays.service";
 import { TransactionUtilsService } from "../_services/transaction-utils.service";
 import { PoolAddressDTO } from "../_classes/pool-address";
+import { AnalyticsService } from "../_services/analytics.service";
 
 @Component({
   selector: "app-pool-create",
@@ -115,7 +116,8 @@ export class PoolCreateComponent implements OnInit, OnDestroy {
     private cgService: CoinGeckoService,
     private userService: UserService,
     public overlaysService: OverlaysService,
-    private txUtilsService: TransactionUtilsService
+    private txUtilsService: TransactionUtilsService,
+    private analytics: AnalyticsService
   ) {
     this.rune = new Asset(`THOR.RUNE`);
     this.depositsDisabled = false;
@@ -398,16 +400,20 @@ export class PoolCreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  goToNav(nav: string) {
+  breadcrumbNav(nav: string) {
     if (nav === "pool") {
+      this.analytics.event('pool_create_approve_contract', 'breadcrumb_skip');
       this.router.navigate(["/", "pool"]);
     } else if (nav === "swap") {
+      this.analytics.event('pool_create_approve_contract', 'breadcrumb_skip');
       this.router.navigate(["/", "swap"]);
     } else if (nav === "create") {
+      this.analytics.event('pool_create_approve_contract', 'breadcrumb_pool');
       this.router.navigate(["/", "create-pool"], {
         queryParams: { pool: `${this.asset.chain}.${this.asset.symbol}` },
       });
     } else if (nav === "create-back") {
+      this.analytics.event('pool_create_approve_contract', 'breadcrumb_create');
       this.overlaysService.setCurrentCreatePoolView("Create");
     }
   }

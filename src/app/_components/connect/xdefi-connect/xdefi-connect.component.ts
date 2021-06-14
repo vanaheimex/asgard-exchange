@@ -1,5 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from "@angular/core";
 import { Subscription } from "rxjs";
+import { AnalyticsService } from "src/app/_services/analytics.service";
+import { MainViewsEnum, OverlaysService } from "src/app/_services/overlays.service";
 import { UserService } from "src/app/_services/user.service";
 import { XDEFIService } from "src/app/_services/xdefi.service";
 import { environment } from "src/environments/environment";
@@ -24,7 +26,9 @@ export class XDEFIConnectComponent implements OnInit {
 
   constructor(
     private userService: UserService,
-    private xdefiService: XDEFIService
+    private xdefiService: XDEFIService,
+    private overlaysService: OverlaysService,
+    private analytics: AnalyticsService
   ) {
     this.back = new EventEmitter<null>();
     this.closeModal = new EventEmitter<null>();
@@ -40,6 +44,17 @@ export class XDEFIConnectComponent implements OnInit {
     );
 
     this.subs = [validNetwork$]
+  }
+
+  breadcrumbNav(val: string) {
+    if (val === 'swap') {
+      this.analytics.event('connect_connect_xdefi', 'breadcrumb_skip');
+      this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
+    }
+    else if (val === 'connect') {
+      this.analytics.event('connect_connect_xdefi', 'breadcrumb_connect');
+      this.back.emit();
+    }
   }
 
   getBreadcrumbText() {
@@ -63,6 +78,7 @@ export class XDEFIConnectComponent implements OnInit {
   }
 
   async initUnlock() {
+    this.analytics.event('connect_connect_xdefi', 'button_connect');
     this.loading = true;
     if (this.xdefiConnecting) {
       return;
@@ -90,7 +106,8 @@ export class XDEFIConnectComponent implements OnInit {
     }
   }
 
-  backClicked() {
+  backNav() {
+    this.analytics.event('connect_connect_xdefi', 'button_cancel');
     this.back.emit();
   }
 

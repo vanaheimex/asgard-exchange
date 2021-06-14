@@ -1,4 +1,4 @@
-<!-- <div *ngIf="!selectedChain">
+breadcrumbNav<!-- <div *ngIf="!selectedChain">
   <div class="modal-head">
     <h1 mat-dialog-title>Select Chain</h1>
   </div>
@@ -19,18 +19,14 @@
 <div *ngIf="selectedChain"> -->
 <div style="height: 100%">
   <div *ngIf="!connectionView">
-    <!-- <div class="modal-head">
-      <div class="wallet-title outline-btn">
-        <h1 mat-dialog-title>Connect to wallet</h1>
-      </div>
-    </div> -->
     <div class="content-top">
       <app-breadcrumb
         [path]="[
-          { name: 'skip', swapView: 'Swap', mainView: 'Swap' },
+          { name: 'skip', call: 'swap' },
           { name: 'connect', disable: true }
         ]"
         message="select"
+        (funcCaller)="breadcrumbNav($event)"
       ></app-breadcrumb>
     </div>
 

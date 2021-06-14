@@ -11,7 +11,7 @@
               { name: 'Create', disable: true }
             ]"
             [message]="mainButtonText()"
-            (funcCaller)="goToNav($event)"
+            (funcCaller)="breadcrumbNav($event)"
           ></app-breadcrumb>
           <div class="top-right"></div>
         </nav>
@@ -122,7 +122,7 @@
             { name: 'SEARCH', disable: true }
           ]"
           message="SELECT"
-          (funcCaller)="goToNav($event)"
+          (funcCaller)="breadcrumbNav($event)"
         ></app-breadcrumb>
       </app-markets-modal>
     </div>

@@ -4,10 +4,11 @@
       <div class="content-top">
         <app-breadcrumb
           [path]="[
-            { name: 'skip', swapView: 'Swap', mainView: 'Swap' },
+            { name: 'skip', call: 'swap' },
             { name: 'Upgrade Rune', disable: true }
           ]"
           message="SELECT ASSET TO UPGRADE"
+          (funcCaller)="breadcrumbNav($event)"
         ></app-breadcrumb>
         <div class="top-right"></div>
       </div>

@@ -1,44 +1,19 @@
-<!-- <div style="padding: 1rem 1rem 0; margin-bottom: 0;" class="section-head-container">
-  <button (click)="back.emit()" mat-icon-button>
-    <mat-icon>arrow_back</mat-icon>
-  </button>
-</div> -->
 <div class="container-wrapper">
   <div class="container">
     <div class="content-top">
       <app-breadcrumb
         [path]="[
-          { name: 'skip', swapView: 'Swap', mainView: 'Swap' },
+          { name: 'skip', call: 'swap' },
           { name: 'wallet', call: 'wallet' },
           { name: chain, call: 'chain' },
           { name: chain + '.' + ticker, disable: true }
         ]"
         message="select"
-        (funcCaller)="navCaller($event)"
+        (funcCaller)="breadcrumbNav($event)"
       ></app-breadcrumb>
       <div class="top-right"></div>
     </div>
     <div class="modal-head" style="margin-bottom: 20px">
-      <!-- <div *ngIf="address" class="uni-input user-address">
-        <label class="flxr flxr--align-center">
-          {{asset.asset.ticker}} Address
-
-
-        </label>
-
-        <div class="flxr" style="width: 100%; align-items: center;">
-          <input class="wallet-address" [value]="address" name="address" [disabled]="true" style="padding: 0;" />
-          <button matSuffix mat-icon-button aria-label="BNB Address" (click)="copyToClipboard()">
-            <mat-icon matSuffix (click)="copyToClipboard()">content_copy</mat-icon>
-          </button>
-          <a class="explorer-link" target="_blank">
-            <mat-icon style="font-size: 20px;">link</mat-icon>
-          </a>
-        </div>
-
-        <app-testnet-warning></app-testnet-warning>
-
-      </div> -->
       <app-notice [isMono]="true" [isCenter]="true">
         <span text style="font-family: inherit; text-align: center">{{
           address.substring(0, 10) +
@@ -59,6 +34,7 @@
                 target="_blank"
                 style="text-decoration: none; color: inherit"
                 [href]="explorerPath"
+                (click)="eventClick()"
                 >Explore</a
               >
             </div>
@@ -151,10 +127,6 @@
               [ngClass]="{ active: i == activeIndex }"
             >
               <div class="icon-addr flex-grow flex-shrink-0">
-                <!-- <div class="asset-icon-container">
-                  <img class="asset-icon"
-                    [src]="getIconPath(tx.asset)" />
-                </div> -->
                 <label style="text-transform: uppercase">{{
                   tx.date | date: "dd/MM/yy"
                 }}</label>
@@ -261,7 +233,7 @@
         <div style="margin-right: 6px">
           <button
             class="close-btn flex justify-center items-center"
-            (click)="back.emit()"
+            (click)="backNav()"
           >
             <svg
               class="arrow-left"
@@ -284,7 +256,7 @@
           <button
             class="next-btn"
             aria-label="Close Connect Wallet Dialog"
-            (click)="send.emit()"
+            (click)="sendNav()"
           >
             <span>send</span>
           </button>

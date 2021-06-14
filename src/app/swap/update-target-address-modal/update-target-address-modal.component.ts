@@ -1,6 +1,7 @@
 import { Component, Output, EventEmitter, Input } from '@angular/core';
 import { Chain } from '@xchainjs/xchain-util';
 import { User } from 'src/app/_classes/user';
+import { AnalyticsService } from 'src/app/_services/analytics.service';
 import { OverlaysService } from 'src/app/_services/overlays.service';
 import { UserService } from 'src/app/_services/user.service';
 
@@ -15,16 +16,21 @@ export class UpdateTargetAddressModalComponent {
   targetAddress: string;
   user: User;
   chain: Chain;
+  thorAddress: string = undefined;
 
   constructor(
     private userService: UserService,
-    private oveService: OverlaysService
+    private oveService: OverlaysService,
+    private analytics: AnalyticsService,
   ) {}
 
   ngOnInit() {
     this.user = this.data?.user ?? null;
     this.chain = this.data?.chain ?? null;
     this.targetAddress = this.data?.targetAddress ?? '';
+
+    //For events
+    this.thorAddress = this.userService.getTokenAddress(this.user, 'THOR') ?? undefined;
   }
 
   updateAddress() {
@@ -40,6 +46,8 @@ export class UpdateTargetAddressModalComponent {
     if (!client.validateAddress(this.targetAddress)) {
       return;
     }
+
+    this.analytics.eventEmitter('vanaheimex_swap', 'swap_receive_container_target_address_select', 'button_target_address_save', undefined, this.thorAddress)
 
     this.close();
   }
@@ -79,11 +87,14 @@ export class UpdateTargetAddressModalComponent {
   }
 
   close() {
+    /** because this is only a component in swap page so the analytics are static */
+    this.analytics.eventEmitter('vanaheimex_swap', 'swap_receive_container_target_address_select', 'button_target_address_save_changed', undefined, this.thorAddress)
     this.back.emit(this.targetAddress);
     this.oveService.setCurrentSwapView('Swap');
   }
 
   backEmit() {
+    this.analytics.eventEmitter('vanaheimex_swap', 'swap_receive_container_target_address_select', 'button_target_address_cancel', undefined, this.thorAddress)
     this.oveService.setCurrentSwapView('Swap');
   }
 }

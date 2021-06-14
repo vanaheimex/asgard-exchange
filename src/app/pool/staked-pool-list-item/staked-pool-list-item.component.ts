@@ -3,6 +3,7 @@ import { getPoolShare, PoolData, UnitData } from "@thorchain/asgardex-util";
 import { assetToString, baseAmount } from "@xchainjs/xchain-util";
 import BigNumber from "bignumber.js";
 import { Subscription } from "rxjs";
+import { take } from "rxjs/operators";
 import { Asset } from "src/app/_classes/asset";
 import { MemberPool } from "src/app/_classes/member";
 import { PoolDTO } from "src/app/_classes/pool";
@@ -73,7 +74,9 @@ export class StakedPoolListItemComponent implements OnChanges {
   constructor(
     private poolDetailService: PoolDetailService,
     private txStatusService: TransactionStatusService,
-    private analyticsService: AnalyticsService
+    private analyticsService: AnalyticsService,
+    private userService: UserService,
+    private analytics: AnalyticsService
   ) {
     this.expanded = false;
     this.activate = false;
@@ -122,6 +125,18 @@ export class StakedPoolListItemComponent implements OnChanges {
     if (this.poolData) {
       this.asset = new Asset(this.poolData.asset);
     }
+  }
+
+  statEvent() {
+    this.analytics.event('pool_select', 'tag_stats_*POOL*', undefined, `${this.asset.chain}.${this.asset.ticker}`);
+  }
+
+  depositEvent() {
+    this.analytics.event('pool_select', 'tag_pool_deposit_*POOL_ASSET*', undefined, `${this.asset.chain}.${this.asset.ticker}`);
+  }
+
+  withdrawEvent() {
+    this.analytics.event('pool_select', 'tag_pool_withdraw_*POOL_ASSET*', undefined, `${this.asset.chain}.${this.asset.ticker}`)
   }
 
   getPoolShare(): void {

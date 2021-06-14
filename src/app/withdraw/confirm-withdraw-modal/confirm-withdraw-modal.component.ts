@@ -24,7 +24,7 @@ import { Asset } from "src/app/_classes/asset";
 import { WithdrawTypeOptions } from "src/app/_const/withdraw-type-options";
 import { TransactionUtilsService } from "src/app/_services/transaction-utils.service";
 import { MidgardService } from "src/app/_services/midgard.service";
-import { AnalyticsService } from "src/app/_services/analytics.service";
+import { AnalyticsService, assetString } from "src/app/_services/analytics.service";
 
 // TODO: this is the same as ConfirmStakeData in confirm stake modal
 export interface ConfirmWithdrawData {
@@ -69,7 +69,7 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
     private overlaysService: OverlaysService,
     private ethUtilsService: EthUtilsService,
     private midgardService: MidgardService,
-    private analyticsService: AnalyticsService
+    private analytics: AnalyticsService
   ) {
     this.close = new EventEmitter<boolean>();
     this.txState = TransactionConfirmationState.PENDING_CONFIRMATION;
@@ -102,6 +102,9 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
 
   async submitTransaction(): Promise<void> {
     this.txState = TransactionConfirmationState.SUBMITTING;
+    
+    let withdrawAmountUSD = this.data.runeAmount * this.data.runePrice + this.data.assetAmount * this.data.assetPrice;
+    this.analytics.event('pool_withdraw_symmetrical_confirm', 'button_withdraw_confirm_*POOL_ASSET*_usd_*numerical_usd_value*', withdrawAmountUSD, assetString(this.data.asset), withdrawAmountUSD.toString())
 
     const memo = `WITHDRAW:${this.data.asset.chain}.${this.data.asset.symbol}:${
       this.data.unstakePercent * 100
@@ -115,7 +118,7 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
   }
 
   async runeWithdraw(memo: string) {
-    this.analyticsService.eventEmitter('withdraw', 'withdraw_page', assetToString(this.data.asset), this.data.assetAmount * this.data.assetPrice + this.data.runeAmount * this.data.runePrice) 
+    this.analytics.eventEmitter('withdraw', 'withdraw_page', assetToString(this.data.asset), this.data.assetAmount * this.data.assetPrice + this.data.runeAmount * this.data.runePrice) 
 
     // withdraw RUNE
     try {
@@ -231,11 +234,29 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
     }
   }
 
-  goToNav(nav: string) {
+  breadcrumbNav(nav: string, mode: 'pending' | 'processing' | 'success') {
     if (nav === "pool") {
       this.router.navigate(["/", "pool"]);
+      if (mode === 'pending') {
+        this.analytics.event('pool_withdraw_symmetrical_confirm', 'breadcrumb_pools');
+      }
+      else if (mode === 'processing') {
+        this.analytics.event('pool_withdraw_symmetrical_processing', 'breadcrumb_pools');
+      }
+      else if ( mode === 'success') {
+        this.analytics.event('pool_withdraw_symmetrical_success', 'breadcrumb_pools');
+      }
     } else if (nav === "swap") {
       this.router.navigate(["/", "swap"]);
+      if (mode === 'pending') {
+        this.analytics.event('pool_withdraw_symmetrical_confirm', 'breadcrumb_vanaheimex');
+      }
+      else if (mode === 'processing') {
+        this.analytics.event('pool_withdraw_symmetrical_processing', 'breadcrumb_vanaheimex');
+      }
+      else if ( mode === 'success') {
+        this.analytics.event('pool_withdraw_symmetrical_success', 'breadcrumb_vanaheimex');
+      }
     }
   }
 
@@ -251,9 +272,15 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
       action: TxActions.WITHDRAW,
       isThorchainTx: true,
     });
+
+    this.analytics.event('pool_withdraw_symmetrical_success', 'tag_withdrawn_asset_container_wallet_*POOL_ASSET*', undefined, assetString(this.data.asset));
+    this.analytics.event('pool_withdraw_symmetrical_success', 'tag_withdrawn_wallet_THOR.RUNE')
   }
 
   closeDialog(transactionSucess?: boolean) {
+    let withdrawAmountUSD = this.data.runeAmount * this.data.runePrice + this.data.assetAmount * this.data.assetPrice;
+    this.analytics.event('pool_withdraw_symmetrical_confirm', 'button_withdraw_cancel_*POOL_ASSET*_usd_*numerical_usd_value*', withdrawAmountUSD, assetString(this.data.asset), withdrawAmountUSD.toString())
+
     this.close.emit(transactionSucess);
   }
 

@@ -1,16 +1,5 @@
 <div class="container-wrapper">
   <div class="container">
-    <!-- <nav>
-      <div>
-        <a [routerLink]="['/', 'swap']" routerLinkActive="active">Swap</a>
-        <a [routerLink]="['/', 'pool']" routerLinkActive="active">
-          <p class="pool">
-            <span class="soon">soon</span>
-            Pool
-          </p>
-        </a>
-      </div>
-    </nav> -->
     <ng-container *ngIf="mode === 'Pool'">
       <div class="main-container">
         <nav class="content-top">
@@ -20,7 +9,7 @@
               { name: 'Pools', disable: true }
             ]"
             [message]="getBreadcrumbText()"
-            (funcCaller)="goToNav($event)"
+            (funcCaller)="breadcrumbNav($event)"
           ></app-breadcrumb>
           <div class="top-right">
             <app-right-option
@@ -28,19 +17,10 @@
                 right: { text: 'Pool', tag: '', disable: false },
                 left: { text: 'Swap', tag: '', disable: false }
               }"
+              (funcCaller)="switchNav($event)"
             ></app-right-option>
           </div>
         </nav>
-
-        <!-- TODO: pooled rune should be added into thorchain mainnet -->
-        <!-- <div *ngIf="maxLiquidityRune" style="padding: 8px" class="flex justify-center disabled-list">
-          <div>
-            <span>{{totalPooledRune | number: '1.0-0'}}</span> / <span class="mr-1">{{maxLiquidityRune | number}} </span>
-          </div>
-          <span>RUNE Cap Pooled</span>
-        </div> -->
-
-        <!-- <button *ngIf="depositsDisabled" class="main-action-btn w-full" mat-flat-button color="primary" disabled>Pool Cap > 90%</button> -->
 
         <app-staked-pools-list
           *ngIf="pools && !userPoolError"
@@ -144,6 +124,7 @@
             }"
             [routerLink]="['/', 'create-pool']"
             [queryParams]="{ pool: createablePools ? createablePools[0] : '' }"
+            (click)="createPoolEvent()"
             class="next-btn graident-btn"
           >
             <span>Create a new pool</span>
@@ -152,7 +133,7 @@
       </div>
 
       <div class="bottom-actions" *ngIf="!user">
-        <button class="next-btn" (click)="ovrService.setCurrentPoolView('Connect')">
+        <button class="next-btn" (click)="connectWallet()">
           <span>CONNECT WALLET</span>
         </button>
       </div>

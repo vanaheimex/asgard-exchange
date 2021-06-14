@@ -17,6 +17,7 @@ import { Balances } from "@xchainjs/xchain-client";
 import { AssetAndBalance } from "src/app/_classes/asset-and-balance";
 import { OverlaysService } from "src/app/_services/overlays.service";
 import { MidgardService } from "src/app/_services/midgard.service";
+import { AnalyticsService, assetString, Events } from "src/app/_services/analytics.service";
 
 @Component({
   selector: "app-markets-modal",
@@ -60,11 +61,13 @@ export class MarketsModalComponent implements OnInit, OnDestroy {
 
   @Input() showApy: boolean = false;
 
+  @Input() events: Events;
+
   constructor(
     private userService: UserService,
-    public overlaysService: OverlaysService
+    public overlaysService: OverlaysService,
+    private analytics: AnalyticsService
   ) {
-    // this.marketListItems = this.selectableMarkets;
 
     const user$ = this.userService.user$.subscribe((user) => {
       this.user = user;
@@ -116,21 +119,18 @@ export class MarketsModalComponent implements OnInit, OnDestroy {
 
   selectItem(item: Asset) {
     if (item.symbol !== "") {
-      // this.dialogRef.close(item);
       if (this.disabledAssetSymbol != item.symbol) {
+        if (this.user)
+          this.analytics.event(this.events.event_category, `option_selected_*ASSET*`, undefined, assetString(item));
         this.selectedAssetChange.emit(item);
-        // this.overlay = false;
-        // this.overlayChange.emit(this.overlay);
-        // this.overlaysService.setCurrentSwapView('Swap');
         this.close.emit();
       }
     }
   }
 
   closeDialog() {
-    // this.overlay = false;
-    // this.overlayChange.emit(this.overlay);
-    // this.overlaysService.setCurrentSwapView('Swap');
+    if (this.user)
+      this.analytics.event(this.events.event_category, 'button_cancel')
     this.close.emit();
   }
 }

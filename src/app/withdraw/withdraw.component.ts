@@ -108,7 +108,7 @@ export class WithdrawComponent implements OnInit {
     private router: Router,
     private txUtilsService: TransactionUtilsService,
     private curService: CurrencyService,
-    private analyticsService: AnalyticsService
+    private analytics: AnalyticsService
   ) {
     this.withdrawPercent = 0;
     this.removeAssetAmount = 0;
@@ -574,7 +574,8 @@ export class WithdrawComponent implements OnInit {
       withdrawType: this.withdrawType,
     };
 
-    this.analyticsService.eventEmitter('withdraw', 'withdraw_page', assetToString(this.asset), this.removeAssetAmount * this.assetPrice + this.removeRuneAmount * this.runePrice) 
+    let usdValue = this.removeAssetAmount * this.assetPrice + this.removeRuneAmount * this.runePrice;
+    this.analytics.event('pool_withdraw_symmetrical_prepare', 'button_withdraw_*POOL_ASSET*_usd_*numerical_usd_value*', usdValue, `${this.asset.chain}.${this.asset.ticker}`, usdValue.toString()) 
     this.overlaysService.setCurrentWithdrawView("Confirm");
   }
 
@@ -586,11 +587,13 @@ export class WithdrawComponent implements OnInit {
     this.overlaysService.setCurrentWithdrawView("Withdraw");
   }
 
-  goToNav(nav: string) {
+  breadcrumbNav(nav: string) {
     if (nav === "pool") {
       this.router.navigate(["/", "pool"]);
+      this.analytics.event('pool_withdraw_symmetrical_prepare', 'breadcrumb_pools')
     } else if (nav === "swap") {
       this.router.navigate(["/", "swap"]);
+      this.analytics.event('pool_withdraw_symmetrical_prepare', 'breadcrumb_vanaheimex')
     }
   }
 
@@ -599,6 +602,7 @@ export class WithdrawComponent implements OnInit {
   }
 
   back() {
+    this.analytics.event('pool_withdraw_symmetrical_prepare', 'button_cancel');
     this.router.navigate(["/", "pool"]);
   }
 

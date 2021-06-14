@@ -2,13 +2,13 @@
   <div class="content-top">
     <app-breadcrumb
       [path]="[
-        { name: 'skip', swapView: 'Swap', mainView: 'Swap' },
-        { name: 'Connect', backFunc: true },
+        { name: 'skip', call: 'swap' },
+        { name: 'Connect', call: 'connect' },
         { name: 'Create wallet from phrase', disable: true }
       ]"
       [isError]="error || (password !== confirmPassword && confirmPassword)"
       [message]="(confirmPassword !== password && confirmPassword) ? 'PASSWORDS DON\'T MATCH' : message"
-      (backFunc)="back.emit()"
+      (funcCaller)="breadcrumbNav($event)"
     ></app-breadcrumb>
     <div class="top-right"></div>
   </div>
@@ -53,7 +53,7 @@
 
 <div class="bottom-actions two-btn">
   <div class="left-btn">
-    <button class="close-btn" (click)="back.emit()">
+    <button class="close-btn" (click)="backNav()">
       <span>cancel</span>
     </button>
   </div>

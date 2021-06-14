@@ -18,6 +18,7 @@
                 right: { text: 'Pool', tag: '', disable: false },
                 left: { text: 'Swap', tag: '', disable: false }
               }"
+              (clickCaller)="switchNav($event)"
             ></app-right-option>
           </div>
         </nav>
@@ -32,7 +33,7 @@
             selectedTargetAsset ? selectedTargetAsset.symbol : null
           "
           [selectableMarkets]="selectableMarkets"
-          (lunchMarket)="overlaysService.setCurrentSwapView('SourceAsset')"
+          (lunchMarket)="marketModal('source')"
           (maxError)="setMaxError($event)"
         >
         </app-asset-input>
@@ -63,7 +64,7 @@
           [error]="poolDetailTargetError || poolDetailSourceError"
           [selectableMarkets]="selectableMarkets"
           [showBalance]="false"
-          (lunchMarket)="overlaysService.setCurrentSwapView('TargetAsset')"
+          (lunchMarket)="marketModal('target')"
         >
         </app-asset-input>
 
@@ -165,6 +166,11 @@
 
         <!-- please connect button -->
         <div class="bottom-actions">
+          <button *ngIf="!user" class="next-btn wallet-connect" (click)="connectWallet()">
+            <span>Connect Wallet</span>
+          </button>
+
+
           <button
             *ngIf="
               user &&
@@ -182,8 +188,6 @@
           >
             <span>{{swapTextButton()}}</span>
           </button>
-
-          <app-connect *ngIf="!user && !appLocked"></app-connect>
 
           <button *ngIf="appLocked" class="next-btn bug-btn" [disabled]="true">
             <span>FIXING BUGS. WE'LL BE BACK SOON.</span>
@@ -215,6 +219,9 @@
       <app-markets-modal
         [(selectedAsset)]="selectedTargetAsset"
         [selectableMarkets]="selectableMarkets"
+        [events]="{
+          event_category: 'swap_asset_search'
+        }"
         [disabledAssetSymbol]="
           selectedSourceAsset ? selectedSourceAsset.symbol : null
         "
@@ -222,11 +229,12 @@
       >
         <app-breadcrumb
           [path]="[
-            { name: 'skip', swapView: 'Swap', mainView: 'Swap' },
-            { name: 'swap', swapView: 'Swap', mainView: 'Swap' },
+            { name: 'skip', call: 'skip' },
+            { name: 'swap', call: 'swap' },
             { name: 'SEARCH', disable: true }
           ]"
           message="SELECT"
+          (funcCaller)="marketNav($event)"
         ></app-breadcrumb>
       </app-markets-modal>
     </div>
@@ -238,6 +246,9 @@
       <app-markets-modal
         [(selectedAsset)]="selectedSourceAsset"
         [selectableMarkets]="selectableMarkets"
+        [events]="{
+          event_category: 'swap_asset_search'
+        }"
         [disabledAssetSymbol]="
           selectedTargetAsset ? selectedTargetAsset.symbol : null
         "
@@ -245,11 +256,12 @@
       >
         <app-breadcrumb
           [path]="[
-            { name: 'skip', swapView: 'Swap', mainView: 'Swap' },
-            { name: 'swap', swapView: 'Swap', mainView: 'Swap' },
+            { name: 'skip', call: 'skip' },
+            { name: 'swap', call: 'swap' },
             { name: 'SEARCH', disable: true }
           ]"
           message="SELECT"
+          (funcCaller)="marketNav($event)"
         ></app-breadcrumb>
       </app-markets-modal>
     </div>
