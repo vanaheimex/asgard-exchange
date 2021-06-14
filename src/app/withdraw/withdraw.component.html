@@ -35,7 +35,7 @@
         <span class="unstake-percent">{{ withdrawPercent }}%</span>
         <mat-slider
           class="slider"
-          [disabled]="!user"
+          [disabled]="sliderDisabled"
           [max]="100"
           [min]="0"
           step="1"
