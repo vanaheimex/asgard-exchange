@@ -67,7 +67,7 @@
         </app-notice>
       </div>
 
-      <div *ngIf="modalType === 'SWAP' || modalType === 'DEPOSIT' || modalType === 'UPGRADE'">
+      <div *ngIf="modalType === 'SWAP' || modalType === 'DEPOSIT' || modalType === 'UPGRADE' || modalType === 'CREATE'">
         <app-asset-input
           [label]="label[0]"
           [(selectedAsset)]="asset[0].asset"

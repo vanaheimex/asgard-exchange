@@ -24,7 +24,7 @@ export class TransactionSuccessModalComponent {
   @Output() closeDialog: EventEmitter<null>;
 
   //added by the new reskin
-  @Input() modalType: 'SWAP' | 'DEPOSIT' | 'WITHDRAW' | 'SEND' | 'UPGRADE';
+  @Input() modalType: 'SWAP' | 'DEPOSIT' | 'WITHDRAW' | 'SEND' | 'UPGRADE' | 'CREATE';
   @Input() asset: Array<AssetAndBalance>;
   @Input() label: Array<string>;
   @Input() amount: Array<number | BigNumber>;
@@ -105,6 +105,9 @@ export class TransactionSuccessModalComponent {
         }
         else if (this.modalType === 'SEND') {
           this.analyticsService.event('wallet_asset_send_success', 'tag_txid_copy_*WALLET*_*ASSET*_*FROM_ADDRESS*_*TO_ADDRESS*', undefined, this.asset[0].asset.chain, assetString(this.asset[0].asset), this.userService.getAdrressChain(this.asset[0].asset.chain),this.recipientAddress)
+        }
+        else if (this.modalType === 'CREATE') {
+          this.analyticsService.event('pool_create_success', 'tag_txid_copy_*ASSET*', undefined, assetString(this.asset[0].asset))
         }
       }
     }
@@ -214,6 +217,9 @@ export class TransactionSuccessModalComponent {
       else if (this.modalType === 'UPGRADE') {
         this.analyticsService.event('upgrade_success', 'tag_txid_explore_*FROM_ASSET*', undefined, assetString(this.asset[0].asset));
       }
+      else if (this.modalType === 'CREATE') {
+        this.analyticsService.event('pool_create_success', 'tag_txid_explore_*ASSET*', undefined, assetString(this.asset[0].asset));
+      }
     }
   }
 
@@ -232,6 +238,9 @@ export class TransactionSuccessModalComponent {
     }
     else if (this.modalType === 'UPGRADE') {
       this.analyticsService.event('upgrade_success', 'button_close');
+    }
+    else if (this.modalType === 'CREATE') {
+      this.analyticsService.event('pool_create_success', 'button_close');
     }
 
     this.closeDialog.emit()

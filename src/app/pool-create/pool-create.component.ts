@@ -23,7 +23,7 @@ import {
 } from "../_services/overlays.service";
 import { TransactionUtilsService } from "../_services/transaction-utils.service";
 import { PoolAddressDTO } from "../_classes/pool-address";
-import { AnalyticsService } from "../_services/analytics.service";
+import { AnalyticsService, assetString } from "../_services/analytics.service";
 
 @Component({
   selector: "app-pool-create",
@@ -429,6 +429,8 @@ export class PoolCreateComponent implements OnInit, OnDestroy {
       networkFee: this.networkFee,
       runeFee: this.runeFee,
     };
+    let createdAmountUSD = this.assetAmount * this.assetUsdValue + this.runeAmount * this.runeUsdValue;
+    this.analytics.event('pool_create', 'button_create_pool_*ASSET*_usd_*numerical_usd_value*', createdAmountUSD, assetString(this.asset), createdAmountUSD.toString());
     this.overlaysService.setCurrentCreatePoolView("Confirm");
   }
 
@@ -443,6 +445,10 @@ export class PoolCreateComponent implements OnInit, OnDestroy {
       );
 
       this.ethContractApprovalRequired = !isApproved;
+
+      //analytics for approve event
+      if (!isApproved)
+        this.analytics.event('pool_create_approve_contract', 'deposit_container_asset');
     }
   }
 
@@ -454,6 +460,7 @@ export class PoolCreateComponent implements OnInit, OnDestroy {
   }
 
   back() {
+    this.analytics.event('pool_create', 'button_cancel');
     this.router.navigate(["/", "pool"]);
   }
 

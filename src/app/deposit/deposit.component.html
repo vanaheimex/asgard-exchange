@@ -157,6 +157,7 @@
         [data]="{ asset: asset, contractAddress: ethRouter }"
         (approvedHash)="contractApproved()"
         (close)="overlaysService.setCurrentDepositView('Deposit')"
+        eventCategory="deposit_contract_approve"
         mode="deposit"
       ></app-approve-eth-contract-modal>
     </div>

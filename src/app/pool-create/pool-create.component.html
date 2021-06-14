@@ -26,6 +26,10 @@
           [selectableMarkets]="selectableMarkets"
           [priceInput]="assetUsdValue"
           (lunchMarket)="overlaysService.setCurrentCreatePoolView('Asset')"
+          [eventTags]="{
+            event_category: 'pool_create', 
+            event_label_max: 'tag_deposit_container_max_*ASSET*'
+          }"
         >
         </app-asset-input>
 
@@ -40,6 +44,10 @@
           [disabledMarketSelect]="true"
           [disabledAssetSymbol]="rune.symbol"
           [priceInput]="runeUsdValue"
+          [eventTags]="{
+            event_category: 'pool_create', 
+            event_label_max: 'tag_deposit_container_max_*ASSET*'
+          }"
         >
         </app-asset-input>
 
@@ -135,6 +143,7 @@
         [data]="{ asset: asset, contractAddress: ethRouter }"
         (approvedHash)="contractApproved()"
         (close)="overlaysService.setCurrentCreatePoolView('Create')"
+        eventCategory="pool_create_approve_contract_approve"
         mode="create pool"
       >
       </app-approve-eth-contract-modal>
