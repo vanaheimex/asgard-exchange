@@ -165,27 +165,6 @@ export class StakedPoolListItemComponent implements OnChanges {
         Number(this.memberPoolData.liquidityUnits) /
         Number(this.poolData.units);
 
-      let currentValue = new BigNumber(
-        this.poolShare * +this.poolData.runeDepth * this.poolData.runePrice +
-          this.poolShare *
-            +this.poolData.assetDepth *
-            +this.poolData.assetPriceUSD
-      )
-        .div(10 ** 8)
-        .toNumber();
-      let addedValue = new BigNumber(
-        this.runeYieldPool?.find(
-          (p) => p.pool === this.memberPoolData.pool
-        )?.totalstakedusd
-      )
-        .div(10 ** 8)
-        .toNumber();
-      if (!addedValue) {
-        this.gainLoss = 0;
-        return;
-      }
-      this.gainLoss = ((currentValue - addedValue) / addedValue) * 100;
-
       if (this.activate) {
         this.poolDetailService.setPooledDetails(
           "member",
@@ -196,6 +175,36 @@ export class StakedPoolListItemComponent implements OnChanges {
           this.asset.chain
         );
       }
+
+      // gain/loss calculation
+      let currentValue = new BigNumber(
+        this.poolShare * +this.poolData.runeDepth * this.poolData.runePrice +
+          this.poolShare *
+            +this.poolData.assetDepth *
+            +this.poolData.assetPriceUSD
+      ).plus(
+        new BigNumber(this.runeYieldPool?.find(
+          (p) => p.pool === this.memberPoolData.pool
+        )?.totalunstakedusd)
+      )
+        .div(10 ** 8)
+        .toNumber();
+
+      let addedValue = new BigNumber(
+        this.runeYieldPool?.find(
+          (p) => p.pool === this.memberPoolData.pool
+        )?.totalstakedusd
+      )
+        .div(10 ** 8)
+        .toNumber();
+
+      console.log(addedValue);
+      console.log(currentValue);
+
+      if (!addedValue) {
+        this.gainLoss = undefined;
+      }
+      this.gainLoss = ((currentValue - addedValue) / addedValue) * 100;
     }
   }
 
