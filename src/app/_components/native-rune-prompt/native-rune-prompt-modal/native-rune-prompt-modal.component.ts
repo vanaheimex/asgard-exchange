@@ -10,6 +10,7 @@ import {
 import { ThorchainPricesService } from "src/app/_services/thorchain-prices.service";
 import { UserService } from "src/app/_services/user.service";
 import { assetAmount } from "@xchainjs/xchain-util";
+import { AnalyticsService, assetString } from "src/app/_services/analytics.service";
 
 @Component({
   selector: "app-native-rune-prompt-modal",
@@ -31,7 +32,8 @@ export class NativeRunePromptModalComponent {
     private userService: UserService,
     private midgardService: MidgardService,
     private thorchainPricesService: ThorchainPricesService,
-    private overlaysService: OverlaysService
+    private overlaysService: OverlaysService,
+    private analytics: AnalyticsService
   ) {
     this.nonNativeRuneAssets = [];
     this.loading = true;
@@ -129,11 +131,20 @@ export class NativeRunePromptModalComponent {
     );
     this.selectedAsset = withBalance;
     this.mode = "UPGRADE_ASSET";
+
+    this.analytics.event('upgrade_select', 'option_selected_*ASSET*', undefined, assetString(asset));
   }
 
   transactionSuccessful(hash: string) {
     this.successfulTxHash = hash;
     this.mode = "SUCCESS";
+  }
+
+  breadcrumbNav(val: string) {
+    if (val === 'swap') {
+      this.analytics.event('upgrade_select', 'breadcrumb_skip');
+      this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
+    }
   }
 
   confirmUpgradeRune(p: { amount: number }) {

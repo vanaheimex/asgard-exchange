@@ -14,7 +14,7 @@ import { AssetAndBalance } from "src/app/_classes/asset-and-balance";
 import { PoolAddressDTO } from "src/app/_classes/pool-address";
 import { User } from "src/app/_classes/user";
 import { TransactionConfirmationState } from "src/app/_const/transaction-confirmation-state";
-import { AnalyticsService } from "src/app/_services/analytics.service";
+import { AnalyticsService, assetString } from "src/app/_services/analytics.service";
 import { CopyService } from "src/app/_services/copy.service";
 import { CurrencyService } from "src/app/_services/currency.service";
 import { EthUtilsService } from "src/app/_services/eth-utils.service";
@@ -72,7 +72,8 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
     private oveylaysService: OverlaysService,
     private txUtilsService: TransactionUtilsService,
     private curService: CurrencyService,
-    private analyticsService: AnalyticsService
+    private analytics: AnalyticsService,
+    private overlaysService: OverlaysService
   ) {
     this.insufficientChainBalance = false;
     this.back = new EventEmitter<null>();
@@ -160,6 +161,9 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
   submitTransaction() {
     this.txState = TransactionConfirmationState.SUBMITTING;
 
+    let upgradeAmountUSD = this.amount * this.asset.assetPriceUSD;
+    this.analytics.event('upgrade_confirm', 'button_upgrade_confirm_*FROM_ASSET*_THOR.RUNE_usd_*numerical_usd_value*', upgradeAmountUSD, assetString(this.asset.asset), upgradeAmountUSD.toString())
+
     this.midgardService.getInboundAddresses().subscribe(async (res) => {
       const currentPools = res;
 
@@ -181,6 +185,11 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
     });
   }
 
+  eventSuccessCall() {
+    this.analytics.event('upgrade_success', 'tag_upgrade_container_wallet_*ASSET*', undefined, assetString(this.asset.asset));
+    this.analytics.event('upgrade_success', 'tag_receive_container_wallet_THOR.RUNE');
+  }
+
   async keystoreTransfer(matchingPool: PoolAddressDTO) {
     try {
       const asset = this.asset.asset;
@@ -192,7 +201,6 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
         .getInboundAddresses()
         .toPromise();
 
-      this.analyticsService.eventEmitter('upgrade_confirm', 'upgrade_page', this.asset.asset.chain, this.amount);
       if (
         thorchainClient &&
         runeAddress &&
@@ -226,6 +234,7 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
 
           // this.transactionSuccessful.next(hash);
           this.txState = TransactionConfirmationState.SUCCESS;
+          this.eventSuccessCall()
         } else if (asset.chain === "ETH") {
           const client = this.user.clients.ethereum;
           const decimal = await this.ethUtilsService.getAssetDecimal(
@@ -279,6 +288,7 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
 
           // this.transactionSuccessful.next(hash);
           this.txState = TransactionConfirmationState.SUCCESS;
+          this.eventSuccessCall()
         }
       } else {
         this.txState = TransactionConfirmationState.ERROR;
@@ -294,12 +304,32 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
     return `SWITCH:${thorAddress}`;
   }
 
-  close(): void {
-    this.oveylaysService.setViews(MainViewsEnum.Swap, "Swap");
+  breadcrumbNav(val: string, type: 'processing' | 'success' | 'pending') {
+    let label;
+    switch (type) {
+      case 'success':
+        label = 'upgrade_success'
+        break;
+      case 'processing':
+        label = 'upgrade_processing'
+        break;
+      default:
+        label = 'upgrade_confirm'
+        break;
+    }
+
+    if (val === 'swap') {
+      this.analytics.event(label, 'breadcrumb_swap');
+      this.overlaysService.setViews(MainViewsEnum.Swap, 'Swap');
+    }
+    else if (val === 'back') {
+      this.analytics.event(label, 'breadcrumb_upgrade');
+      this.upgradeRune.emit();
+    }
   }
 
-  backCall(val: string): void {
-    if (val == "back") this.upgradeRune.emit();
+  close(): void {
+    this.oveylaysService.setViews(MainViewsEnum.Swap, "Swap");
   }
 
   ngOnDestroy() {

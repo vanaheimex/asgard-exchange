@@ -67,40 +67,30 @@ export class UserSettingsComponent implements OnDestroy {
   }
 
   openUserSettings() {
-    // this.overlayChange.emit(!this.overlay);
-    // if (this.currentView == MainViewsEnum.UserSetting)
-    //   this.overlaysService.setCurrentView(MainViewsEnum.Swap)
-    // else
     this.overlaysService.setCurrentUserView({
       userView: "Addresses",
       address: null,
       chain: null,
       asset: null,
     });
-    this.analyticsService.eventEmitter('menu_wallet_open', 'menu');
+    this.analyticsService.event('menu', 'option_selected_*MENU_OPTION*', undefined, "wallet");
     this.overlaysService.setSettingViews(MainViewsEnum.UserSetting, "ACCOUNT");
   }
 
   openAccountSetting() {
-    // if (this.currentView == MainViewsEnum.AccountSetting)
-    //   this.overlaysService.setCurrentView(MainViewsEnum.Swap)
-    // else
     this.overlaysService.setSettingView("ACCOUNT");
-    this.analyticsService.eventEmitter('menu_account_open', 'menu');
+    this.analyticsService.event('menu', 'option_selected_*MENU_OPTION*', undefined, "settings");
     this.overlaysService.setCurrentView(MainViewsEnum.AccountSetting);
   }
 
   openTransaction() {
-    // if (this.currentView == MainViewsEnum.Transaction)
-    //   this.overlaysService.setCurrentView(MainViewsEnum.Swap)
-    // else
-    this.analyticsService.eventEmitter('menu_transactions_open', 'menu');
+    this.analyticsService.event('menu', 'option_selected_*MENU_OPTION*', undefined, "transactions");
     this.overlaysService.setCurrentView(MainViewsEnum.Transaction);
   }
 
   disconnect() {
     this.userService.setUser(null);
-    this.analyticsService.eventEmitter('menu_disconnect', 'menu');
+    this.analyticsService.event('menu', 'option_selected_*MENU_OPTION*', undefined, "disconnect");
     this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
 
     // add this guard in case the route is not in the swap change it to the swap
@@ -111,6 +101,13 @@ export class UserSettingsComponent implements OnDestroy {
 
   toggleMenu() {
     this.showMenu = !this.showMenu;
+
+    if (this.showMenu) {
+      this.analyticsService.event('menu', 'menu_open');
+    }
+    else {
+      this.analyticsService.event('menu', 'menu_close');
+    }
   }
 
   ngOnDestroy() {

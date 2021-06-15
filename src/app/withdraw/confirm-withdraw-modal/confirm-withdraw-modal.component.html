@@ -13,7 +13,7 @@
           ]"
           [isError]="txState === 'ERROR'"
           [message]="message"
-          (funcCaller)="goToNav($event)"
+          (funcCaller)="breadcrumbNav($event, 'pending')"
         ></app-breadcrumb>
       </nav>
     </div>
@@ -139,7 +139,7 @@
     ]"
     [isError]=""
     [message]="'TRANSACTION PROCESSING'"
-    (funcCaller)="goToNav($event)"
+    (funcCaller)="breadcrumbNav($event, 'processing')"
   ></app-breadcrumb>
 </app-transaction-processing-modal>
 
@@ -165,6 +165,6 @@
     ]"
     [isError]=""
     [message]="'SUCCESS'"
-    (funcCaller)="goToNav($event)"
+    (funcCaller)="breadcrumbNav($event, 'success')"
   ></app-breadcrumb>
 </app-transaction-success-modal>

@@ -27,7 +27,7 @@ import { Balances } from "@xchainjs/xchain-client";
 import { AssetAndBalance } from "src/app/_classes/asset-and-balance";
 import { KeystoreDepositService } from "src/app/_services/keystore-deposit.service";
 import { Asset } from "src/app/_classes/asset";
-import { AnalyticsService } from "src/app/_services/analytics.service";
+import { AnalyticsService, assetString } from "src/app/_services/analytics.service";
 
 // assets should be added for asset-input as designed.
 export interface ConfirmDepositData {
@@ -120,6 +120,9 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
         this.deposit(res);
       }
     });
+
+    let depositAmountUSD = this.data.runeAmount * this.data.runePrice + this.data.assetAmount * this.data.assetPrice;
+    this.analyticsService.event('pool_deposit_symmetrical_confirm', 'button_deposit_confirm_symmetrical_*POOL_ASSET*_usd_*numerical_usd_value*', depositAmountUSD, assetString(this.data.asset.asset), depositAmountUSD.toString());
   }
 
   async deposit(pools: PoolAddressDTO[]) {
@@ -274,11 +277,23 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
     this.txState = TransactionConfirmationState.SUCCESS;
   }
 
-  goToNav(nav: string) {
+  breadcrumbNav(nav: string, type: 'pending' | 'success' | 'process') {
     if (nav === "pool") {
       this.router.navigate(["/", "pool"]);
+      if (type === 'pending')
+        this.analyticsService.event('pool_deposit_symmetrical_confirm', 'breadcrumb_pool');
+      else if (type === 'process')
+        this.analyticsService.event('pool_deposit_symmetrical_processing', 'breadcrumb_pool');
+      else if (type === 'success')
+        this.analyticsService.event('pool_deposit_symmetrical_success', 'breadcrumb_pool');
     } else if (nav === "swap") {
       this.router.navigate(["/", "swap"]);
+      if (type === 'pending')
+        this.analyticsService.event('pool_deposit_symmetrical_confirm', 'breadcrumb_skip');
+      else if (type === 'process')
+        this.analyticsService.event('pool_deposit_symmetrical_processing', 'breadcrumb_skip');
+      else if (type === 'success')
+        this.analyticsService.event('pool_deposit_symmetrical_success', 'breadcrumb_skip');
     } else if (nav === "deposit") {
       this.router.navigate([
         "/",
@@ -299,6 +314,8 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
   }
 
   closeDialog(transactionSucess?: boolean) {
+    let depositAmountUSD = this.data.runeAmount * this.data.runePrice + this.data.assetAmount * this.data.assetPrice;
+    this.analyticsService.event('pool_deposit_symmetrical_confirm', 'button_deposit_cancel_symmetrical_*POOL_ASSET*_usd_*numerical_usd_value*', depositAmountUSD, assetString(this.data.asset.asset), depositAmountUSD.toString());
     this.close.emit(transactionSucess);
   }
 

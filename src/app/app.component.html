@@ -41,10 +41,11 @@
         >
         Powered by
         <a class="footer-link" href="https://t.me/thorchain_org" target="_blank"
+          (click)="eventFooterClick('link_thorchain')"
           >THORChain</a
         >. Go to
-        <a class="footer-link" [href]="mainnetUrl" *ngIf="!isTestnet">TestNet</a
-        ><a class="footer-link" [href]="mainnetUrl" *ngIf="isTestnet">ChaosNet</a>
+        <a class="footer-link" [href]="mainnetUrl" *ngIf="!isTestnet" (click)="eventFooterClick('link_testnet')">TestNet</a
+        ><a class="footer-link" [href]="mainnetUrl" *ngIf="isTestnet" (click)="eventFooterClick('link_chaosnet')">ChaosNet</a>
         app instead.</span
       >
     </div>

@@ -19,6 +19,7 @@ import { UserService } from "src/app/_services/user.service";
 import { environment } from "src/environments/environment";
 import { DecimalPipe } from "@angular/common";
 import { HttpErrorResponse } from "@angular/common/http";
+import { AnalyticsService } from "src/app/_services/analytics.service";
 
 @Component({
   selector: "app-header",
@@ -55,6 +56,7 @@ export class HeaderComponent implements OnDestroy {
     private phraseConfirm: PhraseConfirmService,
     private midgardService: MidgardService,
     private _decimalPipe: DecimalPipe,
+    private analytics: AnalyticsService
   ) {
     this.isTestnet = environment.network === "testnet" ? true : false;
 
@@ -76,6 +78,7 @@ export class HeaderComponent implements OnDestroy {
   }
 
   gotoSwap() {
+    this.analytics.event('navigation', 'image_logo');
     if (this.isUnderstood)
       this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
   }

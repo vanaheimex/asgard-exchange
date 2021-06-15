@@ -41,7 +41,7 @@ import { Balances } from "@xchainjs/xchain-client";
 import { Transaction } from "src/app/_classes/transaction";
 import { CurrencyService } from "src/app/_services/currency.service";
 import { Currency } from "src/app/_components/account-settings/currency-converter/currency-converter.component";
-import { AnalyticsService } from 'src/app/_services/analytics.service';
+import { AnalyticsService, assetString } from 'src/app/_services/analytics.service';
 export interface SwapData {
   sourceAsset: AssetAndBalance;
   targetAsset: AssetAndBalance;
@@ -101,7 +101,7 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
     private explorerPathsService: ExplorerPathsService,
     private copyService: CopyService,
     private currencyService: CurrencyService,
-    private analyticsService: AnalyticsService
+    private analytics: AnalyticsService
   ) {
     this.txState = TransactionConfirmationState.PENDING_CONFIRMATION;
     this.insufficientChainBalance = false;
@@ -173,9 +173,14 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
   }
 
   closeDialog(transactionSucess?: boolean) {
-    // this.overlayChange.emit(!this.overlay);
-    // this.dialogRef.close(transactionSucess);
     this.overlaysService.setCurrentSwapView("Swap");
+
+    if (transactionSucess === false) {
+      this.analytics.event('swap_confirm', "button_swap_cancel_*FROM_ASSET*_*TO_ASSET*_usd_*numerical_usd_value*", this.swapData.inputValue * this.swapData.sourceAsset.assetPriceUSD, assetString(this.swapData.sourceAsset.asset), assetString(this.swapData.targetAsset.asset), (this.swapData.inputValue * this.swapData.sourceAsset.assetPriceUSD).toString());
+      if (this.userService.ThorAddress !== this.swapData.targetAddress)
+        this.analytics.event('swap_confirm', "button_swap_cancel_*FROM_ASSET*_*TO_ASSET*_target_address", undefined, assetString(this.swapData.sourceAsset.asset), assetString(this.swapData.targetAsset.asset));
+      this.analytics.event('swap_confirm', "button_swap_cancel_*FROM_ASSET*_*TO_ASSET*_slip_%_*numerical_%_value*", this.swapData.slip, assetString(this.swapData.sourceAsset.asset), assetString(this.swapData.targetAsset.asset), this.swapData.slip.toString());
+    }
 
     if (transactionSucess) this.closeTransaction.emit();
   }
@@ -194,7 +199,10 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
 
   submitTransaction() {
     this.txState = TransactionConfirmationState.SUBMITTING;
-    this.analyticsService.eventEmitter('swap_confirm', 'swap_page', `${assetToString(this.swapData.sourceAsset.asset)}_${assetToString(this.swapData.targetAsset.asset)}`, this.swapData.inputValue * this.swapData.sourceAsset.assetPriceUSD);
+    this.analytics.event('swap_confirm', `button_swap_confirm_${assetToString(this.swapData.sourceAsset.asset)}_${assetToString(this.swapData.targetAsset.asset)}_usd_${this.swapData.inputValue * this.swapData.sourceAsset.assetPriceUSD}`, this.swapData.inputValue * this.swapData.sourceAsset.assetPriceUSD);
+    if (this.userService.ThorAddress !== this.swapData.targetAddress)
+      this.analytics.event('swap_confirm', `button_swap_confirm_${assetToString(this.swapData.sourceAsset.asset)}_${assetToString(this.swapData.targetAsset.asset)}_target_address`, undefined, this.userService.ThorAddress);
+    this.analytics.event('swap_confirm', `button_swap_confirm_${assetToString(this.swapData.sourceAsset.asset)}_${assetToString(this.swapData.targetAsset.asset)}_slip_${this.swapData.slip}`, this.swapData.slip, this.userService.ThorAddress);
 
     // Source asset is not RUNE
     if (
@@ -527,6 +535,7 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
           this.outboundHash = "success";
         }
 
+        this.analytics.event('swap_success', "tag_receive_container_wallet_*ASSET*", undefined, res.out[0].coins[0].asset);
       });
 
     this.subs.push(outbound$);
@@ -546,6 +555,30 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
         hash: undefined,
       },
     });
+  }
+
+  breadcrumbNav(val: string, type: 'processing' | 'success' | 'pending' = 'pending') {
+    let label;
+    switch (type) {
+      case 'success':
+        label = 'swap_success'
+        break;
+      case 'processing':
+        label = 'swap_processing'
+        break;
+      default:
+        label = 'swap_confirm'
+        break;
+    }
+
+    if (val === 'skip') {
+      this.analytics.event(label, 'breadcrumb_skip');
+      this.overlaysService.setViews(MainViewsEnum.Swap, 'Swap');
+    }
+    else if (val === 'swap') {
+      this.analytics.event(label, 'breadcrumb_swap');
+      this.overlaysService.setViews(MainViewsEnum.Swap, 'Swap');
+    }
   }
 
   getSwapMemo(

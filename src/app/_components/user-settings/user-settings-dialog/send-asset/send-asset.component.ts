@@ -12,11 +12,12 @@ import { getChainAsset } from "src/app/_classes/asset";
 import { AssetAndBalance } from "src/app/_classes/asset-and-balance";
 import { PoolAddressDTO } from "src/app/_classes/pool-address";
 import { User } from "src/app/_classes/user";
-import { OverlaysService } from "src/app/_services/overlays.service";
+import { MainViewsEnum, OverlaysService } from "src/app/_services/overlays.service";
 import { MidgardService } from "src/app/_services/midgard.service";
 import { TransactionUtilsService } from "src/app/_services/transaction-utils.service";
 import { UserService } from "src/app/_services/user.service";
 import { XChainClient } from "@xchainjs/xchain-client";
+import { AnalyticsService, assetString } from "src/app/_services/analytics.service";
 
 @Component({
   selector: "app-send-asset",
@@ -68,7 +69,8 @@ export class SendAssetComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private overlaysService: OverlaysService,
     private midgardService: MidgardService,
-    private txUtilsService: TransactionUtilsService
+    private txUtilsService: TransactionUtilsService,
+    private analytics: AnalyticsService
   ) {
     this.recipientAddress = "";
     this.memo = "";
@@ -239,32 +241,66 @@ export class SendAssetComponent implements OnInit, OnDestroy {
         : "prepare";
   }
 
-  async navCaller(nav) {
+  async breadcrumbNav(nav) {
     this.address = await this.userService.getAdrressChain(
       this.asset.asset.chain
     );
-
-    if (nav === "wallet")
+    
+    if (nav === 'swap') {
+      this.analytics.event('wallet_asset_send_prepare', 'breadcrumb_skip');
+      this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
+    }
+    else if (nav === "wallet") {
+      this.analytics.event('wallet_asset_send_prepare', 'breadcrumb_wallet');
       this.overlaysService.setCurrentUserView({
         userView: "Addresses",
         address: null,
         chain: null,
         asset: null,
       });
-    else if (nav === "chain")
+    }
+    else if (nav === "chain") {
+      this.analytics.event('wallet_asset_send_prepare', 'breadcrumb_*WALLET*', undefined, this.asset.asset.chain);
       this.overlaysService.setCurrentUserView({
         userView: "Address",
         address: this.address,
         chain: this.asset.asset.chain,
         asset: null,
       });
-    else if (nav === "asset")
+    }
+    else if (nav === "asset") {
+      this.analytics.event('wallet_asset_send_prepare', 'breadcrumb_*ASSET*', undefined, assetString(this.asset.asset));
       this.overlaysService.setCurrentUserView({
         userView: "Address",
         address: this.address,
         chain: this.asset.asset.chain,
         asset: this.asset,
       });
+    }
+  }
+
+  sendNav() {
+    /** Might be complicated analytics see if won't make performance issue */
+    let sendAmountUSD = this.amount * this.asset.assetPriceUSD;
+    this.analytics.event('wallet_asset_send_prepare', 'button_send_*WALLET*_*ASSET*_*FROM_ADDRESS*_*TO_ADDRESS*_usd_*numerical_usd_value*', 
+      sendAmountUSD,
+      this.asset.asset.chain,
+      assetString(this.asset.asset),
+      this.userService.getClientByChain(this.asset.asset.chain),
+      this.recipientAddress,
+      sendAmountUSD.toString()
+    )
+
+    this.confirmSend.next({
+      amount: this.amount,
+      recipientAddress: this.recipientAddress,
+      memo: this.memo
+    })
+  }
+
+  backNav() {
+    this.analytics.event('wallet_asset_send_prepare', 'button_cancel_*WALLET*_*ASSET*', undefined, assetString(this.asset.asset));
+    this.back.emit()
   }
 
   ngOnDestroy() {

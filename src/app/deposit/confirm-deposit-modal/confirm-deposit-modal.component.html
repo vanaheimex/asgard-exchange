@@ -14,7 +14,7 @@
             ]"
             [isError]="error"
             [message]="getMessage()"
-            (funcCaller)="goToNav($event)"
+            (funcCaller)="breadcrumbNav($event, 'pending')"
           ></app-breadcrumb>
         </nav>
       </div>
@@ -135,7 +135,7 @@
         { name: 'Deposit', disable: true }
       ]"
       message="Transaction Processing"
-      (funcCaller)="goToNav($event)"
+      (funcCaller)="breadcrumbNav($event, 'process')"
     ></app-breadcrumb>
   </app-transaction-processing-modal>
 
@@ -158,7 +158,7 @@
         { name: 'Deposit', call: 'deposit-back' }
       ]"
       message="Success"
-      (funcCaller)="goToNav($event)"
+      (funcCaller)="breadcrumbNav($event, 'success')"
     ></app-breadcrumb>
   </app-transaction-success-modal>
 

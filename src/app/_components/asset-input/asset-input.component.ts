@@ -26,7 +26,12 @@ import { Currency } from "../account-settings/currency-converter/currency-conver
 import { PoolAddressDTO } from "src/app/_classes/pool-address";
 import { TxType } from "src/app/_const/tx-type";
 import { take } from "rxjs/operators";
+import { AnalyticsService } from "src/app/_services/analytics.service";
 
+export type assetInputEventTags = {
+  event_category: string,
+  event_label_max?: string,
+}
 @Component({
   selector: "app-asset-input",
   templateUrl: "./asset-input.component.html",
@@ -66,6 +71,7 @@ export class AssetInputComponent implements OnInit, OnDestroy {
   @Input() disableUser?: boolean;
   @Input() disabledAssetSymbol: string;
   @Input() isWallet: boolean = false;
+  @Input() eventTags: assetInputEventTags;
 
   /**
    * Wallet balance
@@ -120,7 +126,8 @@ export class AssetInputComponent implements OnInit, OnDestroy {
     public overlayService: OverlaysService,
     private midgardService: MidgardService,
     private thorchainPricesService: ThorchainPricesService,
-    private currencyService: CurrencyService
+    private currencyService: CurrencyService,
+    private analytics: AnalyticsService
   ) {
     const user$ = this.userService.user$.subscribe(
       (user) => (this.user = user)
@@ -223,6 +230,9 @@ export class AssetInputComponent implements OnInit, OnDestroy {
 
       if (max) {
         this.assetUnitChange.emit(max);
+        if (this.eventTags) {
+          this.analytics.event(this.eventTags.event_category, this.eventTags.event_label_max);
+        }
       } else {
         if (max === 0 && this.balance > 0) {
           this.maxError.emit(true);
@@ -279,6 +289,7 @@ export class AssetInputComponent implements OnInit, OnDestroy {
             const address = await this.userService.getAdrressChain(
               this.selectedAsset.chain
             );
+            this.analytics.event(this.eventTags.event_category, 'tag_wallet_*ASSET*', undefined, assetString);
             this.overlayService.setCurrentUserView({
               userView: "Asset",
               address,

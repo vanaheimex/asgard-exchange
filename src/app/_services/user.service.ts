@@ -55,6 +55,8 @@ export class UserService {
   pendingBalances$ = this.pendingBalancesSource.asObservable();
   private _pendingBalances: boolean;
 
+  public ThorAddress = undefined;
+
   constructor(
     private midgardService: MidgardService,
     private txUtilsService: TransactionUtilsService,
@@ -72,6 +74,7 @@ export class UserService {
     this._user = user;
     this.userSource.next(user);
     if (user) {
+      this.ThorAddress = this.getTokenAddress(user, "THOR") ?? undefined;
       this.fetchBalances();
     } else {
       this.userBalancesSource.next(null);

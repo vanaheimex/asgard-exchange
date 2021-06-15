@@ -3,12 +3,12 @@
     <div class="content-top">
       <app-breadcrumb
         [path]="[
-          { name: 'skip', swapView: 'Swap', mainView: 'Swap' },
+          { name: 'skip', call: 'swap' },
           { name: 'wallet', call: 'wallet' },
           { name: chain, disable: true }
         ]"
         message="select"
-        (funcCaller)="navCaller($event)"
+        (funcCaller)="breadcrumbNav($event)"
       ></app-breadcrumb>
       <div class="top-right"></div>
     </div>
@@ -34,6 +34,7 @@
                   target="_blank"
                   style="text-decoration: none; color: inherit"
                   [href]="explorerPath"
+                  (click)="eventClick()"
                   >Explore</a
                 >
               </div>
@@ -78,7 +79,7 @@
       <div class="left-btn">
         <button
           class="close-btn flex justify-center items-center"
-          (click)="back.emit()"
+          (click)="backNav()"
         >
           <svg
             class="arrow-left"

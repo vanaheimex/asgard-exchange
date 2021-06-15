@@ -27,6 +27,7 @@ import { Client as LitecoinClient } from "@xchainjs/xchain-litecoin";
 import { Client as BchClient } from "@xchainjs/xchain-bitcoincash";
 import { Client as BitcoinClient } from "@xchainjs/xchain-bitcoin";
 import { Balances } from "@xchainjs/xchain-client";
+import { AnalyticsService } from "src/app/_services/analytics.service";
 
 export interface ConfirmCreatePoolData {
   asset;
@@ -62,7 +63,8 @@ export class ConfirmPoolCreateComponent implements OnDestroy {
     private txStatusService: TransactionStatusService,
     private ethUtilsService: EthUtilsService,
     private overlaysService: OverlaysService,
-    private router: Router
+    private router: Router,
+    private analytics: AnalyticsService
   ) {
     this.txState = TransactionConfirmationState.PENDING_CONFIRMATION;
 
@@ -247,10 +249,25 @@ export class ConfirmPoolCreateComponent implements OnDestroy {
     }
   }
 
-  goToNav(nav: string) {
+  breadcrumbNav(nav: string, type: string) {
+    let label;
+    switch (type) {
+      case 'success':
+        label = 'pool_create_confirm'
+        break;
+      case 'processing':
+        label = 'pool_create_processing'
+        break;
+      default:
+        label = 'pool_create_success'
+        break;
+    }
+
     if (nav === "pool") {
+      this.analytics.event(label, 'breadcrumb_pools');
       this.router.navigate(["/", "pool"]);
     } else if (nav === "swap") {
+      this.analytics.event(label, 'breadcrumb_skip');
       this.router.navigate(["/", "swap"]);
     } else if (nav === "create") {
       this.router.navigate(["/", "create-pool"], {

@@ -6,6 +6,7 @@ import {
   Output,
 } from "@angular/core";
 import { Subscription } from "rxjs";
+import { AnalyticsService } from "src/app/_services/analytics.service";
 import {
   MainViewsEnum,
   OverlaysService,
@@ -37,7 +38,8 @@ export class SlippageToleranceComponent implements OnInit, OnDestroy {
 
   constructor(
     private slippageToleranceService: SlippageToleranceService,
-    private overlaysService: OverlaysService
+    private overlaysService: OverlaysService,
+    private analytics: AnalyticsService
   ) {
     this.slippageTolerance$ =
       this.slippageToleranceService.slippageTolerance$.subscribe(
@@ -52,13 +54,26 @@ export class SlippageToleranceComponent implements OnInit, OnDestroy {
     this.message = "adjust";
   }
 
+  breadcrumbNav(val: string) {
+    if (val === 'swap') {
+      this.analytics.event('setting_slippage_tolerance', 'breadcrumb_skip');
+      this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
+    }
+    else if (val === 'settings') {
+      this.analytics.event('setting_slippage_tolerance', 'breadcrumb_settings');
+      this.close.emit()
+    } 
+  }
+
   setSlippage() {
+    this.analytics.event('setting_slippage_tolerance', 'button_save_%_*numerical_value*', undefined, this.customTolerance.toString());
     this.slippageToleranceService.setSlippageTolerance(this.customTolerance);
     this.message = "saved";
     this.closeDialog();
   }
 
   closeDialog() {
+    this.analytics.event('setting_slippage_tolerance', 'button_cancel_%_*numerical_value*', undefined, this.customTolerance.toString());
     const gotoSwap = this.overlaysService.getSettingNavSwap();
     if (gotoSwap) {
       this.overlaysService.setSettingViews(MainViewsEnum.Swap, "ACCOUNT");

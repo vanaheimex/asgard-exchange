@@ -5,11 +5,11 @@
     <div class="content-top">
       <app-breadcrumb
         [path]="[
-          { name: 'skip', swapView: 'Swap', mainView: 'Swap' },
-          { name: 'SETTINGS', disable: false, backFunc: true },
+          { name: 'skip', call: 'swap' },
+          { name: 'SETTINGS', call: 'settings' },
           { name: 'CURRENCY', disable: true }
         ]"
-        (backFunc)="close.emit()"
+        (funcCaller)="breadcrumbNav($event)"
         [message]="message"
       ></app-breadcrumb>
       <div class="top-right">
@@ -68,7 +68,7 @@
     </div>
 
     <div class="bottom-actions two-btn">
-      <button class="left-btn close-btn" (click)="close.emit()">
+      <button class="left-btn close-btn" (click)="closeNav()">
         <span>close</span>
       </button>
       <div class="divider"></div>

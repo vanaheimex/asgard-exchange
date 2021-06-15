@@ -73,7 +73,7 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
     private transactionStatusService: TransactionStatusService,
     private cgService: CoinGeckoService,
     private currencyService: CurrencyService,
-    private analyticsService: AnalyticsService
+    private analytics: AnalyticsService
   ) {
     this.pools = [];
     this.pendingTxCount = 0;
@@ -129,6 +129,9 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
     chain?: Chain,
     asset?: AssetAndBalance
   ) {
+    if (val === "Address") {
+      this.analytics.event('wallet_select', 'option_selected_*WALLET*', undefined, chain)
+    }
     this.overlaysService.setCurrentUserView({
       userView: val,
       address: address === undefined ? this.selectedAddress : address,
@@ -193,6 +196,13 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
     this.subs.push(balances$);
   }
 
+  breadcrumbNav(val: string) {
+    if (val === 'swap') {
+      this.analytics.event('wallet_select', 'breadcrumb_skip');
+      this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
+    }
+  }
+
   selectAddress(address: string, chain: Chain) {
     this.selectedAddress = address;
     this.selectedChain = chain;
@@ -221,7 +231,7 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
     this.amountToSend = p.amount;
     this.recipient = p.recipientAddress;
     this.memo = p.memo;
-    this.analyticsService.eventEmitter('send_asset', 'send_page', assetToString(this.selectedAsset.asset), this.amountToSend);
+    this.analytics.eventEmitter('send_asset', 'send_page', assetToString(this.selectedAsset.asset), this.amountToSend);
     this.mode = "CONFIRM_SEND";
     this.setMode("Confirm");
   }
@@ -253,6 +263,7 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
   }
 
   close() {
+    this.analytics.event('wallet_select', 'button_close');
     this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
   }
 

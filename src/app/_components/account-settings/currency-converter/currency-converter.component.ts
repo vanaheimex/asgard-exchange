@@ -1,7 +1,10 @@
 import { Component, EventEmitter, OnInit, Output } from "@angular/core";
 import { Subscription } from "rxjs";
+import { take } from "rxjs/operators";
 import { currenciesName } from "src/app/_const/currencies";
+import { AnalyticsService } from "src/app/_services/analytics.service";
 import { CurrencyService } from "src/app/_services/currency.service";
+import { MainViewsEnum, OverlaysService } from "src/app/_services/overlays.service";
 
 export interface Currency {
   symbol: string;
@@ -21,6 +24,7 @@ export class CurrencyConverterComponent implements OnInit {
   @Output() close: EventEmitter<null> = new EventEmitter<null>();
   activeIndex: number;
   message: string;
+  currency: Currency;
 
   /** Search feature for currency list */
   get searchTerm(): string {
@@ -41,8 +45,18 @@ export class CurrencyConverterComponent implements OnInit {
   _searchTerm: string;
   filterdCurrencies: Currency[];
 
-  constructor(private currencyService: CurrencyService) {
+  constructor(
+    private currencyService: CurrencyService,
+    private overlaysService: OverlaysService,
+    private analytics: AnalyticsService
+  ) {
     this.currencies = [] as Currency[];
+
+    currencyService.cur$.pipe(take(1)).subscribe(
+      (cur) => {
+        this.currency = cur;
+      }
+    )
 
     const cur$ = currencyService.getDailyCurrencyValue().subscribe((curs) => {
       let usdBased = curs["usd"];
@@ -60,8 +74,26 @@ export class CurrencyConverterComponent implements OnInit {
 
     this.subs = [cur$];
   }
+  
+  ngOnInit(): void {
+    this.message = "select";
+
+    this.filterdCurrencies = this.currencies;
+  }
+
+  breadcrumbNav(val: string) {
+    if (val === "swap") {
+      this.analytics.event('setting_conversion_currency', 'breadcrumb_skip');
+      this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
+    }
+    else if (val === "settings") {
+      this.analytics.event('setting_conversion_currency', 'breadcrumb_settings');
+      this.close.emit();
+    }
+  }
 
   saveCurrency() {
+    this.analytics.event('setting_conversion_currency', 'button_save_*OLD_CURRENCY_CODE*_*NEW_CURRENCY_CODE*', undefined, this.currency.code, this.currencies[this.activeIndex].code)
     this.currencyService.setActiveCurrency(this.currencies[this.activeIndex]);
     localStorage.setItem(
       `active_currency`,
@@ -71,10 +103,9 @@ export class CurrencyConverterComponent implements OnInit {
     this.close.emit();
   }
 
-  ngOnInit(): void {
-    this.message = "select";
-
-    this.filterdCurrencies = this.currencies;
+  closeNav() {
+    this.analytics.event('setting_conversion_currency', 'button_close');
+    this.close.emit()
   }
 
   ngOnDestroy(): void {

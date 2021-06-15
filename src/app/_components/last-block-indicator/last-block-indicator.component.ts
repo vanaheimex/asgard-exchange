@@ -3,6 +3,7 @@ import { Subscription } from "rxjs";
 import { LastBlockService } from "src/app/_services/last-block.service";
 import { environment } from "src/environments/environment";
 import { links } from "src/app/_const/links";
+import { AnalyticsService } from "src/app/_services/analytics.service";
 
 @Component({
   selector: "app-last-block-indicator",
@@ -18,7 +19,7 @@ export class LastBlockIndicatorComponent implements OnDestroy {
   gitHubUrl: string;
   links: any;
 
-  constructor(private lastBlockService: LastBlockService) {
+  constructor(private lastBlockService: LastBlockService, private analytics: AnalyticsService) {
     this.isTestnet = environment.network === "testnet";
     this.gitHubUrl = links.github;
     this.links = links;
@@ -32,6 +33,10 @@ export class LastBlockIndicatorComponent implements OnDestroy {
     });
 
     this.subs = [lastBlock$];
+  }
+
+  navigationEvent(type: string) {
+    this.analytics.event('navigation', type);
   }
 
   ngOnDestroy() {

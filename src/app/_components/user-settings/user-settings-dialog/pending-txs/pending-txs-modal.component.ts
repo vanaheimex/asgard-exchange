@@ -19,6 +19,7 @@ import { UserService } from "src/app/_services/user.service";
 import { MidgardService } from "src/app/_services/midgard.service";
 import { TransactionDTO } from "src/app/_classes/transaction";
 import { Chain } from "@xchainjs/xchain-util";
+import { AnalyticsService, assetString } from "src/app/_services/analytics.service";
 
 @Component({
   selector: "app-pending-txs-modal",
@@ -46,7 +47,8 @@ export class PendingTxsModalComponent implements OnDestroy {
     private txStatusService: TransactionStatusService,
     private overlaysService: OverlaysService,
     private userService: UserService,
-    private midgardService: MidgardService
+    private midgardService: MidgardService,
+    private analytics: AnalyticsService
   ) {
     this.back = new EventEmitter<null>();
     this.txs = [];
@@ -257,6 +259,48 @@ export class PendingTxsModalComponent implements OnDestroy {
     }
   }
 
+  exploreEvent(tx: Tx, exploreAsset: string = `${tx.chain}.${tx.ticker}`) {
+    if (!exploreAsset)
+      return
+    
+    if (tx.action === "Withdraw") {
+      this.analytics.event('transaction_select', `option_selected_withdraw_*POOL_ASSET*_tag_txid_explore_*ASSET*`,
+        undefined,
+        `${tx.chain}.${tx.ticker}`,
+        exploreAsset
+      )
+    }
+    else if (tx.action === "Deposit") {
+      this.analytics.event('transaction_select', 'option_selected_deposit_*POOL_ASSET*_tag_txid_explore_*ASSET*',
+        undefined,
+        `${tx.chain}.${tx.ticker}`,
+        exploreAsset
+      )
+    }
+    else if (tx.action === 'Swap') {
+      this.analytics.event('transaction_select', 'option_selected_swap_*FROM_ASSET*_*TO_ASSET*_tag_txid_explore_*ASSET*',
+        undefined,
+        `${tx.chain}.${tx.ticker}`,
+        assetString(tx.outbound.asset),
+        exploreAsset
+      )
+    }
+    else if (tx.action === "Upgrade") {
+      this.analytics.event('transaction_select', 'option_selected_upgrade_*ASSET*_tag_txid_explore_*ASSET*',
+        undefined,
+        `${tx.chain}.${tx.ticker}`,
+        exploreAsset
+      )
+    }
+    else if (tx.action === 'Send') {
+      this.analytics.event('transaction_select', 'option_selected_send_*ASSET*_tag_txid_explore_*ASSET*',
+        undefined,
+        `${tx.chain}.${tx.ticker}`,
+        exploreAsset
+      )
+    }
+  }
+
   goToExternal(url: string) {
     window.open(url, "_blank");
   }
@@ -269,8 +313,15 @@ export class PendingTxsModalComponent implements OnDestroy {
     return path;
   }
 
+  breadcrumbNav(val: string) {
+    if (val === 'swap') {
+      this.analytics.event('transaction_select', 'breadcrumb_skip');
+      this.overlaysService.setViews(MainViewsEnum.Swap, 'Swap');
+    }
+  }
+
   close(): void {
-    // this.dialogRef.close();
+    this.analytics.event('transaction_select', 'button_close');
     this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
   }
 

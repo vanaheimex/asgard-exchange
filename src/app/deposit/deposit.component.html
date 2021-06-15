@@ -13,7 +13,7 @@
               { name: 'Deposit', disable: true }
             ]"
             [message]="mainButtonText()"
-            (funcCaller)="goToNav($event)"
+            (funcCaller)="breadCrumbNav($event)"
           ></app-breadcrumb>
         </nav>
       </div>
@@ -26,8 +26,12 @@
         [disabledAssetSymbol]="rune.symbol"
         [selectableMarkets]="selectableMarkets"
         [isDeposit]="true"
-        (lunchMarket)="overlaysService.setCurrentDepositView('Asset')"
+        (lunchMarket)="lunchMarket()"
         (maxError)="setMaxError($event)"
+        [eventTags]="{
+          event_category: 'pool_deposit_symmetrical_prepare',
+          event_label_max: 'tag_deposit_symmetrical_container_max'
+        }"
       >
       </app-asset-input>
 
@@ -44,6 +48,10 @@
         [disabledAssetSymbol]="rune.symbol"
         [disabledMarketSelect]="true"
         [isDeposit]="true"
+        [eventTags]="{
+          event_category: 'pool_deposit_symmetrical_prepare',
+          event_label_max: 'tag_deposit_symmetrical_container_max'
+        }"
       >
       </app-asset-input>
 
@@ -100,7 +108,7 @@
         </div>
         <div class="divider"></div>
         <div class="right-btn">
-          <button class="next-btn" (click)="overlaysService.setCurrentDepositView('Connect')">
+          <button class="next-btn" (click)="connectWallet()">
             <span>Connect</span>
           </button>
         </div>
@@ -124,6 +132,9 @@
         [disabledAssetSymbol]="rune.symbol"
         (close)="overlaysService.setCurrentDepositView('Deposit')"
         [showApy]="true"
+        [events]="{
+          event_category: 'pool_deposit_symmetrical_asset_search'
+        }"
       >
         <app-breadcrumb
           [path]="[
@@ -133,7 +144,7 @@
             { name: 'SEARCH', disable: true }
           ]"
           message="SELECT"
-          (funcCaller)="goToNav($event)"
+          (funcCaller)="breadCrumbNav($event)"
         ></app-breadcrumb>
       </app-markets-modal>
     </div>
@@ -146,6 +157,7 @@
         [data]="{ asset: asset, contractAddress: ethRouter }"
         (approvedHash)="contractApproved()"
         (close)="overlaysService.setCurrentDepositView('Deposit')"
+        eventCategory="deposit_contract_approve"
         mode="deposit"
       ></app-approve-eth-contract-modal>
     </div>
