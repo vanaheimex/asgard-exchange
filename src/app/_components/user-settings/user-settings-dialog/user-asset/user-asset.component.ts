@@ -113,7 +113,7 @@ export class UserAssetComponent {
     );
     
     /** Analytics section */
-    this.analytics.event('wallet_asset', 'tag_tx_list_send_*ASSET*_tag_txid_explore_*ASSET*', undefined, assetString(this.asset.asset), assetString(this.asset.asset))
+    this.analytics.event('wallet_asset', 'tag_tx_list_tag_txid_explore_*WALLET*_*ASSET*', undefined, this.chain, assetString(this.asset.asset))
 
     return client.getExplorerTxUrl(hash);
   }
