@@ -586,7 +586,7 @@ export class WithdrawComponent implements OnInit {
     if (transactionSuccess) {
       this.withdrawPercent = 0;
     }
-
+    
     this.overlaysService.setCurrentWithdrawView("Withdraw");
   }
 
@@ -649,5 +649,9 @@ export class WithdrawComponent implements OnInit {
       },
       (err) => console.error("error getting pool detail: ", err)
     );
+  }
+
+  ngOnDestroy() {
+    this.overlaysService.setCurrentWithdrawView("Withdraw");
   }
 }

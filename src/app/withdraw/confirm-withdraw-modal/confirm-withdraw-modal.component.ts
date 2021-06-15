@@ -61,6 +61,8 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
   @Input() data: ConfirmWithdrawData;
   @Output() close: EventEmitter<boolean>;
 
+  message: string = "confirm";
+
   constructor(
     private txStatusService: TransactionStatusService,
     private txUtilsService: TransactionUtilsService,
@@ -136,6 +138,7 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
     } catch (error) {
       console.error("error making RUNE withdraw: ", error);
       this.error = error;
+      this.message = error;
       this.txState = TransactionConfirmationState.ERROR;
     }
   }
