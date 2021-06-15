@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit } from "@angular/core";
 import { Subscription } from "rxjs";
+import { AnalyticsService } from "src/app/_services/analytics.service";
 import {
   MainViewsEnum,
   OverlaysService,
@@ -26,7 +27,8 @@ export class ReconnectXDEFIDialogComponent implements OnInit {
     // private dialogRef: MatDialogRef<ReconnectXDEFIDialogComponent>,
     private userService: UserService,
     private xdefiService: XDEFIService,
-    private overlaysService: OverlaysService
+    private overlaysService: OverlaysService,
+    private analytics: AnalyticsService
   ) {
     this.isTestnet = environment.network === "testnet";
   }
@@ -44,6 +46,8 @@ export class ReconnectXDEFIDialogComponent implements OnInit {
     if (this.connecting) {
       return;
     }
+
+    this.analytics.event('connect_reconnect_xdefi', 'button_connect');
     
     this.connecting = true;
 
@@ -82,8 +86,20 @@ export class ReconnectXDEFIDialogComponent implements OnInit {
     return { text: "Reconnect or forget", isError: false };
   }
 
+  breadcrumbNav(val: string) {
+    if (val === 'skip') {
+      this.analytics.event('connect_reconnect_xdefi', 'breadcrumb_skip');
+      this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
+    }
+    else if (val === 'connect') {
+      this.analytics.event('connect_reconnect_xdefi', 'breadcrumb_connect');
+      this.overlaysService.setViews(MainViewsEnum.Swap, "Connect");
+    }
+  }
+
   forget() {
     localStorage.clear();
+    this.analytics.event('connect_reconnect_xdefi', 'button_forget');
     this.overlaysService.setCurrentView(MainViewsEnum.Swap);
     // this.dialogRef.close();
   }

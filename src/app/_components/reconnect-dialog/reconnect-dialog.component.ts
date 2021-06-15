@@ -7,6 +7,7 @@ import {
   EventEmitter,
 } from "@angular/core";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { AnalyticsService } from "src/app/_services/analytics.service";
 import { KeystoreService } from "src/app/_services/keystore.service";
 import {
   OverlaysService,
@@ -30,7 +31,8 @@ export class ReconnectDialogComponent {
     // private dialogRef: MatDialogRef<ReconnectDialogComponent>,
     private keystoreService: KeystoreService,
     private userService: UserService,
-    public overlayService: OverlaysService
+    public overlayService: OverlaysService,
+    private analytics: AnalyticsService
   ) {
     this.keystoreConnecting = false;
     // this.keystore = data.keystore;
@@ -45,11 +47,24 @@ export class ReconnectDialogComponent {
       return;
     }
 
+    this.analytics.event('connect_reconnect_keystore', 'button_connect');
+
     this.keystoreConnecting = true;
 
     setTimeout(() => {
       this.keystoreUnlock();
     }, 100);
+  }
+
+  breadcrumbNav(val: string) {
+    if (val === 'skip') {
+      this.analytics.event('connect_reconnect_keystore', 'breadcrumb_skip');
+      this.overlayService.setViews(MainViewsEnum.Swap, "Swap");
+    }
+    else if (val === 'connect') {
+      this.analytics.event('connect_reconnect_keystore', 'breadcrumb_connect');
+      this.overlayService.setViews(MainViewsEnum.Swap, "Connect");
+    }
   }
 
   async keystoreUnlock() {
@@ -71,7 +86,8 @@ export class ReconnectDialogComponent {
   }
 
   forgetKeystore() {
-    this.overlayService.setViews(MainViewsEnum.Swap, "Swap");
+    this.analytics.event('connect_reconnect_keystore', 'button_forget');
     localStorage.clear();
+    this.overlayService.setViews(MainViewsEnum.Swap, "Swap");
   }
 }

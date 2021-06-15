@@ -17,7 +17,7 @@
                 right: { text: 'Pool', tag: '', disable: false },
                 left: { text: 'Swap', tag: '', disable: false }
               }"
-              (funcCaller)="switchNav($event)"
+              (clickCaller)="switchNav($event)"
             ></app-right-option>
           </div>
         </nav>
@@ -106,7 +106,7 @@
           <button
             class="next-btn"
             [disabled]="!user || loading"
-            (click)="getAccountPools()"
+            (click)="buttonRefresh()"
           >
             <span>Refresh</span>
           </button>

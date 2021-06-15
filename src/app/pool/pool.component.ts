@@ -307,10 +307,15 @@ export class PoolComponent implements OnInit, OnDestroy {
         });
       }
 
-      this.analytics.event('pool_select', 'button_refresh');
     }
 
     this.loading = false;
+  }
+
+  buttonRefresh() {
+    this.analytics.event('pool_select', 'button_refresh');
+
+    this.getAccountPools();
   }
 
   createPoolEvent() {
