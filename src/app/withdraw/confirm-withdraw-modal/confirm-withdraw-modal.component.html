@@ -12,7 +12,7 @@
             { name: 'Withdraw', disable: true }
           ]"
           [isError]="txState === 'ERROR'"
-          [message]="txState === 'ERROR' ? 'Error' : 'Confirm'"
+          [message]="message"
           (funcCaller)="breadcrumbNav($event, 'pending')"
         ></app-breadcrumb>
       </nav>

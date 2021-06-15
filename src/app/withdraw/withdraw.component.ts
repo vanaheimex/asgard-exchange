@@ -98,6 +98,7 @@ export class WithdrawComponent implements OnInit {
   runeBalance: number;
   balances: Balances;
   currency: Currency;
+  sliderDisabled: boolean;
 
   constructor(
     private route: ActivatedRoute,
@@ -113,6 +114,7 @@ export class WithdrawComponent implements OnInit {
     this.withdrawPercent = 0;
     this.removeAssetAmount = 0;
     this.removeRuneAmount = 0;
+    this.sliderDisabled = true;
 
     const user$ = this.userService.user$.subscribe((user) => {
       this.user = user;
@@ -302,6 +304,8 @@ export class WithdrawComponent implements OnInit {
   }
 
   calculate() {
+    // slider now can get out of being disabled.
+    this.sliderDisabled = false;
     switch (this.withdrawType) {
       case "SYM":
         this.calculateSym();
@@ -583,7 +587,7 @@ export class WithdrawComponent implements OnInit {
     if (transactionSuccess) {
       this.withdrawPercent = 0;
     }
-
+    
     this.overlaysService.setCurrentWithdrawView("Withdraw");
   }
 
@@ -649,5 +653,9 @@ export class WithdrawComponent implements OnInit {
       },
       (err) => console.error("error getting pool detail: ", err)
     );
+  }
+
+  ngOnDestroy() {
+    this.overlaysService.setCurrentWithdrawView("Withdraw");
   }
 }
