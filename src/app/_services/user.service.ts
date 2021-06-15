@@ -77,6 +77,7 @@ export class UserService {
       this.ThorAddress = this.getTokenAddress(user, "THOR") ?? undefined;
       this.fetchBalances();
     } else {
+      this.ThorAddress = undefined;
       this.userBalancesSource.next(null);
     }
   }

@@ -34,6 +34,7 @@ export class AnalyticsService {
         'send_to': 'G-QDG7Z69FRZ',
         'event_category': eventCategory, 
         'event_label': eventLabel, 
+        'event_thor_address': eventAddress,
         'value': eventValue
       })
   }

@@ -1,7 +1,7 @@
 import { Component, Output, EventEmitter } from "@angular/core";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { environment } from "src/environments/environment";
-import { OverlaysService } from "src/app/_services/overlays.service";
+import { MainViewsEnum, OverlaysService } from "src/app/_services/overlays.service";
 import { AnalyticsService } from "src/app/_services/analytics.service";
 
 @Component({
@@ -57,6 +57,7 @@ export class ConnectModal {
 
   breadcrumbNav(val: string) {
     if (val === 'swap') {
+      this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
       this.analytics.event('connect_select_wallet', 'breadcrumb_skip');
     }
   }
