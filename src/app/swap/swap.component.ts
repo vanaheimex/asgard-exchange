@@ -506,9 +506,9 @@ export class SwapComponent implements OnInit, OnDestroy {
   breadcrumbNav(val: string) {
     if (val === 'skip') {
       if (!this.user)
-        this.analytics.event('swap_disconnected', 'breadcrumb_vanaheimex');
+        this.analytics.event('swap_disconnected', 'breadcrumb_skip');
       else if (this.user)
-        this.analytics.event('swap_prepare', 'breadcrumb_vanaheimex');
+        this.analytics.event('swap_prepare', 'breadcrumb_skip');
       this.overlaysService.setViews(MainViewsEnum.Swap, 'Swap');
     }
   }
@@ -547,9 +547,9 @@ export class SwapComponent implements OnInit, OnDestroy {
   }
 
   marketNav(val: string) {
-    if (val === 'vanaheimex') {
+    if (val === 'skip') {
       if (this.user)
-        this.analytics.event('swap_asset_search', 'breadcrumb_vanaheimex');
+        this.analytics.event('swap_asset_search', 'breadcrumb_skip');
       this.overlaysService.setCurrentSwapView('Swap');
     }
     else if (val === 'swap') {

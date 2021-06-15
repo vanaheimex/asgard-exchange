@@ -44,8 +44,8 @@ export class AnalyticsService {
 
       let r =  /\*(.*?)\*/g;
 
-      let valArray = event.label.match(r)
-      if (values.length !== valArray.length) {
+      let valArray = event.label.match(r);
+      if (valArray && values.length !== valArray.length) {
         console.error("Event values are not same!")
         return
       }
@@ -56,8 +56,9 @@ export class AnalyticsService {
       }
 
       let label = event.label;
+      console.log(label)
       for (let val in valArray) {
-        label = label.replace(valArray[val])
+        label = label.replace(valArray[val], values[val])
       }
 
       let thorAddr = undefined;
@@ -74,6 +75,7 @@ export class AnalyticsService {
       )
     } catch (error) {
       console.error('Couldn\'t send the analytics!');
+      console.log(error)
     }
 
   }

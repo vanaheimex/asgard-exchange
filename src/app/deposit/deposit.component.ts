@@ -644,9 +644,9 @@ export class DepositComponent implements OnInit, OnDestroy {
     } else if (nav === "swap") {
       this.router.navigate(["/", "swap"]);
       if (this.user)
-        this.analytics.event('pool_deposit', 'breadcrumb_vanaheimex');
+        this.analytics.event('pool_deposit', 'breadcrumb_skip');
       else
-        this.analytics.event('pool_disconnected_deposit', 'breadcrumb_vanaheimex');
+        this.analytics.event('pool_disconnected_deposit', 'breadcrumb_skip');
     } else if (nav === "deposit") {
       this.router.navigate([
         "/",

@@ -593,7 +593,7 @@ export class WithdrawComponent implements OnInit {
       this.analytics.event('pool_withdraw_symmetrical_prepare', 'breadcrumb_pools')
     } else if (nav === "swap") {
       this.router.navigate(["/", "swap"]);
-      this.analytics.event('pool_withdraw_symmetrical_prepare', 'breadcrumb_vanaheimex')
+      this.analytics.event('pool_withdraw_symmetrical_prepare', 'breadcrumb_skip')
     }
   }
 

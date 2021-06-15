@@ -249,13 +249,13 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
     } else if (nav === "swap") {
       this.router.navigate(["/", "swap"]);
       if (mode === 'pending') {
-        this.analytics.event('pool_withdraw_symmetrical_confirm', 'breadcrumb_vanaheimex');
+        this.analytics.event('pool_withdraw_symmetrical_confirm', 'breadcrumb_skip');
       }
       else if (mode === 'processing') {
-        this.analytics.event('pool_withdraw_symmetrical_processing', 'breadcrumb_vanaheimex');
+        this.analytics.event('pool_withdraw_symmetrical_processing', 'breadcrumb_skip');
       }
       else if ( mode === 'success') {
-        this.analytics.event('pool_withdraw_symmetrical_success', 'breadcrumb_vanaheimex');
+        this.analytics.event('pool_withdraw_symmetrical_success', 'breadcrumb_skip');
       }
     }
   }

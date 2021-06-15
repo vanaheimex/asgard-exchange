@@ -180,10 +180,10 @@ export class PoolComponent implements OnInit, OnDestroy {
     } else if (nav === "swap") {
       this.router.navigate(["/", "swap"]);
       if (!this.user) {
-        this.analytics.event('pool_disconnected', 'breadcrumb_vanaheimex');
+        this.analytics.event('pool_disconnected', 'breadcrumb_skip');
       }
       else {
-        this.analytics.event('pool_select', 'breadcrumb_vanaheimex');
+        this.analytics.event('pool_select', 'breadcrumb_skip');
       }
     }
   }
