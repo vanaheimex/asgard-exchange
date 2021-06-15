@@ -202,6 +202,7 @@ export class UserAssetComponent {
 
   sendNav() {
     this.analytics.event('wallet_asset', 'button_send_*WALLET*_*ASSET*', undefined, this.chain, assetString(this.asset.asset));
+    this.send.emit();
   }
 
   backNav() {

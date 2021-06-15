@@ -494,6 +494,11 @@ export class WithdrawComponent implements OnInit {
       return "Please Connect Wallet";
     }
 
+    if (this.sliderDisabled) {
+      this.isError = false;
+      return "Loading"
+    }
+
     /** THORChain is backed up */
     if (this.queue && this.queue.outbound >= 12) {
       this.isError = true;

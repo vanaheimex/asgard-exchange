@@ -28,8 +28,8 @@ import { AnalyticsService, assetString } from "src/app/_services/analytics.servi
 
 // TODO: this is the same as ConfirmStakeData in confirm stake modal
 export interface ConfirmWithdrawData {
-  asset;
-  rune;
+  asset: Asset;
+  rune: Asset;
   runeBasePrice: number;
   assetBasePrice: number;
   assetAmount: number;
@@ -132,7 +132,10 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
         return;
       }
 
+      const assetObj = {chain: this.data.rune.chain, symbol: this.data.rune.symbol, ticker: this.data.rune.ticker};
+
       const hash = await thorClient.deposit({
+        asset: assetObj,
         amount: txCost,
         memo,
       });

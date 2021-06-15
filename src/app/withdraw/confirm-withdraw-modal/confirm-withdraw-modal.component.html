@@ -106,12 +106,6 @@
   </div>
 </div>
 
-<div class="flex flex-col items-center p-8 text-sm" *ngIf="txState === 'ERROR'">
-  <mat-icon>warning</mat-icon>
-  <span *ngIf="error">{{ error }}</span>
-  <span *ngIf="!error">Something went wrong</span>
-</div>
-
 <app-transaction-ledger-confirm-modal
   *ngIf="txState == 'PENDING_LEDGER_CONFIRMATION'"
 ></app-transaction-ledger-confirm-modal>
