@@ -78,7 +78,6 @@ export class XDEFIConnectComponent implements OnInit {
   }
 
   async initUnlock() {
-    this.analytics.event('connect_connect_xdefi', 'button_connect');
     this.loading = true;
     if (this.xdefiConnecting) {
       return;
@@ -93,6 +92,7 @@ export class XDEFIConnectComponent implements OnInit {
     this.xdefiError = false;
     this.xdefiConnecting = true;
     try {
+      this.analytics.event('connect_connect_xdefi', 'button_connect');
       const user = await this.xdefiService.connectXDEFI();
       console.log("xdefiConnect::got user", user);
       this.userService.setUser(user);

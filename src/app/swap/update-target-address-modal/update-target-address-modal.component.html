@@ -2,11 +2,12 @@
   <div class="content-top">
     <app-breadcrumb
       [path]="[
-        { name: 'skip', call: 'swap' },
+        { name: 'skip', call: 'skip' },
         { name: 'swap', call: 'swap' },
         { name: 'TARGET ' + data?.chain + ' ADDRESS', disable: true }
       ]"
       [message]="updateAddressBtnText()"
+      (funcCaller)="breadcurmbNav($event)"
     ></app-breadcrumb>
   </div>
 

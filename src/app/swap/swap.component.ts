@@ -600,6 +600,8 @@ export class SwapComponent implements OnInit, OnDestroy {
   }
 
   goToSettings() {
+    this.analytics.event('swap_prepare', 'select_slip_tolerance_slip_visible')
+
     this.overlaysService.setSettingViews(
       MainViewsEnum.AccountSetting,
       "SLIP",
@@ -946,7 +948,7 @@ export class SwapComponent implements OnInit, OnDestroy {
     if (this.userService.getTokenAddress(this.user, this.selectedTargetAsset.chain) !== this.targetAddress)
       this.analytics.event('swap_prepare', `button_swap_*FROM_ASSET*_*TO_ASSET*_target_address`, undefined, assetString(this.selectedSourceAsset), assetString(this.selectedTargetAsset));
     
-    this.analytics.event('swap_prepare', `button_swap_*FROM_ASSET*_*TO_ASSET*_slip_%_*numerical_%_value*`, this.slip, assetString(this.selectedSourceAsset), assetString(this.selectedTargetAsset), this.slip.toString());
+    this.analytics.event('swap_prepare', `button_swap_*FROM_ASSET*_*TO_ASSET*_slip_%_*numerical_%_value*`, this.slip * 100, assetString(this.selectedSourceAsset), assetString(this.selectedTargetAsset), this.slip.toString());
     
     this.overlaysService.setCurrentSwapView('Confirm');
   }

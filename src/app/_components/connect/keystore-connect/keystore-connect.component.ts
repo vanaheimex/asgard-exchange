@@ -105,6 +105,7 @@ export class KeystoreConnectComponent {
       return;
     }
 
+    this.analytics.event('connect_connect_keystore', 'button_create');
     this.keystoreConnecting = true;
 
     setTimeout(() => {
@@ -123,7 +124,6 @@ export class KeystoreConnectComponent {
       );
       this.userService.setUser(user);
       this.closeModal.emit();
-      this.analytics.event('connect_connect_keystore', 'button_create');
     } catch (error) {
       this.keystoreConnecting = false;
       this.keystoreError = true;

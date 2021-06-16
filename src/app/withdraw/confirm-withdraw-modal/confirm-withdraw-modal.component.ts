@@ -120,8 +120,6 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
   }
 
   async runeWithdraw(memo: string) {
-    this.analytics.eventEmitter('withdraw', 'withdraw_page', assetToString(this.data.asset), this.data.assetAmount * this.data.assetPrice + this.data.runeAmount * this.data.runePrice) 
-
     // withdraw RUNE
     try {
       const txCost = assetToBase(assetAmount(0.00000001));

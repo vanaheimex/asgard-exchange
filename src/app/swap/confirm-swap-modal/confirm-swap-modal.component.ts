@@ -177,9 +177,9 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
 
     if (transactionSucess === false) {
       this.analytics.event('swap_confirm', "button_swap_cancel_*FROM_ASSET*_*TO_ASSET*_usd_*numerical_usd_value*", this.swapData.inputValue * this.swapData.sourceAsset.assetPriceUSD, assetString(this.swapData.sourceAsset.asset), assetString(this.swapData.targetAsset.asset), (this.swapData.inputValue * this.swapData.sourceAsset.assetPriceUSD).toString());
-      if (this.userService.ThorAddress !== this.swapData.targetAddress)
+      if (this.userService.getAdrressChain(this.swapData.targetAsset.asset.chain) !== this.swapData.targetAddress)
         this.analytics.event('swap_confirm', "button_swap_cancel_*FROM_ASSET*_*TO_ASSET*_target_address", undefined, assetString(this.swapData.sourceAsset.asset), assetString(this.swapData.targetAsset.asset));
-      this.analytics.event('swap_confirm', "button_swap_cancel_*FROM_ASSET*_*TO_ASSET*_slip_%_*numerical_%_value*", this.swapData.slip, assetString(this.swapData.sourceAsset.asset), assetString(this.swapData.targetAsset.asset), this.swapData.slip.toString());
+      this.analytics.event('swap_confirm', "button_swap_cancel_*FROM_ASSET*_*TO_ASSET*_slip_%_*numerical_%_value*", this.swapData.slip * 100, assetString(this.swapData.sourceAsset.asset), assetString(this.swapData.targetAsset.asset), this.swapData.slip.toString());
     }
 
     if (transactionSucess) this.closeTransaction.emit();
@@ -199,11 +199,11 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
 
   submitTransaction() {
     this.txState = TransactionConfirmationState.SUBMITTING;
-    this.analytics.event('swap_confirm', `button_swap_confirm_${assetToString(this.swapData.sourceAsset.asset)}_${assetToString(this.swapData.targetAsset.asset)}_usd_${this.swapData.inputValue * this.swapData.sourceAsset.assetPriceUSD}`, this.swapData.inputValue * this.swapData.sourceAsset.assetPriceUSD);
-    if (this.userService.ThorAddress !== this.swapData.targetAddress)
-      this.analytics.event('swap_confirm', `button_swap_confirm_${assetToString(this.swapData.sourceAsset.asset)}_${assetToString(this.swapData.targetAsset.asset)}_target_address`, undefined, this.userService.ThorAddress);
-    this.analytics.event('swap_confirm', `button_swap_confirm_${assetToString(this.swapData.sourceAsset.asset)}_${assetToString(this.swapData.targetAsset.asset)}_slip_${this.swapData.slip}`, this.swapData.slip, this.userService.ThorAddress);
-
+    this.analytics.event('swap_confirm', "button_swap_confirm_*FROM_ASSET*_*TO_ASSET*_usd_*numerical_usd_value*", this.swapData.inputValue * this.swapData.sourceAsset.assetPriceUSD, assetString(this.swapData.sourceAsset.asset), assetString(this.swapData.targetAsset.asset), (this.swapData.inputValue * this.swapData.sourceAsset.assetPriceUSD).toString());
+    if (this.userService.getAdrressChain(this.swapData.targetAsset.asset.chain) !== this.swapData.targetAddress)
+      this.analytics.event('swap_confirm', "button_swap_confirm_*FROM_ASSET*_*TO_ASSET*_target_address", undefined, assetString(this.swapData.sourceAsset.asset), assetString(this.swapData.targetAsset.asset));
+    this.analytics.event('swap_confirm', "button_swap_confirm_*FROM_ASSET*_*TO_ASSET*_slip_%_*numerical_%_value*", this.swapData.slip * 100, assetString(this.swapData.sourceAsset.asset), assetString(this.swapData.targetAsset.asset), this.swapData.slip.toString());
+    
     // Source asset is not RUNE
     if (
       this.swapData.sourceAsset.asset.chain === "BNB" ||
@@ -523,8 +523,11 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
       }
     }
 
+  }
+
+  getOutboundHash(hash) {
     const outbound$ = this.txStatusService
-      .getOutboundHash(this.hash)
+      .getOutboundHash(hash)
       .subscribe((res: Transaction) => {
         this.outboundHash = res.out[0]?.txID;
         console.log(res.out[0]?.coins[0]?.amount)
@@ -555,6 +558,12 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
         hash: undefined,
       },
     });
+
+    // successful hash recive
+    this.analytics.event('swap_success', `tag_send_container_wallet_*ASSET*`, undefined, assetString(this.swapData.sourceAsset.asset))
+
+    //get outbound hash for the view
+    this.getOutboundHash(hash);
   }
 
   breadcrumbNav(val: string, type: 'processing' | 'success' | 'pending' = 'pending') {

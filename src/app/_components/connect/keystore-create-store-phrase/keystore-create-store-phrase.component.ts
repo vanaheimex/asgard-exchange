@@ -9,6 +9,7 @@ import { PhraseConfirmService } from "src/app/_services/phrase-confirm.service";
 })
 export class KeystoreCreateStorePhraseComponent {
   @Input() phrase: string;
+  @Input() eventCategory: string;
   @Output() closeModal: EventEmitter<null>;
 
   constructor(private phraseConfirm: PhraseConfirmService, private analytics: AnalyticsService) {
@@ -18,7 +19,7 @@ export class KeystoreCreateStorePhraseComponent {
   ngOnInit(): void {}
 
   confirm() {
-    this.analytics.event('connnect_store_secure', 'button_understand');
+    this.analytics.event(this.eventCategory, 'button_understand');
     this.phraseConfirm.setConfirmation(true);
     this.closeModal.emit();
   }

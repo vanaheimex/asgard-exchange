@@ -231,7 +231,6 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
     this.amountToSend = p.amount;
     this.recipient = p.recipientAddress;
     this.memo = p.memo;
-    this.analytics.eventEmitter('send_asset', 'send_page', assetToString(this.selectedAsset.asset), this.amountToSend);
     this.mode = "CONFIRM_SEND";
     this.setMode("Confirm");
   }

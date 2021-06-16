@@ -43,6 +43,7 @@ export class ConnectModal {
   isTestnet: boolean;
   isXDEFIConnected: boolean;
   phrase: string;
+  writePhraseCategory: string;
 
   @Output() closeEvent = new EventEmitter<null>();
 
@@ -79,8 +80,9 @@ export class ConnectModal {
 
   connectXDEFI() {
     if (!this.isXDEFIConnected) {
+      this.analytics.event('connect_select_wallet', 'option_install_xdefi');
       return window.open(
-        "https://xdefi-io.medium.com/how-to-use-asgardex-with-xdefi-wallet-%EF%B8%8F-547081a8d274",
+        "https://www.xdefi.io",
         "_blank"
       );
     }
@@ -88,8 +90,9 @@ export class ConnectModal {
     this.analytics.event('connect_select_wallet', 'option_connect_xdefi');
   }
 
-  storePhrasePrompt(phrase: string) {
-    this.phrase = phrase;
+  storePhrasePrompt(values: {phrase: string, label: string}) {
+    this.phrase = values.phrase;
+    this.writePhraseCategory = values.label
     this.connectionView = ConnectionView.KEYSTORE_WRITE_PHRASE;
   }
 
@@ -101,20 +104,6 @@ export class ConnectModal {
   close() {
     if (!this.connectionView) {
       this.analytics.event('connect_select_wallet', 'button_cancel');
-    }
-    else if (this.connectionView === ConnectionView.KEYSTORE_CONNECT) {
-      this.analytics.event('connect_connect_keystore', 'button_cancel');
-    }
-    else if (this.connectionView === ConnectionView.KEYSTORE_CREATE) {
-      this.analytics.event('connect_create_keystore', 'button_cancel');
-
-    }
-    else if (this.connectionView === ConnectionView.KEYSTORE_IMPORT_PHRASE) {
-      this.analytics.event('connect_create_keystore_phrase', 'button_cancel');
-    
-    }
-    else if (this.connectionView === ConnectionView.XDEFI) {
-      this.analytics.event('connect_connect_xdefi', 'button_cancel');
     }
 
     this.closeEvent.emit();

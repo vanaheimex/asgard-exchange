@@ -15,7 +15,7 @@ import { environment } from "src/environments/environment";
 export class KeystoreCreateComponent {
   @Output() back: EventEmitter<null>;
   @Output() closeModal: EventEmitter<null>;
-  @Output() keystoreCreated: EventEmitter<string>;
+  @Output() keystoreCreated: EventEmitter<{phrase: string, label: string}>;
   password: string;
   confirmPassword: string;
   phrase: string;
@@ -33,7 +33,7 @@ export class KeystoreCreateComponent {
     this.phrase = generatePhrase();
     this.back = new EventEmitter<null>();
     this.closeModal = new EventEmitter<null>();
-    this.keystoreCreated = new EventEmitter<string>();
+    this.keystoreCreated = new EventEmitter<{phrase: string, label: string}>();
   }
 
   breadcrumbNav(val: string) {
@@ -85,7 +85,7 @@ export class KeystoreCreateComponent {
       a.innerHTML = "loading";
       a.click();
 
-      this.keystoreCreated.emit(this.phrase);
+      this.keystoreCreated.emit({phrase: this.phrase, label: 'connect_create_keystore_secure'});
 
       this.analytics.event('connect_create_keystore', 'button_create');
     } catch (error) {

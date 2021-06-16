@@ -573,20 +573,25 @@ export class XDEFIService {
     // Thor
     userThorchainClient.deposit = async (depositParams) => {
       console.log("userThorchainClient.deposit", depositParams);
+      
+      const params = [
+        {
+          ...depositParams,
+          from: thorAddress,
+          amount: {
+            amount: depositParams.amount.amount().toNumber(),
+            decimals: depositParams.amount.decimal,
+          },
+          recipient: ''
+        },
+      ]
+
+      console.log('params', params)
       return new Promise((resolve, reject) => {
         (window as any).xfi.thorchain.request(
           {
             method: "deposit",
-            params: [
-              {
-                ...depositParams,
-                from: thorAddress,
-                amount: {
-                  amount: depositParams.amount.amount().toString(),
-                  decimals: depositParams.amount.decimal,
-                },
-              },
-            ],
+            params,
           },
           (err, result) => {
             if (err) {

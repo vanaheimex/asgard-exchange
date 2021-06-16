@@ -13,7 +13,7 @@
               { name: 'Deposit', disable: true }
             ]"
             [message]="mainButtonText()"
-            (funcCaller)="breadCrumbNav($event)"
+            (funcCaller)="breadCrumbNav($event, 'deposit')"
           ></app-breadcrumb>
         </nav>
       </div>
@@ -138,13 +138,13 @@
       >
         <app-breadcrumb
           [path]="[
-            { name: 'skip', swapView: 'Swap', mainView: 'Swap' },
+            { name: 'skip', call: 'swap' },
             { name: 'Pools', call: 'pool' },
             { name: 'Deposit', call: 'deposit-back' },
             { name: 'SEARCH', disable: true }
           ]"
           message="SELECT"
-          (funcCaller)="breadCrumbNav($event)"
+          (funcCaller)="breadCrumbNav($event, 'market')"
         ></app-breadcrumb>
       </app-markets-modal>
     </div>

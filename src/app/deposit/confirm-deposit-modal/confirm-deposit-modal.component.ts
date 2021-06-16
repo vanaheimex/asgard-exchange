@@ -126,7 +126,6 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
   }
 
   async deposit(pools: PoolAddressDTO[]) {
-    this.analyticsService.eventEmitter('deposit_confirm', 'deposit_page', assetToString(this.data.asset.asset), this.data.assetAmount * this.data.assetPrice);
     const clients = this.data.user.clients;
     const asset = this.data.asset.asset;
     const thorClient = clients.thorchain;
@@ -281,11 +280,11 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
     if (nav === "pool") {
       this.router.navigate(["/", "pool"]);
       if (type === 'pending')
-        this.analyticsService.event('pool_deposit_symmetrical_confirm', 'breadcrumb_pool');
+        this.analyticsService.event('pool_deposit_symmetrical_confirm', 'breadcrumb_pools');
       else if (type === 'process')
-        this.analyticsService.event('pool_deposit_symmetrical_processing', 'breadcrumb_pool');
+        this.analyticsService.event('pool_deposit_symmetrical_processing', 'breadcrumb_pools');
       else if (type === 'success')
-        this.analyticsService.event('pool_deposit_symmetrical_success', 'breadcrumb_pool');
+        this.analyticsService.event('pool_deposit_symmetrical_success', 'breadcrumb_pools');
     } else if (nav === "swap") {
       this.router.navigate(["/", "swap"]);
       if (type === 'pending')

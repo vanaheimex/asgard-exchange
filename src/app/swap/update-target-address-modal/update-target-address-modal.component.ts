@@ -2,7 +2,7 @@ import { Component, Output, EventEmitter, Input } from '@angular/core';
 import { Chain } from '@xchainjs/xchain-util';
 import { User } from 'src/app/_classes/user';
 import { AnalyticsService } from 'src/app/_services/analytics.service';
-import { OverlaysService } from 'src/app/_services/overlays.service';
+import { MainViewsEnum, OverlaysService } from 'src/app/_services/overlays.service';
 import { UserService } from 'src/app/_services/user.service';
 
 @Component({
@@ -33,6 +33,17 @@ export class UpdateTargetAddressModalComponent {
     this.thorAddress = this.userService.getTokenAddress(this.user, 'THOR') ?? undefined;
   }
 
+  breadcurmbNav(val: string) {
+    if (val === 'skip') {
+      this.analytics.event('swap_receive_container_target_address_select', 'breadcrumb_skip')
+      this.oveService.setViews(MainViewsEnum.Swap, "Swap");
+    }
+    else if (val === 'swap') {
+      this.analytics.event('swap_receive_container_target_address_select', 'breadcrumb_swap')
+      this.oveService.setViews(MainViewsEnum.Swap, "Swap");
+    }
+  }
+
   updateAddress() {
     if (!this.user?.clients) {
       return;
@@ -46,8 +57,12 @@ export class UpdateTargetAddressModalComponent {
     if (!client.validateAddress(this.targetAddress)) {
       return;
     }
+    
+    if(this.targetAddress !== this.data.targetAddress)
+      this.analytics.event('swap_receive_container_target_address_select', 'button_target_address_save_changed')
+    else
+      this.analytics.event('swap_receive_container_target_address_select', 'button_target_address_save')
 
-    this.analytics.event('swap_receive_container_target_address_select', 'button_target_address_save')
 
     this.close();
   }
@@ -88,7 +103,6 @@ export class UpdateTargetAddressModalComponent {
 
   close() {
     /** because this is only a component in swap page so the analytics are static */
-    this.analytics.event('swap_receive_container_target_address_select', 'button_target_address_save_changed')
     this.back.emit(this.targetAddress);
     this.oveService.setCurrentSwapView('Swap');
   }

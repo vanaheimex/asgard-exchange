@@ -57,10 +57,10 @@ export class AnalyticsService {
       }
 
       let label = event.label;
-      console.log(label)
       for (let val in valArray) {
         label = label.replace(valArray[val], values[val])
       }
+      console.log(label, event.category, event.action)
 
       let thorAddr = undefined;
       if (event.thorwallet) {

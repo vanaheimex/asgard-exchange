@@ -145,6 +145,7 @@
     *ngIf="connectionView == 'KEYSTORE_WRITE_PHRASE'"
     [phrase]="phrase"
     (closeModal)="close()"
+    [eventCategory]="writePhraseCategory"
   ></app-keystore-create-store-phrase>
 
   <!-- KEYSTORE CONNECT -->

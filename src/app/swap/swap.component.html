@@ -35,6 +35,10 @@
           [selectableMarkets]="selectableMarkets"
           (lunchMarket)="marketModal('source')"
           (maxError)="setMaxError($event)"
+          [eventTags]="{
+            event_category: 'swap_prepare',
+            event_label_max: 'tag_send_container_max'
+          }"
         >
         </app-asset-input>
 

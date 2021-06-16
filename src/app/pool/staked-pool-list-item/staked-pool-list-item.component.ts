@@ -118,7 +118,6 @@ export class StakedPoolListItemComponent implements OnChanges {
 
   toggleExpanded() {
     if (!this.isPending) this.poolDetailService.setActivatedAsset(this.asset);
-    this.analyticsService.eventEmitter('pool_select', 'pool_page', assetToString(this.asset));
   }
 
   setAsset(): void {
@@ -128,7 +127,7 @@ export class StakedPoolListItemComponent implements OnChanges {
   }
 
   statEvent() {
-    this.analytics.event('pool_select', 'tag_stats_*POOL*', undefined, `${this.asset.chain}.${this.asset.ticker}`);
+    this.analytics.event('pool_select', 'tag_pool_stats_*POOL_ASSET*', undefined, `${this.asset.chain}.${this.asset.ticker}`);
   }
 
   depositEvent() {

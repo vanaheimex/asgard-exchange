@@ -184,10 +184,6 @@ export class TransactionSuccessModalComponent {
       }
     });
 
-    if (this.modalType === 'SWAP' && this.hash) {
-      this.analyticsService.event('swap_success', `tag_send_container_wallet_*ASSET*`, undefined, assetString(this.asset[0].asset))
-    }
-
     this.subs = [balances$];
   }
 
@@ -251,7 +247,5 @@ export class TransactionSuccessModalComponent {
       sub.unsubscribe();
     }
 
-    if (this.modalType === 'SWAP')
-      this.analyticsService.eventEmitter('swap_success_close', 'swap_page', `${assetToString(this.asset[0].asset)}_${assetToString(this.asset[1].asset)}`);
   }
 }

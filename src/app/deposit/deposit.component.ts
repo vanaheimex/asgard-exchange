@@ -617,7 +617,7 @@ export class DepositComponent implements OnInit, OnDestroy {
       assetPrice,
     };
 
-    this.analytics.event('pool_deposit_symmetrical_prepare', 'button_deposit_symmetrical_*POOL_ASSET*_usd_*numerical_usd_value*',  this.assetAmount * this.assetPrice, assetString(this.asset));
+    this.analytics.event('pool_deposit_symmetrical_prepare', 'button_deposit_symmetrical_*POOL_ASSET*_usd_*numerical_usd_value*',  this.assetAmount * this.assetPrice, assetString(this.asset), (this.assetAmount * this.assetPrice).toString());
     if (this.depositData) this.overlaysService.setCurrentDepositView("Confirm");
   }
 
@@ -630,23 +630,36 @@ export class DepositComponent implements OnInit, OnDestroy {
   }
 
   back(): void {
-    this.analytics.event('pool_deposit_symmetrical_prepare', 'button_cancel');
+    if (this.user)
+      this.analytics.event('pool_deposit_symmetrical_prepare', 'button_cancel');
+    else
+      this.analytics.event('pool_disconnected_deposit', 'button_cancel');
     this.router.navigate(["/", "pool"]);
   }
 
-  breadCrumbNav(nav: string) {
+  breadCrumbNav(nav: string, type: 'deposit' | 'market') {
+    let label;
+    switch (type) {
+      case 'deposit':
+        if (this.user)
+          label = 'pool_deposit_symmetrical_prepare'
+        else
+          label = 'pool_disconnected_deposit'
+        break;
+      case 'market':
+        label = 'pool_deposit_symmetrical_asset_search'
+        break;
+      default:
+        label = 'pool_disconnected_deposit'
+        break;
+    }
+
     if (nav === "pool") {
       this.router.navigate(["/", "pool"]);
-      if (this.user)
-        this.analytics.event('pool_deposit', 'breadcrumb_pools');
-      else
-        this.analytics.event('pool_disconnected_deposit', 'breadcrumb_pools');
+      this.analytics.event(label, 'breadcrumb_pools');
     } else if (nav === "swap") {
       this.router.navigate(["/", "swap"]);
-      if (this.user)
-        this.analytics.event('pool_deposit', 'breadcrumb_skip');
-      else
-        this.analytics.event('pool_disconnected_deposit', 'breadcrumb_skip');
+      this.analytics.event(label, 'breadcrumb_skip');
     } else if (nav === "deposit") {
       this.router.navigate([
         "/",
@@ -654,6 +667,7 @@ export class DepositComponent implements OnInit, OnDestroy {
         `${this.asset.chain}.${this.asset.symbol}`,
       ]);
     } else if (nav === "deposit-back") {
+      this.analytics.event(label, 'breadcrumb_deposit');
       this.overlaysService.setCurrentDepositView("Deposit");
     }
   }
