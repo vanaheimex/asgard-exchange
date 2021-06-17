@@ -20,6 +20,7 @@ import { environment } from "src/environments/environment";
 import { DecimalPipe } from "@angular/common";
 import { HttpErrorResponse } from "@angular/common/http";
 import { AnalyticsService } from "src/app/_services/analytics.service";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-header",
@@ -56,7 +57,8 @@ export class HeaderComponent implements OnDestroy {
     private phraseConfirm: PhraseConfirmService,
     private midgardService: MidgardService,
     private _decimalPipe: DecimalPipe,
-    private analytics: AnalyticsService
+    private analytics: AnalyticsService,
+    private router: Router
   ) {
     this.isTestnet = environment.network === "testnet" ? true : false;
 
@@ -79,8 +81,10 @@ export class HeaderComponent implements OnDestroy {
 
   gotoSwap() {
     this.analytics.event('navigation', 'image_logo');
-    if (this.isUnderstood)
+    if (this.isUnderstood) {
       this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
+      this.router.navigate(['/', 'swap']);
+    }
   }
 
   getPoolCap() {

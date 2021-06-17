@@ -276,9 +276,6 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
       action: TxActions.WITHDRAW,
       isThorchainTx: true,
     });
-
-    this.analytics.event('pool_withdraw_symmetrical_success', 'tag_withdrawn_asset_container_wallet_*POOL_ASSET*', undefined, assetString(this.data.asset));
-    this.analytics.event('pool_withdraw_symmetrical_success', 'tag_withdrawn_wallet_THOR.RUNE')
   }
 
   closeDialog(transactionSucess?: boolean) {

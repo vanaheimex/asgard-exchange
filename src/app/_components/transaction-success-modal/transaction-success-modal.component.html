@@ -80,7 +80,7 @@
           [showPrice]="false"
           [disableUser]="false"
           [isWallet]="sourceBalance ? true : false"
-          [eventTags]="getEventTags(1)"
+          [eventTags]="getEventTags(0)"
         >
         </app-asset-input>
 
@@ -294,6 +294,10 @@
           [assetUnits]="[amount[0], amount[1]]"
           [showPrice]="false"
           [isWallet]="true"
+          [assetEvents]="{
+              event_category: 'pool_withdraw_symmetrical_success',
+              event_tag_wallet: 'tag_withdrawn_wallet_*POOL_ASSET*'
+            }"
         ></app-double-asset-field>
 
         <app-arrow></app-arrow>

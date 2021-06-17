@@ -286,14 +286,21 @@ export class PendingTxsModalComponent implements OnDestroy {
       )
     }
     else if (tx.action === "Upgrade") {
-      this.analytics.event('transaction_select', 'option_selected_upgrade_*ASSET*_tag_txid_explore_*ASSET*',
+      this.analytics.event('transaction_select', 'option_selected_upgrade_tag_txid_explore_*ASSET*',
         undefined,
         `${tx.chain}.${tx.ticker}`,
         exploreAsset
       )
     }
     else if (tx.action === 'Send') {
-      this.analytics.event('transaction_select', 'option_selected_send_*ASSET*_tag_txid_explore_*ASSET*',
+      this.analytics.event('transaction_select', 'option_selected_send_tag_txid_explore_*ASSET*',
+        undefined,
+        `${tx.chain}.${tx.ticker}`,
+        exploreAsset
+      )
+    }
+    else if (tx.action === 'Refund') {
+      this.analytics.event('transaction_select', 'option_selected_refund_tag_txid_explore_*ASSET*',
         undefined,
         `${tx.chain}.${tx.ticker}`,
         exploreAsset

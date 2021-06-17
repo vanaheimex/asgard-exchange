@@ -42,6 +42,7 @@ export class AnalyticsService {
   public event(eventName: string, eventLabel: string, eventVal?: number, ...values: string[]) {
     try {
       let event = events[eventName][eventLabel];
+      console.log(eventName, eventLabel)
 
       let r =  /\*(.*?)\*/g;
 
@@ -60,13 +61,13 @@ export class AnalyticsService {
       for (let val in valArray) {
         label = label.replace(valArray[val], values[val])
       }
-      console.log(label, event.category, event.action)
 
       let thorAddr = undefined;
       if (event.thorwallet) {
         thorAddr = this.userService.ThorAddress
       }
 
+      console.log(label)
       this.eventEmitter(
         event.action,
         event.category,

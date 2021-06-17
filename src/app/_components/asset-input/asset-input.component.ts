@@ -26,7 +26,7 @@ import { Currency } from "../account-settings/currency-converter/currency-conver
 import { PoolAddressDTO } from "src/app/_classes/pool-address";
 import { TxType } from "src/app/_const/tx-type";
 import { take } from "rxjs/operators";
-import { AnalyticsService } from "src/app/_services/analytics.service";
+import { AnalyticsService, assetString } from "src/app/_services/analytics.service";
 
 export type assetInputEventTags = {
   event_category: string,
@@ -232,7 +232,7 @@ export class AssetInputComponent implements OnInit, OnDestroy {
       if (max) {
         this.assetUnitChange.emit(max);
         if (this.eventTags) {
-          this.analytics.event(this.eventTags.event_category, this.eventTags.event_label_max);
+          this.analytics.event(this.eventTags.event_category, this.eventTags.event_label_max, undefined, assetString(this.selectedAsset));
         }
       } else {
         if (max === 0 && this.balance > 0) {

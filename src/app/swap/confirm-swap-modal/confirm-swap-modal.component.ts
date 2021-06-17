@@ -179,7 +179,7 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
       this.analytics.event('swap_confirm', "button_swap_cancel_*FROM_ASSET*_*TO_ASSET*_usd_*numerical_usd_value*", this.swapData.inputValue * this.swapData.sourceAsset.assetPriceUSD, assetString(this.swapData.sourceAsset.asset), assetString(this.swapData.targetAsset.asset), (this.swapData.inputValue * this.swapData.sourceAsset.assetPriceUSD).toString());
       if (this.userService.getAdrressChain(this.swapData.targetAsset.asset.chain) !== this.swapData.targetAddress)
         this.analytics.event('swap_confirm', "button_swap_cancel_*FROM_ASSET*_*TO_ASSET*_target_address", undefined, assetString(this.swapData.sourceAsset.asset), assetString(this.swapData.targetAsset.asset));
-      this.analytics.event('swap_confirm', "button_swap_cancel_*FROM_ASSET*_*TO_ASSET*_slip_%_*numerical_%_value*", this.swapData.slip * 100, assetString(this.swapData.sourceAsset.asset), assetString(this.swapData.targetAsset.asset), this.swapData.slip.toString());
+      this.analytics.event('swap_confirm', "button_swap_cancel_*FROM_ASSET*_*TO_ASSET*_slip_%_*numerical_%_value*", this.swapData.slip * 100, assetString(this.swapData.sourceAsset.asset), assetString(this.swapData.targetAsset.asset), (this.swapData.slip * 100).toString());
     }
 
     if (transactionSucess) this.closeTransaction.emit();
@@ -202,7 +202,7 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
     this.analytics.event('swap_confirm', "button_swap_confirm_*FROM_ASSET*_*TO_ASSET*_usd_*numerical_usd_value*", this.swapData.inputValue * this.swapData.sourceAsset.assetPriceUSD, assetString(this.swapData.sourceAsset.asset), assetString(this.swapData.targetAsset.asset), (this.swapData.inputValue * this.swapData.sourceAsset.assetPriceUSD).toString());
     if (this.userService.getAdrressChain(this.swapData.targetAsset.asset.chain) !== this.swapData.targetAddress)
       this.analytics.event('swap_confirm', "button_swap_confirm_*FROM_ASSET*_*TO_ASSET*_target_address", undefined, assetString(this.swapData.sourceAsset.asset), assetString(this.swapData.targetAsset.asset));
-    this.analytics.event('swap_confirm', "button_swap_confirm_*FROM_ASSET*_*TO_ASSET*_slip_%_*numerical_%_value*", this.swapData.slip * 100, assetString(this.swapData.sourceAsset.asset), assetString(this.swapData.targetAsset.asset), this.swapData.slip.toString());
+    this.analytics.event('swap_confirm', "button_swap_confirm_*FROM_ASSET*_*TO_ASSET*_slip_%_*numerical_%_value*", this.swapData.slip * 100, assetString(this.swapData.sourceAsset.asset), assetString(this.swapData.targetAsset.asset), (this.swapData.slip * 100).toString());
     
     // Source asset is not RUNE
     if (

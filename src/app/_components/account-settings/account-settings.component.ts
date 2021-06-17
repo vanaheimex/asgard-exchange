@@ -75,6 +75,10 @@ export class AccountSettingsComponent implements OnInit {
     this.overlaysService.setSettingView(val);
   }
 
+  changeSettingView(val: SettingViews) {
+    this.overlaysService.setSettingView(val);
+  }
+
   ngOnDestroy() {
     for (const sub of this.subs) {
       sub.unsubscribe();

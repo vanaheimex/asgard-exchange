@@ -185,11 +185,6 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
     });
   }
 
-  eventSuccessCall() {
-    this.analytics.event('upgrade_success', 'tag_upgrade_container_wallet_*ASSET*', undefined, assetString(this.asset.asset));
-    this.analytics.event('upgrade_success', 'tag_receive_container_wallet_THOR.RUNE');
-  }
-
   async keystoreTransfer(matchingPool: PoolAddressDTO) {
     try {
       const asset = this.asset.asset;
@@ -234,7 +229,6 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
 
           // this.transactionSuccessful.next(hash);
           this.txState = TransactionConfirmationState.SUCCESS;
-          this.eventSuccessCall()
         } else if (asset.chain === "ETH") {
           const client = this.user.clients.ethereum;
           const decimal = await this.ethUtilsService.getAssetDecimal(
@@ -288,7 +282,6 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
 
           // this.transactionSuccessful.next(hash);
           this.txState = TransactionConfirmationState.SUCCESS;
-          this.eventSuccessCall()
         }
       } else {
         this.txState = TransactionConfirmationState.ERROR;

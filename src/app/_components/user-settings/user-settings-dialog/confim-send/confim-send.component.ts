@@ -132,11 +132,10 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
     this.txState = TransactionConfirmationState.SUBMITTING;
 
     let sendAmountUSD = this.amount * this.asset.assetPriceUSD
-    this.analytics.event('wallet_asset_send_confirm', 'button_confirm_*WALLET*_*ASSET*_*FROM_ADDRESS*_*TO_ADDRESS*_usd_*numerical_usd_value*',
+    this.analytics.event('wallet_asset_send_confirm', 'button_confirm_*WALLET*_*ASSET*_*TO_ADDRESS*_usd_*numerical_usd_value*',
       sendAmountUSD,
       this.asset.asset.chain,
       assetString(this.asset.asset),
-      this.userService.getTokenAddress(this.user, this.asset.asset.chain),
       this.recipientAddress,
       sendAmountUSD.toString()
     )
@@ -482,11 +481,10 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
 
   backNav() {
     let sendAmountUSD = this.amount * this.asset.assetPriceUSD
-    this.analytics.event('wallet_asset_send_confirm', 'button_cancel_*WALLET*_*ASSET*_*FROM_ADDRESS*_*TO_ADDRESS*_usd_*numerical_usd_value*',
+    this.analytics.event('wallet_asset_send_confirm', 'button_cancel_*WALLET*_*ASSET*_*TO_ADDRESS*_usd_*numerical_usd_value*',
       sendAmountUSD,
       this.asset.asset.chain,
       assetString(this.asset.asset),
-      this.userService.getTokenAddress(this.user, this.asset.asset.chain),
       this.recipientAddress,
       sendAmountUSD.toString()
     )

@@ -129,9 +129,6 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
     chain?: Chain,
     asset?: AssetAndBalance
   ) {
-    if (val === "Address") {
-      this.analytics.event('wallet_select', 'option_selected_*WALLET*', undefined, chain)
-    }
     this.overlaysService.setCurrentUserView({
       userView: val,
       address: address === undefined ? this.selectedAddress : address,
@@ -206,6 +203,7 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
   selectAddress(address: string, chain: Chain) {
     this.selectedAddress = address;
     this.selectedChain = chain;
+    this.analytics.event('wallet_select', 'option_selected_*WALLET*', undefined, chain);
     this.mode = "ADDRESS";
     this.setMode("Address", address, chain);
   }

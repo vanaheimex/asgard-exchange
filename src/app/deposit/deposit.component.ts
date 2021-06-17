@@ -617,7 +617,8 @@ export class DepositComponent implements OnInit, OnDestroy {
       assetPrice,
     };
 
-    this.analytics.event('pool_deposit_symmetrical_prepare', 'button_deposit_symmetrical_*POOL_ASSET*_usd_*numerical_usd_value*',  this.assetAmount * this.assetPrice, assetString(this.asset), (this.assetAmount * this.assetPrice).toString());
+    let depositAmountUsd = assetData.assetPriceUSD * this.assetAmount + runeData.assetPriceUSD * this.runeAmount
+    this.analytics.event('pool_deposit_symmetrical_prepare', 'button_deposit_symmetrical_*POOL_ASSET*_usd_*numerical_usd_value*',  depositAmountUsd, assetString(this.asset), (depositAmountUsd).toString());
     if (this.depositData) this.overlaysService.setCurrentDepositView("Confirm");
   }
 

@@ -112,10 +112,12 @@ export class UserAssetComponent {
       this.asset.asset.chain
     );
     
+    return client.getExplorerTxUrl(hash);
+  }
+
+  getExplorerEvent() {
     /** Analytics section */
     this.analytics.event('wallet_asset', 'tx_list_tag_txid_explore_*WALLET*_*ASSET*', undefined, this.chain, assetString(this.asset.asset))
-
-    return client.getExplorerTxUrl(hash);
   }
 
   formatDate(date) {

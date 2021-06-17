@@ -89,18 +89,6 @@ export class TransactionSuccessModalComponent {
         }
       ]
     } 
-    else if (this.modalType === 'WITHDRAW') {
-      eventWallet = [
-        {
-          event_category: 'pool_withdraw_symmetrical_success',
-          event_label_wallet: 'tag_withdrawn_asset_container_wallet_*POOL_ASSET*'
-        },
-        {
-          event_category: 'pool_withdraw_symmetrical_success',
-          event_label_wallet: 'tag_withdrawn_wallet_THOR.RUNE'
-        }
-      ]
-    }
     else if (this.modalType === 'UPGRADE') {
       eventWallet = [
         {
@@ -158,7 +146,7 @@ export class TransactionSuccessModalComponent {
           this.analyticsService.event('upgrade_success', 'tag_txid_copy_*FROM_ASSET*', undefined, assetString(this.asset[0].asset))
         }
         else if (this.modalType === 'SEND') {
-          this.analyticsService.event('wallet_asset_send_success', 'tag_txid_copy_*WALLET*_*ASSET*_*FROM_ADDRESS*_*TO_ADDRESS*', undefined, this.asset[0].asset.chain, assetString(this.asset[0].asset), this.userService.getAdrressChain(this.asset[0].asset.chain),this.recipientAddress)
+          this.analyticsService.event('wallet_asset_send_success', 'tag_txid_copy_*WALLET*_*ASSET*_*TO_ADDRESS*', undefined, this.asset[0].asset.chain, assetString(this.asset[0].asset),this.recipientAddress)
         }
         else if (this.modalType === 'CREATE') {
           this.analyticsService.event('pool_create_success', 'tag_txid_copy_*ASSET*', undefined, assetString(this.asset[0].asset))
@@ -256,7 +244,7 @@ export class TransactionSuccessModalComponent {
     }
     else if (type === 'none') {
       if (this.modalType === 'SEND') {
-        this.analyticsService.event('wallet_asset_send_success', "tag_txid_explore_*WALLET*_*ASSET*_*FROM_ADDRESS*_*TO_ADDRESS*", undefined, this.asset[0].asset.chain, assetString(this.asset[0].asset), this.userService.getAdrressChain(this.asset[0].asset.chain), this.recipientAddress);
+        this.analyticsService.event('wallet_asset_send_success', "tag_txid_explore_*WALLET*_*ASSET*_*TO_ADDRESS*", undefined, this.asset[0].asset.chain, assetString(this.asset[0].asset), this.recipientAddress);
       }
       else if (this.modalType === 'DEPOSIT') {
         this.analyticsService.event('pool_deposit_symmetrical_success', 'tag_txid_explore_*POOL_ASSET*', undefined, assetString(this.asset[0].asset));

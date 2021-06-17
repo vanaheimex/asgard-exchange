@@ -27,6 +27,13 @@ export const events = {
       "action": "skip_nav",
       "thorwallet": true,
       "value": false
+    },
+    "image_logo": {
+      "label": "image_logo",
+      "category": "navigation",
+      "action": "skip_nav",
+      "thorwallet": true,
+      "value": false
     }
   },
   "swap_disconnected": {
@@ -519,6 +526,20 @@ export const events = {
       "action": "skip_swap",
       "thorwallet": true,
       "value": false
+    },
+    "breadcrumb_skip": {
+      "label": "breadcrumb_skip",
+      "category": "swap_receive_container_target_address_select",
+      "action": "skip_swap",
+      "thorwallet": true,
+      "value": false
+    },
+    "breadcrumb_swap": {
+      "label": "breadcrumb_swap",
+      "category": "swap_receive_container_target_address_select",
+      "action": "skip_swap",
+      "thorwallet": true,
+      "value": false
     }
   },
   "swap_confirm": {
@@ -571,8 +592,8 @@ export const events = {
       "thorwallet": true,
       "value": false
     },
-    "button_swap_confirm_*FROM_ASSET*_*TO_ASSET*_slip_%_*numerical_usd_value*": {
-      "label": "button_swap_confirm_*FROM_ASSET*_*TO_ASSET*_slip_%_*numerical_usd_value*",
+    "button_swap_confirm_*FROM_ASSET*_*TO_ASSET*_slip_%_*numerical_%_value**": {
+      "label": "button_swap_confirm_*FROM_ASSET*_*TO_ASSET*_slip_%_*numerical_%_value*",
       "category": "swap_confirm",
       "action": "skip_swap",
       "thorwallet": true,
@@ -1267,8 +1288,8 @@ export const events = {
       "thorwallet": true,
       "value": false
     },
-    "tag_withdrawn_asset_container_wallet_*POOL_ASSET*": {
-      "label": "tag_withdrawn_asset_container_wallet_*POOL_ASSET*",
+    "tag_withdrawn_wallet_*POOL_ASSET*": {
+      "label": "tag_withdrawn_wallet_*POOL_ASSET*",
       "category": "pool_withdraw_symmetrical_success",
       "action": "skip_pool",
       "thorwallet": true,
@@ -1475,8 +1496,8 @@ export const events = {
       "thorwallet": true,
       "value": false
     },
-    "option_selected_upgrade_*ASSET*_tag_txid_explore_*ASSET*": {
-      "label": "option_selected_upgrade_*ASSET*_tag_txid_explore_*ASSET*",
+    "option_selected_upgrade_tag_txid_explore_*ASSET*": {
+      "label": "option_selected_upgrade_tag_txid_explore_*ASSET*",
       "category": "transaction_select",
       "action": "skip_transactions",
       "thorwallet": true,
@@ -1489,8 +1510,15 @@ export const events = {
       "thorwallet": true,
       "value": false
     },
-    "option_selected_send_*ASSET*_tag_txid_explore_*ASSET*": {
-      "label": "option_selected_send_*ASSET*_tag_txid_explore_*ASSET*",
+    "option_selected_send_tag_txid_explore_*ASSET*": {
+      "label": "option_selected_send_tag_txid_explore_*ASSET*",
+      "category": "transaction_select",
+      "action": "skip_transactions",
+      "thorwallet": true,
+      "value": false
+    },
+    "option_selected_refund_tag_txid_explore_*ASSET*": {
+      "label": "option_selected_refund_tag_txid_explore_*ASSET*",
       "category": "transaction_select",
       "action": "skip_transactions",
       "thorwallet": true,
@@ -1614,36 +1642,8 @@ export const events = {
       "thorwallet": true,
       "value": false
     },
-    "tag_tx_list_withdraw_*POOL_ASSET*_tag_txid_explore_*ASSET*": {
-      "label": "tag_tx_list_withdraw_*POOL_ASSET*_tag_txid_explore_*ASSET*",
-      "category": "wallet_asset",
-      "action": "skip_wallets",
-      "thorwallet": true,
-      "value": false
-    },
-    "tag_tx_list_deposit_*POOL_ASSET*_tag_txid_explore_*ASSET*": {
-      "label": "tag_tx_list_deposit_*POOL_ASSET*_tag_txid_explore_*ASSET*",
-      "category": "wallet_asset",
-      "action": "skip_wallets",
-      "thorwallet": true,
-      "value": false
-    },
-    "tag_tx_list_upgrade_*ASSET*_tag_txid_explore_*ASSET*": {
-      "label": "tag_tx_list_upgrade_*ASSET*_tag_txid_explore_*ASSET*",
-      "category": "wallet_asset",
-      "action": "skip_wallets",
-      "thorwallet": true,
-      "value": false
-    },
-    "tag_tx_list_swap_*FROM_ASSET*_*TO_ASSET*_tag_txid_explore_*ASSET*": {
-      "label": "tag_tx_list_swap_*FROM_ASSET*_*TO_ASSET*_tag_txid_explore_*ASSET*",
-      "category": "wallet_asset",
-      "action": "skip_wallets",
-      "thorwallet": true,
-      "value": false
-    },
-    "tag_tx_list_send_*ASSET*_tag_txid_explore_*ASSET*": {
-      "label": "tag_tx_list_send_*ASSET*_tag_txid_explore_*ASSET*",
+    "tx_list_tag_txid_explore_*WALLET*_*ASSET*": {
+      "label": "tx_list_tag_txid_explore_*WALLET*_*ASSET*",
       "category": "wallet_asset",
       "action": "skip_wallets",
       "thorwallet": true,
@@ -1707,8 +1707,8 @@ export const events = {
       "thorwallet": true,
       "value": false
     },
-    "button_send_*WALLET*_*ASSET*_*FROM_ADDRESS*_*TO_ADDRESS*_usd_*numerical_usd_value*": {
-      "label": "button_send_*WALLET*_*ASSET*_*FROM_ADDRESS*_*TO_ADDRESS*_usd_*numerical_usd_value*",
+    "button_send_*WALLET*_*ASSET*_*TO_ADDRESS*_usd_*numerical_usd_value*": {
+      "label": "button_send_*WALLET*_*ASSET*_*TO_ADDRESS*_usd_*numerical_usd_value*",
       "category": "wallet_asset_send_prepare",
       "action": "skip_wallets",
       "thorwallet": true,
@@ -1751,15 +1751,15 @@ export const events = {
       "thorwallet": true,
       "value": false
     },
-    "button_confirm_*WALLET*_*ASSET*_*FROM_ADDRESS*_*TO_ADDRESS*_usd_*numerical_usd_value*": {
-      "label": "button_confirm_*WALLET*_*ASSET*_*FROM_ADDRESS*_*TO_ADDRESS*_usd_*numerical_usd_value*",
+    "button_confirm_*WALLET*_*ASSET*_*TO_ADDRESS*_usd_*numerical_usd_value*": {
+      "label": "button_confirm_*WALLET*_*ASSET*_*TO_ADDRESS*_usd_*numerical_usd_value*",
       "category": "wallet_asset_send_confirm",
       "action": "skip_wallets",
       "thorwallet": true,
       "value": true
     },
-    "button_cancel_*WALLET*_*ASSET*_*FROM_ADDRESS*_*TO_ADDRESS*_usd_*numerical_usd_value*": {
-      "label": "button_cancel_*WALLET*_*ASSET*_*FROM_ADDRESS*_*TO_ADDRESS*_usd_*numerical_usd_value*",
+    "button_cancel_*WALLET*_*ASSET*_*TO_ADDRESS*_usd_*numerical_usd_value*": {
+      "label": "button_cancel_*WALLET*_*ASSET*_*TO_ADDRESS*_usd_*numerical_usd_value*",
       "category": "wallet_asset_send_confirm",
       "action": "skip_wallets",
       "thorwallet": true,
@@ -1832,15 +1832,15 @@ export const events = {
       "thorwallet": true,
       "value": false
     },
-    "tag_txid_copy_*WALLET*_*ASSET*_*FROM_ADDRESS*_*TO_ADDRESS*": {
-      "label": "tag_txid_copy_*WALLET*_*ASSET*_*FROM_ADDRESS*_*TO_ADDRESS*",
+    "tag_txid_copy_*WALLET*_*ASSET*_*TO_ADDRESS*": {
+      "label": "tag_txid_copy_*WALLET*_*ASSET*_*TO_ADDRESS*",
       "category": "wallet_asset_send_success",
       "action": "skip_wallets",
       "thorwallet": true,
       "value": false
     },
-    "tag_txid_explore_*WALLET*_*ASSET*_*FROM_ADDRESS*_*TO_ADDRESS*": {
-      "label": "tag_txid_explore_*WALLET*_*ASSET*_*FROM_ADDRESS*_*TO_ADDRESS*",
+    "tag_txid_explore_*WALLET*_*ASSET*_*TO_ADDRESS*": {
+      "label": "tag_txid_explore_*WALLET*_*ASSET*_*TO_ADDRESS*",
       "category": "wallet_asset_send_success",
       "action": "skip_wallets",
       "thorwallet": true,
@@ -1940,6 +1940,13 @@ export const events = {
   "menu": {
     "menu_open": {
       "label": "menu_open",
+      "category": "menu",
+      "action": "skip_menu",
+      "thorwallet": true,
+      "value": false
+    },
+    "menu_upgrade": {
+      "label": "menu_upgrade",
       "category": "menu",
       "action": "skip_menu",
       "thorwallet": true,

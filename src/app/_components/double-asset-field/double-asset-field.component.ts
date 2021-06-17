@@ -25,6 +25,7 @@ import { MidgardService } from "src/app/_services/midgard.service";
 import { ThorchainPricesService } from "src/app/_services/thorchain-prices.service";
 import { CurrencyService } from "src/app/_services/currency.service";
 import { Currency } from "../account-settings/currency-converter/currency-converter.component";
+import { AnalyticsService, assetString as assetStringFunc } from "src/app/_services/analytics.service";
 
 @Component({
   selector: "app-double-asset-field",
@@ -67,6 +68,7 @@ export class DoubleAssetFieldComponent implements OnInit {
   @Input() error: boolean;
 
   @Input() priceInputs: number[];
+  @Input() assetEvents;
   assetPriceUSD: number;
   usdValue: number;
   user: User;
@@ -80,7 +82,8 @@ export class DoubleAssetFieldComponent implements OnInit {
     public overlayService: OverlaysService,
     private midgardService: MidgardService,
     private thorchainPricesService: ThorchainPricesService,
-    private currencyService: CurrencyService
+    private currencyService: CurrencyService,
+    private analytics: AnalyticsService
   ) {
     const user$ = this.userService.user$.subscribe(
       (user) => (this.user = user)
@@ -107,6 +110,7 @@ export class DoubleAssetFieldComponent implements OnInit {
           const asset = new Asset(
             `${balance.asset.chain}.${balance.asset.symbol}`
           );
+          this.analytics.event(this.assetEvents.event_category, this.assetEvents.event_tag_wallet, undefined, assetStringFunc(inputAsset))
           let assetBalance: AssetAndBalance;
           this.midgardService.getPools().subscribe(async (pools) => {
             if (asset.ticker === "RUNE") {

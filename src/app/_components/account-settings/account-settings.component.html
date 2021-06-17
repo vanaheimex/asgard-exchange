@@ -56,16 +56,16 @@
     </div>
   </div>
   <ng-container *ngIf="getSettingView() === 'PHRASE'">
-    <app-seed-phrase (close)="setSettingView('ACCOUNT')"></app-seed-phrase>
+    <app-seed-phrase (close)="changeSettingView('ACCOUNT')"></app-seed-phrase>
   </ng-container>
   <ng-container *ngIf="getSettingView() === 'SLIP'">
     <app-slippage-tolerance
-      (close)="setSettingView('ACCOUNT')"
+      (close)="changeSettingView('ACCOUNT')"
     ></app-slippage-tolerance>
   </ng-container>
   <ng-container *ngIf="getSettingView() === 'CURRENCY'">
     <app-currency-converter
-      (close)="setSettingView('ACCOUNT')"
+      (close)="changeSettingView('ACCOUNT')"
     ></app-currency-converter>
   </ng-container>
 </div>

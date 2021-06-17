@@ -271,7 +271,7 @@ export class SendAssetComponent implements OnInit, OnDestroy {
     else if (nav === "asset") {
       this.analytics.event('wallet_asset_send_prepare', 'breadcrumb_*ASSET*', undefined, assetString(this.asset.asset));
       this.overlaysService.setCurrentUserView({
-        userView: "Address",
+        userView: "Asset",
         address: this.address,
         chain: this.asset.asset.chain,
         asset: this.asset,
@@ -282,11 +282,10 @@ export class SendAssetComponent implements OnInit, OnDestroy {
   sendNav() {
     /** Might be complicated analytics see if won't make performance issue */
     let sendAmountUSD = this.amount * this.asset.assetPriceUSD;
-    this.analytics.event('wallet_asset_send_prepare', 'button_send_*WALLET*_*ASSET*_*FROM_ADDRESS*_*TO_ADDRESS*_usd_*numerical_usd_value*', 
+    this.analytics.event('wallet_asset_send_prepare', 'button_send_*WALLET*_*ASSET*_*TO_ADDRESS*_usd_*numerical_usd_value*', 
       sendAmountUSD,
       this.asset.asset.chain,
       assetString(this.asset.asset),
-      this.userService.getClientByChain(this.asset.asset.chain),
       this.recipientAddress,
       sendAmountUSD.toString()
     )
@@ -299,7 +298,7 @@ export class SendAssetComponent implements OnInit, OnDestroy {
   }
 
   backNav() {
-    this.analytics.event('wallet_asset_send_prepare', 'button_cancel_*WALLET*_*ASSET*', undefined, assetString(this.asset.asset));
+    this.analytics.event('wallet_asset_send_prepare', 'button_cancel_*WALLET*_*ASSET*', undefined, this.asset.asset.chain, assetString(this.asset.asset));
     this.back.emit()
   }
 

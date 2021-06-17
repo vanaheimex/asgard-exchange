@@ -7,6 +7,7 @@ import {
 } from "src/app/_services/overlays.service";
 import { UserService } from "src/app/_services/user.service";
 import { Asset } from "src/app/_classes/asset";
+import { AnalyticsService } from "src/app/_services/analytics.service";
 
 @Component({
   selector: "app-native-rune-prompt",
@@ -20,7 +21,8 @@ export class NativeRunePromptComponent implements OnInit {
 
   constructor(
     private userService: UserService,
-    private overlaysService: OverlaysService
+    private overlaysService: OverlaysService,
+    private analytics: AnalyticsService
   ) {
     this.nonNativeRuneAssets = [];
 
@@ -61,6 +63,7 @@ export class NativeRunePromptComponent implements OnInit {
   ngOnInit(): void {}
 
   launchModal() {
+    this.analytics.event('menu', 'menu_upgrade');
     this.overlaysService.setCurrentView(MainViewsEnum.Upgrade);
   }
 }
