@@ -75,7 +75,7 @@ export class XDEFIService {
 
   constructor(private userService: UserService) {
     if (typeof window === 'object' && window?.xfi) {
-      (window as any).xfi.thorchain.on("chainChanged", (obj) => {
+      (window as any)?.xfi?.thorchain?.on("chainChanged", (obj) => {
         console.log("changed", obj);
         const envNetwork =
           environment.network === "testnet" ? "testnet" : "mainnet";
@@ -88,7 +88,7 @@ export class XDEFIService {
         }
       });
 
-      (window as any).ethereum.on('accountsChanged', (accounts) => {
+      (window as any)?.ethereum?.on('accountsChanged', (accounts) => {
         // Time to reload your interface with accounts[0]!
         console.log((window as any).ethereum);
         this.connectXDEFI().then(

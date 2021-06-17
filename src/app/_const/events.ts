@@ -155,6 +155,13 @@ export const events = {
       "thorwallet": false,
       "value": false
     },
+    "option_install_xdefi": {
+      "label": "option_install_xdefi",
+      "category": "connect_select_wallet",
+      "action": "skip_connect",
+      "thorwallet": false,
+      "value": false
+    },
     "button_cancel": {
       "label": "button_cancel",
       "category": "connect_select_wallet",
