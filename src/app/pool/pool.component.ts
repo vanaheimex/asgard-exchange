@@ -328,6 +328,5 @@ export class PoolComponent implements OnInit, OnDestroy {
     }
 
     this.clearPoolDetail();
-    console.log("destory the pool veiw");
   }
 }

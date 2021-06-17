@@ -61,7 +61,7 @@
           </div>
           <div class="flex justify-between">
             <span class="tx-detail-label">Disclaimer:</span>
-            <span>A minimum of 1,000 RUNE + balancing</span>
+            <span>A minimum of 1,000 RUNE + balancing asset is required to create a pool</span>
           </div>
           <div class="flex justify-between">
             <span class="tx-detail-label">Fees</span>
@@ -74,10 +74,6 @@
             <span class="tx-detail-label"></span>
             <span *ngIf="runeFee">{{ runeFee | number: "1.0-4" }} RUNE</span>
             <span *ngIf="!runeFee">-</span>
-          </div>
-          <div class="flex justify-between">
-            <span class="tx-detail-label"></span>
-            <span>asset is required to create a pool</span>
           </div>
         </div>
 

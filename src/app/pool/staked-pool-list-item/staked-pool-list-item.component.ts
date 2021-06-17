@@ -197,9 +197,6 @@ export class StakedPoolListItemComponent implements OnChanges {
         .div(10 ** 8)
         .toNumber();
 
-      console.log(addedValue);
-      console.log(currentValue);
-
       if (!addedValue) {
         this.gainLoss = undefined;
       }

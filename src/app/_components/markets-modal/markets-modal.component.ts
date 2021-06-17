@@ -121,7 +121,7 @@ export class MarketsModalComponent implements OnInit, OnDestroy {
     if (item.symbol !== "") {
       if (this.disabledAssetSymbol != item.symbol) {
         if (this.user)
-          this.analytics.event(this.events.event_category, `option_selected_*ASSET*`, undefined, assetString(item));
+          this.analytics.event(this.events?.event_category, `option_selected_*ASSET*`, undefined, assetString(item));
         this.selectedAssetChange.emit(item);
         this.close.emit();
       }
@@ -130,7 +130,7 @@ export class MarketsModalComponent implements OnInit, OnDestroy {
 
   closeDialog() {
     if (this.user)
-      this.analytics.event(this.events.event_category, 'button_cancel')
+      this.analytics.event(this.events?.event_category, 'button_cancel')
     this.close.emit();
   }
 }
