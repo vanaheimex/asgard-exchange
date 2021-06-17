@@ -9,7 +9,7 @@
     <app-breadcrumb
       [path]="[
         { name: 'skip', call: 'swap' },
-        { name: 'upgrade rune', disable: true },
+        { name: 'upgrade rune', call: 'back' },
         { name: asset.asset.chain + '.' + asset.asset.ticker, disable: true }
       ]"
       (funcCaller)="breadcrumbNav($event, 'processing')"

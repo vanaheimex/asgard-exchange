@@ -22,7 +22,7 @@
           [showPrice]="false"
           [disableUser]="false"
           [isWallet]="true"
-          [eventTags]="{event_category: 'wallet_asset_send_success'}"
+          [eventTags]="{event_category: 'wallet_asset_send_success', event_label_wallet: 'tag_wallet_*ASSET*'}"
         >
         </app-asset-input>
 
@@ -80,7 +80,7 @@
           [showPrice]="false"
           [disableUser]="false"
           [isWallet]="sourceBalance ? true : false"
-          [eventTags]="{event_category: 'wallet_asset_send_success'}"
+          [eventTags]="getEventTags(1)"
         >
         </app-asset-input>
 
@@ -109,6 +109,7 @@
           [isWallet]="sourceBalance ? true : false"
           [targetAddress]="targetAddress"
           targetLabel="Sent to"
+          [eventTags]="getEventTags(1)"
         >
         </app-asset-input>
 

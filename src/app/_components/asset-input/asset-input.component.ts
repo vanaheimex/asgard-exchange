@@ -31,6 +31,7 @@ import { AnalyticsService } from "src/app/_services/analytics.service";
 export type assetInputEventTags = {
   event_category: string,
   event_label_max?: string,
+  event_label_wallet?: string
 }
 @Component({
   selector: "app-asset-input",
@@ -289,7 +290,7 @@ export class AssetInputComponent implements OnInit, OnDestroy {
             const address = await this.userService.getAdrressChain(
               this.selectedAsset.chain
             );
-            this.analytics.event(this.eventTags.event_category, 'tag_wallet_*ASSET*', undefined, assetString);
+            this.analytics.event(this.eventTags.event_category, this.eventTags.event_label_wallet, undefined, assetString);
             this.overlayService.setCurrentUserView({
               userView: "Asset",
               address,

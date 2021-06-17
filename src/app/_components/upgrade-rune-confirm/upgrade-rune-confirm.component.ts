@@ -319,7 +319,7 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
     }
 
     if (val === 'swap') {
-      this.analytics.event(label, 'breadcrumb_swap');
+      this.analytics.event(label, 'breadcrumb_skip');
       this.overlaysService.setViews(MainViewsEnum.Swap, 'Swap');
     }
     else if (val === 'back') {

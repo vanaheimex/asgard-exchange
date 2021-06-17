@@ -63,6 +63,60 @@ export class TransactionSuccessModalComponent {
     this.bchExplorerUrl = `${this.explorerPathsService.bchExplorerUrl}/tx`;
   }
 
+  getEventTags(index: number) {
+    let eventWallet;
+    if (this.modalType === 'SWAP') {
+      eventWallet = [
+        {
+          event_category: 'swap_success',
+          event_label_wallet: 'tag_receive_container_wallet_*ASSET*'
+        },
+        {
+          event_category: 'swap_success',
+          event_label_wallet: 'tag_send_container_wallet_*ASSET*'
+        }
+      ]
+    }
+    else if (this.modalType === 'DEPOSIT') {
+      eventWallet = [
+        {
+          event_category: 'pool_deposit_symmetrical_success',
+          event_label_wallet: 'tag_deposited_asset_container_wallet_*POOL_ASSET*'
+        },
+        {
+          event_category: 'pool_deposit_symmetrical_success',
+          event_label_wallet: 'tag_deposited_wallet_THOR.RUNE'
+        }
+      ]
+    } 
+    else if (this.modalType === 'WITHDRAW') {
+      eventWallet = [
+        {
+          event_category: 'pool_withdraw_symmetrical_success',
+          event_label_wallet: 'tag_withdrawn_asset_container_wallet_*POOL_ASSET*'
+        },
+        {
+          event_category: 'pool_withdraw_symmetrical_success',
+          event_label_wallet: 'tag_withdrawn_wallet_THOR.RUNE'
+        }
+      ]
+    }
+    else if (this.modalType === 'UPGRADE') {
+      eventWallet = [
+        {
+          event_category: 'upgrade_success',
+          event_label_wallet: 'tag_upgrade_container_wallet_*ASSET*'
+        },
+        {
+          event_category: 'upgrade_success',
+          event_label_wallet: 'tag_receive_container_wallet_THOR.RUNE'
+        }
+      ]
+    }
+
+    return eventWallet[index];
+  }
+
   copyToClipboard(val?: string, copyOutbound?: boolean) {
     let result;
     if (val)
