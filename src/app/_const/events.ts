@@ -270,8 +270,8 @@ export const events = {
       "thorwallet": false,
       "value": false
     },
-    "button_create": {
-      "label": "button_create",
+    "button_connect": {
+      "label": "button_connect",
       "category": "connect_connect_keystore",
       "action": "skip_connect",
       "thorwallet": false,

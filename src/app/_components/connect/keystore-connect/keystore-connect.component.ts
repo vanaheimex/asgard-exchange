@@ -105,7 +105,7 @@ export class KeystoreConnectComponent {
       return;
     }
 
-    this.analytics.event('connect_connect_keystore', 'button_create');
+    this.analytics.event('connect_connect_keystore', 'button_connect');
     this.keystoreConnecting = true;
 
     setTimeout(() => {
