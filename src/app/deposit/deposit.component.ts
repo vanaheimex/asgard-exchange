@@ -630,11 +630,15 @@ export class DepositComponent implements OnInit, OnDestroy {
   }
 
   back(): void {
+    this.router.navigate(["/", "pool"]);
+  }
+
+  cancelButton() {
     if (this.user)
       this.analytics.event('pool_deposit_symmetrical_prepare', 'button_cancel');
     else
-      this.analytics.event('pool_disconnected_deposit', 'button_cancel');
-    this.router.navigate(["/", "pool"]);
+      this.analytics.event('pool_disconnected_deposit', 'button_cancel_*POOL*', undefined, assetToString(this.asset));
+    this.back();
   }
 
   breadCrumbNav(nav: string, type: 'deposit' | 'market') {

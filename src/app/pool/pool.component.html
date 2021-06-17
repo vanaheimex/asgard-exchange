@@ -101,8 +101,8 @@
         </div>
       </div>
 
-      <div class="bottom-actions two-btn" *ngIf="user">
-        <div class="left-btn">
+      <div class="bottom-actions" *ngIf="user">
+        <div>
           <button
             class="next-btn"
             [disabled]="!user || loading"
@@ -111,8 +111,8 @@
             <span>Refresh</span>
           </button>
         </div>
-        <div class="divider"></div>
-        <div class="right-btn">
+        <!-- <div class="divider"></div> -->
+        <!-- <div class="right-btn">
           <a
             [ngClass]="{
               disabled:
@@ -129,7 +129,7 @@
           >
             <span>Create a new pool</span>
           </a>
-        </div>
+        </div> -->
       </div>
 
       <div class="bottom-actions" *ngIf="!user">

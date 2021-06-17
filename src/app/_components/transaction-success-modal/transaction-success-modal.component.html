@@ -143,6 +143,7 @@
                     *ngIf="modalType !== 'SWAP'"
                     target="_blank"
                     style="text-decoration: none; color: inherit"
+                    (click)="txEventClick('none')"
                     [href]="explorerPath()"
                     >EXPLORE</a
                   >
