@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from "@angular/core";
+import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
 
 export type SwitchField = {
   right: {
@@ -21,8 +21,12 @@ export type SwitchField = {
 export class RightOptionComponent implements OnInit {
   @Input() whichType: "SWITCH" | "FIELD" | "BUTTON" = "SWITCH";
   @Input() switchField: SwitchField;
+  @Output() clickCaller: EventEmitter<string>;
 
-  constructor() {}
+  constructor() {
+    this.clickCaller = new EventEmitter<string>();
+  }
 
   ngOnInit(): void {}
+
 }

@@ -15,6 +15,7 @@ import { environment } from "src/environments/environment";
 import { links } from "src/app/_const/links";
 import { Router } from "@angular/router";
 import { NetworkSummary } from "./_classes/network";
+import { AnalyticsService } from "./_services/analytics.service";
 
 @Component({
   selector: "app-root",
@@ -43,7 +44,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private lastBlockService: LastBlockService,
     private overlaysService: OverlaysService,
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
+    private analytics: AnalyticsService
   ) {
     this.isTestnet = environment.network === "testnet";
     this.mainnetUrl = this.isTestnet ? links.mainnetUrl : links.testnetUrl;
@@ -132,6 +134,9 @@ export class AppComponent implements OnInit, OnDestroy {
           document.querySelector(".expandable")
         ) !== 10
       ) {
+        if (this.overlaysService.getMenu()) {
+          this.analytics.event('menu', 'menu_close');
+        }
         this.overlaysService.setMenu(false);
       }
     });
@@ -153,6 +158,10 @@ export class AppComponent implements OnInit, OnDestroy {
     //     }
     //   }
     // );
+  }
+
+  eventFooterClick(label: string) {
+    this.analytics.event('footer', label);
   }
 
   notificationsExist(): boolean {

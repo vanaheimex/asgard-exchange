@@ -8,11 +8,12 @@
       <div class="content-top">
         <app-breadcrumb
           [path]="[
-            { name: 'skip', swapView: 'Swap', mainView: 'Swap' },
-            { name: 'connect', swapView: 'Connect', mainView: 'Swap' },
+            { name: 'skip', call: 'skip' },
+            { name: 'connect', call: 'connect' },
             { name: 'xdefi found', disable: true }
           ]"
           [message]="getBreadcrumbText()"
+          (funcCaller)="breadcrumbNav($event)"
         ></app-breadcrumb>
       </div>
 

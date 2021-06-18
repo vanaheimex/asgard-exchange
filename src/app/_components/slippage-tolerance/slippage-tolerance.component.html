@@ -2,12 +2,12 @@
   <div class="content-top">
     <app-breadcrumb
       [path]="[
-        { name: 'skip', swapView: 'Swap', mainView: 'Swap' },
-        { name: 'settings', backFunc: true },
+        { name: 'skip', call: 'swap' },
+        { name: 'settings', call: 'settings' },
         { name: 'slippage tolerance', disable: true }
       ]"
       [message]="message"
-      (backFunc)="close.emit()"
+      (funcCaller)="breadcrumbNav($event)"
     ></app-breadcrumb>
     <div class="top-right"></div>
   </div>
@@ -25,7 +25,7 @@
     <!-- close dialog -->
     <div class="bottom-actions two-btn">
       <div class="left-btn">
-        <button class="close-btn" (click)="closeDialog()">
+        <button class="close-btn" (click)="closeButton()">
           <span>cancel</span>
         </button>
       </div>

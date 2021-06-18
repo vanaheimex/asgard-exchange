@@ -24,12 +24,12 @@ import { Asset } from "src/app/_classes/asset";
 import { WithdrawTypeOptions } from "src/app/_const/withdraw-type-options";
 import { TransactionUtilsService } from "src/app/_services/transaction-utils.service";
 import { MidgardService } from "src/app/_services/midgard.service";
-import { AnalyticsService } from "src/app/_services/analytics.service";
+import { AnalyticsService, assetString } from "src/app/_services/analytics.service";
 
 // TODO: this is the same as ConfirmStakeData in confirm stake modal
 export interface ConfirmWithdrawData {
-  asset;
-  rune;
+  asset: Asset;
+  rune: Asset;
   runeBasePrice: number;
   assetBasePrice: number;
   assetAmount: number;
@@ -61,6 +61,8 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
   @Input() data: ConfirmWithdrawData;
   @Output() close: EventEmitter<boolean>;
 
+  message: string = "confirm";
+
   constructor(
     private txStatusService: TransactionStatusService,
     private txUtilsService: TransactionUtilsService,
@@ -69,7 +71,7 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
     private overlaysService: OverlaysService,
     private ethUtilsService: EthUtilsService,
     private midgardService: MidgardService,
-    private analyticsService: AnalyticsService
+    private analytics: AnalyticsService
   ) {
     this.close = new EventEmitter<boolean>();
     this.txState = TransactionConfirmationState.PENDING_CONFIRMATION;
@@ -102,6 +104,12 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
 
   async submitTransaction(): Promise<void> {
     this.txState = TransactionConfirmationState.SUBMITTING;
+    
+    let withdrawAmountUSD = this.data.runeAmount * this.data.runePrice + this.data.assetAmount * this.data.assetPrice;
+    this.analytics.event('pool_withdraw_symmetrical_confirm', 'button_withdraw_confirm_*POOL_ASSET*_usd_*numerical_usd_value*', withdrawAmountUSD, assetString(this.data.asset), withdrawAmountUSD.toString())
+
+    let withdrawFeeAmountUSD = this.data.runeFee * this.data.runePrice + this.data.assetAmount * this.data.networkFee;
+    this.analytics.event('pool_withdraw_symmetrical_confirm', 'button_withdraw_confirm_*POOL_ASSET*_fee_usd_*numerical_usd_value*', withdrawFeeAmountUSD, assetString(this.data.asset), withdrawFeeAmountUSD.toString())
 
     const memo = `WITHDRAW:${this.data.asset.chain}.${this.data.asset.symbol}:${
       this.data.unstakePercent * 100
@@ -115,8 +123,6 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
   }
 
   async runeWithdraw(memo: string) {
-    this.analyticsService.eventEmitter('withdraw', 'withdraw_page', assetToString(this.data.asset), this.data.assetAmount * this.data.assetPrice + this.data.runeAmount * this.data.runePrice) 
-
     // withdraw RUNE
     try {
       const txCost = assetToBase(assetAmount(0.00000001));
@@ -127,7 +133,10 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
         return;
       }
 
+      const assetObj = {chain: this.data.rune.chain, symbol: this.data.rune.symbol, ticker: this.data.rune.ticker};
+
       const hash = await thorClient.deposit({
+        asset: assetObj,
         amount: txCost,
         memo,
       });
@@ -136,6 +145,7 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
     } catch (error) {
       console.error("error making RUNE withdraw: ", error);
       this.error = error;
+      this.message = error;
       this.txState = TransactionConfirmationState.ERROR;
     }
   }
@@ -231,11 +241,29 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
     }
   }
 
-  goToNav(nav: string) {
+  breadcrumbNav(nav: string, mode: 'pending' | 'processing' | 'success') {
     if (nav === "pool") {
       this.router.navigate(["/", "pool"]);
+      if (mode === 'pending') {
+        this.analytics.event('pool_withdraw_symmetrical_confirm', 'breadcrumb_pools');
+      }
+      else if (mode === 'processing') {
+        this.analytics.event('pool_withdraw_symmetrical_processing', 'breadcrumb_pools');
+      }
+      else if ( mode === 'success') {
+        this.analytics.event('pool_withdraw_symmetrical_success', 'breadcrumb_pools');
+      }
     } else if (nav === "swap") {
       this.router.navigate(["/", "swap"]);
+      if (mode === 'pending') {
+        this.analytics.event('pool_withdraw_symmetrical_confirm', 'breadcrumb_skip');
+      }
+      else if (mode === 'processing') {
+        this.analytics.event('pool_withdraw_symmetrical_processing', 'breadcrumb_skip');
+      }
+      else if ( mode === 'success') {
+        this.analytics.event('pool_withdraw_symmetrical_success', 'breadcrumb_skip');
+      }
     }
   }
 
@@ -254,6 +282,12 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
   }
 
   closeDialog(transactionSucess?: boolean) {
+    let withdrawAmountUSD = this.data.runeAmount * this.data.runePrice + this.data.assetAmount * this.data.assetPrice;
+    this.analytics.event('pool_withdraw_symmetrical_confirm', 'button_withdraw_cancel_*POOL_ASSET*_usd_*numerical_usd_value*', withdrawAmountUSD, assetString(this.data.asset), withdrawAmountUSD.toString())
+
+    let withdrawFeeAmountUSD = this.data.runeFee * this.data.runePrice + this.data.assetAmount * this.data.networkFee;
+    this.analytics.event('pool_withdraw_symmetrical_confirm', 'button_withdraw_cancel_*POOL_ASSET*_fee_usd_*numerical_usd_value*', withdrawFeeAmountUSD, assetString(this.data.asset), withdrawFeeAmountUSD.toString())
+
     this.close.emit(transactionSucess);
   }
 

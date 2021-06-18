@@ -12,8 +12,8 @@
             { name: 'Withdraw', disable: true }
           ]"
           [isError]="txState === 'ERROR'"
-          [message]="txState === 'ERROR' ? 'Error' : 'Confirm'"
-          (funcCaller)="goToNav($event)"
+          [message]="message"
+          (funcCaller)="breadcrumbNav($event, 'pending')"
         ></app-breadcrumb>
       </nav>
     </div>
@@ -106,12 +106,6 @@
   </div>
 </div>
 
-<div class="flex flex-col items-center p-8 text-sm" *ngIf="txState === 'ERROR'">
-  <mat-icon>warning</mat-icon>
-  <span *ngIf="error">{{ error }}</span>
-  <span *ngIf="!error">Something went wrong</span>
-</div>
-
 <app-transaction-ledger-confirm-modal
   *ngIf="txState == 'PENDING_LEDGER_CONFIRMATION'"
 ></app-transaction-ledger-confirm-modal>
@@ -139,7 +133,7 @@
     ]"
     [isError]=""
     [message]="'TRANSACTION PROCESSING'"
-    (funcCaller)="goToNav($event)"
+    (funcCaller)="breadcrumbNav($event, 'processing')"
   ></app-breadcrumb>
 </app-transaction-processing-modal>
 
@@ -165,6 +159,6 @@
     ]"
     [isError]=""
     [message]="'SUCCESS'"
-    (funcCaller)="goToNav($event)"
+    (funcCaller)="breadcrumbNav($event, 'success')"
   ></app-breadcrumb>
 </app-transaction-success-modal>

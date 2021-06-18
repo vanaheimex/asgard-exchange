@@ -3,6 +3,7 @@ import { getPoolShare, PoolData, UnitData } from "@thorchain/asgardex-util";
 import { assetToString, baseAmount } from "@xchainjs/xchain-util";
 import BigNumber from "bignumber.js";
 import { Subscription } from "rxjs";
+import { take } from "rxjs/operators";
 import { Asset } from "src/app/_classes/asset";
 import { MemberPool } from "src/app/_classes/member";
 import { PoolDTO } from "src/app/_classes/pool";
@@ -73,7 +74,9 @@ export class StakedPoolListItemComponent implements OnChanges {
   constructor(
     private poolDetailService: PoolDetailService,
     private txStatusService: TransactionStatusService,
-    private analyticsService: AnalyticsService
+    private analyticsService: AnalyticsService,
+    private userService: UserService,
+    private analytics: AnalyticsService
   ) {
     this.expanded = false;
     this.activate = false;
@@ -115,13 +118,24 @@ export class StakedPoolListItemComponent implements OnChanges {
 
   toggleExpanded() {
     if (!this.isPending) this.poolDetailService.setActivatedAsset(this.asset);
-    this.analyticsService.eventEmitter('pool_select', 'pool_page', assetToString(this.asset));
   }
 
   setAsset(): void {
     if (this.poolData) {
       this.asset = new Asset(this.poolData.asset);
     }
+  }
+
+  statEvent() {
+    this.analytics.event('pool_select', 'tag_pool_stats_*POOL_ASSET*', undefined, `${this.asset.chain}.${this.asset.ticker}`);
+  }
+
+  depositEvent() {
+    this.analytics.event('pool_select', 'tag_pool_deposit_*POOL_ASSET*', undefined, `${this.asset.chain}.${this.asset.ticker}`);
+  }
+
+  withdrawEvent() {
+    this.analytics.event('pool_select', 'tag_pool_withdraw_*POOL_ASSET*', undefined, `${this.asset.chain}.${this.asset.ticker}`)
   }
 
   getPoolShare(): void {
@@ -150,27 +164,6 @@ export class StakedPoolListItemComponent implements OnChanges {
         Number(this.memberPoolData.liquidityUnits) /
         Number(this.poolData.units);
 
-      let currentValue = new BigNumber(
-        this.poolShare * +this.poolData.runeDepth * this.poolData.runePrice +
-          this.poolShare *
-            +this.poolData.assetDepth *
-            +this.poolData.assetPriceUSD
-      )
-        .div(10 ** 8)
-        .toNumber();
-      let addedValue = new BigNumber(
-        this.runeYieldPool?.find(
-          (p) => p.pool === this.memberPoolData.pool
-        )?.totalstakedusd
-      )
-        .div(10 ** 8)
-        .toNumber();
-      if (!addedValue) {
-        this.gainLoss = 0;
-        return;
-      }
-      this.gainLoss = ((currentValue - addedValue) / addedValue) * 100;
-
       if (this.activate) {
         this.poolDetailService.setPooledDetails(
           "member",
@@ -181,6 +174,33 @@ export class StakedPoolListItemComponent implements OnChanges {
           this.asset.chain
         );
       }
+
+      // gain/loss calculation
+      let currentValue = new BigNumber(
+        this.poolShare * +this.poolData.runeDepth * this.poolData.runePrice +
+          this.poolShare *
+            +this.poolData.assetDepth *
+            +this.poolData.assetPriceUSD
+      ).plus(
+        new BigNumber(this.runeYieldPool?.find(
+          (p) => p.pool === this.memberPoolData.pool
+        )?.totalunstakedusd)
+      )
+        .div(10 ** 8)
+        .toNumber();
+
+      let addedValue = new BigNumber(
+        this.runeYieldPool?.find(
+          (p) => p.pool === this.memberPoolData.pool
+        )?.totalstakedusd
+      )
+        .div(10 ** 8)
+        .toNumber();
+
+      if (!addedValue) {
+        this.gainLoss = undefined;
+      }
+      this.gainLoss = ((currentValue - addedValue) / addedValue) * 100;
     }
   }
 

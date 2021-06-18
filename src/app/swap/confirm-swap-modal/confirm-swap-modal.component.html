@@ -9,10 +9,11 @@
 >
   <app-breadcrumb
     [path]="[
-      { name: 'skip', swapView: 'Swap', mainView: 'Swap' },
-      { name: 'Swap', swapView: 'Swap', mainView: 'Swap' }
+      { name: 'skip', call: 'skip' },
+      { name: 'Swap', call: 'swap' }
     ]"
     message="TRANSACTION PROCESSING"
+    (funcCaller)="breadcrumbNav($event, 'processing')"
   ></app-breadcrumb>
 </app-transaction-processing-modal>
 
@@ -33,14 +34,12 @@
     [path]="[
       {
         name: 'skip',
-        swapView: 'Swap',
-        mainView: 'Swap',
-        call: 'sucSwap'
+        call: 'skip'
       },
-      { name: 'Swap', swapView: 'Swap', mainView: 'Swap', call: 'sucSwap' }
+      { name: 'Swap', call: 'swap' }
     ]"
     message="SUCCESS"
-    (funcCaller)="navCaller($event)"
+    (funcCaller)="breadcrumbNav($event, 'success')"
   ></app-breadcrumb>
 </app-transaction-success-modal>
 
@@ -54,10 +53,11 @@
         <div *ngIf="txState === 'PENDING_CONFIRMATION'">
           <app-breadcrumb
             [path]="[
-              { name: 'skip', swapView: 'Swap', mainView: 'Swap' },
-              { name: 'Swap', swapView: 'Swap', mainView: 'Swap' }
+              { name: 'skip', call: 'skip' },
+              { name: 'Swap', call: 'swap' }
             ]"
             message="confirm"
+            (funcCaller)="breadcrumbNav($event, 'pending')"
           ></app-breadcrumb>
         </div>
         <div *ngIf="txState === 'ERROR'">

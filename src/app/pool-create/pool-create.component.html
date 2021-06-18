@@ -11,7 +11,7 @@
               { name: 'Create', disable: true }
             ]"
             [message]="mainButtonText()"
-            (funcCaller)="goToNav($event)"
+            (funcCaller)="breadcrumbNav($event)"
           ></app-breadcrumb>
           <div class="top-right"></div>
         </nav>
@@ -26,6 +26,10 @@
           [selectableMarkets]="selectableMarkets"
           [priceInput]="assetUsdValue"
           (lunchMarket)="overlaysService.setCurrentCreatePoolView('Asset')"
+          [eventTags]="{
+            event_category: 'pool_create', 
+            event_label_max: 'tag_deposit_container_max_*ASSET*'
+          }"
         >
         </app-asset-input>
 
@@ -40,6 +44,10 @@
           [disabledMarketSelect]="true"
           [disabledAssetSymbol]="rune.symbol"
           [priceInput]="runeUsdValue"
+          [eventTags]="{
+            event_category: 'pool_create', 
+            event_label_max: 'tag_deposit_container_max_*ASSET*'
+          }"
         >
         </app-asset-input>
 
@@ -53,7 +61,7 @@
           </div>
           <div class="flex justify-between">
             <span class="tx-detail-label">Disclaimer:</span>
-            <span>A minimum of 1,000 RUNE + balancing</span>
+            <span>A minimum of 1,000 RUNE + balancing asset is required to create a pool</span>
           </div>
           <div class="flex justify-between">
             <span class="tx-detail-label">Fees</span>
@@ -66,10 +74,6 @@
             <span class="tx-detail-label"></span>
             <span *ngIf="runeFee">{{ runeFee | number: "1.0-4" }} RUNE</span>
             <span *ngIf="!runeFee">-</span>
-          </div>
-          <div class="flex justify-between">
-            <span class="tx-detail-label"></span>
-            <span>asset is required to create a pool</span>
           </div>
         </div>
 
@@ -122,7 +126,7 @@
             { name: 'SEARCH', disable: true }
           ]"
           message="SELECT"
-          (funcCaller)="goToNav($event)"
+          (funcCaller)="breadcrumbNav($event)"
         ></app-breadcrumb>
       </app-markets-modal>
     </div>
@@ -135,6 +139,7 @@
         [data]="{ asset: asset, contractAddress: ethRouter }"
         (approvedHash)="contractApproved()"
         (close)="overlaysService.setCurrentCreatePoolView('Create')"
+        eventCategory="pool_create_approve_contract_approve"
         mode="create pool"
       >
       </app-approve-eth-contract-modal>

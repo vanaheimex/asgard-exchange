@@ -22,6 +22,7 @@
           [showPrice]="false"
           [disableUser]="false"
           [isWallet]="true"
+          [eventTags]="{event_category: 'wallet_asset_send_success', event_label_wallet: 'tag_wallet_*ASSET*'}"
         >
         </app-asset-input>
 
@@ -57,6 +58,7 @@
                   target="_blank"
                   style="text-decoration: none; color: inherit"
                   [href]="explorerPath()"
+                  (click)="txEventClick()"
                   >Explore</a
                 >
               </div>
@@ -65,7 +67,7 @@
         </app-notice>
       </div>
 
-      <div *ngIf="modalType === 'SWAP' || modalType === 'DEPOSIT' || modalType === 'UPGRADE'">
+      <div *ngIf="modalType === 'SWAP' || modalType === 'DEPOSIT' || modalType === 'UPGRADE' || modalType === 'CREATE'">
         <app-asset-input
           [label]="label[0]"
           [(selectedAsset)]="asset[0].asset"
@@ -78,6 +80,7 @@
           [showPrice]="false"
           [disableUser]="false"
           [isWallet]="sourceBalance ? true : false"
+          [eventTags]="getEventTags(0)"
         >
         </app-asset-input>
 
@@ -106,6 +109,7 @@
           [isWallet]="sourceBalance ? true : false"
           [targetAddress]="targetAddress"
           targetLabel="Sent to"
+          [eventTags]="getEventTags(1)"
         >
         </app-asset-input>
 
@@ -132,6 +136,7 @@
                     *ngIf="modalType === 'SWAP'"
                     target="_blank"
                     style="text-decoration: none; color: inherit"
+                    (click)="txEventClick('none_inbound')"
                     [href]="explorerPath(hash, asset[0].asset.chain)"
                     >{{asset[0].asset.chain}} TX</a
                   >
@@ -139,6 +144,7 @@
                     *ngIf="modalType !== 'SWAP'"
                     target="_blank"
                     style="text-decoration: none; color: inherit"
+                    (click)="txEventClick('none')"
                     [href]="explorerPath()"
                     >EXPLORE</a
                   >
@@ -153,6 +159,7 @@
                       target="_blank"
                       style="text-decoration: none; color: inherit"
                       [href]="explorerPath(hash, asset[1].asset.chain)"
+                      (click)="txEventClick('none_outbound')"
                       >{{asset[1].asset.chain}} TX</a
                     >
                     <a
@@ -193,6 +200,7 @@
                       target="_blank"
                       style="text-decoration: none; color: inherit"
                       [href]="explorerPath()"
+                      (click)="txEventClick('inbound')"
                       >Explore</a
                     >
                   </div>
@@ -246,6 +254,7 @@
                     <a
                       target="_blank"
                       style="text-decoration: none; color: inherit"
+                      (click)="txEventClick('outbound')"
                       [href]="
                         hashOutbound !== 'success'
                           ? explorerPath(hashOutbound, asset[1].asset.chain)
@@ -285,6 +294,10 @@
           [assetUnits]="[amount[0], amount[1]]"
           [showPrice]="false"
           [isWallet]="true"
+          [assetEvents]="{
+              event_category: 'pool_withdraw_symmetrical_success',
+              event_tag_wallet: 'tag_withdrawn_wallet_*POOL_ASSET*'
+            }"
         ></app-double-asset-field>
 
         <app-arrow></app-arrow>
@@ -309,6 +322,7 @@
                   target="_blank"
                   style="text-decoration: none; color: inherit"
                   [href]="explorerPath()"
+                  (click)="txEventClick()"
                   >Explore</a
                 >
               </div>
@@ -323,7 +337,7 @@
         <button
           class="close-btn"
           aria-label="CLOSE"
-          (click)="closeDialog.emit()"
+          (click)="close()"
         >
           <span>close</span>
         </button>

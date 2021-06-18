@@ -10,7 +10,8 @@ import { ExplorerPathsService } from "src/app/_services/explorer-paths.service";
 import { UserService } from "src/app/_services/user.service";
 import { PoolDTO } from "src/app/_classes/pool";
 import { ThorchainPricesService } from "src/app/_services/thorchain-prices.service";
-import { OverlaysService } from "src/app/_services/overlays.service";
+import { MainViewsEnum, OverlaysService } from "src/app/_services/overlays.service";
+import { AnalyticsService, assetString } from "src/app/_services/analytics.service";
 
 @Component({
   selector: "app-user-address",
@@ -40,7 +41,8 @@ export class UserAddressComponent implements OnInit {
     private copyService: CopyService,
     private explorerPathsService: ExplorerPathsService,
     private thorchainPricesService: ThorchainPricesService,
-    private overlaysService: OverlaysService
+    private overlaysService: OverlaysService,
+    private analytics: AnalyticsService
   ) {
     this.back = new EventEmitter<null>();
     this.navigateToAsset = new EventEmitter<AssetAndBalance>();
@@ -175,9 +177,16 @@ export class UserAddressComponent implements OnInit {
     let result = this.copyService.copyToClipboard(address);
 
     if (result) this.copied = true;
+
+    this.analytics.event('wallet_asset_select', 'tag_txid_copy_*WALLET*', undefined, this.chain);
+  }
+
+  eventClick() {
+    this.analytics.event('wallet_asset_select', 'tag_txid_explore_*WALLET*', undefined, this.chain);
   }
 
   async refreshBalances() {
+    this.analytics.event('wallet_asset_select', 'button_refresh_*WALLET*', undefined, this.chain);
     this.loadingBalance = true;
     await this.userService.fetchBalances();
     setTimeout(() => {
@@ -185,14 +194,20 @@ export class UserAddressComponent implements OnInit {
     }, 1500);
   }
 
-  navCaller(nav) {
-    if (nav === "wallet")
+  breadcrumbNav(nav) {
+    if (nav === 'swap') {
+      this.analytics.event('wallet_asset_select', 'breadcrumb_skip');
+      this.overlaysService.setViews(MainViewsEnum.Swap, "Swap")
+    }
+    else if (nav === "wallet") {
+      this.analytics.event('wallet_asset_select', 'breadcrumb_wallet');
       this.overlaysService.setCurrentUserView({
         userView: "Addresses",
         address: null,
         chain: null,
         asset: null,
       });
+    }
   }
 
   selectAsset(asset: Asset) {
@@ -201,9 +216,15 @@ export class UserAddressComponent implements OnInit {
     );
     if (match) {
       this.navigateToAsset.next(match);
+      this.analytics.event('wallet_asset_select', 'option_selected_*ASSET*', undefined, assetString(match.asset));
     } else {
       console.error("no match found for asset: ", asset);
     }
+  }
+
+  backNav() {
+    this.analytics.event('wallet_asset_select', 'button_wallet_*WALLET*', undefined, this.chain);
+    this.back.emit()
   }
 
   ngOnDestroy(): void {

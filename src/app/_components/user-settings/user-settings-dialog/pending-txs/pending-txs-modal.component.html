@@ -6,10 +6,11 @@
       <div class="content-top">
         <app-breadcrumb
           [path]="[
-            { name: 'skip', swapView: 'Swap', mainView: 'Swap' },
+            { name: 'skip', call: 'swap' },
             { name: 'transactions', disable: true }
           ]"
           message="select"
+          (funcCaller)="breadcrumbNav($event)"
         ></app-breadcrumb>
         <div class="top-right"></div>
       </div>
@@ -90,6 +91,7 @@
                   style="text-decoration: none; color: #fff"
                   target="_blank"
                   [href]="explorerPath(tx)"
+                  (click)="exploreEvent(tx)"
                   >{{ tx.chain }} TX</a
                 >
               </app-tag>
@@ -103,6 +105,8 @@
                       tx.outbound?.asset?.chain
                     )
                   "
+                  (click)="exploreEvent(tx, tx.outbound?.asset)"
+
                   >{{ tx.outbound.asset.chain }} TX</a
                 >
               </app-tag>

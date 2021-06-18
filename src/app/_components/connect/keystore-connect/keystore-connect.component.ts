@@ -1,6 +1,8 @@
 import { Component, Output, EventEmitter } from "@angular/core";
 import { UserService } from "src/app/_services/user.service";
 import { KeystoreService } from "src/app/_services/keystore.service";
+import { MainViewsEnum, OverlaysService } from "src/app/_services/overlays.service";
+import { AnalyticsService } from "src/app/_services/analytics.service";
 
 export type Keystore = {
   address: string;
@@ -41,7 +43,9 @@ export class KeystoreConnectComponent {
 
   constructor(
     private userService: UserService,
-    private keystoreService: KeystoreService
+    private keystoreService: KeystoreService,
+    private overlaysService: OverlaysService,
+    private analytics: AnalyticsService
   ) {
     this.back = new EventEmitter<null>();
     this.closeModal = new EventEmitter<null>();
@@ -51,10 +55,23 @@ export class KeystoreConnectComponent {
     this.keystorePassword = "";
     this.keystoreFile = null;
     this.keystoreFileSelected = false;
+    this.analytics.event('connect_connect_keystore', 'button_cancel');
     this.back.emit();
+  }
+  
+  breadcrumbNav(val: string) {
+    if (val === 'swap') {
+      this.analytics.event('connect_connect_keystore', 'breadcrumb_skip')
+      this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
+    }
+    else if (val === 'connect') {
+      this.analytics.event('connect_connect_keystore', 'breadcrumb_connect');
+      this.back.emit();
+    }
   }
 
   async onKeystoreFileChange(event: Event) {
+    this.analytics.event('connect_connect_keystore', 'tag_select_file');
     this.keystoreFileSelected = true;
 
     const target = event.target as HTMLInputElement;
@@ -88,6 +105,7 @@ export class KeystoreConnectComponent {
       return;
     }
 
+    this.analytics.event('connect_connect_keystore', 'button_connect');
     this.keystoreConnecting = true;
 
     setTimeout(() => {
@@ -113,7 +131,4 @@ export class KeystoreConnectComponent {
     }
   }
 
-  backClicked() {
-    this.back.emit();
-  }
 }

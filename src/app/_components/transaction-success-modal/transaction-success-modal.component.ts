@@ -8,7 +8,7 @@ import { UserService } from "src/app/_services/user.service";
 import { Balances } from "@xchainjs/xchain-client";
 import { Subscription } from "rxjs";
 import { environment } from "src/environments/environment";
-import { AnalyticsService } from "src/app/_services/analytics.service";
+import { AnalyticsService, assetString } from "src/app/_services/analytics.service";
 
 @Component({
   selector: "app-transaction-success-modal",
@@ -24,7 +24,7 @@ export class TransactionSuccessModalComponent {
   @Output() closeDialog: EventEmitter<null>;
 
   //added by the new reskin
-  @Input() modalType: 'SWAP' | 'DEPOSIT' | 'WITHDRAW' | 'SEND' | 'UPGRADE';
+  @Input() modalType: 'SWAP' | 'DEPOSIT' | 'WITHDRAW' | 'SEND' | 'UPGRADE' | 'CREATE';
   @Input() asset: Array<AssetAndBalance>;
   @Input() label: Array<string>;
   @Input() amount: Array<number | BigNumber>;
@@ -63,6 +63,48 @@ export class TransactionSuccessModalComponent {
     this.bchExplorerUrl = `${this.explorerPathsService.bchExplorerUrl}/tx`;
   }
 
+  getEventTags(index: number) {
+    let eventWallet;
+    if (this.modalType === 'SWAP') {
+      eventWallet = [
+        {
+          event_category: 'swap_success',
+          event_label_wallet: 'tag_receive_container_wallet_*ASSET*'
+        },
+        {
+          event_category: 'swap_success',
+          event_label_wallet: 'tag_send_container_wallet_*ASSET*'
+        }
+      ]
+    }
+    else if (this.modalType === 'DEPOSIT') {
+      eventWallet = [
+        {
+          event_category: 'pool_deposit_symmetrical_success',
+          event_label_wallet: 'tag_deposited_asset_container_wallet_*POOL_ASSET*'
+        },
+        {
+          event_category: 'pool_deposit_symmetrical_success',
+          event_label_wallet: 'tag_deposited_wallet_THOR.RUNE'
+        }
+      ]
+    } 
+    else if (this.modalType === 'UPGRADE') {
+      eventWallet = [
+        {
+          event_category: 'upgrade_success',
+          event_label_wallet: 'tag_upgrade_container_wallet_*ASSET*'
+        },
+        {
+          event_category: 'upgrade_success',
+          event_label_wallet: 'tag_receive_container_wallet_THOR.RUNE'
+        }
+      ]
+    }
+
+    return eventWallet[index];
+  }
+
   copyToClipboard(val?: string, copyOutbound?: boolean) {
     let result;
     if (val)
@@ -80,11 +122,35 @@ export class TransactionSuccessModalComponent {
         setTimeout(() => {
           this.copiedOutbound = false;
         }, 3000);
+        if (this.modalType === 'SWAP') {
+          this.analyticsService.event('swap_success', `tag_outbound_txid_copy_*ASSET*`, undefined, assetString(this.asset[1].asset));
+        }
       } else {
         this.copied = true;
         setTimeout(() => {
           this.copied = false;
         }, 3000);
+        if (this.modalType === 'SWAP') {
+          if (this.hasOutbound)
+            this.analyticsService.event('swap_success', `tag_inbound_txid_copy_*POOL_ASSET*`, undefined, assetString(this.asset[0].asset));
+          else
+            this.analyticsService.event('swap_success', "tag_txid_copy_*FROM_ASSET*_*TO_ASSET*", undefined, assetString(this.asset[0].asset), assetString(this.asset[1].asset));
+        }
+        else if (this.modalType === 'DEPOSIT') {
+          this.analyticsService.event('pool_deposit_symmetrical_success', 'tag_txid_copy_*POOL_ASSET*', undefined, assetString(this.asset[0].asset))
+        } 
+        else if (this.modalType === 'WITHDRAW') {
+          this.analyticsService.event('pool_withdraw_symmetrical_success', 'tag_txid_copy_*POOL_ASSET*', undefined, assetString(this.asset[0].asset))
+        }
+        else if (this.modalType === 'UPGRADE') {
+          this.analyticsService.event('upgrade_success', 'tag_txid_copy_*FROM_ASSET*', undefined, assetString(this.asset[0].asset))
+        }
+        else if (this.modalType === 'SEND') {
+          this.analyticsService.event('wallet_asset_send_success', 'tag_txid_copy_*WALLET*_*ASSET*_*TO_ADDRESS*', undefined, this.asset[0].asset.chain, assetString(this.asset[0].asset),this.recipientAddress)
+        }
+        else if (this.modalType === 'CREATE') {
+          this.analyticsService.event('pool_create_success', 'tag_txid_copy_*ASSET*', undefined, assetString(this.asset[0].asset))
+        }
       }
     }
   }
@@ -163,12 +229,65 @@ export class TransactionSuccessModalComponent {
     this.subs = [balances$];
   }
 
+  txEventClick(type: 'inbound' | 'outbound' | 'none_inbound' | 'none_outbound' | 'none' = 'none') {
+    if (type === 'inbound') {
+      this.analyticsService.event('swap_success', `tag_inbound_txid_explore_*ASSET*`, undefined, assetString(this.asset[0].asset));
+    }
+    else if (type === 'outbound') {
+      this.analyticsService.event('swap_success', `tag_outbound_txid_explore_*ASSET*`, undefined, assetString(this.asset[1].asset));
+    }
+    else if (type === 'none_inbound') {
+      this.analyticsService.event('swap_success', `tag_txid_explore_*FROM_ASSET*`, undefined, assetString(this.asset[0].asset));
+    }
+    else if (type === 'none_outbound') {
+      this.analyticsService.event('swap_success', `tag_txid_explore_*TO_ASSET*`, undefined, assetString(this.asset[1].asset));
+    }
+    else if (type === 'none') {
+      if (this.modalType === 'SEND') {
+        this.analyticsService.event('wallet_asset_send_success', "tag_txid_explore_*WALLET*_*ASSET*_*TO_ADDRESS*", undefined, this.asset[0].asset.chain, assetString(this.asset[0].asset), this.recipientAddress);
+      }
+      else if (this.modalType === 'DEPOSIT') {
+        this.analyticsService.event('pool_deposit_symmetrical_success', 'tag_txid_explore_*POOL_ASSET*', undefined, assetString(this.asset[0].asset));
+      }
+      else if (this.modalType === 'WITHDRAW') {
+        this.analyticsService.event('pool_withdraw_symmetrical_success', 'tag_txid_explore_*POOL_ASSET*', undefined, assetString(this.asset[0].asset));
+      }
+      else if (this.modalType === 'UPGRADE') {
+        this.analyticsService.event('upgrade_success', 'tag_txid_explore_*FROM_ASSET*', undefined, assetString(this.asset[0].asset));
+      }
+      else if (this.modalType === 'CREATE') {
+        this.analyticsService.event('pool_create_success', 'tag_txid_explore_*ASSET*', undefined, assetString(this.asset[0].asset));
+      }
+    }
+  }
+
+  close() {
+    if (this.modalType === 'SWAP') {
+      this.analyticsService.event('swap_success', 'button_close');
+    }
+    else if (this.modalType === 'DEPOSIT') {
+      this.analyticsService.event('pool_withdraw_symmetrical_success', 'button_close');
+    }
+    else if (this.modalType === 'SEND') {
+      this.analyticsService.event('wallet_asset_send_success', 'button_close');
+    }
+    else if (this.modalType === 'WITHDRAW') {
+      this.analyticsService.event('pool_withdraw_symmetrical_success', 'button_close');
+    }
+    else if (this.modalType === 'UPGRADE') {
+      this.analyticsService.event('upgrade_success', 'button_close');
+    }
+    else if (this.modalType === 'CREATE') {
+      this.analyticsService.event('pool_create_success', 'button_close');
+    }
+
+    this.closeDialog.emit()
+  }
+
   ngOnDestroy(): void {
     for (const sub of this.subs) {
       sub.unsubscribe();
     }
 
-    if (this.modalType === 'SWAP')
-      this.analyticsService.eventEmitter('swap_success_close', 'swap_page', `${assetToString(this.asset[0].asset)}_${assetToString(this.asset[1].asset)}`);
   }
 }

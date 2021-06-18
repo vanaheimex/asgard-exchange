@@ -22,9 +22,7 @@
     <span class="pending" *ngIf="isPending"
       >({{ isPending.action + 'ING' }})</span
     >
-    <!-- <button class="text-white" mat-icon-button>
-      <mat-icon>expand_more</mat-icon>
-    </button> -->
+
     <div class="flex justify-between">
       <ng-container *ngIf="activate && !isPending">
         <app-tag *ngIf="!isTestnet">
@@ -45,19 +43,22 @@
               (isTestnet ? 'testnet/' : 'chaosnet/')
             "
             target="_blank"
+            (click)="statEvent()"
             >POOL STATS</a
           >
         </app-tag>
         <div style="width: 5px"></div>
         <app-tag *ngIf="!depositsDisabled">
           <a [routerLink]="['/', 'deposit', asset.chain + '.' + asset.symbol]"
-            >Deposit</a
+          (click)="depositEvent()"
+          >Deposit</a
           >
         </app-tag>
         <div style="width: 5px"></div>
         <app-tag>
           <a [routerLink]="['/', 'withdraw', asset.chain + '.' + asset.symbol]"
-            >Withdraw</a
+            (click)="withdrawEvent()"  
+          >Withdraw</a
           >
         </app-tag>
       </ng-container>
@@ -65,7 +66,7 @@
         <app-tag
           type="color"
           [active]="hover"
-          [color]="gainLoss >= 0 ? '#28F4AE' : '#FF4954'"
+          [color]="gainLoss < 0 ? '#FF4954' : '#28F4AE'"
         >
           <span style="color: inherit"
             >Joined
@@ -79,25 +80,4 @@
     </div>
   </div>
 
-  <!-- <div [hidden]="!expanded" class="staked-data-details">
-    <div *ngIf="pooledRune" class="flex justify-between pool-detail-row">
-      <span>Pooled RUNE</span>
-      <span>{{pooledRune | number:"0.0-6"}}</span>
-    </div>
-    <div *ngIf="pooledAsset" class="flex justify-between pool-detail-row">
-      <span>Pooled {{asset.ticker}}</span>
-      <span>{{pooledAsset | number:"0.0-6"}}</span>
-    </div>
-    <div *ngIf="poolShare" class="flex justify-between pool-detail-row">
-      <span>Pool Share</span>
-      <span>{{poolShare | percent:"0.0-6"}}</span>
-    </div>
-
-
-    <div class="flex justify-between">
-      <a *ngIf="!depositsDisabled" mat-flat-button class="w-1/2" color="primary" [routerLink]="['/', 'deposit', asset.chain + '.' + asset.symbol]">Deposit</a>
-      <span *ngIf="!depositsDisabled" class="w-2"></span>
-      <a mat-flat-button [ngClass]="{'w-1/2' : !depositsDisabled, 'w-full' : depositsDisabled}" color="primary" [routerLink]="['/', 'withdraw', asset.chain + '.' +  asset.symbol]">Withdraw</a>
-    </div>
-  </div> -->
 </div>

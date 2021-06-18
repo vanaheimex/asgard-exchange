@@ -17,6 +17,7 @@ import { ThorchainPricesService } from "../_services/thorchain-prices.service";
 import { CurrencyService } from "../_services/currency.service";
 import { Currency } from "../_components/account-settings/currency-converter/currency-converter.component";
 import { OverlaysService, PoolViews } from "../_services/overlays.service";
+import { AnalyticsService } from "../_services/analytics.service";
 
 @Component({
   selector: "app-pool",
@@ -56,7 +57,8 @@ export class PoolComponent implements OnInit, OnDestroy {
     private router: Router,
     private thorchainPricesService: ThorchainPricesService,
     private currencyService: CurrencyService,
-    public ovrService: OverlaysService
+    public ovrService: OverlaysService,
+    private analytics: AnalyticsService
   ) {
     this.subs = [];
     this.memberPools = [];
@@ -172,12 +174,43 @@ export class PoolComponent implements OnInit, OnDestroy {
     });
   }
 
-  goToNav(nav: string) {
+  breadcrumbNav(nav: string) {
     if (nav === "pool") {
       this.router.navigate(["/", "pool"]);
     } else if (nav === "swap") {
       this.router.navigate(["/", "swap"]);
+      if (!this.user) {
+        this.analytics.event('pool_disconnected', 'breadcrumb_skip');
+      }
+      else {
+        this.analytics.event('pool_select', 'breadcrumb_skip');
+      }
     }
+  }
+
+  switchNav(val: string) {
+    if (val === "left") {
+      if (!this.user)
+        this.analytics.event('pool_disconnected', 'switch_swap');
+      else if (this.user) {
+        this.analytics.event('pool_select', 'switch_swap');
+      }
+      this.router.navigate([
+        "/",
+        "swap"
+      ]);
+    }
+    else if (val === "right") {
+      this.router.navigate([
+        "/",
+        "pool"
+      ]);
+    }
+  }
+
+  connectWallet() {
+    this.analytics.event('pool_disconnected', 'button_connect_wallet');
+    this.ovrService.setCurrentPoolView('Connect')
   }
 
   checkCreateableMarkets() {
@@ -273,9 +306,20 @@ export class PoolComponent implements OnInit, OnDestroy {
           }
         });
       }
+
     }
 
     this.loading = false;
+  }
+
+  buttonRefresh() {
+    this.analytics.event('pool_select', 'button_refresh');
+
+    this.getAccountPools();
+  }
+
+  createPoolEvent() {
+    this.analytics.event('pool_select', 'button_create_pool');
   }
 
   ngOnDestroy(): void {
@@ -284,6 +328,5 @@ export class PoolComponent implements OnInit, OnDestroy {
     }
 
     this.clearPoolDetail();
-    console.log("destory the pool veiw");
   }
 }

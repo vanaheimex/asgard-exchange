@@ -25,6 +25,7 @@
             'https://thorchain.delphidigital.io/thorchain/' +
             (isTestnet ? 'testnet/' : 'chaosnet/')
           "
+          (click)="statEvent()"
           target="_blank"
           >POOL STATS</a
         >
@@ -32,6 +33,7 @@
       <div style="width: 5px"></div>
       <app-tag *ngIf="!depositsDisabled">
         <a [routerLink]="['/', 'deposit', asset.chain + '.' + asset.symbol]"
+          (click)="depositEvent()"
           >Deposit</a
         >
       </app-tag>

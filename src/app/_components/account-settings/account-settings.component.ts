@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { Subscription } from "rxjs";
 import { User } from "src/app/_classes/user";
+import { AnalyticsService } from "src/app/_services/analytics.service";
 import { CurrencyService } from "src/app/_services/currency.service";
 import {
   MainViewsEnum,
@@ -28,7 +29,8 @@ export class AccountSettingsComponent implements OnInit {
     private overlaysService: OverlaysService,
     private slipLimitService: SlippageToleranceService,
     private userService: UserService,
-    private currencyService: CurrencyService
+    private currencyService: CurrencyService,
+    private analytics: AnalyticsService
   ) {
     const slippageTolerange$ =
       this.slipLimitService.slippageTolerance$.subscribe(
@@ -48,11 +50,19 @@ export class AccountSettingsComponent implements OnInit {
     this.subs = [slippageTolerange$, user$, cur$];
   }
 
+  breadcrumbNav(val: string) {
+    if (val === "swap") {
+      this.analytics.event('setting_select', 'breadcrumb_skip');
+      this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
+    }
+  }
+
   ngOnInit(): void {
     this.loading = true;
   }
 
   close() {
+    this.analytics.event('setting_select', 'button_close');
     this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
   }
 
@@ -61,6 +71,11 @@ export class AccountSettingsComponent implements OnInit {
   }
 
   setSettingView(val: SettingViews) {
+    this.analytics.event('setting_select', 'option_selected_*SETTING*', undefined, val);
+    this.overlaysService.setSettingView(val);
+  }
+
+  changeSettingView(val: SettingViews) {
     this.overlaysService.setSettingView(val);
   }
 

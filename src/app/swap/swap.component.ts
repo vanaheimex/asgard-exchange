@@ -50,7 +50,7 @@ import {
 } from 'rxjs/operators';
 import { UpdateTargetAddressModalComponent } from './update-target-address-modal/update-target-address-modal.component';
 import { SwapServiceService } from "../_services/swap-service.service";
-import { AnalyticsService } from '../_services/analytics.service';
+import { AnalyticsService, assetString } from '../_services/analytics.service';
 
 export enum SwapType {
   DOUBLE_SWAP = "double_swap",
@@ -175,8 +175,11 @@ export class SwapComponent implements OnInit, OnDestroy {
       ]);
     }
 
-    this.targetClientAddress = this.userService.getChainClient(this.user, this.selectedTargetAsset?.chain)?.getAddress();
-
+    try {
+      this.targetClientAddress = this.userService.getChainClient(this.user, this._selectedTargetAsset?.chain)?.getAddress();
+    } catch (error) {
+      this.targetAddress = undefined;
+    }
 
     this.setTargetAddress();
   }
@@ -245,7 +248,7 @@ export class SwapComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private swapService: SwapServiceService,
-    private analyticsService: AnalyticsService
+    private analytics: AnalyticsService
   ) {
     this.ethContractApprovalRequired = false;
     this.selectableMarkets = undefined;
@@ -476,6 +479,7 @@ export class SwapComponent implements OnInit, OnDestroy {
       user: this.user,
     }
 
+    this.analytics.event('swap_prepare', 'select_receive_container_target_address');
     this.overlaysService.setCurrentSwapView('Update-target');
 
     // const dialogRef = this.dialog.open(UpdateTargetAddressModalComponent, {
@@ -501,7 +505,57 @@ export class SwapComponent implements OnInit, OnDestroy {
 
   breadcrumbNav(val: string) {
     if (val === 'skip') {
+      if (!this.user)
+        this.analytics.event('swap_disconnected', 'breadcrumb_skip');
+      else if (this.user)
+        this.analytics.event('swap_prepare', 'breadcrumb_skip');
       this.overlaysService.setViews(MainViewsEnum.Swap, 'Swap');
+    }
+  }
+
+  switchNav(val: string) {
+    if (val === "left") {
+      this.router.navigate([
+        "/",
+        "swap"
+      ]);
+    }
+    else if (val === "right") {
+      if (!this.user)
+        this.analytics.event('swap_disconnected', 'switch_pool');
+      else if (this.user) {
+        this.analytics.event('swap_prepare', 'switch_pool');
+      }
+      this.router.navigate([
+        "/",
+        "pool"
+      ]);
+    }
+  }
+
+  marketModal(val: 'source' | 'target') {
+    if (val === 'source') {
+      if (this.user)
+        this.analytics.event('swap_prepare', 'select_send_container_asset');
+      this.overlaysService.setCurrentSwapView('SourceAsset');
+    }
+    else if (val === 'target') {
+      if (this.user)
+        this.analytics.event('swap_prepare', 'select_receive_container_asset');
+      this.overlaysService.setCurrentSwapView('TargetAsset');
+    }
+  }
+
+  marketNav(val: string) {
+    if (val === 'skip') {
+      if (this.user)
+        this.analytics.event('swap_asset_search', 'breadcrumb_skip');
+      this.overlaysService.setCurrentSwapView('Swap');
+    }
+    else if (val === 'swap') {
+      if (this.user)
+        this.analytics.event('swap_asset_search', 'breadcrumb_swap');
+      this.overlaysService.setCurrentSwapView('Swap');
     }
   }
 
@@ -546,6 +600,12 @@ export class SwapComponent implements OnInit, OnDestroy {
   }
 
   goToSettings() {
+    
+    if (this.slip)
+      this.analytics.event('swap_prepare', 'select_slip_tolerance_slip_visible')
+    else
+      this.analytics.event('swap_prepare', 'select_slip_tolerance')
+
     this.overlaysService.setSettingViews(
       MainViewsEnum.AccountSetting,
       "SLIP",
@@ -650,6 +710,7 @@ export class SwapComponent implements OnInit, OnDestroy {
       !this.selectedTargetAsset ||
       !this.targetAssetUnit ||
       !this.inboundAddresses ||
+      !this.targetAddress ||
       this.haltedChains.includes(this.selectedSourceAsset.chain) ||
       this.haltedChains.includes(this.selectedTargetAsset?.chain) ||
       this.sourceAssetUnit >
@@ -838,6 +899,12 @@ export class SwapComponent implements OnInit, OnDestroy {
     return 'SWAP'
   }
 
+  connectWallet() {
+    /** Add analytics to the wallet connect */
+    this.analytics.event('swap_disconnected', 'button_connect_wallet')
+    this.overlaysService.setCurrentSwapView('Connect')
+  }
+
   getBalance() {
     return (
       this.selectedSourceAsset &&
@@ -879,8 +946,18 @@ export class SwapComponent implements OnInit, OnDestroy {
       targetAddress: this.targetAddress
     };
 
+    /** This is button analytics */
+    this.analytics.event('swap_prepare', `button_swap_*FROM_ASSET*_*TO_ASSET*_usd_*numerical_usd_value*`, this.sourceAssetUnit * this.sourceAssetPrice, assetString(this.selectedSourceAsset), assetString(this.selectedTargetAsset), (this.sourceAssetUnit * this.sourceAssetPrice).toString());
+    
+    if (this.userService.getTokenAddress(this.user, this.selectedTargetAsset.chain) !== this.targetAddress)
+      this.analytics.event('swap_prepare', `button_swap_*FROM_ASSET*_*TO_ASSET*_target_address`, undefined, assetString(this.selectedSourceAsset), assetString(this.selectedTargetAsset));
+    
+    this.analytics.event('swap_prepare', `button_swap_*FROM_ASSET*_*TO_ASSET*_slip_%_*numerical_%_value*`, this.slip * 100, assetString(this.selectedSourceAsset), assetString(this.selectedTargetAsset), (this.slip * 100).toString());
+    
+    let feeAmountUSD = this.sourceAssetPrice * this.networkFeeInSource
+    this.analytics.event('swap_prepare', `button_swap_*FROM_ASSET*_*TO_ASSET*_fee_usd_*numerical_usd_value*`, feeAmountUSD, assetString(this.selectedSourceAsset), assetString(this.selectedTargetAsset), (feeAmountUSD).toString());
+    
     this.overlaysService.setCurrentSwapView('Confirm');
-    this.analyticsService.eventEmitter('swap_assets', 'swap_page', `${assetToString(this.selectedSourceAsset)}_${assetToString(this.selectedTargetAsset)}`, this.sourceAssetUnit * this.sourceAssetPrice);
   }
 
   updateSwapDetails() {
@@ -981,6 +1058,8 @@ export class SwapComponent implements OnInit, OnDestroy {
           ? targetInput.div(10 ** 8).toNumber()
           : 0;
       }
+
+      this.analytics.event('swap_prepare', 'switch_arrow_send_receive_containers');
     }
   }
 

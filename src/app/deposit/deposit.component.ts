@@ -30,7 +30,7 @@ import { PoolAddressDTO } from "../_classes/pool-address";
 import { toLegacyAddress } from '@xchainjs/xchain-bitcoincash';
 import { CurrencyService } from "../_services/currency.service";
 import { Currency } from "../_components/account-settings/currency-converter/currency-converter.component";
-import { AnalyticsService } from "../_services/analytics.service";
+import { AnalyticsService, assetString } from "../_services/analytics.service";
 
 @Component({
   selector: "app-deposit",
@@ -138,7 +138,7 @@ export class DepositComponent implements OnInit, OnDestroy {
     public overlaysService: OverlaysService,
     private txUtilsService: TransactionUtilsService,
     private curService: CurrencyService,
-    private analyticsService: AnalyticsService
+    private analytics: AnalyticsService,
   ) {
     this.poolNotFoundErr = false;
     this.ethContractApprovalRequired = false;
@@ -617,7 +617,11 @@ export class DepositComponent implements OnInit, OnDestroy {
       assetPrice,
     };
 
-    this.analyticsService.eventEmitter('deposit', 'deposit_page', assetToString(this.asset), this.assetAmount * this.assetPrice);
+    let depositAmountUsd = assetData.assetPriceUSD * this.assetAmount + runeData.assetPriceUSD * this.runeAmount
+    this.analytics.event('pool_deposit_symmetrical_prepare', 'button_deposit_symmetrical_*POOL_ASSET*_usd_*numerical_usd_value*',  depositAmountUsd, assetString(this.asset), (depositAmountUsd).toString());
+    let depositFeeAmountUSD = this.networkFee * assetData.assetPriceUSD + runeData.assetPriceUSD * this.runeFee
+    this.analytics.event('pool_deposit_symmetrical_prepare', 'button_deposit_symmetrical_*POOL_ASSET*_fee_usd_*numerical_usd_value*',  depositFeeAmountUSD, assetString(this.asset), (depositFeeAmountUSD).toString());
+    
     if (this.depositData) this.overlaysService.setCurrentDepositView("Confirm");
   }
 
@@ -633,11 +637,42 @@ export class DepositComponent implements OnInit, OnDestroy {
     this.router.navigate(["/", "pool"]);
   }
 
-  goToNav(nav: string) {
+  cancelButton() {
+    if (this.user) {
+      this.analytics.event('pool_deposit_symmetrical_prepare', 'button_cancel');
+      let depositAmountUsd = this.assetPrice * this.assetAmount + this.runeFee * this.runeAmount
+      this.analytics.event('pool_deposit_symmetrical_prepare', 'button_deposit_cancel_symmetrical_*POOL_ASSET*_usd_*numerical_usd_value*',  depositAmountUsd, assetString(this.asset), (depositAmountUsd).toString());
+      let depositFeeAmountUSD = this.networkFee * this.assetPrice + this.runeFee * this.runeFee
+      this.analytics.event('pool_deposit_symmetrical_prepare', 'button_deposit_cancel_symmetrical_*POOL_ASSET*_fee_usd_*numerical_usd_value*',  depositFeeAmountUSD, assetString(this.asset), (depositFeeAmountUSD).toString());
+    }
+    else
+      this.analytics.event('pool_disconnected_deposit', 'button_cancel_*POOL*', undefined, assetToString(this.asset));
+    this.back();
+  }
+
+  breadCrumbNav(nav: string, type: 'deposit' | 'market') {
+    let label;
+    switch (type) {
+      case 'deposit':
+        if (this.user)
+          label = 'pool_deposit_symmetrical_prepare'
+        else
+          label = 'pool_disconnected_deposit'
+        break;
+      case 'market':
+        label = 'pool_deposit_symmetrical_asset_search'
+        break;
+      default:
+        label = 'pool_disconnected_deposit'
+        break;
+    }
+
     if (nav === "pool") {
       this.router.navigate(["/", "pool"]);
+      this.analytics.event(label, 'breadcrumb_pools');
     } else if (nav === "swap") {
       this.router.navigate(["/", "swap"]);
+      this.analytics.event(label, 'breadcrumb_skip');
     } else if (nav === "deposit") {
       this.router.navigate([
         "/",
@@ -645,8 +680,19 @@ export class DepositComponent implements OnInit, OnDestroy {
         `${this.asset.chain}.${this.asset.symbol}`,
       ]);
     } else if (nav === "deposit-back") {
+      this.analytics.event(label, 'breadcrumb_deposit');
       this.overlaysService.setCurrentDepositView("Deposit");
     }
+  }
+
+  lunchMarket() {
+    this.analytics.event('pool_deposit_symmetrical_prepare', 'select_deposit_symmetrical_container_asset');
+    this.overlaysService.setCurrentDepositView('Asset')
+  }
+
+  connectWallet() {
+    this.analytics.event('pool_disconnected_deposit', 'button_connect_wallet_*POOL*', undefined, `${this.asset.chain}.${this.asset.ticker}`);
+    this.overlaysService.setCurrentDepositView('Connect');
   }
 
   ngOnDestroy() {

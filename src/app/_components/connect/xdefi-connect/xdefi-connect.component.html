@@ -8,11 +8,11 @@
     <div class="content-top">
       <app-breadcrumb
         [path]="[
-          { name: 'skip', swapView: 'Swap', mainView: 'Swap' },
-          { name: 'connect', backFunc: true },
+          { name: 'skip', call: 'swap' },
+          { name: 'connect', call: 'connect' },
           { name: 'connect with xdefi', disable: true }
         ]"
-        (backFunc)="back.emit()"
+        (funcCaller)="breadcrumbNav($event)"
         [message]="getBreadcrumbText()"
       ></app-breadcrumb>
     </div>
@@ -73,7 +73,7 @@
 
     <div class="bottom-actions two-btn">
       <div class="left-btn">
-        <button class="close-btn" (click)="back.emit()">
+        <button class="close-btn" (click)="backNav()">
           <span>Cancel</span>
         </button>
       </div>

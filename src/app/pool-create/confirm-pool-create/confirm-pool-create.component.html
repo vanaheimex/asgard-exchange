@@ -10,7 +10,7 @@
           ]"
           [isError]=""
           message="Confirm"
-          (funcCaller)="goToNav($event)"
+          (funcCaller)="breadcrumbNav($event, 'pending')"
         ></app-breadcrumb>
         <div class="top-right">
           <div class="right-option"></div>
@@ -89,7 +89,7 @@
         { name: 'Create', disable: true }
       ]"
       message="Transaction Processing"
-      (funcCaller)="goToNav($event)"
+      (funcCaller)="breadcrumbNav($event, 'processing')"
     ></app-breadcrumb>
   </app-transaction-processing-modal>
 
@@ -105,7 +105,7 @@
     [amount]="[data.assetAmount, data.runeAmount]"
     (closeDialog)="closeDialog(true)"
     [externalTx]="true"
-    modalType="DEPOSIT"
+    modalType="CREATE"
   >
     <app-breadcrumb
       [path]="[
@@ -114,7 +114,7 @@
         { name: 'Create', disable: true }
       ]"
       message="Success"
-      (funcCaller)="goToNav($event)"
+      (funcCaller)="breadcrumbNav($event, 'success')"
     ></app-breadcrumb>
   </app-transaction-success-modal>
 </div>

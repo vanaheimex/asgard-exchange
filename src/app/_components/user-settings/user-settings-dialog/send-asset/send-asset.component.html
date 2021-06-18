@@ -3,14 +3,14 @@
     <div class="content-top">
       <app-breadcrumb
         [path]="[
-          { name: 'skip', swapView: 'Swap', mainView: 'Swap' },
+          { name: 'skip', call: 'swap' },
           { name: 'wallet', call: 'wallet' },
           { name: asset.asset.chain, call: 'chain' },
           { name: asset.asset.chain + '.' + asset.asset.ticker, call: 'asset' },
           { name: 'send', disable: true }
         ]"
         [message]="mainButtonText()"
-        (funcCaller)="navCaller($event)"
+        (funcCaller)="breadcrumbNav($event)"
       ></app-breadcrumb>
       <div class="top-right"></div>
     </div>
@@ -27,6 +27,10 @@
             [selectableMarkets]="[asset]"
             txType="EXTERNAL"
             (maxError)="setMaxError($event)"
+            [eventTags]="{
+              event_category: 'wallet_asset_send_prepare',
+              event_label_max: 'tag_send_container_max_*ASSET*'
+            }"
           >
           </app-asset-input>
         </div>
@@ -56,7 +60,7 @@
     <div class="bottom-actions" style="display: flex; margin-top: 58px">
       <div style="width: 50%">
         <div style="margin-right: 6px">
-          <button class="close-btn" (click)="back.emit()">
+          <button class="close-btn" (click)="backNav()">
             <span>CANCEL</span>
           </button>
         </div>
@@ -65,13 +69,7 @@
         <div style="margin-left: 6px">
           <button
             class="next-btn graident-btn"
-            (click)="
-              confirmSend.next({
-                amount: amount,
-                recipientAddress: recipientAddress,
-                memo: memo
-              })
-            "
+            (click)="sendNav()"
             [disabled]="nextDisabled()"
           >
             <span>Send</span>

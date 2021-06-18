@@ -25,7 +25,7 @@ import {
   TxStatus,
 } from "src/app/_services/transaction-status.service";
 import { UserService } from "src/app/_services/user.service";
-import { OverlaysService } from "src/app/_services/overlays.service";
+import { MainViewsEnum, OverlaysService } from "src/app/_services/overlays.service";
 import { BigNumber, ethers } from "ethers";
 import { Asset as AsgrsxAsset } from "src/app/_classes/asset";
 import { Balances } from "@xchainjs/xchain-client";
@@ -33,6 +33,7 @@ import { MidgardService } from "src/app/_services/midgard.service";
 import { PoolAddressDTO } from "src/app/_classes/pool-address";
 import { TransactionUtilsService } from "src/app/_services/transaction-utils.service";
 import { EthUtilsService } from "src/app/_services/eth-utils.service";
+import { AnalyticsService, assetString } from "src/app/_services/analytics.service";
 
 @Component({
   selector: "app-confim-send",
@@ -99,7 +100,8 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
     private overlaysService: OverlaysService,
     private ethUtilsService: EthUtilsService,
     private midgardService: MidgardService,
-    private txUtilsService: TransactionUtilsService
+    private txUtilsService: TransactionUtilsService,
+    private analytics: AnalyticsService
   ) {
     this.back = new EventEmitter<null>();
     this.close = new EventEmitter<null>();
@@ -129,6 +131,15 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
 
     this.txState = TransactionConfirmationState.SUBMITTING;
 
+    let sendAmountUSD = this.amount * this.asset.assetPriceUSD
+    this.analytics.event('wallet_asset_send_confirm', 'button_confirm_*WALLET*_*ASSET*_*TO_ADDRESS*_usd_*numerical_usd_value*',
+      sendAmountUSD,
+      this.asset.asset.chain,
+      assetString(this.asset.asset),
+      this.recipientAddress,
+      sendAmountUSD.toString()
+    )
+
     if (this.user.type === "keystore" || this.user.type === 'XDEFI' ) {
       this.midgardService
         .getInboundAddresses()
@@ -136,32 +147,55 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
     }
   }
 
-  async navCaller(nav) {
+  async breadcrumbNav(nav: string, type: 'processing' | 'success' | 'pending' = 'pending') {
+    let label;
+    switch (type) {
+      case 'success':
+        label = 'wallet_asset_send_success'
+        break;
+      case 'processing':
+        label = 'wallet_asset_send_processing'
+        break;
+      default:
+        label = 'wallet_asset_send_confirm'
+        break;
+    }
+
     this.address = await this.userService.getAdrressChain(
       this.asset.asset.chain
     );
 
-    if (nav === "wallet")
+    if (nav === 'swap') {
+      this.analytics.event(label, 'breadcrumb_skip');
+      this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
+    }
+    else if (nav === "wallet") {
+      this.analytics.event(label, 'breadcrumb_wallet');
       this.overlaysService.setCurrentUserView({
         userView: "Addresses",
         address: null,
         chain: null,
         asset: null,
       });
-    else if (nav === "chain")
+    }
+    else if (nav === "chain") {
+      this.analytics.event(label, 'breadcrumb_*WALLET*', undefined, this.asset.asset.chain);
       this.overlaysService.setCurrentUserView({
         userView: "Address",
         address: this.address,
         chain: this.asset.asset.chain,
         asset: null,
       });
-    else if (nav === "asset")
+    }
+    else if (nav === "asset") {
+      this.analytics.event(label, 'breadcrumb_*ASSET*', undefined, assetString(this.asset.asset));
       this.overlaysService.setCurrentUserView({
-        userView: "Address",
+        userView: "Asset",
         address: this.address,
         chain: this.asset.asset.chain,
         asset: this.asset,
       });
+    }
   }
 
   async submitKeystoreTransaction(inboundAddresses: PoolAddressDTO[]) {
@@ -443,6 +477,18 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
       hash,
       pollRpc: asset.chain === "THOR",
     });
+  }
+
+  backNav() {
+    let sendAmountUSD = this.amount * this.asset.assetPriceUSD
+    this.analytics.event('wallet_asset_send_confirm', 'button_cancel_*WALLET*_*ASSET*_*TO_ADDRESS*_usd_*numerical_usd_value*',
+      sendAmountUSD,
+      this.asset.asset.chain,
+      assetString(this.asset.asset),
+      this.recipientAddress,
+      sendAmountUSD.toString()
+    )
+    this.back.emit()
   }
 
   ngOnDestroy() {

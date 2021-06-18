@@ -8,6 +8,7 @@
         switchField.left.disable ? 'disable' : ''
       ]"
       routerLinkActive="active"
+      (click)="!left.classList.contains('active') && clickCaller.emit('left')"
       #left
     >
       <p class="left-inner">
@@ -27,6 +28,7 @@
         switchField.right.disable ? 'disable' : ''
       ]"
       routerLinkActive="active"
+      (click)="!right.classList.contains('active') && clickCaller.emit('right')"
       #right
     >
       <p class="right-inner">

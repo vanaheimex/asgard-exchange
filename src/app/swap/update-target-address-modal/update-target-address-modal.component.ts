@@ -1,7 +1,8 @@
 import { Component, Output, EventEmitter, Input } from '@angular/core';
 import { Chain } from '@xchainjs/xchain-util';
 import { User } from 'src/app/_classes/user';
-import { OverlaysService } from 'src/app/_services/overlays.service';
+import { AnalyticsService } from 'src/app/_services/analytics.service';
+import { MainViewsEnum, OverlaysService } from 'src/app/_services/overlays.service';
 import { UserService } from 'src/app/_services/user.service';
 
 @Component({
@@ -15,16 +16,32 @@ export class UpdateTargetAddressModalComponent {
   targetAddress: string;
   user: User;
   chain: Chain;
+  thorAddress: string = undefined;
 
   constructor(
     private userService: UserService,
-    private oveService: OverlaysService
+    private oveService: OverlaysService,
+    private analytics: AnalyticsService,
   ) {}
 
   ngOnInit() {
     this.user = this.data?.user ?? null;
     this.chain = this.data?.chain ?? null;
     this.targetAddress = this.data?.targetAddress ?? '';
+
+    //For events
+    this.thorAddress = this.userService.getTokenAddress(this.user, 'THOR') ?? undefined;
+  }
+
+  breadcurmbNav(val: string) {
+    if (val === 'skip') {
+      this.analytics.event('swap_receive_container_target_address_select', 'breadcrumb_skip')
+      this.oveService.setViews(MainViewsEnum.Swap, "Swap");
+    }
+    else if (val === 'swap') {
+      this.analytics.event('swap_receive_container_target_address_select', 'breadcrumb_swap')
+      this.oveService.setViews(MainViewsEnum.Swap, "Swap");
+    }
   }
 
   updateAddress() {
@@ -40,6 +57,12 @@ export class UpdateTargetAddressModalComponent {
     if (!client.validateAddress(this.targetAddress)) {
       return;
     }
+    
+    if(this.targetAddress !== this.data.targetAddress)
+      this.analytics.event('swap_receive_container_target_address_select', 'button_target_address_save_changed')
+    else
+      this.analytics.event('swap_receive_container_target_address_select', 'button_target_address_save')
+
 
     this.close();
   }
@@ -79,11 +102,13 @@ export class UpdateTargetAddressModalComponent {
   }
 
   close() {
+    /** because this is only a component in swap page so the analytics are static */
     this.back.emit(this.targetAddress);
     this.oveService.setCurrentSwapView('Swap');
   }
 
   backEmit() {
+    this.analytics.event('swap_receive_container_target_address_select', 'button_target_address_cancel')
     this.oveService.setCurrentSwapView('Swap');
   }
 }

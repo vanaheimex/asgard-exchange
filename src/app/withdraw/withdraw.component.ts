@@ -109,7 +109,7 @@ export class WithdrawComponent implements OnInit {
     private router: Router,
     private txUtilsService: TransactionUtilsService,
     private curService: CurrencyService,
-    private analyticsService: AnalyticsService
+    private analytics: AnalyticsService
   ) {
     this.withdrawPercent = 0;
     this.removeAssetAmount = 0;
@@ -494,6 +494,11 @@ export class WithdrawComponent implements OnInit {
       return "Please Connect Wallet";
     }
 
+    if (this.sliderDisabled) {
+      this.isError = false;
+      return "Loading"
+    }
+
     /** THORChain is backed up */
     if (this.queue && this.queue.outbound >= 12) {
       this.isError = true;
@@ -578,7 +583,11 @@ export class WithdrawComponent implements OnInit {
       withdrawType: this.withdrawType,
     };
 
-    this.analyticsService.eventEmitter('withdraw', 'withdraw_page', assetToString(this.asset), this.removeAssetAmount * this.assetPrice + this.removeRuneAmount * this.runePrice) 
+    let usdValue = this.removeAssetAmount * this.assetPrice + this.removeRuneAmount * this.runePrice;
+    this.analytics.event('pool_withdraw_symmetrical_prepare', 'button_withdraw_*POOL_ASSET*_usd_*numerical_usd_value*', usdValue, `${this.asset.chain}.${this.asset.ticker}`, usdValue.toString()) 
+    let usdFeeValue = this.runePrice * this.runeFee + this.assetPrice * this.networkFee;
+    this.analytics.event('pool_withdraw_symmetrical_prepare', 'button_withdraw_*POOL_ASSET*_fee_usd_*numerical_usd_value*', usdFeeValue, `${this.asset.chain}.${this.asset.ticker}`, usdFeeValue.toString()) 
+
     this.overlaysService.setCurrentWithdrawView("Confirm");
   }
 
@@ -586,15 +595,17 @@ export class WithdrawComponent implements OnInit {
     if (transactionSuccess) {
       this.withdrawPercent = 0;
     }
-
+    
     this.overlaysService.setCurrentWithdrawView("Withdraw");
   }
 
-  goToNav(nav: string) {
+  breadcrumbNav(nav: string) {
     if (nav === "pool") {
       this.router.navigate(["/", "pool"]);
+      this.analytics.event('pool_withdraw_symmetrical_prepare', 'breadcrumb_pools')
     } else if (nav === "swap") {
       this.router.navigate(["/", "swap"]);
+      this.analytics.event('pool_withdraw_symmetrical_prepare', 'breadcrumb_skip')
     }
   }
 
@@ -603,6 +614,12 @@ export class WithdrawComponent implements OnInit {
   }
 
   back() {
+    this.analytics.event('pool_withdraw_symmetrical_prepare', 'button_cancel');
+    let usdValue = this.removeAssetAmount * this.assetPrice + this.removeRuneAmount * this.runePrice;
+    this.analytics.event('pool_withdraw_symmetrical_prepare', 'button_withdraw_cancel_*POOL_ASSET*_usd_*numerical_usd_value*', usdValue, `${this.asset.chain}.${this.asset.ticker}`, usdValue.toString()) 
+    let usdFeeValue = this.runePrice * this.runeFee + this.assetPrice * this.networkFee;
+    this.analytics.event('pool_withdraw_symmetrical_prepare', 'button_withdraw_cancel_*POOL_ASSET*_fee_usd_*numerical_usd_value*', usdFeeValue, `${this.asset.chain}.${this.asset.ticker}`, usdFeeValue.toString()) 
+
     this.router.navigate(["/", "pool"]);
   }
 
@@ -649,5 +666,9 @@ export class WithdrawComponent implements OnInit {
       },
       (err) => console.error("error getting pool detail: ", err)
     );
+  }
+
+  ngOnDestroy() {
+    this.overlaysService.setCurrentWithdrawView("Withdraw");
   }
 }

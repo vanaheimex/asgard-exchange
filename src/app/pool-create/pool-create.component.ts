@@ -23,6 +23,7 @@ import {
 } from "../_services/overlays.service";
 import { TransactionUtilsService } from "../_services/transaction-utils.service";
 import { PoolAddressDTO } from "../_classes/pool-address";
+import { AnalyticsService, assetString } from "../_services/analytics.service";
 
 @Component({
   selector: "app-pool-create",
@@ -115,7 +116,8 @@ export class PoolCreateComponent implements OnInit, OnDestroy {
     private cgService: CoinGeckoService,
     private userService: UserService,
     public overlaysService: OverlaysService,
-    private txUtilsService: TransactionUtilsService
+    private txUtilsService: TransactionUtilsService,
+    private analytics: AnalyticsService
   ) {
     this.rune = new Asset(`THOR.RUNE`);
     this.depositsDisabled = false;
@@ -398,16 +400,20 @@ export class PoolCreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  goToNav(nav: string) {
+  breadcrumbNav(nav: string) {
     if (nav === "pool") {
+      this.analytics.event('pool_create_approve_contract', 'breadcrumb_skip');
       this.router.navigate(["/", "pool"]);
     } else if (nav === "swap") {
+      this.analytics.event('pool_create_approve_contract', 'breadcrumb_skip');
       this.router.navigate(["/", "swap"]);
     } else if (nav === "create") {
+      this.analytics.event('pool_create_approve_contract', 'breadcrumb_pool');
       this.router.navigate(["/", "create-pool"], {
         queryParams: { pool: `${this.asset.chain}.${this.asset.symbol}` },
       });
     } else if (nav === "create-back") {
+      this.analytics.event('pool_create_approve_contract', 'breadcrumb_create');
       this.overlaysService.setCurrentCreatePoolView("Create");
     }
   }
@@ -423,6 +429,8 @@ export class PoolCreateComponent implements OnInit, OnDestroy {
       networkFee: this.networkFee,
       runeFee: this.runeFee,
     };
+    let createdAmountUSD = this.assetAmount * this.assetUsdValue + this.runeAmount * this.runeUsdValue;
+    this.analytics.event('pool_create', 'button_create_pool_*ASSET*_usd_*numerical_usd_value*', createdAmountUSD, assetString(this.asset), createdAmountUSD.toString());
     this.overlaysService.setCurrentCreatePoolView("Confirm");
   }
 
@@ -437,6 +445,10 @@ export class PoolCreateComponent implements OnInit, OnDestroy {
       );
 
       this.ethContractApprovalRequired = !isApproved;
+
+      //analytics for approve event
+      if (!isApproved)
+        this.analytics.event('pool_create_approve_contract', 'deposit_container_asset');
     }
   }
 
@@ -448,6 +460,7 @@ export class PoolCreateComponent implements OnInit, OnDestroy {
   }
 
   back() {
+    this.analytics.event('pool_create', 'button_cancel');
     this.router.navigate(["/", "pool"]);
   }
 

@@ -8,8 +8,8 @@
       <div class="content-top">
         <app-breadcrumb
           [path]="[
-            { name: 'skip', swapView: 'Swap', mainView: 'Swap' },
-            { name: 'connect', swapView: 'Connect', mainView: 'Swap' },
+            { name: 'skip', call: 'skip' },
+            { name: 'connect', call: 'connect' },
             { name: 'keystore found', disable: true }
           ]"
           [isError]="keystoreError"
@@ -20,6 +20,7 @@
               ? 'connecting'
               : 'enter password or forget'
           "
+          (funcCaller)="breadcrumbNav($event)"
         ></app-breadcrumb>
         <!-- <div class="top-right">
           <app-right-option></app-right-option>

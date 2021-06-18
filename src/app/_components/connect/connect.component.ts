@@ -1,7 +1,8 @@
 import { Component, Output, EventEmitter } from "@angular/core";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { environment } from "src/environments/environment";
-import { OverlaysService } from "src/app/_services/overlays.service";
+import { MainViewsEnum, OverlaysService } from "src/app/_services/overlays.service";
+import { AnalyticsService } from "src/app/_services/analytics.service";
 
 @Component({
   selector: "app-connect",
@@ -42,10 +43,11 @@ export class ConnectModal {
   isTestnet: boolean;
   isXDEFIConnected: boolean;
   phrase: string;
+  writePhraseCategory: string;
 
   @Output() closeEvent = new EventEmitter<null>();
 
-  constructor(public overlaysService: OverlaysService) {
+  constructor(public overlaysService: OverlaysService, private analytics: AnalyticsService) {
     this.isTestnet = environment.network === "testnet" ? true : false;
 
     this.isXDEFIConnected = false;
@@ -54,30 +56,43 @@ export class ConnectModal {
     }
   }
 
+  breadcrumbNav(val: string) {
+    if (val === 'swap') {
+      this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
+      this.analytics.event('connect_select_wallet', 'breadcrumb_skip');
+    }
+  }
+
   createKeystore() {
     this.connectionView = ConnectionView.KEYSTORE_CREATE;
+    this.analytics.event('connect_select_wallet', 'option_create_keystore');
   }
 
   connectKeystore() {
     this.connectionView = ConnectionView.KEYSTORE_CONNECT;
+    this.analytics.event('connect_select_wallet', 'option_connect_keystore');
   }
 
   createKeystoreFromPhrase() {
     this.connectionView = ConnectionView.KEYSTORE_IMPORT_PHRASE;
+    this.analytics.event('connect_select_wallet', 'option_create_keystore_phrase');
   }
 
   connectXDEFI() {
     if (!this.isXDEFIConnected) {
+      this.analytics.event('connect_select_wallet', 'option_install_xdefi');
       return window.open(
-        "https://xdefi-io.medium.com/how-to-use-asgardex-with-xdefi-wallet-%EF%B8%8F-547081a8d274",
+        "https://www.xdefi.io",
         "_blank"
       );
     }
     this.connectionView = ConnectionView.XDEFI;
+    this.analytics.event('connect_select_wallet', 'option_connect_xdefi');
   }
 
-  storePhrasePrompt(phrase: string) {
-    this.phrase = phrase;
+  storePhrasePrompt(values: {phrase: string, label: string}) {
+    this.phrase = values.phrase;
+    this.writePhraseCategory = values.label
     this.connectionView = ConnectionView.KEYSTORE_WRITE_PHRASE;
   }
 
@@ -87,8 +102,10 @@ export class ConnectModal {
   }
 
   close() {
-    // this.dialogRef.close();
-    // this.overlayChange.emit(false);
+    if (!this.connectionView) {
+      this.analytics.event('connect_select_wallet', 'button_cancel');
+    }
+
     this.closeEvent.emit();
     this.phrase = null;
   }

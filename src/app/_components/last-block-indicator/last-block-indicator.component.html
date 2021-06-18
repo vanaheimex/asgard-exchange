@@ -1,5 +1,5 @@
 <div class="nav-social">
-  <a class="social-item" [href]="links.telegram" target="_blank"
+  <a class="social-item" [href]="links.telegram" (click)="navigationEvent('icon_telegram')" target="_blank"
     ><img
       class="icon-pic"
       alt="telegram-link"
@@ -12,7 +12,7 @@
           : '/assets/icons/social-telegram-icon-hover.svg'
       "
   /></a>
-  <a class="social-item github-icon" [href]="gitHubUrl" target="_blank"
+  <a class="social-item github-icon" [href]="gitHubUrl" (click)="navigationEvent('icon_github')" target="_blank"
     ><img
       class="icon-pic"
       alt="github-link"
@@ -25,7 +25,7 @@
           : '/assets/icons/social-github-icon-hover.svg'
       "
   /></a>
-  <a class="social-item" [href]="links.twitter" target="_blank"
+  <a class="social-item" [href]="links.twitter" (click)="navigationEvent('icon_twitter')" target="_blank"
     ><img
       class="icon-pic"
       alt="twitter-link"
@@ -40,7 +40,7 @@
   /></a>
 </div>
 <div class="nav-rune-container">
-  <a class="no-style" href="https://viewblock.io/thorchain" target="_blank">
+  <a class="no-style" href="https://viewblock.io/thorchain" (click)="navigationEvent('block_counter')" target="_blank">
     <div class="nav-rune" [ngClass]="{ 'nav-rune-new-block': updating }">
       <div class="nav-rune-logo">
         <img src="/assets/images/rune-symbol.svg" alt="" />

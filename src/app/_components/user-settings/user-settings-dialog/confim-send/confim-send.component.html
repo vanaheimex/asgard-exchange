@@ -6,14 +6,14 @@
     <div class="content-top">
       <app-breadcrumb
         [path]="[
-          { name: 'skip', swapView: 'Swap', mainView: 'Swap' },
+          { name: 'skip', call: 'swap' },
           { name: 'wallet', call: 'wallet' },
           { name: asset.asset.chain, call: 'chain' },
           { name: asset.asset.chain + '.' + asset.asset.ticker, call: 'asset' },
           { name: 'send', disable: true }
         ]"
         [message]="message"
-        (funcCaller)="navCaller($event)"
+        (funcCaller)="breadcrumbNav($event)"
         [isError]="mode === 'ERROR'"
       ></app-breadcrumb>
       <div class="top-right"></div>
@@ -62,7 +62,7 @@
     <div class="bottom-actions two-btn">
       <div class="right-btn">
         <div>
-          <button class="close-btn" (click)="back.emit()">
+          <button class="close-btn" (click)="backNav()">
             <span>cancel</span>
           </button>
         </div>
@@ -120,14 +120,14 @@
 >
   <app-breadcrumb
     [path]="[
-      { name: 'skip', swapView: 'Swap', mainView: 'Swap' },
+      { name: 'skip', call: 'swap' },
       { name: 'wallet', call: 'wallet' },
       { name: asset.asset.chain, call: 'chain' },
       { name: asset.asset.chain + '.' + asset.asset.ticker, call: 'asset' },
       { name: 'send', disable: true }
     ]"
     message="TRANSACTION PROCESSING"
-    (funcCaller)="navCaller($event)"
+    (funcCaller)="breadcrumbNav($event, 'processing')"
   ></app-breadcrumb>
 </app-transaction-processing-modal>
 
@@ -144,14 +144,14 @@
 >
   <app-breadcrumb
     [path]="[
-      { name: 'skip', swapView: 'Swap', mainView: 'Swap' },
+      { name: 'skip', call: 'swap' },
       { name: 'wallet', call: 'wallet' },
       { name: asset.asset.chain, call: 'chain' },
       { name: asset.asset.chain + '.' + asset.asset.ticker, call: 'asset' },
       { name: 'send', disable: true }
     ]"
     message="SUCCESS"
-    (funcCaller)="navCaller($event)"
+    (funcCaller)="breadcrumbNav($event, 'success')"
   ></app-breadcrumb>
 </app-transaction-success-modal>
 

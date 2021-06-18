@@ -3,10 +3,11 @@
     <div class="content-top">
       <app-breadcrumb
         [path]="[
-          { name: 'skip', swapView: 'Swap', mainView: 'Swap' },
+          { name: 'skip', call: 'swap' },
           { name: 'wallet', disable: true }
         ]"
         message="select"
+        (funcCaller)="breadcrumbNav($event)"
       ></app-breadcrumb>
       <div class="top-right"></div>
     </div>
