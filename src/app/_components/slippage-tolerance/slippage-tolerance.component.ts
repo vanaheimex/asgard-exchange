@@ -72,8 +72,12 @@ export class SlippageToleranceComponent implements OnInit, OnDestroy {
     this.closeDialog();
   }
 
-  closeDialog() {
+  closeButton() {
     this.analytics.event('setting_slippage_tolerance', 'button_cancel_%_*numerical_value*', undefined, this.customTolerance.toString());
+    this.closeDialog()
+  }
+
+  closeDialog() {
     const gotoSwap = this.overlaysService.getSettingNavSwap();
     if (gotoSwap) {
       this.overlaysService.setSettingViews(MainViewsEnum.Swap, "ACCOUNT");
