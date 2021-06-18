@@ -954,6 +954,9 @@ export class SwapComponent implements OnInit, OnDestroy {
     
     this.analytics.event('swap_prepare', `button_swap_*FROM_ASSET*_*TO_ASSET*_slip_%_*numerical_%_value*`, this.slip * 100, assetString(this.selectedSourceAsset), assetString(this.selectedTargetAsset), (this.slip * 100).toString());
     
+    let feeAmountUSD = this.sourceAssetPrice * this.networkFeeInSource
+    this.analytics.event('swap_prepare', `button_swap_*FROM_ASSET*_*TO_ASSET*_fee_usd_*numerical_usd_value*`, feeAmountUSD, assetString(this.selectedSourceAsset), assetString(this.selectedTargetAsset), (feeAmountUSD).toString());
+    
     this.overlaysService.setCurrentSwapView('Confirm');
   }
 

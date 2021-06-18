@@ -94,10 +94,10 @@ export class CurrencyConverterComponent implements OnInit {
 
   saveCurrency() {
     this.analytics.event('setting_conversion_currency', 'button_save_*OLD_CURRENCY_CODE*_*NEW_CURRENCY_CODE*', undefined, this.currency.code, this.currencies[this.activeIndex].code)
-    this.currencyService.setActiveCurrency(this.currencies[this.activeIndex]);
+    this.currencyService.setActiveCurrency(this.filterdCurrencies[this.activeIndex]);
     localStorage.setItem(
       `active_currency`,
-      JSON.stringify(this.currencies[this.activeIndex])
+      JSON.stringify(this.filterdCurrencies[this.activeIndex])
     );
     this.message = "saved";
     this.close.emit();

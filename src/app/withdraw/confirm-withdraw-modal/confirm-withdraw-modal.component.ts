@@ -108,6 +108,9 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
     let withdrawAmountUSD = this.data.runeAmount * this.data.runePrice + this.data.assetAmount * this.data.assetPrice;
     this.analytics.event('pool_withdraw_symmetrical_confirm', 'button_withdraw_confirm_*POOL_ASSET*_usd_*numerical_usd_value*', withdrawAmountUSD, assetString(this.data.asset), withdrawAmountUSD.toString())
 
+    let withdrawFeeAmountUSD = this.data.runeFee * this.data.runePrice + this.data.assetAmount * this.data.networkFee;
+    this.analytics.event('pool_withdraw_symmetrical_confirm', 'button_withdraw_confirm_*POOL_ASSET*_fee_usd_*numerical_usd_value*', withdrawFeeAmountUSD, assetString(this.data.asset), withdrawFeeAmountUSD.toString())
+
     const memo = `WITHDRAW:${this.data.asset.chain}.${this.data.asset.symbol}:${
       this.data.unstakePercent * 100
     }`;
@@ -281,6 +284,9 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
   closeDialog(transactionSucess?: boolean) {
     let withdrawAmountUSD = this.data.runeAmount * this.data.runePrice + this.data.assetAmount * this.data.assetPrice;
     this.analytics.event('pool_withdraw_symmetrical_confirm', 'button_withdraw_cancel_*POOL_ASSET*_usd_*numerical_usd_value*', withdrawAmountUSD, assetString(this.data.asset), withdrawAmountUSD.toString())
+
+    let withdrawFeeAmountUSD = this.data.runeFee * this.data.runePrice + this.data.assetAmount * this.data.networkFee;
+    this.analytics.event('pool_withdraw_symmetrical_confirm', 'button_withdraw_cancel_*POOL_ASSET*_fee_usd_*numerical_usd_value*', withdrawFeeAmountUSD, assetString(this.data.asset), withdrawFeeAmountUSD.toString())
 
     this.close.emit(transactionSucess);
   }

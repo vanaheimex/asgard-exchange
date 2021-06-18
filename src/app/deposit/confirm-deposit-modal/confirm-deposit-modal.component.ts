@@ -124,6 +124,10 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
 
     let depositAmountUSD = this.data.runeAmount * this.data.runePrice + this.data.assetAmount * this.data.assetPrice;
     this.analyticsService.event('pool_deposit_symmetrical_confirm', 'button_deposit_confirm_symmetrical_*POOL_ASSET*_usd_*numerical_usd_value*', depositAmountUSD, assetString(this.data.asset.asset), depositAmountUSD.toString());
+  
+    let depositFeeAmountUSD = this.data.runeFee * this.data.runePrice + this.data.estimatedFee * this.data.assetPrice;
+    this.analyticsService.event('pool_deposit_symmetrical_confirm', 'button_deposit_confirm_symmetrical_*POOL_ASSET*_fee_usd_*numerical_usd_value*', depositFeeAmountUSD, assetString(this.data.asset.asset), depositFeeAmountUSD.toString());
+
   }
 
   async deposit(pools: PoolAddressDTO[]) {
@@ -336,6 +340,10 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
   closeDialog(transactionSucess?: boolean) {
     let depositAmountUSD = this.data.runeAmount * this.data.runePrice + this.data.assetAmount * this.data.assetPrice;
     this.analyticsService.event('pool_deposit_symmetrical_confirm', 'button_deposit_cancel_symmetrical_*POOL_ASSET*_usd_*numerical_usd_value*', depositAmountUSD, assetString(this.data.asset.asset), depositAmountUSD.toString());
+    
+    let depositFeeAmountUSD = this.data.runeFee * this.data.runePrice + this.data.estimatedFee * this.data.assetPrice;
+    this.analyticsService.event('pool_deposit_symmetrical_confirm', 'button_deposit_cancel_symmetrical_*POOL_ASSET*_fee_usd_*numerical_usd_value*', depositFeeAmountUSD, assetString(this.data.asset.asset), depositFeeAmountUSD.toString());
+
     this.close.emit(transactionSucess);
   }
 

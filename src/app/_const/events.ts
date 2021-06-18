@@ -473,6 +473,13 @@ export const events = {
       "action": "skip_swap",
       "thorwallet": true,
       "value": true
+    },
+    "button_swap_*FROM_ASSET*_*TO_ASSET*_fee_usd_*numerical_usd_value*": {
+      "label": "button_swap_*FROM_ASSET*_*TO_ASSET*_fee_usd_*numerical_usd_value*",
+      "category": "swap_prepare",
+      "action": "skip_swap",
+      "thorwallet": true,
+      "value": true
     }
   },
   "swap_asset_search": {
@@ -578,6 +585,13 @@ export const events = {
       "thorwallet": true,
       "value": true
     },
+    "button_swap_cancel_*FROM_ASSET*_*TO_ASSET*_fee_usd_*numerical_usd_value*": {
+      "label": "button_swap_cancel_*FROM_ASSET*_*TO_ASSET*_fee_usd_*numerical_usd_value*",
+      "category": "swap_confirm",
+      "action": "skip_swap",
+      "thorwallet": true,
+      "value": true
+    },
     "button_swap_confirm_*FROM_ASSET*_*TO_ASSET*_usd_*numerical_usd_value*": {
       "label": "button_swap_confirm_*FROM_ASSET*_*TO_ASSET*_usd_*numerical_usd_value*",
       "category": "swap_confirm",
@@ -598,7 +612,14 @@ export const events = {
       "action": "skip_swap",
       "thorwallet": true,
       "value": true
-    }
+    },
+    "button_swap_confirm_*FROM_ASSET*_*TO_ASSET*_fee_usd_*numerical_usd_value*": {
+      "label": "button_swap_confirm_*FROM_ASSET*_*TO_ASSET*_fee_usd_*numerical_usd_value*",
+      "category": "swap_confirm",
+      "action": "skip_swap",
+      "thorwallet": true,
+      "value": true
+    },
   },
   "swap_processing": {
     "breadcrumb_skip": {
@@ -1055,6 +1076,27 @@ export const events = {
       "thorwallet": true,
       "value": true
     },
+    "button_deposit_symmetrical_*POOL_ASSET*_fee_usd_*numerical_usd_value*": {
+      "label": "button_deposit_symmetrical_*POOL_ASSET*_fee_usd_*numerical_usd_value*",
+      "category": "pool_deposit_symmetrical_prepare",
+      "action": "skip_pool",
+      "thorwallet": true,
+      "value": true
+    },
+    "button_deposit_cancel_symmetrical_*POOL_ASSET*_fee_usd_*numerical_usd_value*": {
+      "label": "button_deposit_cancel_symmetrical_*POOL_ASSET*_fee_usd_*numerical_usd_value*",
+      "category": "pool_deposit_symmetrical_prepare",
+      "action": "skip_pool",
+      "thorwallet": true,
+      "value": true
+    },
+    "button_deposit_cancel_symmetrical_*POOL_ASSET*_usd_*numerical_usd_value*": {
+      "label": "button_deposit_cancel_symmetrical_*POOL_ASSET*_usd_*numerical_usd_value*",
+      "category": "pool_deposit_symmetrical_prepare",
+      "action": "skip_pool",
+      "thorwallet": true,
+      "value": true
+    },
     "button_cancel": {
       "label": "button_cancel",
       "category": "pool_deposit_symmetrical_prepare",
@@ -1122,8 +1164,22 @@ export const events = {
       "thorwallet": true,
       "value": true
     },
+    "button_deposit_confirm_symmetrical_*POOL_ASSET*_fee_usd_*numerical_usd_value*": {
+      "label": "button_deposit_confirm_symmetrical_*POOL_ASSET*_fee_usd_*numerical_usd_value*",
+      "category": "pool_deposit_symmetrical_confirm",
+      "action": "skip_pool",
+      "thorwallet": true,
+      "value": true
+    },
     "button_deposit_cancel_symmetrical_*POOL_ASSET*_usd_*numerical_usd_value*": {
       "label": "button_deposit_cancel_symmetrical_*POOL_ASSET*_usd_*numerical_usd_value*",
+      "category": "pool_deposit_symmetrical_confirm",
+      "action": "skip_pool",
+      "thorwallet": true,
+      "value": true
+    },
+    "button_deposit_cancel_symmetrical_*POOL_ASSET*_fee_usd_*numerical_usd_value*": {
+      "label": "button_deposit_cancel_symmetrical_*POOL_ASSET*_fee_usd_*numerical_usd_value*",
       "category": "pool_deposit_symmetrical_confirm",
       "action": "skip_pool",
       "thorwallet": true,
@@ -1219,6 +1275,27 @@ export const events = {
       "thorwallet": true,
       "value": true
     },
+    "button_withdraw_*POOL_ASSET*_fee_usd_*numerical_usd_value*": {
+      "label": "button_withdraw_*POOL_ASSET*_fee_usd_*numerical_usd_value*",
+      "category": "pool_withdraw_symmetrical_prepare",
+      "action": "skip_pool",
+      "thorwallet": true,
+      "value": true
+    },
+    "button_withdraw_cancel_*POOL_ASSET*_usd_*numerical_usd_value*": {
+      "label": "button_withdraw_cancel_*POOL_ASSET*_usd_*numerical_usd_value*",
+      "category": "pool_withdraw_symmetrical_prepare",
+      "action": "skip_pool",
+      "thorwallet": true,
+      "value": true
+    },
+    "button_withdraw_cancel_*POOL_ASSET*_fee_usd_*numerical_usd_value*": {
+      "label": "button_withdraw_cancel_*POOL_ASSET*_fee_usd_*numerical_usd_value*",
+      "category": "pool_withdraw_symmetrical_prepare",
+      "action": "skip_pool",
+      "thorwallet": true,
+      "value": true
+    },
     "button_cancel": {
       "label": "button_cancel",
       "category": "pool_withdraw_symmetrical_prepare",
@@ -1255,7 +1332,7 @@ export const events = {
       "action": "skip_pool",
       "thorwallet": true,
       "value": true
-    }
+    },
   },
   "pool_withdraw_symmetrical_processing": {
     "breadcrumb_skip": {
@@ -1401,6 +1478,13 @@ export const events = {
     },
     "button_upgrade_cancel_*FROM_ASSET*_THOR.RUNE_usd_*numerical_usd_value*": {
       "label": "button_upgrade_cancel_*FROM_ASSET*_THOR.RUNE_usd_*numerical_usd_value*",
+      "category": "upgrade_confirm",
+      "action": "skip_upgrade",
+      "thorwallet": true,
+      "value": true
+    },
+    "button_upgrade_cancel_*FROM_ASSET*_THOR.RUNE_fee_usd_*numerical_usd_value*": {
+      "label": "button_upgrade_cancel_*FROM_ASSET*_THOR.RUNE_fee_usd_*numerical_usd_value*",
       "category": "upgrade_confirm",
       "action": "skip_upgrade",
       "thorwallet": true,

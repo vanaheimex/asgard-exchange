@@ -163,6 +163,8 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
 
     let upgradeAmountUSD = this.amount * this.asset.assetPriceUSD;
     this.analytics.event('upgrade_confirm', 'button_upgrade_confirm_*FROM_ASSET*_THOR.RUNE_usd_*numerical_usd_value*', upgradeAmountUSD, assetString(this.asset.asset), upgradeAmountUSD.toString())
+    let upgradeFeeAmountUSD = this.networkFee * this.asset.assetPriceUSD;
+    this.analytics.event('upgrade_confirm', 'button_upgrade_confirm_*FROM_ASSET*_THOR.RUNE_fee_usd_*numerical_usd_value*', upgradeFeeAmountUSD, assetString(this.asset.asset), upgradeFeeAmountUSD.toString())
 
     this.midgardService.getInboundAddresses().subscribe(async (res) => {
       const currentPools = res;
@@ -183,6 +185,14 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
         }
       }
     });
+  }
+
+  cancelButton() {
+    let upgradeAmountUSD = this.amount * this.asset.assetPriceUSD;
+    this.analytics.event('upgrade_confirm', 'button_upgrade_cancel_*FROM_ASSET*_THOR.RUNE_usd_*numerical_usd_value*', upgradeAmountUSD, assetString(this.asset.asset), upgradeAmountUSD.toString())
+    let upgradeFeeAmountUSD = this.networkFee * this.asset.assetPriceUSD;
+    this.analytics.event('upgrade_confirm', 'button_upgrade_cancel_*FROM_ASSET*_THOR.RUNE_fee_usd_*numerical_usd_value*', upgradeFeeAmountUSD, assetString(this.asset.asset), upgradeFeeAmountUSD.toString())
+    this.back.emit();
   }
 
   async keystoreTransfer(matchingPool: PoolAddressDTO) {

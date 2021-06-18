@@ -619,6 +619,9 @@ export class DepositComponent implements OnInit, OnDestroy {
 
     let depositAmountUsd = assetData.assetPriceUSD * this.assetAmount + runeData.assetPriceUSD * this.runeAmount
     this.analytics.event('pool_deposit_symmetrical_prepare', 'button_deposit_symmetrical_*POOL_ASSET*_usd_*numerical_usd_value*',  depositAmountUsd, assetString(this.asset), (depositAmountUsd).toString());
+    let depositFeeAmountUSD = this.networkFee * assetData.assetPriceUSD + runeData.assetPriceUSD * this.runeFee
+    this.analytics.event('pool_deposit_symmetrical_prepare', 'button_deposit_symmetrical_*POOL_ASSET*_fee_usd_*numerical_usd_value*',  depositFeeAmountUSD, assetString(this.asset), (depositFeeAmountUSD).toString());
+    
     if (this.depositData) this.overlaysService.setCurrentDepositView("Confirm");
   }
 
@@ -635,8 +638,13 @@ export class DepositComponent implements OnInit, OnDestroy {
   }
 
   cancelButton() {
-    if (this.user)
+    if (this.user) {
       this.analytics.event('pool_deposit_symmetrical_prepare', 'button_cancel');
+      let depositAmountUsd = this.assetPrice * this.assetAmount + this.runeFee * this.runeAmount
+      this.analytics.event('pool_deposit_symmetrical_prepare', 'button_deposit_cancel_symmetrical_*POOL_ASSET*_usd_*numerical_usd_value*',  depositAmountUsd, assetString(this.asset), (depositAmountUsd).toString());
+      let depositFeeAmountUSD = this.networkFee * this.assetPrice + this.runeFee * this.runeFee
+      this.analytics.event('pool_deposit_symmetrical_prepare', 'button_deposit_cancel_symmetrical_*POOL_ASSET*_fee_usd_*numerical_usd_value*',  depositFeeAmountUSD, assetString(this.asset), (depositFeeAmountUSD).toString());
+    }
     else
       this.analytics.event('pool_disconnected_deposit', 'button_cancel_*POOL*', undefined, assetToString(this.asset));
     this.back();
