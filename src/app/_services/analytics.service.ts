@@ -42,7 +42,6 @@ export class AnalyticsService {
   public event(eventName: string, eventLabel: string, eventVal?: number, ...values: string[]) {
     try {
       let event = events[eventName][eventLabel];
-      console.log(eventName, eventLabel)
 
       let r =  /\*(.*?)\*/g;
 
@@ -67,7 +66,6 @@ export class AnalyticsService {
         thorAddr = this.userService.ThorAddress
       }
 
-      console.log(label)
       this.eventEmitter(
         event.action,
         event.category,

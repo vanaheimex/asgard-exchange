@@ -309,6 +309,7 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
             hash: undefined,
           },
         });
+        this.getOutboundHash(hash);
         this.txState = TransactionConfirmationState.SUCCESS;
       } catch (error) {
         console.error("error making transfer: ", error);
@@ -526,7 +527,6 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
   }
 
   getOutboundHash(hash) {
-    console.log(hash)
     const outbound$ = this.txStatusService
       .getOutboundHash(hash)
       .subscribe((res: Transaction) => {
