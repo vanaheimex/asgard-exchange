@@ -1326,8 +1326,22 @@ export const events = {
       "thorwallet": true,
       "value": true
     },
+    "button_withdraw_confirm_*POOL_ASSET*_fee_usd_*numerical_usd_value*": {
+      "label": "button_withdraw_confirm_*POOL_ASSET*_fee_usd_*numerical_usd_value*",
+      "category": "pool_withdraw_symmetrical_confirm",
+      "action": "skip_pool",
+      "thorwallet": true,
+      "value": true
+    },
     "button_withdraw_cancel_*POOL_ASSET*_usd_*numerical_usd_value*": {
       "label": "button_withdraw_cancel_*POOL_ASSET*_usd_*numerical_usd_value*",
+      "category": "pool_withdraw_symmetrical_confirm",
+      "action": "skip_pool",
+      "thorwallet": true,
+      "value": true
+    },
+    "button_withdraw_cancel_*POOL_ASSET*_fee_usd_*numerical_usd_value*": {
+      "label": "button_withdraw_cancel_*POOL_ASSET*_fee_usd_*numerical_usd_value*",
       "category": "pool_withdraw_symmetrical_confirm",
       "action": "skip_pool",
       "thorwallet": true,
@@ -1471,6 +1485,13 @@ export const events = {
     },
     "button_upgrade_confirm_*FROM_ASSET*_THOR.RUNE_usd_*numerical_usd_value*": {
       "label": "button_upgrade_confirm_*FROM_ASSET*_THOR.RUNE_usd_*numerical_usd_value*",
+      "category": "upgrade_confirm",
+      "action": "skip_upgrade",
+      "thorwallet": true,
+      "value": true
+    },
+    "button_upgrade_confirm_*FROM_ASSET*_THOR.RUNE_fee_usd_*numerical_usd_value*": {
+      "label": "button_upgrade_confirm_*FROM_ASSET*_THOR.RUNE_fee_usd_*numerical_usd_value*",
       "category": "upgrade_confirm",
       "action": "skip_upgrade",
       "thorwallet": true,

@@ -614,11 +614,15 @@ export class WithdrawComponent implements OnInit {
   }
 
   back() {
-    this.analytics.event('pool_withdraw_symmetrical_prepare', 'button_cancel');
-    let usdValue = this.removeAssetAmount * this.assetPrice + this.removeRuneAmount * this.runePrice;
-    this.analytics.event('pool_withdraw_symmetrical_prepare', 'button_withdraw_cancel_*POOL_ASSET*_usd_*numerical_usd_value*', usdValue, `${this.asset.chain}.${this.asset.ticker}`, usdValue.toString()) 
-    let usdFeeValue = this.runePrice * this.runeFee + this.assetPrice * this.networkFee;
-    this.analytics.event('pool_withdraw_symmetrical_prepare', 'button_withdraw_cancel_*POOL_ASSET*_fee_usd_*numerical_usd_value*', usdFeeValue, `${this.asset.chain}.${this.asset.ticker}`, usdFeeValue.toString()) 
+    if (this.withdrawPercent == 0) {
+      this.analytics.event('pool_withdraw_symmetrical_prepare', 'button_cancel');
+    }
+    else {
+      let usdValue = this.removeAssetAmount * this.assetPrice + this.removeRuneAmount * this.runePrice;
+      this.analytics.event('pool_withdraw_symmetrical_prepare', 'button_withdraw_cancel_*POOL_ASSET*_usd_*numerical_usd_value*', usdValue, `${this.asset.chain}.${this.asset.ticker}`, usdValue.toString()) 
+      let usdFeeValue = this.runePrice * this.runeFee + this.assetPrice * this.networkFee;
+      this.analytics.event('pool_withdraw_symmetrical_prepare', 'button_withdraw_cancel_*POOL_ASSET*_fee_usd_*numerical_usd_value*', usdFeeValue, `${this.asset.chain}.${this.asset.ticker}`, usdFeeValue.toString()) 
+    }
 
     this.router.navigate(["/", "pool"]);
   }
