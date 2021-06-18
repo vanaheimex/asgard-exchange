@@ -134,7 +134,9 @@ export class AppComponent implements OnInit, OnDestroy {
           document.querySelector(".expandable")
         ) !== 10
       ) {
-        this.analytics.event('menu', 'menu_close');
+        if (this.overlaysService.getMenu()) {
+          this.analytics.event('menu', 'menu_close');
+        }
         this.overlaysService.setMenu(false);
       }
     });

@@ -526,6 +526,7 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
   }
 
   getOutboundHash(hash) {
+    console.log(hash)
     const outbound$ = this.txStatusService
       .getOutboundHash(hash)
       .subscribe((res: Transaction) => {
@@ -537,8 +538,6 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
         if (!this.outboundHash && res.status == "success") {
           this.outboundHash = "success";
         }
-
-        this.analytics.event('swap_success', "tag_receive_container_wallet_*ASSET*", undefined, res.out[0].coins[0].asset);
       });
 
     this.subs.push(outbound$);
@@ -558,9 +557,6 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
         hash: undefined,
       },
     });
-
-    // successful hash recive
-    this.analytics.event('swap_success', `tag_send_container_wallet_*ASSET*`, undefined, assetString(this.swapData.sourceAsset.asset))
 
     //get outbound hash for the view
     this.getOutboundHash(hash);
