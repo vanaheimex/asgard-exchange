@@ -733,7 +733,7 @@ export class SwapComponent implements OnInit, OnDestroy {
         this.outboundFees[assetToString(this.selectedTargetAsset)] ||
       // if RUNE, ensure 3 RUNE remain in wallet
       (this.selectedSourceAsset.chain === "THOR" &&
-        this.sourceBalance - this.sourceAssetUnit < 3) ||
+        this.sourceBalance - this.sourceAssetUnit < 0.2) ||
       // check sufficient underlying chain balance to cover fees
       this.sourceChainBalance <
         1.5 *
@@ -810,9 +810,9 @@ export class SwapComponent implements OnInit, OnDestroy {
 
     if (
       this.selectedSourceAsset.chain === "THOR" &&
-      this.sourceBalance - this.sourceAssetUnit < 3
+      this.sourceBalance - this.sourceAssetUnit < 0.2
     ) {
-      return "Min 3 RUNE in Wallet Required";
+      return "Min 0.2 RUNE in Wallet Required";
     }
 
     if (this.isMaxError) {

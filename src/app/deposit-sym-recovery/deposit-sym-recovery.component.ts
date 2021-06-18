@@ -326,7 +326,7 @@ export class DepositSymRecoveryComponent implements OnInit, OnDestroy {
       return true;
     }
 
-    if (this.runeBalance < 3) {
+    if (this.runeBalance < 0.2) {
       return true;
     }
 
@@ -388,7 +388,7 @@ export class DepositSymRecoveryComponent implements OnInit, OnDestroy {
       return "Insufficient Balance";
     }
 
-    if (this.runeBalance < 3) {
+    if (this.runeBalance < 0.2) {
       return "Min 3 RUNE in Wallet Required";
     }
 

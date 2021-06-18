@@ -366,7 +366,7 @@ export class UserService {
           inboundAddresses,
           txType ?? "INBOUND"
         );
-        max = balance - fee - 3;
+        max = balance - fee - 0.2;
         break;
 
       case "BTC.BTC":

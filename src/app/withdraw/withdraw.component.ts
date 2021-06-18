@@ -475,7 +475,7 @@ export class WithdrawComponent implements OnInit {
      */
     if (
       this.withdrawType !== "ASYM_ASSET" &&
-      this.runeBalance - this.runeFee < 3
+      this.runeBalance - this.runeFee < 0.1
     ) {
       return true;
     }
@@ -541,9 +541,9 @@ export class WithdrawComponent implements OnInit {
 
     if (
       this.withdrawType !== "ASYM_ASSET" &&
-      this.runeBalance - this.runeFee < 3
+      this.runeBalance - this.runeFee < 0.1
     ) {
-      return "Min 3 RUNE in Wallet Required";
+      return "Min 0.1 RUNE in Wallet Required";
     }
 
     /** Good to go */

@@ -468,7 +468,7 @@ export class DepositComponent implements OnInit, OnDestroy {
             this.inboundAddresses
           )) ||
       this.assetBalance < this.assetAmount ||
-      this.runeBalance - this.runeAmount < 3
+      this.runeBalance - this.runeAmount < 0.2
     );
   }
 
@@ -517,8 +517,8 @@ export class DepositComponent implements OnInit, OnDestroy {
     }
 
     /** RUNE amount exceeds RUNE balance. Leave 3 RUNE in balance */
-    if (this.runeBalance - this.runeAmount < 3) {
-      return {text: "Min 3 RUNE in Wallet", isError: true};
+    if (this.runeBalance - this.runeAmount < 0.2) {
+      return {text: "Min 0.2 RUNE in Wallet", isError: true};
     }
 
     /** Checks sufficient chain balance for fee */
