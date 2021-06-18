@@ -592,7 +592,7 @@ export const events = {
       "thorwallet": true,
       "value": false
     },
-    "button_swap_confirm_*FROM_ASSET*_*TO_ASSET*_slip_%_*numerical_%_value**": {
+    "button_swap_confirm_*FROM_ASSET*_*TO_ASSET*_slip_%_*numerical_%_value*": {
       "label": "button_swap_confirm_*FROM_ASSET*_*TO_ASSET*_slip_%_*numerical_%_value*",
       "category": "swap_confirm",
       "action": "skip_swap",
