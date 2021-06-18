@@ -1649,8 +1649,8 @@ export const events = {
       "thorwallet": true,
       "value": false
     },
-    "button_wallet_*WALLET*_*ASSET*": {
-      "label": "button_wallet_*WALLET*_*ASSET*",
+    "button_assets_*WALLET*_*ASSET*": {
+      "label": "button_assets_*WALLET*_*ASSET*",
       "category": "wallet_asset",
       "action": "skip_wallets",
       "thorwallet": true,
@@ -1892,15 +1892,15 @@ export const events = {
       "thorwallet": true,
       "value": false
     },
-    "button_cancel_%_numerical_value": {
-      "label": "button_cancel_%_numerical_value",
+    "button_cancel_%_*numerical_value*": {
+      "label": "button_cancel_%_*numerical_value*",
       "category": "setting_slippage_tolerance",
       "action": "skip_settings",
       "thorwallet": true,
       "value": false
     },
-    "button_save_%_numerical_value": {
-      "label": "button_save_%_numerical_value",
+    "button_save_%_*numerical_value*": {
+      "label": "button_save_%_*numerical_value*",
       "category": "setting_slippage_tolerance",
       "action": "skip_settings",
       "thorwallet": true,

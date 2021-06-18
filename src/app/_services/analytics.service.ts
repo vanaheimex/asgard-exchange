@@ -66,6 +66,7 @@ export class AnalyticsService {
         thorAddr = this.userService.ThorAddress
       }
 
+      console.log(label)
       this.eventEmitter(
         event.action,
         event.category,

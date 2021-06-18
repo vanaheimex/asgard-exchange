@@ -208,7 +208,7 @@ export class UserAssetComponent {
   }
 
   backNav() {
-    this.analytics.event('wallet_asset', 'button_wallet_*WALLET*_*ASSET*', undefined, this.chain, assetString(this.asset.asset));
+    this.analytics.event('wallet_asset', 'button_assets_*WALLET*_*ASSET*', undefined, this.chain, assetString(this.asset.asset));
     this.back.emit()
   }
 

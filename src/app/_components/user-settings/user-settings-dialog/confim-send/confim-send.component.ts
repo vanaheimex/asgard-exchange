@@ -190,7 +190,7 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
     else if (nav === "asset") {
       this.analytics.event(label, 'breadcrumb_*ASSET*', undefined, assetString(this.asset.asset));
       this.overlaysService.setCurrentUserView({
-        userView: "Address",
+        userView: "Asset",
         address: this.address,
         chain: this.asset.asset.chain,
         asset: this.asset,
