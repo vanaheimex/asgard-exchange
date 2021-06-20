@@ -83,7 +83,7 @@
           <button
             class="next-btn"
             (click)="initUnlock()"
-            [disabled]="xdefiConnecting || !isValidNetwork || loading"
+            [disabled]="xdefiConnecting || !isValidNetwork || loading || providersAllDisabled()"
           >
             <span>Connect</span>
           </button>

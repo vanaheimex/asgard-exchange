@@ -66,6 +66,14 @@ export class XDEFIConnectComponent implements OnInit {
       return { text: `SET TO ${this.isTestnet ? 'TESTNET' : 'MAINNET'} IN XDEFI`, isError: true };
     }
 
+    if (this.listProviders?.every((p) => !p.enabled)) {
+      return { text: "All dApps are disabled !", isError: true }
+    }
+
+    if (this.listProviders?.some((p) => !p.enabled)) {
+      return { text: "Some dApps are disabled !", isError: false }
+    }
+
     if (this.xdefiConnecting) {
       return { text: "Connecting", isError: false };
     }
@@ -104,6 +112,10 @@ export class XDEFIConnectComponent implements OnInit {
       this.loading = false;
       console.error(error.message);
     }
+  }
+
+  providersAllDisabled() {
+    return this.listProviders?.every((p) => !p.enabled)
   }
 
   backNav() {

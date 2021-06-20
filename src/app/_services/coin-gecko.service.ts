@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
-import { shareReplay } from "rxjs/operators";
+import { retry, share, shareReplay } from "rxjs/operators";
 
 export interface CurrencyConversionDTO {
   [coin: string]: {
@@ -21,7 +21,9 @@ export interface CGCoinListItem {
 export class CoinGeckoService {
   private coinList$: Observable<CGCoinListItem[]>;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.getCoinList().pipe(retry(2));
+  }
 
   getCoinList(): Observable<CGCoinListItem[]> {
     if (!this.coinList$) {
@@ -35,7 +37,7 @@ export class CoinGeckoService {
   getCurrencyConversion(id: string): Observable<CurrencyConversionDTO> {
     return this.http.get<CurrencyConversionDTO>(
       `https://api.coingecko.com/api/v3/simple/price?ids=${id}&vs_currencies=usd`
-    );
+    ).pipe(shareReplay(1));
   }
 
   getCoinIdBySymbol(ticker: string, list: CGCoinListItem[]): string {

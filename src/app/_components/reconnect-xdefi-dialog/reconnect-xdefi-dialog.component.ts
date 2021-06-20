@@ -76,7 +76,15 @@ export class ReconnectXDEFIDialogComponent implements OnInit {
     }
 
     if (!this.isValidNetwork) {
-      return { text: "Incorrect network!", isError: true };
+      return { text: `SET TO ${this.isTestnet ? 'TESTNET' : 'MAINNET'} IN XDEFI`, isError: true };
+    }
+
+    if (this.listProviders?.every((p) => !p.enabled)) {
+      return { text: "All dApps are disabled !", isError: true }
+    }
+
+    if (this.listProviders?.some((p) => !p.enabled)) {
+      return { text: "Some dApps are disabled !", isError: false }
     }
 
     if (this.connecting) {
@@ -95,6 +103,10 @@ export class ReconnectXDEFIDialogComponent implements OnInit {
       this.analytics.event('connect_reconnect_wallet', 'breadcrumb_connect');
       this.overlaysService.setViews(MainViewsEnum.Swap, "Connect");
     }
+  }
+
+  providersAllDisabled() {
+    return this.listProviders?.every((p) => !p.enabled)
   }
 
   forget() {

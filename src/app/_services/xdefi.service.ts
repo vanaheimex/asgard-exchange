@@ -25,6 +25,7 @@ import { hexlify } from "@ethersproject/bytes";
 import { links } from "../_const/links";
 import { BehaviorSubject } from "rxjs";
 import { UserService } from "./user.service";
+import { take } from "rxjs/operators";
 
 declare global {
   interface Window {
@@ -79,9 +80,7 @@ export class XDEFIService {
         console.log("changed", obj);
         const envNetwork =
           environment.network === "testnet" ? "testnet" : "mainnet";
-        if(this.isValidNetwork()) {
-          this.vaildNetwork.next(this.isValidNetwork());
-        }
+        this.vaildNetwork.next(this.isValidNetwork());
         if (obj.network !== envNetwork) {
           // let changeUrl = envNetwork === 'testnet' ? links.appUrl : links.testnetAppUrl;
           // location.href = changeUrl;
@@ -91,13 +90,19 @@ export class XDEFIService {
       (window as any)?.ethereum?.on('accountsChanged', (accounts) => {
         // Time to reload your interface with accounts[0]!
         console.log((window as any).ethereum);
-        this.connectXDEFI().then(
+        this.userService.user$.pipe(take(1)).subscribe(
           (user) => {
-            console.log('new user account', user);
-            if (user)
-              this.userService.setUser(user);
+            if (user) {
+              this.connectXDEFI().then(
+                (user) => {
+                  console.log('new user account', user);
+                  if (user)
+                    this.userService.setUser(user);
+                }
+              );
+            }
           }
-        );
+        )
       });
     }
   }
