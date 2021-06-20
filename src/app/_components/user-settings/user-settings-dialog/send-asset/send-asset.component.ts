@@ -282,11 +282,10 @@ export class SendAssetComponent implements OnInit, OnDestroy {
   sendNav() {
     /** Might be complicated analytics see if won't make performance issue */
     let sendAmountUSD = this.amount * this.asset.assetPriceUSD;
-    this.analytics.event('wallet_asset_send_prepare', 'button_send_*WALLET*_*ASSET*_*TO_ADDRESS*_usd_*numerical_usd_value*', 
+    this.analytics.event('wallet_asset_send_prepare', 'button_send_*WALLET*_*ASSET*_usd_*numerical_usd_value*', 
       sendAmountUSD,
       this.asset.asset.chain,
       assetString(this.asset.asset),
-      this.recipientAddress,
       sendAmountUSD.toString()
     )
 
