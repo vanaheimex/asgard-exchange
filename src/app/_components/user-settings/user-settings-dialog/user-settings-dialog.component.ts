@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { assetToString, baseToAsset, Chain } from '@xchainjs/xchain-util';
-import { Subscription } from 'rxjs';
+import { Asset, assetToString, BaseAmount, baseToAsset, Chain } from '@xchainjs/xchain-util';
+import { combineLatest, Subscription } from 'rxjs';
 import { AssetAndBalance } from 'src/app/_classes/asset-and-balance';
 import { PoolDTO } from 'src/app/_classes/pool';
 import { User } from 'src/app/_classes/user';
@@ -15,6 +15,12 @@ import { CurrencyService } from 'src/app/_services/currency.service';
 import { Currency } from '../../account-settings/currency-converter/currency-converter.component';
 import { AnalyticsService } from 'src/app/_services/analytics.service';
 
+export interface coinLists {
+  [id: string]: {
+    asset: Asset;
+    amount: BaseAmount
+  }
+}
 @Component({
   selector: "app-user-settings-dialog",
   templateUrl: "./user-settings-dialog.component.html",
@@ -156,41 +162,54 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
   }
 
   async getBalances() {
-    var i = 0;
     const list = await this.cgService.getCoinList().toPromise(); 
 
     // balance will be triggered multiple time even on one chain
-    const balances$ = this.userService.userBalances$.subscribe(
-      (balances) => {
-        if (balances) {
+    let ids: coinLists = {};
+    const balances$ = this.userService.userBalances$;
+    const pendingBalances$ = this.userService.pendingBalances$;
+
+    const combined = combineLatest([balances$, pendingBalances$]);
+    
+    const sub = combined.subscribe(
+      ([balances, pendingBalances]) => {
+        if (!pendingBalances) {
           balances.forEach(
-            async (balance) => {
+            (balance) => {
               let id = this.cgService.getCoinIdBySymbol(balance.asset.ticker, list);
-              if (id) {
-                this.cgService.getCurrencyConversion(id).subscribe(
-                  (res) => {
-                    for (const [_key, value] of Object.entries(res)) {
-                      if (this.chainUsdValue[balance.asset.chain] && !this.chainUsdValue[balance.asset.chain].tokens.includes(balance.asset.ticker)) {
-                        this.chainUsdValue[balance.asset.chain].tokens = [...this.chainUsdValue[balance.asset.chain].tokens, balance.asset.ticker];
-                        this.chainUsdValue[balance.asset.chain].value += value.usd * baseToAsset(balance.amount).amount().toNumber();
-                      }
-                      else if(!this.chainUsdValue[balance.asset.chain]) {
-                        this.chainUsdValue[balance.asset.chain] = {
-                          value: value.usd * baseToAsset(balance.amount).amount().toNumber(),
-                          tokens: [balance.asset.ticker]
-                        }
-                      }
+              if (!ids[id]) {
+                ids[id] = {
+                  asset: balance.asset,
+                  amount: balance.amount
+                }
+              }
+            }
+          )
+
+          this.cgService.getCurrencyConversion(Object.keys(ids).join(',')).subscribe(
+            (cnPrice) => {
+              Object.keys(cnPrice).forEach(
+                (ca) => {
+                  let {asset, amount} = ids[ca];
+                  if (this.chainUsdValue[asset.chain] && !this.chainUsdValue[asset.chain].tokens.includes(asset.ticker)) {
+                    this.chainUsdValue[asset.chain].tokens = [...this.chainUsdValue[asset.chain].tokens, asset.ticker];
+                    this.chainUsdValue[asset.chain].value += cnPrice[ca].usd * baseToAsset(amount).amount().toNumber();
+                  }
+                  else if(!this.chainUsdValue[asset.chain]) {
+                    this.chainUsdValue[asset.chain] = {
+                      value: cnPrice[ca].usd * baseToAsset(amount).amount().toNumber(),
+                      tokens: [asset.ticker]
                     }
                   }
-                )
-              }
+                }
+              )
             }
           )
         }
       }
     );
 
-    this.subs.push(balances$);
+    this.subs.push(sub);
   }
 
   breadcrumbNav(val: string) {

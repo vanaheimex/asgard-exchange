@@ -6,6 +6,11 @@ import { environment } from "./environments/environment";
 
 if (environment.production) {
   enableProdMode();
+
+  // disableing console.log
+  if(window){
+    window.console.log = window.console.warn = window.console.info = function() {};
+  }
 }
 
 platformBrowserDynamic()
