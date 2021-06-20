@@ -34,7 +34,6 @@ export class AnalyticsService {
         'send_to': 'G-QDG7Z69FRZ',
         'event_category': eventCategory, 
         'event_label': eventLabel, 
-        'event_thor_address': eventAddress,
         'value': eventValue
       })
   }
@@ -61,17 +60,11 @@ export class AnalyticsService {
         label = label.replace(valArray[val], values[val])
       }
 
-      let thorAddr = undefined;
-      if (event.thorwallet) {
-        thorAddr = this.userService.ThorAddress
-      }
-
       this.eventEmitter(
         event.action,
         event.category,
         label,
         eventVal,
-        thorAddr
       )
     } catch (error) {
       console.error('Couldn\'t send the analytics!');
