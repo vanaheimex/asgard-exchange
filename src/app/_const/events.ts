@@ -1492,8 +1492,8 @@ export const events = {
       "action": "skip_wallets",
       "value": false
     },
-    "button_send_*WALLET*_*ASSET*_*TO_ADDRESS*_usd_*numerical_usd_value*": {
-      "label": "button_send_*WALLET*_*ASSET*_*TO_ADDRESS*_usd_*numerical_usd_value*",
+    "button_send_*WALLET*_*ASSET*_usd_*numerical_usd_value*": {
+      "label": "button_send_*WALLET*_*ASSET*_usd_*numerical_usd_value*",
       "category": "wallet_asset_send_prepare",
       "action": "skip_wallets",
       "value": true
@@ -1530,14 +1530,14 @@ export const events = {
       "action": "skip_wallets",
       "value": false
     },
-    "button_confirm_*WALLET*_*ASSET*_*TO_ADDRESS*_usd_*numerical_usd_value*": {
-      "label": "button_confirm_*WALLET*_*ASSET*_*TO_ADDRESS*_usd_*numerical_usd_value*",
+    "button_confirm_*WALLET*_*ASSET*_usd_*numerical_usd_value*": {
+      "label": "button_confirm_*WALLET*_*ASSET*_usd_*numerical_usd_value*",
       "category": "wallet_asset_send_confirm",
       "action": "skip_wallets",
       "value": true
     },
-    "button_cancel_*WALLET*_*ASSET*_*TO_ADDRESS*_usd_*numerical_usd_value*": {
-      "label": "button_cancel_*WALLET*_*ASSET*_*TO_ADDRESS*_usd_*numerical_usd_value*",
+    "button_cancel_*WALLET*_*ASSET*_usd_*numerical_usd_value*": {
+      "label": "button_cancel_*WALLET*_*ASSET*_usd_*numerical_usd_value*",
       "category": "wallet_asset_send_confirm",
       "action": "skip_wallets",
       "value": true
@@ -1600,14 +1600,14 @@ export const events = {
       "action": "skip_wallets",
       "value": false
     },
-    "tag_txid_copy_*WALLET*_*ASSET*_*TO_ADDRESS*": {
-      "label": "tag_txid_copy_*WALLET*_*ASSET*_*TO_ADDRESS*",
+    "tag_txid_copy_*WALLET*_*ASSET*": {
+      "label": "tag_txid_copy_*WALLET*_*ASSET*",
       "category": "wallet_asset_send_success",
       "action": "skip_wallets",
       "value": false
     },
-    "tag_txid_explore_*WALLET*_*ASSET*_*TO_ADDRESS*": {
-      "label": "tag_txid_explore_*WALLET*_*ASSET*_*TO_ADDRESS*",
+    "tag_txid_explore_*WALLET*_*ASSET*": {
+      "label": "tag_txid_explore_*WALLET*_*ASSET*",
       "category": "wallet_asset_send_success",
       "action": "skip_wallets",
       "value": false
