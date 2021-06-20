@@ -100,7 +100,7 @@
             <button
               class="next-btn"
               (click)="initUnlock()"
-              [disabled]="connecting || !isValidNetwork"
+              [disabled]="connecting || !isValidNetwork || providersAllDisabled()"
             >
               <span>Connect</span>
             </button>
