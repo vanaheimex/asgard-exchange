@@ -173,7 +173,7 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
     
     const sub = combined.subscribe(
       ([balances, pendingBalances]) => {
-        if (!pendingBalances) {
+        if (!pendingBalances && balances) {
           balances.forEach(
             (balance) => {
               let id = this.cgService.getCoinIdBySymbol(balance.asset.ticker, list);
