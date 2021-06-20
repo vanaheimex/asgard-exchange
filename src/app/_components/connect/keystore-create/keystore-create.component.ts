@@ -38,11 +38,11 @@ export class KeystoreCreateComponent {
 
   breadcrumbNav(val: string) {
     if (val === 'swap') {
-      this.analytics.event('connect_create_keystore', 'breadcrumb_skip')
+      this.analytics.event('connect_create_wallet', 'breadcrumb_skip')
       this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
     }
     else if (val === 'connect') {
-      this.analytics.event('connect_create_keystore', 'breadcrumb_connect');
+      this.analytics.event('connect_create_wallet', 'breadcrumb_connect');
       this.back.emit();
     }
   }
@@ -85,9 +85,9 @@ export class KeystoreCreateComponent {
       a.innerHTML = "loading";
       a.click();
 
-      this.keystoreCreated.emit({phrase: this.phrase, label: 'connect_create_keystore_secure'});
+      this.keystoreCreated.emit({phrase: this.phrase, label: 'connect_create_wallet'});
 
-      this.analytics.event('connect_create_keystore', 'button_create');
+      this.analytics.event('connect_create_wallet', 'button_create');
     } catch (error) {
       console.error(error);
     }
@@ -96,7 +96,7 @@ export class KeystoreCreateComponent {
   }
 
   backNav() {
-    this.analytics.event('connect_create_keystore', 'button_cancel');
+    this.analytics.event('connect_create_wallet', 'button_cancel');
     this.back.emit();
   }
 }

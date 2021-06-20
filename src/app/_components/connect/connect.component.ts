@@ -65,29 +65,29 @@ export class ConnectModal {
 
   createKeystore() {
     this.connectionView = ConnectionView.KEYSTORE_CREATE;
-    this.analytics.event('connect_select_wallet', 'option_create_keystore');
+    this.analytics.event('connect_select_wallet', 'option_create_wallet');
   }
 
   connectKeystore() {
     this.connectionView = ConnectionView.KEYSTORE_CONNECT;
-    this.analytics.event('connect_select_wallet', 'option_connect_keystore');
+    this.analytics.event('connect_select_wallet', 'option_connect_wallet');
   }
 
   createKeystoreFromPhrase() {
     this.connectionView = ConnectionView.KEYSTORE_IMPORT_PHRASE;
-    this.analytics.event('connect_select_wallet', 'option_create_keystore_phrase');
+    this.analytics.event('connect_select_wallet', 'option_create_wallet');
   }
 
   connectXDEFI() {
     if (!this.isXDEFIConnected) {
-      this.analytics.event('connect_select_wallet', 'option_install_xdefi');
+      this.analytics.event('connect_select_wallet', 'option_connect_wallet');
       return window.open(
         "https://www.xdefi.io",
         "_blank"
       );
     }
     this.connectionView = ConnectionView.XDEFI;
-    this.analytics.event('connect_select_wallet', 'option_connect_xdefi');
+    this.analytics.event('connect_select_wallet', 'option_connect_wallet');
   }
 
   storePhrasePrompt(values: {phrase: string, label: string}) {

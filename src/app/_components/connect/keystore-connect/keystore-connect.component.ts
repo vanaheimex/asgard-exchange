@@ -55,23 +55,23 @@ export class KeystoreConnectComponent {
     this.keystorePassword = "";
     this.keystoreFile = null;
     this.keystoreFileSelected = false;
-    this.analytics.event('connect_connect_keystore', 'button_cancel');
+    this.analytics.event('connect_connect_wallet', 'button_cancel');
     this.back.emit();
   }
   
   breadcrumbNav(val: string) {
     if (val === 'swap') {
-      this.analytics.event('connect_connect_keystore', 'breadcrumb_skip')
+      this.analytics.event('connect_connect_wallet', 'breadcrumb_skip')
       this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
     }
     else if (val === 'connect') {
-      this.analytics.event('connect_connect_keystore', 'breadcrumb_connect');
+      this.analytics.event('connect_connect_wallet', 'breadcrumb_connect');
       this.back.emit();
     }
   }
 
   async onKeystoreFileChange(event: Event) {
-    this.analytics.event('connect_connect_keystore', 'tag_select_file');
+    this.analytics.event('connect_connect_wallet', 'tag_select_file');
     this.keystoreFileSelected = true;
 
     const target = event.target as HTMLInputElement;
@@ -105,7 +105,7 @@ export class KeystoreConnectComponent {
       return;
     }
 
-    this.analytics.event('connect_connect_keystore', 'button_connect');
+    this.analytics.event('connect_connect_wallet', 'button_connect');
     this.keystoreConnecting = true;
 
     setTimeout(() => {
