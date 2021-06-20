@@ -47,7 +47,7 @@ export class ReconnectDialogComponent {
       return;
     }
 
-    this.analytics.event('connect_reconnect_keystore', 'button_connect');
+    this.analytics.event('connect_reconnect_wallet', 'button_connect');
 
     this.keystoreConnecting = true;
 
@@ -58,11 +58,11 @@ export class ReconnectDialogComponent {
 
   breadcrumbNav(val: string) {
     if (val === 'skip') {
-      this.analytics.event('connect_reconnect_keystore', 'breadcrumb_skip');
+      this.analytics.event('connect_reconnect_wallet', 'breadcrumb_skip');
       this.overlayService.setViews(MainViewsEnum.Swap, "Swap");
     }
     else if (val === 'connect') {
-      this.analytics.event('connect_reconnect_keystore', 'breadcrumb_connect');
+      this.analytics.event('connect_reconnect_wallet', 'breadcrumb_connect');
       this.overlayService.setViews(MainViewsEnum.Swap, "Connect");
     }
   }
@@ -86,7 +86,7 @@ export class ReconnectDialogComponent {
   }
 
   forgetKeystore() {
-    this.analytics.event('connect_reconnect_keystore', 'button_forget');
+    this.analytics.event('connect_reconnect_wallet', 'button_forget');
     localStorage.clear();
     this.overlayService.setViews(MainViewsEnum.Swap, "Swap");
   }

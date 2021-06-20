@@ -15,7 +15,7 @@ import { environment } from "src/environments/environment";
 export class ImportPhraseComponent implements OnInit {
   @Output() back: EventEmitter<null>;
   @Output() closeModal: EventEmitter<null>;
-  @Output() keystoreCreated: EventEmitter<string>;
+  @Output() keystoreCreated: EventEmitter<{phrase: string, label: string}>;
   password: string;
   confirmPassword: string;
   phrase: string;
@@ -34,18 +34,18 @@ export class ImportPhraseComponent implements OnInit {
     this.message = "PREPARE";
     this.back = new EventEmitter<null>();
     this.closeModal = new EventEmitter<null>();
-    this.keystoreCreated = new EventEmitter<string>();
+    this.keystoreCreated = new EventEmitter<{phrase: string, label: string}>();
   }
 
   ngOnInit(): void {}
 
   breadcrumbNav(val: string) {
     if (val === 'swap') {
-      this.analytics.event('connect_create_keystore_phrase', 'breadcrumb_skip')
+      this.analytics.event('connect_create_wallet', 'breadcrumb_skip')
       this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
     }
     else if (val === 'connect') {
-      this.analytics.event('connect_create_keystore_phrase', 'breadcrumb_connect');
+      this.analytics.event('connect_create_wallet', 'breadcrumb_connect');
       this.back.emit();
     }
   }
@@ -84,8 +84,8 @@ export class ImportPhraseComponent implements OnInit {
       a.innerHTML = "loading";
       a.click();
 
-      this.keystoreCreated.emit(this.phrase);
-      this.analytics.event('connect_create_keystore_phrase', 'button_create');
+      this.keystoreCreated.emit({phrase: this.phrase, label: 'connect_create_wallet'});
+      this.analytics.event('connect_create_wallet', 'button_create');
     } catch (error) {
       console.error(error);
       this.message = error.message;
@@ -96,7 +96,7 @@ export class ImportPhraseComponent implements OnInit {
   }
 
   backNav() {
-    this.analytics.event('connect_create_keystore_phrase', 'button_cancel');
+    this.analytics.event('connect_create_wallet', 'button_cancel');
     this.back.emit();
   }
 }

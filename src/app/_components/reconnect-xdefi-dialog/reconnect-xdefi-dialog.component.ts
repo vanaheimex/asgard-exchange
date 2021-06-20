@@ -47,7 +47,7 @@ export class ReconnectXDEFIDialogComponent implements OnInit {
       return;
     }
 
-    this.analytics.event('connect_reconnect_xdefi', 'button_connect');
+    this.analytics.event('connect_reconnect_wallet', 'button_connect');
     
     this.connecting = true;
 
@@ -88,18 +88,18 @@ export class ReconnectXDEFIDialogComponent implements OnInit {
 
   breadcrumbNav(val: string) {
     if (val === 'skip') {
-      this.analytics.event('connect_reconnect_xdefi', 'breadcrumb_skip');
+      this.analytics.event('connect_reconnect_wallet', 'breadcrumb_skip');
       this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
     }
     else if (val === 'connect') {
-      this.analytics.event('connect_reconnect_xdefi', 'breadcrumb_connect');
+      this.analytics.event('connect_reconnect_wallet', 'breadcrumb_connect');
       this.overlaysService.setViews(MainViewsEnum.Swap, "Connect");
     }
   }
 
   forget() {
     localStorage.clear();
-    this.analytics.event('connect_reconnect_xdefi', 'button_forget');
+    this.analytics.event('connect_reconnect_wallet', 'button_forget');
     this.overlaysService.setCurrentView(MainViewsEnum.Swap);
     // this.dialogRef.close();
   }

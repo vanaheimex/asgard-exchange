@@ -48,11 +48,11 @@ export class XDEFIConnectComponent implements OnInit {
 
   breadcrumbNav(val: string) {
     if (val === 'swap') {
-      this.analytics.event('connect_connect_xdefi', 'breadcrumb_skip');
+      this.analytics.event('connect_connect_wallet', 'breadcrumb_skip');
       this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
     }
     else if (val === 'connect') {
-      this.analytics.event('connect_connect_xdefi', 'breadcrumb_connect');
+      this.analytics.event('connect_connect_wallet', 'breadcrumb_connect');
       this.back.emit();
     }
   }
@@ -92,7 +92,7 @@ export class XDEFIConnectComponent implements OnInit {
     this.xdefiError = false;
     this.xdefiConnecting = true;
     try {
-      this.analytics.event('connect_connect_xdefi', 'button_connect');
+      this.analytics.event('connect_connect_wallet', 'button_connect');
       const user = await this.xdefiService.connectXDEFI();
       console.log("xdefiConnect::got user", user);
       this.userService.setUser(user);
@@ -107,7 +107,7 @@ export class XDEFIConnectComponent implements OnInit {
   }
 
   backNav() {
-    this.analytics.event('connect_connect_xdefi', 'button_cancel');
+    this.analytics.event('connect_connect_wallet', 'button_cancel');
     this.back.emit();
   }
 

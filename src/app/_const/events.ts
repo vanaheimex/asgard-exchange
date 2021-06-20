@@ -134,36 +134,15 @@ export const events = {
       "thorwallet": false,
       "value": false
     },
-    "option_create_keystore": {
-      "label": "option_create_keystore",
+    "option_create_wallet": {
+      "label": "option_create_wallet",
       "category": "connect_select_wallet",
       "action": "skip_connect",
       "thorwallet": false,
       "value": false
     },
-    "option_create_keystore_phrase": {
-      "label": "option_create_keystore_phrase",
-      "category": "connect_select_wallet",
-      "action": "skip_connect",
-      "thorwallet": false,
-      "value": false
-    },
-    "option_connect_keystore": {
-      "label": "option_connect_keystore",
-      "category": "connect_select_wallet",
-      "action": "skip_connect",
-      "thorwallet": false,
-      "value": false
-    },
-    "option_connect_xdefi": {
-      "label": "option_connect_xdefi",
-      "category": "connect_select_wallet",
-      "action": "skip_connect",
-      "thorwallet": false,
-      "value": false
-    },
-    "option_install_xdefi": {
-      "label": "option_install_xdefi",
+    "option_connect_wallet": {
+      "label": "option_connect_wallet",
       "category": "connect_select_wallet",
       "action": "skip_connect",
       "thorwallet": false,
@@ -205,178 +184,114 @@ export const events = {
       "action": "skip_connect",
       "thorwallet": false,
       "value": false
-    }
-  },
-  "connect_create_keystore_secure": {
+    },
     "button_understand": {
       "label": "button_understand",
-      "category": "connect_create_keystore_secure",
+      "category": "connect_create_keystore",
       "action": "skip_connect",
       "thorwallet": true,
       "value": false
     }
   },
-  "connect_create_keystore_phrase": {
+  "connect_create_wallet": {
     "breadcrumb_skip": {
       "label": "breadcrumb_skip",
-      "category": "connect_create_keystore_phrase",
+      "category": "connect_create_wallet",
       "action": "skip_connect",
       "thorwallet": false,
       "value": false
     },
     "breadcrumb_connect": {
       "label": "breadcrumb_connect",
-      "category": "connect_create_keystore_phrase",
+      "category": "connect_create_wallet",
       "action": "skip_connect",
       "thorwallet": false,
       "value": false
     },
     "button_create": {
       "label": "button_create",
-      "category": "connect_create_keystore_phrase",
+      "category": "connect_create_wallet",
       "action": "skip_connect",
       "thorwallet": false,
       "value": false
     },
     "button_cancel": {
       "label": "button_cancel",
-      "category": "connect_create_keystore_phrase",
+      "category": "connect_create_wallet",
       "action": "skip_connect",
       "thorwallet": false,
       "value": false
-    }
-  },
-  "connect_create_keystore_phrase_secure": {
+    },
     "button_understand": {
       "label": "button_understand",
-      "category": "connect_create_keystore_phrase_secure",
+      "category": "connect_create_wallet",
       "action": "skip_connect",
       "thorwallet": true,
       "value": false
     }
   },
-  "connect_connect_keystore": {
+  "connect_connect_wallet": {
     "breadcrumb_skip": {
       "label": "breadcrumb_skip",
-      "category": "connect_connect_keystore",
+      "category": "connect_connect_wallet",
       "action": "skip_connect",
       "thorwallet": false,
       "value": false
     },
     "breadcrumb_connect": {
       "label": "breadcrumb_connect",
-      "category": "connect_connect_keystore",
+      "category": "connect_connect_wallet",
       "action": "skip_connect",
       "thorwallet": false,
       "value": false
     },
     "tag_select_file": {
       "label": "tag_select_file",
-      "category": "connect_connect_keystore",
+      "category": "connect_connect_wallet",
       "action": "skip_connect",
       "thorwallet": false,
       "value": false
     },
     "button_connect": {
       "label": "button_connect",
-      "category": "connect_connect_keystore",
+      "category": "connect_connect_wallet",
       "action": "skip_connect",
       "thorwallet": false,
       "value": false
     },
     "button_cancel": {
       "label": "button_cancel",
-      "category": "connect_connect_keystore",
+      "category": "connect_connect_wallet",
       "action": "skip_connect",
       "thorwallet": false,
       "value": false
     }
   },
-  "connect_connect_xdefi": {
+  "connect_reconnect_wallet": {
     "breadcrumb_skip": {
       "label": "breadcrumb_skip",
-      "category": "connect_connect_xdefi",
-      "action": "skip_connect",
-      "thorwallet": false,
-      "value": false
-    },
-    "breadcrumb_connect": {
-      "label": "breadcrumb_connect",
-      "category": "connect_connect_xdefi",
-      "action": "skip_connect",
-      "thorwallet": false,
-      "value": false
-    },
-    "button_connect": {
-      "label": "button_connect",
-      "category": "connect_connect_xdefi",
-      "action": "skip_connect",
-      "thorwallet": false,
-      "value": false
-    },
-    "button_cancel": {
-      "label": "button_cancel",
-      "category": "connect_connect_xdefi",
-      "action": "skip_connect",
-      "thorwallet": false,
-      "value": false
-    }
-  },
-  "connect_reconnect_xdefi": {
-    "breadcrumb_skip": {
-      "label": "breadcrumb_skip",
-      "category": "connect_reconnect_xdefi",
+      "category": "connect_reconnect_wallet",
       "action": "skip_connect",
       "thorwallet": true,
       "value": false
     },
     "breadcrumb_connect": {
       "label": "breadcrumb_connect",
-      "category": "connect_reconnect_xdefi",
+      "category": "connect_reconnect_wallet",
       "action": "skip_connect",
       "thorwallet": true,
       "value": false
     },
     "button_connect": {
       "label": "button_connect",
-      "category": "connect_reconnect_xdefi",
+      "category": "connect_reconnect_wallet",
       "action": "skip_connect",
       "thorwallet": true,
       "value": false
     },
     "button_forget": {
       "label": "button_forget",
-      "category": "connect_reconnect_xdefi",
-      "action": "skip_connect",
-      "thorwallet": true,
-      "value": false
-    }
-  },
-  "connect_reconnect_keystore": {
-    "breadcrumb_skip": {
-      "label": "breadcrumb_skip",
-      "category": "connect_reconnect_keystore",
-      "action": "skip_connect",
-      "thorwallet": true,
-      "value": false
-    },
-    "breadcrumb_connect": {
-      "label": "breadcrumb_connect",
-      "category": "connect_reconnect_keystore",
-      "action": "skip_connect",
-      "thorwallet": true,
-      "value": false
-    },
-    "button_connect": {
-      "label": "button_connect",
-      "category": "connect_reconnect_keystore",
-      "action": "skip_connect",
-      "thorwallet": true,
-      "value": false
-    },
-    "button_forget": {
-      "label": "button_forget",
-      "category": "connect_reconnect_keystore",
+      "category": "connect_reconnect_wallet",
       "action": "skip_connect",
       "thorwallet": true,
       "value": false
