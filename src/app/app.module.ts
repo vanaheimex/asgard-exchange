@@ -58,6 +58,8 @@ import { KeystoreDepositService } from "./_services/keystore-deposit.service";
 import { NetworkQueueService } from "./_services/network-queue.service";
 import { ThorchainRpcService } from "./_services/thorchain-rpc.service";
 import { CurrencyService } from "./_services/currency.service";
+import { MockClientService } from './_services/mock-client.service';
+import { MetamaskService } from './_services/metamask.service';
 
 /** MATERIAL */
 import { MatButtonModule } from "@angular/material/button";
@@ -186,7 +188,9 @@ import { AnalyticsService } from './_services/analytics.service';
     ThorchainRpcService,
     CurrencyService,
     RuneYieldService,
-    AnalyticsService
+    AnalyticsService,
+    MetamaskService,
+    MockClientService,
   ],
   bootstrap: [AppComponent],
 })

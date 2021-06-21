@@ -136,7 +136,7 @@
       *ngIf="view === 'Approve'"
     >
       <app-approve-eth-contract-modal
-        [data]="{ asset: asset, contractAddress: ethRouter }"
+        [data]="{ asset: asset, routerAddress: ethRouter }"
         (approvedHash)="contractApproved()"
         (close)="overlaysService.setCurrentCreatePoolView('Create')"
         eventCategory="pool_create_approve_contract_approve"

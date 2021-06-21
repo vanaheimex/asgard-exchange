@@ -12,23 +12,10 @@
           [message]="mainButtonText()"
           (funcCaller)="breadcrumbNav($event)"
         ></app-breadcrumb>
+        <div class="top-right">
+          <app-pool-type-options [asset]="asset" [selectedPoolType]="withdrawType" [poolTypeOptions]="withdrawOptions" (selectPoolType)="setSelectedWithdrawOption($event)"></app-pool-type-options>
+        </div>
       </nav>
-
-      <!-- <div class="px-4 h-12 flex items-center">
-        <div *ngIf="withdrawOptions.sym && asset">
-          <button (click)="setSelectedWithdrawOption('SYM')" class="mr-2 text-sm" [ngClass]="{'underline': withdrawType === 'SYM'}">{{asset.ticker}} + RUNE</button>
-          <span *ngIf="withdrawOptions.asymAsset || withdrawOptions.asymRune" class="text-xs text-gray-500 mr-2">/</span>
-        </div>
-  
-        <div *ngIf="withdrawOptions.asymAsset && asset">
-          <button (click)="setSelectedWithdrawOption('ASYM_ASSET')" class="mr-2 text-sm" [ngClass]="{'underline': withdrawType === 'ASYM_ASSET'}">{{asset.ticker}}</button>
-          <span *ngIf="withdrawOptions.asymRune" class="text-xs text-gray-500 mr-2">/</span>
-        </div>
-  
-        <div>
-          <button (click)="setSelectedWithdrawOption('ASYM_RUNE')" *ngIf="withdrawOptions.asymRune" class="text-sm" [ngClass]="{'underline': withdrawType === 'ASYM_RUNE'}">RUNE</button>
-        </div>
-      </div> -->
 
       <div class="percent-container">
         <span class="percent-label">Percentage</span>

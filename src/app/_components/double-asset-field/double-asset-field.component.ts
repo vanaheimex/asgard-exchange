@@ -149,6 +149,10 @@ export class DoubleAssetFieldComponent implements OnInit {
     this.subs.push(userBalance$);
   }
 
+  getCumulativeVal(): number {
+    return this.priceInputs[0] ?? 0 * this.assetUnits[0] ?? 0 + this.priceInputs[1] ?? 0 * this.assetUnits[1] ?? 0 
+  }
+
   ngOnDestroy() {
     for (const sub of this.subs) {
       sub.unsubscribe();

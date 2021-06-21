@@ -15,10 +15,7 @@
       <div mat-dialog-content>
         <div>
           <div *ngIf="loading" class="icon-container">
-            <mat-progress-spinner
-              mode="indeterminate"
-              diameter="60"
-            ></mat-progress-spinner>
+            <span>Loading</span>
           </div>
 
           <div class="wallets" *ngIf="!loading">

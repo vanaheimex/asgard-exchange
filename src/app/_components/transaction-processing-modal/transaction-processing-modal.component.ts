@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { AssetAndBalance } from "src/app/_classes/asset-and-balance";
+import { PoolTypeOption } from "src/app/_const/pool-type-options";
 
 @Component({
   selector: "app-transaction-processing-modal",
@@ -19,6 +20,7 @@ export class TransactionProcessingModalComponent {
   @Input() isPlus: boolean = false;
   @Input() memo: string;
   @Input() targetAddress?: string;
+  @Input() poolType: PoolTypeOption;
 
   constructor() {
     this.closeDialog = new EventEmitter<null>();

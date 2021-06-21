@@ -7,8 +7,6 @@ import {
   OnInit,
 } from "@angular/core";
 import { Asset } from "src/app/_classes/asset";
-import { MarketsModalComponent } from "../markets-modal/markets-modal.component";
-import { MatDialog } from "@angular/material/dialog";
 import { UserService } from "src/app/_services/user.service";
 import { AssetAndBalance } from "src/app/_classes/asset-and-balance";
 import {

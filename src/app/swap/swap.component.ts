@@ -38,7 +38,6 @@ import { MainViewsEnum, OverlaysService } from "../_services/overlays.service";
 import { ThorchainPricesService } from "../_services/thorchain-prices.service";
 import { TransactionUtilsService } from "../_services/transaction-utils.service";
 import { NetworkQueueService } from "../_services/network-queue.service";
-import { environment } from "src/environments/environment";
 import { CurrencyService } from "../_services/currency.service";
 import { Currency } from "../_components/account-settings/currency-converter/currency-converter.component";
 import {
@@ -51,6 +50,11 @@ import {
 import { UpdateTargetAddressModalComponent } from './update-target-address-modal/update-target-address-modal.component';
 import { SwapServiceService } from "../_services/swap-service.service";
 import { AnalyticsService, assetString } from '../_services/analytics.service';
+import { MetamaskService } from '../_services/metamask.service';
+import { ethers } from 'ethers';
+import { EthUtilsService } from '../_services/eth-utils.service';
+import { MockClientService } from '../_services/mock-client.service';
+import { environment } from 'src/environments/environment';
 
 export enum SwapType {
   DOUBLE_SWAP = "double_swap",
@@ -207,6 +211,8 @@ export class SwapComponent implements OnInit, OnDestroy {
   confirmShow: boolean;
 
   runePrice: number;
+  selectableSourceMarkets: AssetAndBalance[] = [];
+  selectableTargetMarkets: AssetAndBalance[] = [];
 
   inboundFees: { [key: string]: number } = {};
 
@@ -234,6 +240,8 @@ export class SwapComponent implements OnInit, OnDestroy {
   haltedChains: string[];
   targetAddressData: any;
   targetClientAddress: string;
+  metaMaskProvider?: ethers.providers.Web3Provider;
+  metaMaskNetwork?: 'testnet' | 'mainnet';
 
   constructor(
     private dialog: MatDialog,
@@ -248,7 +256,10 @@ export class SwapComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private swapService: SwapServiceService,
-    private analytics: AnalyticsService
+    private analytics: AnalyticsService,
+    private metaMaskService: MetamaskService,
+    private ethUtilService: EthUtilsService,
+    private mockClientService: MockClientService
   ) {
     this.ethContractApprovalRequired = false;
     this.selectableMarkets = undefined;
@@ -298,7 +309,26 @@ export class SwapComponent implements OnInit, OnDestroy {
       }
       
       this.setTargetAddress();
+      if (this.user && this.user.type === 'metamask') {
+        this.router.navigate(['/', 'swap', 'ETH.ETH', 'BTC.BTC']);
+      }
+
+      if (
+        this.selectedSourceAsset &&
+        this.selectedSourceAsset.chain === 'ETH' &&
+        this.selectedSourceAsset.ticker !== 'ETH'
+      ) {
+        this.checkContractApproved();
+      }
     });
+
+    const metaMaskProvider$ = this.metaMaskService.provider$.subscribe(
+      (provider) => (this.metaMaskProvider = provider)
+    );
+
+    const metaMaskNetwork$ = this.metaMaskService.metaMaskNetwork$.subscribe(
+      (network) => (this.metaMaskNetwork = network)
+    );
 
     const queue$ = this.networkQueueService.networkQueue$.subscribe(
       (queue) => (this.queue = queue)
@@ -323,7 +353,7 @@ export class SwapComponent implements OnInit, OnDestroy {
       this.swapService.setTarget(new BigNumber(0));
     }
 
-    this.subs = [balances$, user$, slippageTolerange$, queue$, curs$];
+    this.subs = [balances$, user$, slippageTolerange$, queue$, curs$, metaMaskProvider$, metaMaskNetwork$];
 
     this.appLocked = environment.appLocked;
   }
@@ -370,21 +400,21 @@ export class SwapComponent implements OnInit, OnDestroy {
           this.router.navigate(["/", "swap", "THOR.RUNE", "BTC.BTC"]);
           return;
         } else if (
-          this.selectableMarkets &&
+          this.selectableTargetMarkets &&
           !this.selectedSourceAsset &&
           !this.selectedTargetAsset
         ) {
           if (sourceAssetName && sourceAssetName !== "no-asset") {
             this.setSelectedSourceAsset(
               new Asset(sourceAssetName),
-              this.selectableMarkets
+              this.selectableTargetMarkets
             );
           }
 
           if (targetAssetName && targetAssetName !== "no-asset") {
             this.setSelectedTargetAsset(
               new Asset(targetAssetName),
-              this.selectableMarkets
+              this.selectableTargetMarkets
             );
           }
         }    
@@ -441,17 +471,11 @@ export class SwapComponent implements OnInit, OnDestroy {
   }
 
   setTargetAddress() {
-    if (
-      this.selectedTargetAsset != null &&
-      ((this.user != null &&
-        this.user?.type &&
-        this.user?.type === 'keystore') ||
-        this.user?.type === 'XDEFI')
-    ) {
+    if (this.selectedTargetAsset && this.user) {
       this.targetAddress = this.userService.getTokenAddress(
         this.user,
         this.selectedTargetAsset.chain
-      );
+      ) || 'No Address';
     }
   }
 
@@ -540,6 +564,7 @@ export class SwapComponent implements OnInit, OnDestroy {
       this.overlaysService.setCurrentSwapView('SourceAsset');
     }
     else if (val === 'target') {
+      console.log(this.overlaysService.getCurrentSwapView());
       if (this.user)
         this.analytics.event('swap_prepare', 'select_receive_container_asset');
       this.overlaysService.setCurrentSwapView('TargetAsset');
@@ -654,33 +679,40 @@ export class SwapComponent implements OnInit, OnDestroy {
 
   setSelectableMarkets() {
     if (!this.availablePools) {
-      this.selectableMarkets = [];
+      this.selectableSourceMarkets = [];
+      this.selectableTargetMarkets = [];
     } else {
-      this.selectableMarkets = this.availablePools
+      const availablePools = this.availablePools
         .sort((a, b) => a.asset.localeCompare(b.asset))
         .map((pool) => ({
           asset: new Asset(pool.asset),
           assetPriceUSD: +pool.assetPriceUSD,
-        }))
-        // filter out until we can add support
-        .filter(
-          (pool) =>
-            pool.asset.chain === "BNB" ||
-            pool.asset.chain === "THOR" ||
-            pool.asset.chain === "BTC" ||
-            pool.asset.chain === "ETH" ||
-            pool.asset.chain === "LTC" ||
-            pool.asset.chain === 'BCH'
-        );
+        }));
 
-      // Keeping RUNE at top by default
-      this.selectableMarkets.unshift({
-        asset: new Asset("THOR.RUNE"),
+      this.selectableSourceMarkets =
+        this.userService.filterAvailableSourceChains({
+          userType: this.user?.type,
+          assets: availablePools,
+        });
+
+      this.selectableTargetMarkets = availablePools;
+      const runeMarket = {
+        asset: new Asset('THOR.RUNE'),
         assetPriceUSD: this.thorchainPricesService.estimateRunePrice(
           this.availablePools
         ),
-      });
-      
+      };
+
+      this.selectableTargetMarkets.unshift(runeMarket);
+
+      if (
+        this.user?.type === 'XDEFI' ||
+        this.user?.type === 'keystore' ||
+        !this.user
+      ) {
+        // Keeping RUNE at top by default
+        this.selectableSourceMarkets.unshift(runeMarket);
+      }
     }
   }
 
@@ -690,10 +722,20 @@ export class SwapComponent implements OnInit, OnDestroy {
         this.selectedSourceAsset.ticker.length + 1
       );
       const strip0x = assetAddress.substr(2);
-      const isApproved = await this.user.clients.ethereum.isApproved(
-        this.ethInboundAddress.router,
+      const provider =
+        this.user.type === 'keystore' || this.user.type === 'XDEFI'
+          ? this.user.clients.ethereum.getProvider()
+          : this.metaMaskProvider;
+      const userAddress =
+        this.user.type === 'keystore' || this.user.type === 'XDEFI'
+          ? this.user.clients.ethereum.getAddress()
+          : await this.metaMaskProvider.getSigner().getAddress();
+
+      const isApproved = await this.ethUtilService.isApproved(
+        provider,
         strip0x,
-        baseAmount(1)
+        this.ethInboundAddress.router,
+        userAddress
       );
       this.ethContractApprovalRequired = !isApproved;
     }
@@ -739,7 +781,12 @@ export class SwapComponent implements OnInit, OnDestroy {
         1.5 *
           this.inboundFees[
             assetToString(getChainAsset(this.selectedSourceAsset.chain))
-          ]
+          ] ||
+      !this.mockClientService
+        .getMockClientByChain(this.selectedTargetAsset.chain)
+        .validateAddress(this.targetAddress) ||
+      (this.user?.type === 'metamask' &&
+        this.metaMaskNetwork !== environment.network)
     );
   }
 
@@ -875,6 +922,22 @@ export class SwapComponent implements OnInit, OnDestroy {
       return "Slip Limit Exceeded";
     }
 
+    /** Validate Address */
+    if (
+      !this.mockClientService
+        .getMockClientByChain(this.selectedTargetAsset.chain)
+        .validateAddress(this.targetAddress)
+    ) {
+      return 'Enter Valid Address';
+    }
+
+    if (
+      this.user?.type === 'metamask' &&
+      this.metaMaskNetwork !== environment.network
+    ) {
+      return 'Change MetaMask Network';
+    }
+
     /** Good to go */
     if (
       this.user &&
@@ -921,12 +984,12 @@ export class SwapComponent implements OnInit, OnDestroy {
   openConfirmationDialog() {
     const output = this.targetAssetUnit.div(10 ** 8);
 
-    let sourceAsset = this.selectableMarkets.find(
+    let sourceAsset = this.selectableSourceMarkets.find(
       (asset) =>
         `${asset.asset.chain}.${asset.asset.ticker}` ===
         `${this.selectedSourceAsset.chain}.${this.selectedSourceAsset.ticker}`
     );
-    let targetAsset = this.selectableMarkets.find(
+    let targetAsset = this.selectableTargetMarkets.find(
       (asset) =>
         `${asset.asset.chain}.${asset.asset.ticker}` ===
         `${this.selectedTargetAsset.chain}.${this.selectedTargetAsset.ticker}`
@@ -968,25 +1031,25 @@ export class SwapComponent implements OnInit, OnDestroy {
     }
 
     // Getting the source asset price from selected pools
-    if (this.selectableMarkets && this._selectedSourceAsset) {
-      this.sourceAssetPrice = this.selectableMarkets.find(
+    if (this.selectableSourceMarkets && this._selectedSourceAsset) {
+      this.sourceAssetPrice = this.selectableSourceMarkets.find(
         (pool) =>
           `${pool.asset.chain}.${pool.asset.ticker}` ===
           `${this._selectedSourceAsset.chain}.${this._selectedSourceAsset.ticker}`
       ).assetPriceUSD;
     }
 
-    // Getting the source asset price from selected pools
-    if (this.selectableMarkets && this.balances && this._selectedTargetAsset) {
-      this.targetAssetPrice = this.selectableMarkets.find(
+    // Getting the target asset price from selected pools
+    if (this.selectableTargetMarkets && this.balances && this._selectedTargetAsset) {
+      this.targetAssetPrice = this.selectableTargetMarkets.find(
         (pool) =>
           `${pool.asset.chain}.${pool.asset.ticker}` ===
           `${this._selectedTargetAsset.chain}.${this._selectedTargetAsset.ticker}`
       ).assetPriceUSD;
     }
 
-    if (this.selectableMarkets && this.balances && this._selectedSourceAsset) {
-      this.runePrice = this.selectableMarkets.find(
+    if (this.selectableTargetMarkets && this.balances && this._selectedSourceAsset) {
+      this.runePrice = this.selectableTargetMarkets.find(
         (asset) => `${asset.asset.chain}.${asset.asset.ticker}` === `THOR.RUNE`
       ).assetPriceUSD;
     }
@@ -1061,6 +1124,15 @@ export class SwapComponent implements OnInit, OnDestroy {
 
       this.analytics.event('swap_prepare', 'switch_arrow_send_receive_containers');
     }
+  }
+
+  reverseTransactionDisabled(): boolean {
+    return (
+      !this.selectedSourceAsset ||
+      !this.selectedTargetAsset ||
+      (this.user?.type === 'metamask' &&
+        this.selectedTargetAsset?.chain !== 'ETH')
+    );
   }
 
   /**

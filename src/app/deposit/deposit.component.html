@@ -3,25 +3,29 @@
   *ngIf="view === 'Asset' || view === 'Deposit' || view === 'Approve' || view === 'Connect'"
 >
   <div class="container">
-    <div *ngIf="view === 'Deposit'">
-      <div class="main-container">
-        <nav class="content-top">
-          <app-breadcrumb
-            [path]="[
-              { name: 'skip', call: 'swap' },
-              { name: 'Pools', call: 'pool' },
-              { name: 'Deposit', disable: true }
-            ]"
-            [message]="mainButtonText()"
-            (funcCaller)="breadCrumbNav($event, 'deposit')"
-          ></app-breadcrumb>
-        </nav>
-      </div>
+    <div *ngIf="view === 'Deposit'" class="main-container">
+      <nav class="content-top">
+        <app-breadcrumb
+          [path]="[
+            { name: 'skip', call: 'swap' },
+            { name: 'Pools', call: 'pool' },
+            { name: 'Deposit', disable: true }
+          ]"
+          [message]="{text: formValidation.message, isError: !formValidation.isValid}"
+          (funcCaller)="breadCrumbNav($event, 'deposit')"
+        ></app-breadcrumb>
+        <div class="top-right">
+          <app-pool-type-options [asset]="asset" [selectedPoolType]="poolType" [poolTypeOptions]="poolTypeOptions" (selectPoolType)="setPoolTypeOption($event)"></app-pool-type-options>
+        </div>
+      </nav>
+
 
       <app-asset-input
-        label="Deposit"
+        *ngIf="poolType === 'SYM' || poolType === 'ASYM_ASSET'"
+        label="Input"
         [(selectedAsset)]="asset"
-        [(assetUnit)]="assetAmount"
+        [assetUnit]="assetAmount"
+        (assetUnitChange)="updateValues('ASSET', $event)"
         [balance]="assetBalance"
         [disabledAssetSymbol]="rune.symbol"
         [selectableMarkets]="selectableMarkets"
@@ -35,16 +39,16 @@
       >
       </app-asset-input>
 
-      <app-arrow [isPlus]="true"></app-arrow>
+      <app-arrow *ngIf="poolType === 'SYM'" [isPlus]="true"></app-arrow>
 
       <app-asset-input
+        *ngIf="poolType === 'SYM' || poolType === 'ASYM_RUNE'"
         label="Deposit"
         [(selectedAsset)]="rune"
-        [(assetUnit)]="runeAmount"
+        [assetUnit]="runeAmount"
+        (assetUnitChange)="updateValues('RUNE', $event)"
         [balance]="runeBalance"
         [priceInput]="runePrice"
-        [hideMax]="true"
-        [disableInput]="true"
         [disabledAssetSymbol]="rune.symbol"
         [disabledMarketSelect]="true"
         [isDeposit]="true"
@@ -58,18 +62,18 @@
       <div class="swap-details">
         <div class="flex justify-between">
           <span class="tx-detail-label">Fees:</span>
-          <span *ngIf="networkFee"
+          <span *ngIf="networkFee && (poolType === 'SYM' || poolType === 'ASYM_ASSET')"
             >{{ networkFee | number: "1.0-8" }} {{ asset.ticker }}.{{
               asset.chain
             }} 
             <span *ngIf="currency && assetPrice">({{this.currency.value * networkFee * assetPrice | number: '0.0-2'}} {{currency.code}})</span>
           </span>
-          <span *ngIf="!networkFee">...</span>
+          <span *ngIf="!networkFee || !(poolType === 'SYM' || poolType === 'ASYM_ASSET')">...</span>
         </div>
         <div class="flex justify-between">
           <span class="tx-detail-label"></span>
-          <span *ngIf="runeFee">{{ runeFee | number: "1.0-4" }} RUNE <span *ngIf="currency && runePrice">({{this.currency.value * runePrice * runeFee | number: '0.0-2'}} {{currency.code}})</span></span>
-          <span *ngIf="!runeFee">...</span>
+          <span *ngIf="runeFee && (poolType === 'SYM' || poolType === 'ASYM_RUNE')">{{ runeFee | number: "1.0-4" }} RUNE <span *ngIf="currency && runePrice">({{this.currency.value * runePrice * runeFee | number: '0.0-2'}} {{currency.code}})</span></span>
+          <span *ngIf="!runeFee || !(poolType === 'SYM' || poolType === 'ASYM_RUNE')">...</span>
         </div>
       </div>
 
@@ -85,7 +89,7 @@
             *ngIf="!ethContractApprovalRequired"
             (click)="openConfirmationDialog()"
             class="next-btn graident-btn"
-            [disabled]="formDisabled() || !assetPoolData || poolNotFoundErr || bchLegacyPooled"
+            [disabled]="!formValidation.isValid"
           >
             <span>Deposit</span>
           </button>
@@ -154,7 +158,7 @@
       *ngIf="view === 'Approve'"
     >
       <app-approve-eth-contract-modal
-        [data]="{ asset: asset, contractAddress: ethRouter }"
+        [data]="{ asset: asset, routerAddress: ethRouter }"
         (approvedHash)="contractApproved()"
         (close)="overlaysService.setCurrentDepositView('Deposit')"
         eventCategory="deposit_contract_approve"

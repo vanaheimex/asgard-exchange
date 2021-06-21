@@ -1,6 +1,11 @@
-import { Component, Output, EventEmitter } from "@angular/core";
-import { MatDialog, MatDialogRef } from "@angular/material/dialog";
-import { environment } from "src/environments/environment";
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { User } from 'src/app/_classes/user';
+import { MetamaskService } from 'src/app/_services/metamask.service';
+import { UserService } from 'src/app/_services/user.service';
+import { environment } from 'src/environments/environment';
+import { ethers } from 'ethers';
+import { combineLatest, Subscription } from 'rxjs';
 import { MainViewsEnum, OverlaysService } from "src/app/_services/overlays.service";
 import { AnalyticsService } from "src/app/_services/analytics.service";
 
@@ -9,11 +14,50 @@ import { AnalyticsService } from "src/app/_services/analytics.service";
   templateUrl: "./connect.component.html",
   styleUrls: ["./connect.component.scss"],
 })
-export class ConnectComponent {
-  constructor(public overlaysService: OverlaysService) {}
+export class ConnectComponent implements OnInit, OnDestroy {
+  metaMaskProvider: ethers.providers.Web3Provider;
+  subs: Subscription[];
+
+  constructor(
+    private metaMaskService: MetamaskService,
+    private userService: UserService,
+    private overlaysService: OverlaysService
+  ) {
+    this.subs = [];
+  }
+
+  ngOnInit() {
+    const user$ = this.userService.user$;
+    const metaMaskProvider$ = this.metaMaskService.provider$;
+    const combined = combineLatest([user$, metaMaskProvider$]);
+    const subs = combined.subscribe(async ([_user, _metaMaskProvider]) => {
+      if (_metaMaskProvider) {
+        const accounts = await _metaMaskProvider.listAccounts();
+        if (accounts.length > 0 && !_user) {
+          const signer = _metaMaskProvider.getSigner();
+          const address = await signer.getAddress();
+          const user = new User({
+            type: 'metamask',
+            wallet: address,
+          });
+          this.userService.setUser(user);
+        }
+      } else {
+        console.log('metamask provider is null');
+      }
+    });
+
+    this.subs = [subs];
+  }
 
   openDialog() {
     this.overlaysService.setCurrentSwapView("Connect");
+  }
+
+  ngOnDestroy() {
+    for (const sub of this.subs) {
+      sub.unsubscribe();
+    }
   }
 }
 
@@ -47,7 +91,7 @@ export class ConnectModal {
 
   @Output() closeEvent = new EventEmitter<null>();
 
-  constructor(public overlaysService: OverlaysService, private analytics: AnalyticsService) {
+  constructor(public overlaysService: OverlaysService, private analytics: AnalyticsService, private metaMaskService: MetamaskService) {
     this.isTestnet = environment.network === "testnet" ? true : false;
 
     this.isXDEFIConnected = false;
@@ -63,12 +107,12 @@ export class ConnectModal {
     }
   }
 
-  createKeystore() {
+  createKeystore(): void {
     this.connectionView = ConnectionView.KEYSTORE_CREATE;
     this.analytics.event('connect_select_wallet', 'option_create_wallet');
   }
 
-  connectKeystore() {
+  connectKeystore(): void {
     this.connectionView = ConnectionView.KEYSTORE_CONNECT;
     this.analytics.event('connect_select_wallet', 'option_connect_wallet');
   }
@@ -81,13 +125,16 @@ export class ConnectModal {
   connectXDEFI() {
     if (!this.isXDEFIConnected) {
       this.analytics.event('connect_select_wallet', 'option_connect_wallet');
-      return window.open(
-        "https://www.xdefi.io",
-        "_blank"
-      );
+      return window.open('https://www.xdefi.io', '_blank');
     }
     this.connectionView = ConnectionView.XDEFI;
     this.analytics.event('connect_select_wallet', 'option_connect_wallet');
+  }
+
+  async connectMetaMask(): Promise<void> {
+    this.analytics.event('connect_select_wallet', 'option_connect_wallet');
+    await this.metaMaskService.connect();
+    this.close()
   }
 
   storePhrasePrompt(values: {phrase: string, label: string}) {
@@ -96,7 +143,7 @@ export class ConnectModal {
     this.connectionView = ConnectionView.KEYSTORE_WRITE_PHRASE;
   }
 
-  clearConnectionMethod() {
+  clearConnectionMethod(): void {
     this.phrase = null;
     this.connectionView = null;
   }

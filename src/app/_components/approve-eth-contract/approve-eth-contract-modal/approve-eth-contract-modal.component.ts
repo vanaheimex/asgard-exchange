@@ -22,9 +22,11 @@ import { MainViewsEnum, OverlaysService } from "src/app/_services/overlays.servi
 import { TransactionStatusService } from "src/app/_services/transaction-status.service";
 import { UserService } from "src/app/_services/user.service";
 import { Path } from "../../breadcrumb/breadcrumb.component";
+import { MetamaskService } from 'src/app/_services/metamask.service';
+import { TransactionResponse } from '@ethersproject/abstract-provider';
 
 export type ApproveEthContractModalParams = {
-  contractAddress: string;
+  routerAddress: string;
   asset: xchainAsset;
 };
 
@@ -53,6 +55,7 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
   //breadcurmb path
   path: Path[];
   @Input() mode: "deposit" | "swap" | "create pool" = "swap";
+  metaMaskProvider?: ethers.providers.Web3Provider;
 
   constructor(
     private userService: UserService,
@@ -61,7 +64,9 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
     private copySerivce: CopyService,
     private explorerPathsService: ExplorerPathsService,
     private overlaysService: OverlaysService,
-    private analytics: AnalyticsService
+    private analytics: AnalyticsService,
+    private ethUtilService: EthUtilsService,
+    private metaMaskService: MetamaskService,
   ) {
     this.loading = true;
     this.insufficientEthBalance = false;
@@ -71,6 +76,7 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     const user$ = this.userService.user$;
     const balances$ = this.userService.userBalances$;
+    const metaMaskProvider$ = this.metaMaskService.provider$;
 
     this.path = [{ name: 'skip', call: 'skip' }];
     if (this.mode == "swap") {
@@ -91,9 +97,9 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
       );
     }
 
-    const combined = combineLatest([user$, balances$]);
+    const combined = combineLatest([user$, balances$, metaMaskProvider$]);
 
-    const sub = combined.subscribe(([user, balances]) => {
+    const sub = combined.subscribe(([user, balances, metaMaskProvider]) => {
       this.user = user;
       this.ethBalance = this.userService.findBalance(
         balances,
@@ -104,6 +110,9 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
         this.message = {text: 'Insufficient ETH.ETH balance', isError: true}
       else
         this.message = {text: "Approve", isError: false}
+      
+      this.metaMaskProvider = metaMaskProvider;
+
       this.loading = false;
     });
 
@@ -128,30 +137,52 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
   async approve() {
     this.loading = true;
 
-    if (this.data.contractAddress && this.user && this.data.asset) {
+    if (this.data.routerAddress && this.user && this.data.asset) {
       const asset = this.data.asset;
-      const contractAddress = this.data.contractAddress;
+      const routerContractAddress = this.data.routerAddress;
 
       const assetAddress = asset.symbol.slice(asset.ticker.length + 1);
       const strip0x = assetAddress.substr(2);
-      try {
-        const approve = await this.user.clients.ethereum.approve({
-          walletIndex: 0,
-          spender: contractAddress,
-          sender: strip0x,
-          amount: baseAmount(bn(2).pow(96).minus(1)),
-          feeOptionKey: "fast",
-        });
+      let approve: TransactionResponse;
 
+      try {
+        if (this.user.type === 'keystore' || this.user.type === 'XDEFI') {
+          const inboundAddresses = await this.midgardService
+            .getInboundAddresses()
+            .toPromise();
+          const ethInbound = inboundAddresses.find(
+            (inbound) => inbound.chain === 'ETH'
+          );
+          if (!ethInbound) {
+            return;
+          }
+
+          const ethClient = this.user.clients.ethereum;
+
+          const keystoreProvider = this.user.clients.ethereum.getProvider();
+          approve = await this.ethUtilService.approveKeystore({
+            contractAddress: strip0x,
+            routerContractAddress,
+            provider: keystoreProvider,
+            ethClient,
+            ethInbound,
+            userAddress: ethClient.getAddress(),
+          });
+        } else if (this.user.type === 'metamask') {
+          approve = await this.ethUtilService.approveMetaMask({
+            contractAddress: strip0x,
+            routerContractAddress,
+            provider: this.metaMaskProvider,
+          });
+        }
         this.txStatusService.pollEthContractApproval(approve.hash);
-        // this.dialogRef.close(approve.hash);
         this.approvedHash.emit(approve.hash);
-        this.analytics.event(this.eventCategory, 'button_approve_*ASSET*_*CONTRACT_ADDRESS*', undefined, `${this.data.asset.chain}.${this.data.asset.ticker}`, this.data.contractAddress)
+        this.analytics.event(this.eventCategory, 'button_approve_*ASSET*_*CONTRACT_ADDRESS*', undefined, `${this.data.asset.chain}.${this.data.asset.ticker}`, this.data.routerAddress)
         this.closeDialog();
-      }
-      catch(error) {
+      } catch (error) {
         this.message.text = error.message;
         this.message.isError = true;
+        this.loading = false;
       }
     }
 
@@ -164,16 +195,16 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
   }
 
   explorerPath(): string {
-    return `${this.explorerPathsService.ethereumExplorerUrl}/address/${this.data.contractAddress}`;
+    return `${this.explorerPathsService.ethereumExplorerUrl}/address/${this.data.routerAddress}`;
   }
 
   exploreEvent() { 
-    this.analytics.event(this.eventCategory, 'tag_txid_explore_*ASSET*_*CONTRACT_ADDRESS*', undefined, this.data.contractAddress);
+    this.analytics.event(this.eventCategory, 'tag_txid_explore_*ASSET*_*CONTRACT_ADDRESS*', undefined, this.data.routerAddress);
   }
 
   copyToClipboard() {
-    this.analytics.event(this.eventCategory, 'tag_txid_copy_*ASSET*_*CONTRACT_ADDRESS*', undefined, this.data.contractAddress);
-    let res = this.copySerivce.copyToClipboard(this.data.contractAddress);
+    this.analytics.event(this.eventCategory, 'tag_txid_copy_*ASSET*_*CONTRACT_ADDRESS*', undefined, this.data.routerAddress);
+    let res = this.copySerivce.copyToClipboard(this.data.routerAddress);
     if (res) this.copied = true;
   }
 

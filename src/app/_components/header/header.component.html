@@ -30,7 +30,7 @@
     </a>
   </h1>
   <ng-container *ngIf="user && isUnderstood">
-    <app-native-rune-prompt></app-native-rune-prompt>
+    <app-native-rune-prompt *ngIf="user.type === 'keystore' || user.type === 'XDEFI'"></app-native-rune-prompt>
   </ng-container>
   <div class="header-right">
     <app-user-settings

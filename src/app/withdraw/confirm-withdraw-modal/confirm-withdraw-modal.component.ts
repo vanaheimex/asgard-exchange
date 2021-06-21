@@ -19,12 +19,15 @@ import {
 } from "src/app/_services/transaction-status.service";
 import { Router } from "@angular/router";
 import { OverlaysService } from "src/app/_services/overlays.service";
-import { EthUtilsService } from "src/app/_services/eth-utils.service";
-import { Asset } from "src/app/_classes/asset";
 import { WithdrawTypeOptions } from "src/app/_const/withdraw-type-options";
-import { TransactionUtilsService } from "src/app/_services/transaction-utils.service";
-import { MidgardService } from "src/app/_services/midgard.service";
 import { AnalyticsService, assetString } from "src/app/_services/analytics.service";
+import { EthUtilsService } from 'src/app/_services/eth-utils.service';
+import { Asset } from 'src/app/_classes/asset';
+import { PoolTypeOption } from 'src/app/_const/pool-type-options';
+import { TransactionUtilsService } from 'src/app/_services/transaction-utils.service';
+import { MidgardService } from 'src/app/_services/midgard.service';
+import { MetamaskService } from 'src/app/_services/metamask.service';
+import { ethers } from 'ethers';
 
 // TODO: this is the same as ConfirmStakeData in confirm stake modal
 export interface ConfirmWithdrawData {
@@ -40,7 +43,7 @@ export interface ConfirmWithdrawData {
   runePrice: number;
   runeFee: number;
   networkFee: number;
-  withdrawType: WithdrawTypeOptions;
+  withdrawType: PoolTypeOption;
 }
 
 @Component({
@@ -62,6 +65,7 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
   @Output() close: EventEmitter<boolean>;
 
   message: string = "confirm";
+  metaMaskProvider?: ethers.providers.Web3Provider;
 
   constructor(
     private txStatusService: TransactionStatusService,
@@ -71,7 +75,8 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
     private overlaysService: OverlaysService,
     private ethUtilsService: EthUtilsService,
     private midgardService: MidgardService,
-    private analytics: AnalyticsService
+    private analytics: AnalyticsService,
+    private metaMaskService: MetamaskService
   ) {
     this.close = new EventEmitter<boolean>();
     this.txState = TransactionConfirmationState.PENDING_CONFIRMATION;
@@ -81,7 +86,11 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.subs = [user$];
+    const metaMaskProvider$ = this.metaMaskService.provider$.subscribe(
+      (provider) => (this.metaMaskProvider = provider)
+    );
+
+    this.subs = [user$, metaMaskProvider$];
   }
 
   ngOnInit(): void {
@@ -114,11 +123,16 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
     const memo = `WITHDRAW:${this.data.asset.chain}.${this.data.asset.symbol}:${
       this.data.unstakePercent * 100
     }`;
+    const user = this.data.user;
 
-    if (this.data.withdrawType === "ASYM_ASSET") {
-      this.assetWithdraw(memo);
-    } else {
-      this.runeWithdraw(memo);
+    if (user?.type === 'XDEFI' || user?.type === 'keystore') {
+      if (this.data.withdrawType === 'ASYM_ASSET') {
+        this.keystoreAssetWithdraw(memo);
+      } else {
+        this.runeWithdraw(memo);
+      }
+    } else if (user?.type === 'metamask') {
+      this.metaMaskAssetWithdraw(memo);
     }
   }
 
@@ -150,7 +164,59 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
     }
   }
 
-  async assetWithdraw(memo: string) {
+  async metaMaskAssetWithdraw(memo: string) {
+    const asset = this.data.asset;
+    const inboundAddresses = await this.midgardService
+      .getInboundAddresses()
+      .toPromise();
+    if (!inboundAddresses) {
+      console.error('no inbound addresses found');
+      this.error = 'No Inbound Addresses Found. Please try again later.';
+      this.txState = TransactionConfirmationState.ERROR;
+      return;
+    }
+
+    const matchingInboundAddress = inboundAddresses.find(
+      (inbound) => inbound.chain === asset.chain
+    );
+    if (!matchingInboundAddress) {
+      console.error('no matching inbound addresses found');
+      this.error = 'No Matching Inbound Address Found. Please try again later.';
+      this.txState = TransactionConfirmationState.ERROR;
+      return;
+    }
+
+    if (!this.metaMaskProvider) {
+      this.error = 'No MetaMask Provider found.';
+      this.txState = TransactionConfirmationState.ERROR;
+      return;
+    }
+
+    try {
+      const hash = await this.metaMaskService.callDeposit({
+        ethInboundAddress: matchingInboundAddress,
+        asset: new Asset('ETH.ETH'),
+        input: 0.00000001,
+        memo,
+        userAddress: this.data.user.wallet,
+        signer: this.metaMaskProvider.getSigner(),
+      });
+
+      if (hash.length > 0) {
+        this.txSuccess(this.ethUtilsService.strip0x(hash));
+      } else {
+        console.error('hash empty');
+        this.error = 'Error withdrawing, hash is empty. Please try again later';
+        this.txState = TransactionConfirmationState.ERROR;
+      }
+    } catch (error) {
+      console.error(error);
+      this.error = 'Error withdrawing. Please try again later';
+      this.txState = TransactionConfirmationState.ERROR;
+    }
+  }
+
+  async keystoreAssetWithdraw(memo: string) {
     try {
       const asset = this.data.asset;
 

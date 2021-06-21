@@ -6,6 +6,7 @@ import { AssetAndBalance } from 'src/app/_classes/asset-and-balance';
 import { PoolDTO } from 'src/app/_classes/pool';
 import { User } from 'src/app/_classes/user';
 import { MainViewsEnum, OverlaysService, UserViews } from 'src/app/_services/overlays.service';
+import { MetamaskService } from 'src/app/_services/metamask.service';
 import { MidgardService } from 'src/app/_services/midgard.service';
 import { TransactionStatusService } from 'src/app/_services/transaction-status.service';
 import { UserService } from 'src/app/_services/user.service';
@@ -79,7 +80,8 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
     private transactionStatusService: TransactionStatusService,
     private cgService: CoinGeckoService,
     private currencyService: CurrencyService,
-    private analytics: AnalyticsService
+    private analytics: AnalyticsService,
+    private metaMaskService: MetamaskService
   ) {
     this.pools = [];
     this.pendingTxCount = 0;
@@ -98,12 +100,12 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
         this.user = user;
 
         if (this.user.clients) {
-          this.binanceAddress = await this.user.clients.binance.getAddress();
-          this.bitcoinAddress = await this.user.clients.bitcoin.getAddress();
-          this.thorAddress = await this.user.clients.thorchain.getAddress();
-          this.ethereumAddress = await this.user.clients.ethereum.getAddress();
-          this.litecoinAddress = await this.user.clients.litecoin.getAddress();
-          this.bchAddress = await this.user.clients.bitcoinCash.getAddress();
+          this.binanceAddress = await this.user.clients?.binance.getAddress();
+          this.bitcoinAddress = await this.user.clients?.bitcoin.getAddress();
+          this.thorAddress = await this.user.clients?.thorchain.getAddress();
+          this.ethereumAddress = await this.user.clients?.ethereum.getAddress();
+          this.litecoinAddress = await this.user.clients?.litecoin.getAddress();
+          this.bchAddress = await this.user.clients?.bitcoinCash.getAddress();
         }
 
         this.loading = false;
@@ -254,7 +256,7 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
 
   confirmUpgradeRune(p: { amount: number }) {
     this.amountToSend = p.amount;
-    this.mode = "CONFIRM_UPGRADE_RUNE";
+    this.mode = 'CONFIRM_UPGRADE_RUNE';
   }
 
   clearSelectedAsset() {
@@ -274,6 +276,7 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
   disconnect() {
     localStorage.clear();
     this.userService.setUser(null);
+    this.metaMaskService.setProvider(null);
     this.transactionStatusService.clearPendingTransactions();
     // this.dialogRef.close();
   }

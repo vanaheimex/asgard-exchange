@@ -19,6 +19,7 @@
         </nav>
       </div>
       <app-asset-input
+        *ngIf="data.poolTypeOption === 'SYM' || data.poolTypeOption === 'ASYM_ASSET'"
         label="Deposit"
         [(selectedAsset)]="data.asset.asset"
         [(assetUnit)]="data.assetAmount"
@@ -31,8 +32,9 @@
         [isDeposit]="true"
       >
       </app-asset-input>
-      <app-arrow [isPlus]="true"></app-arrow>
+      <app-arrow *ngIf="data.poolTypeOption === 'SYM'" [isPlus]="true"></app-arrow>
       <app-asset-input
+        *ngIf="data.poolTypeOption === 'SYM' || data.poolTypeOption === 'ASYM_RUNE'"
         label="Deposit"
         [(selectedAsset)]="data.rune.asset"
         [(assetUnit)]="data.runeAmount"
@@ -62,13 +64,14 @@
             {{ data.rune.asset.ticker }}</span
           >
         </div>
-        <div *ngIf="data.estimatedFee" class="flex justify-between">
+        <div class="flex justify-between">
           <span class="tx-detail-label">Fees:</span>
-          <span
-            >{{ data.estimatedFee | number: "0.0-8" }}
-            {{ data.asset.asset.ticker
-            }}<span *ngIf="data.estimatedFee && data.runeFee"> + </span
-            ><span *ngIf="data.runeFee"
+          <span>
+            <span *ngIf="data.poolTypeOption === 'ASYM_ASSET' || data.poolTypeOption === 'SYM'">
+              {{ data.estimatedFee | number: "0.0-8" }} {{ data.asset.asset.ticker }}
+            </span>
+            <span *ngIf="data.estimatedFee && data.runeFee && data.poolTypeOption === 'SYM'"> + </span
+            ><span *ngIf="data.runeFee && (data.poolTypeOption === 'SYM' || data.poolTypeOption === 'ASYM_RUNE')"
               >{{ data.runeFee | number: "0.0-4" }} RUNE</span
             ></span
           >
@@ -127,6 +130,7 @@
     }} + {{ +data.runeAmount | number: '0.0-2' }} {{ data.rune.asset.ticker }}"
     (closeDialog)="closeDialog()"
     [isPlus]="true"
+    [poolType]="data.poolTypeOption"
   >
     <app-breadcrumb
       [path]="[
@@ -150,6 +154,7 @@
     [externalTx]="true"
     [isPlus]="true"
     modalType="DEPOSIT"
+    [poolType]="data.poolTypeOption"
   >
     <app-breadcrumb
       [path]="[

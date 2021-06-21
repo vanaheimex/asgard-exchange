@@ -17,6 +17,7 @@ import { BreadcrumbModule } from "../_components/breadcrumb/breadcrumb.module";
 import { ArrowModule } from "../_components/arrow/arrow.module";
 import { DoubleAssetFieldModule } from "../_components/double-asset-field/double-asset-field.module";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { PoolTypeOptionsModule } from '../_components/pool-type-options/pool-type-options.module';
 
 @NgModule({
   declarations: [WithdrawComponent, ConfirmWithdrawModalComponent],
@@ -35,6 +36,8 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     BreadcrumbModule,
     ArrowModule,
     DoubleAssetFieldModule,
+    MatTooltipModule,
+    PoolTypeOptionsModule,
     RouterModule.forChild([
       {
         path: ":asset",

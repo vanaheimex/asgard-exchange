@@ -19,6 +19,7 @@ import { RightOptionModule } from "../_components/right-option/right-option.modu
 import { ArrowModule } from "../_components/arrow/arrow.module";
 import { MarketsModalModule } from "../_components/markets-modal/markets-modal.module";
 import { RetryRuneDepositComponent } from "./retry-rune-deposit/retry-rune-deposit.component";
+import { PoolTypeOptionsModule } from '../_components/pool-type-options/pool-type-options.module';
 import { ApproveEthContractModalModule } from "../_components/approve-eth-contract/approve-eth-contract-modal/approve-eth-contract-modal.module";
 import { ConnectModule } from "../_components/connect/connect.module";
 
@@ -46,6 +47,8 @@ import { ConnectModule } from "../_components/connect/connect.module";
     ArrowModule,
     MarketsModalModule,
     ConnectModule,
+    MatTooltipModule,
+    PoolTypeOptionsModule,
     RouterModule.forChild([
       {
         path: ":asset",

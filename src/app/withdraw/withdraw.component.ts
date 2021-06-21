@@ -19,7 +19,7 @@ import {
 } from "@xchainjs/xchain-util";
 import BigNumber from "bignumber.js";
 import { combineLatest, Subscription } from "rxjs";
-import { Asset } from "../_classes/asset";
+import { Asset, assetIsChainAsset } from "../_classes/asset";
 import { MemberPool } from "../_classes/member";
 import { User } from "../_classes/user";
 import { LastBlockService } from "../_services/last-block.service";
@@ -32,9 +32,15 @@ import { ConfirmWithdrawModalComponent } from "./confirm-withdraw-modal/confirm-
 import { WithdrawTypeOptions } from "../_const/withdraw-type-options";
 import { Balances } from "@xchainjs/xchain-client";
 import { debounceTime } from "rxjs/operators";
+import { MetamaskService } from '../_services/metamask.service';
+import { environment } from 'src/environments/environment';
 import { CurrencyService } from "../_services/currency.service";
 import { Currency } from "../_components/account-settings/currency-converter/currency-converter.component";
 import { AnalyticsService } from "../_services/analytics.service";
+import {
+  AvailablePoolTypeOptions,
+  PoolTypeOption,
+} from '../_const/pool-type-options';
 
 @Component({
   selector: "app-withdraw",
@@ -87,18 +93,19 @@ export class WithdrawComponent implements OnInit {
   //breadcrumb
   isError: boolean = false;
 
-  withdrawOptions = {
+  withdrawOptions: AvailablePoolTypeOptions = {
     asymAsset: false,
     asymRune: false,
     sym: false,
   };
 
-  withdrawType: WithdrawTypeOptions;
+  withdrawType: PoolTypeOption;
   assetBalance: number;
   runeBalance: number;
   balances: Balances;
   currency: Currency;
   sliderDisabled: boolean;
+  metaMaskNetwork?: 'testnet' | 'mainnet';
 
   constructor(
     private route: ActivatedRoute,
@@ -109,7 +116,8 @@ export class WithdrawComponent implements OnInit {
     private router: Router,
     private txUtilsService: TransactionUtilsService,
     private curService: CurrencyService,
-    private analytics: AnalyticsService
+    private analytics: AnalyticsService,
+    private metaMaskService: MetamaskService
   ) {
     this.withdrawPercent = 0;
     this.removeAssetAmount = 0;
@@ -135,7 +143,11 @@ export class WithdrawComponent implements OnInit {
       }
     )
 
-    this.subs = [user$, lastBlock$, cur$];
+    const metaMaskNetwork$ = this.metaMaskService.metaMaskNetwork$.subscribe(
+      (network) => (this.metaMaskNetwork = network)
+    );
+
+    this.subs = [user$, lastBlock$, metaMaskNetwork$, cur$];
   }
 
   ngOnInit(): void {
@@ -194,18 +206,24 @@ export class WithdrawComponent implements OnInit {
 
   async getAccountStaked() {
     if (this.user && this.asset) {
-      const thorclient = this.user.clients.thorchain;
-      const chainClient = this.userService.getChainClient(
-        this.user,
-        this.asset.chain
-      );
-      if (!thorclient || !chainClient) {
-        console.error("no client found");
-        return;
-      }
+      let chainAddress: string;
+      let thorAddress: string;
 
-      const thorAddress = thorclient.getAddress();
-      const chainAddress = chainClient.getAddress();
+      if (this.user.type === 'XDEFI' || this.user.type === 'keystore') {
+        const thorclient = this.user.clients.thorchain;
+        const chainClient = this.userService.getChainClient(
+          this.user,
+          this.asset.chain
+        );
+        if (!thorclient || !chainClient) {
+          console.error('no client found');
+          return;
+        }
+        thorAddress = thorclient.getAddress();
+        chainAddress = chainClient.getAddress();
+      } else if (this.user.type === 'metamask') {
+        chainAddress = this.user.wallet.toLowerCase();
+      }
 
       /**
        * Clear Member Pools
@@ -214,36 +232,40 @@ export class WithdrawComponent implements OnInit {
       this.asymRuneMemberPool = null;
       this.asymAssetMemberPool = null;
 
-      /**
-       * Check THOR
-       */
-      try {
-        const member = await this.midgardService
-          .getMember(thorAddress)
-          .toPromise();
-        const thorAssetPools = member.pools.filter(
-          (pool) => pool.pool === assetToString(this.asset)
-        );
+      if (thorAddress && thorAddress.length > 0) {
+        /**
+         * Check THOR
+         */
+        try {
+          const member = await this.midgardService
+            .getMember(thorAddress)
+            .toPromise();
+          const thorAssetPools = member.pools.filter(
+            (pool) => pool.pool === assetToString(this.asset)
+          );
 
-        this.setMemberPools(thorAssetPools);
-      } catch (error) {
-        console.error("error fetching thor pool member data: ", error);
+          this.setMemberPools(thorAssetPools);
+        } catch (error) {
+          console.error('error fetching thor pool member data: ', error);
+        }
       }
 
+      if (chainAddress && chainAddress.length > 0) {
+        try {
+          const member = await this.midgardService
+            .getMember(chainAddress)
+            .toPromise();
+          const assetPools = member.pools.filter(
+            (pool) => pool.pool === assetToString(this.asset)
+          );
+          this.setMemberPools(assetPools);
+        } catch (error) {
+          console.error('error fetching asset pool member data: ', error);
+        }
+      }
       /**
        * Check CHAIN
        */
-      try {
-        const member = await this.midgardService
-          .getMember(chainAddress)
-          .toPromise();
-        const assetPools = member.pools.filter(
-          (pool) => pool.pool === assetToString(this.asset)
-        );
-        this.setMemberPools(assetPools);
-      } catch (error) {
-        console.error("error fetching asset pool member data: ", error);
-      }
 
       this.setWithdrawOptions();
       if (this.withdrawOptions.sym) {
@@ -292,7 +314,7 @@ export class WithdrawComponent implements OnInit {
     }
   }
 
-  setSelectedWithdrawOption(option: WithdrawTypeOptions) {
+  setSelectedWithdrawOption(option: PoolTypeOption) {
     this.withdrawType = option;
     this.calculate();
   }
@@ -464,7 +486,8 @@ export class WithdrawComponent implements OnInit {
      * Check ASYM ASSET asset balance for tx + network fee
      */
     if (
-      this.withdrawType === "ASYM_ASSET" &&
+      this.withdrawType === 'ASYM_ASSET' &&
+      assetIsChainAsset(this.asset) &&
       this.assetBalance < this.networkFee
     ) {
       return true;
@@ -481,6 +504,13 @@ export class WithdrawComponent implements OnInit {
     }
 
     if (this.remainingTime) {
+      return true;
+    }
+
+    if (
+      this.user?.type === 'metamask' &&
+      this.metaMaskNetwork !== environment.network
+    ) {
       return true;
     }
 
@@ -533,7 +563,8 @@ export class WithdrawComponent implements OnInit {
     }
 
     if (
-      this.withdrawType === "ASYM_ASSET" &&
+      this.withdrawType === 'ASYM_ASSET' &&
+      assetIsChainAsset(this.asset) &&
       this.assetBalance < this.networkFee
     ) {
       return "Insufficient Balance";
@@ -544,6 +575,13 @@ export class WithdrawComponent implements OnInit {
       this.runeBalance - this.runeFee < 3
     ) {
       return "Min 3 RUNE in Wallet Required";
+    }
+
+    if (
+      this.user?.type === 'metamask' &&
+      this.metaMaskNetwork !== environment.network
+    ) {
+      return 'Change MetaMask Network';
     }
 
     /** Good to go */

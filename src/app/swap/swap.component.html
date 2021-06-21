@@ -32,7 +32,7 @@
           [disabledAssetSymbol]="
             selectedTargetAsset ? selectedTargetAsset.symbol : null
           "
-          [selectableMarkets]="selectableMarkets"
+          [selectableMarkets]="selectableSourceMarkets"
           (lunchMarket)="marketModal('source')"
           (maxError)="setMaxError($event)"
           [eventTags]="{
@@ -43,10 +43,8 @@
         </app-asset-input>
 
         <app-arrow
-          [isGrey]="
-            (user && !balances) || !selectedSourceAsset || !selectedTargetAsset
-          "
-          [seperator]="!selectedSourceAsset || !selectedTargetAsset"
+          [isGrey]="(user && !balances) || reverseTransactionDisabled()"
+          [seperator]="reverseTransactionDisabled()"
           (onClick)="reverseTransaction()"
         ></app-arrow>
 
@@ -58,6 +56,7 @@
           [(assetUnit)]="targetAssetUnitDisplay"
           [balance]="targetBalance"
           [disableInput]="true"
+          (lunchMarket)="marketModal('target')"
           [disabledAssetSymbol]="
             selectedSourceAsset ? selectedSourceAsset.symbol : null
           "
@@ -66,9 +65,8 @@
           [loading]="calculatingTargetAsset"
           [hideMax]="true"
           [error]="poolDetailTargetError || poolDetailSourceError"
-          [selectableMarkets]="selectableMarkets"
+          [selectableMarkets]="selectableTargetMarkets">
           [showBalance]="false"
-          (lunchMarket)="marketModal('target')"
         >
         </app-asset-input>
 
@@ -222,7 +220,7 @@
     >
       <app-markets-modal
         [(selectedAsset)]="selectedTargetAsset"
-        [selectableMarkets]="selectableMarkets"
+        [selectableMarkets]="selectableTargetMarkets"
         [events]="{
           event_category: 'swap_asset_search'
         }"
@@ -249,7 +247,7 @@
     >
       <app-markets-modal
         [(selectedAsset)]="selectedSourceAsset"
-        [selectableMarkets]="selectableMarkets"
+        [selectableMarkets]="selectableSourceMarkets"
         [events]="{
           event_category: 'swap_asset_search'
         }"
@@ -296,7 +294,7 @@
       <app-approve-eth-contract-modal
         [data]="{
           asset: selectedSourceAsset,
-          contractAddress: ethInboundAddress.router
+          routerAddress: ethInboundAddress.router
         }"
         (approvedHash)="contractApproved()"
         (close)="overlaysService.setCurrentSwapView('Swap')"

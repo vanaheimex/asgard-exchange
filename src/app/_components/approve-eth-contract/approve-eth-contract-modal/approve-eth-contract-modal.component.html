@@ -12,11 +12,11 @@
 
   <app-notice [isMono]="true">
     <span text style="font-family: inherit">{{
-      data.contractAddress.substring(0, 16) +
+      data.routerAddress.substring(0, 16) +
         "..." +
-        data.contractAddress.substring(
-          data.contractAddress.length - 16,
-          data.contractAddress.length
+        data.routerAddress.substring(
+          data.routerAddress.length - 16,
+          data.routerAddress.length
         )
     }}</span>
     <ng-container tags>
@@ -77,7 +77,7 @@
     <small>
       <span>Approve {{data.asset.ticker}} to be used by</span> <br />
       <span>THORChain smart contract</span> <br />
-      <span>{{data.contractAddress}}</span>
+      <span>{{data.routerAddress}}</span>
     </small>
 
   </div>

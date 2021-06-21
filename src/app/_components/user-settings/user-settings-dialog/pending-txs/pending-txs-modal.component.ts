@@ -72,7 +72,12 @@ export class PendingTxsModalComponent implements OnDestroy {
   }
 
   ngOnInit(): void {
-    this.getThorchainTxs();
+    if (this.user.type === 'metamask') {
+      this.getThorchainTxs(this.user.wallet);
+    }
+    else {
+      this.getThorchainTxs(this.user.clients.thorchain.getAddress());
+    }
   }
 
   getStatus(status: string): TxStatus {
@@ -165,7 +170,7 @@ export class PendingTxsModalComponent implements OnDestroy {
     return txs;
   }
 
-  async getThorchainTxs() {
+  async getThorchainTxs(address: string) {
     this.loading = true;
   
     if (!this.user && !this.user.clients && !this.user.clients.thorchain)
@@ -177,7 +182,7 @@ export class PendingTxsModalComponent implements OnDestroy {
     // })
 
     this.transactions = await this.midgardService
-      .getAddrTransactions(this.user.clients.thorchain.getAddress())
+      .getAddrTransactions(address)
       .toPromise();
 
     this.transactionToTx(this.transactions).forEach((tx) => {
@@ -229,13 +234,8 @@ export class PendingTxsModalComponent implements OnDestroy {
   }
 
   explorerPath(tx: Tx): string {
-    if (tx.isThorchainTx) {
-      if (tx.pollThornodeDirectly) {
-        return this.getViewBlockPath(tx.hash);
-      } else if (tx.pollRpc) {
-        /**
-         * For THOR transfers
-         */
+    if (tx.isThorchainTx && tx.chain === 'THOR') {
+      if (tx.pollThornodeDirectly || tx.pollRpc) {
         return this.getViewBlockPath(tx.hash);
       } else {
         return this.thorchainExplorerUrl + "/" + tx.hash;

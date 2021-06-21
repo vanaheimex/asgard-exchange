@@ -9,6 +9,7 @@ import { Balances } from "@xchainjs/xchain-client";
 import { Subscription } from "rxjs";
 import { environment } from "src/environments/environment";
 import { AnalyticsService, assetString } from "src/app/_services/analytics.service";
+import { PoolTypeOption } from "src/app/_const/pool-type-options";
 
 @Component({
   selector: "app-transaction-success-modal",
@@ -34,6 +35,7 @@ export class TransactionSuccessModalComponent {
   @Input() hasOutbound: boolean = false;
   @Input() hashOutbound: string = "";
   @Input() targetAddress?: string;
+  @Input() poolType: PoolTypeOption; 
 
   binanceExplorerUrl: string;
   bitcoinExplorerUrl: string;

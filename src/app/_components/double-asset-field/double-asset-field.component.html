@@ -99,17 +99,12 @@
 
     <span
       class="usd-est"
-      *ngIf="showPrice && priceInputs && assetUnits[0] && assetUnits[1]"
+      *ngIf="showPrice"
       >{{
-        (priceInputs[0] * assetUnits[0] + priceInputs[1] * assetUnits[1]) *
+        (priceInputs[0] * assetUnits[0] || 0 + priceInputs[1] * assetUnits[1] || 0) *
           currency.value | number: ".2-3"
       }}
       {{ currency.code }} CUMULATIVE</span
-    >
-    <span
-      class="usd-est"
-      *ngIf="showPrice && (!assetUnits[0] || !assetUnits[1])"
-      >{{ 0 | number: ".2-3" }} {{ currency.code }} CUMULATIVE</span
     >
   </div>
 </div>

@@ -14,7 +14,7 @@
       {{ user.wallet.substring(user.wallet.length - 5, user.wallet.length) }}
     </div>
     <div
-      *ngIf="showMenu"
+      *ngIf="showMenu && user?.type !== 'metamask'"
       style="margin-top: 5px"
       class="menu"
       (click)="openUserSettings()"

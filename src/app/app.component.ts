@@ -1,6 +1,5 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
-import { MatDialog } from "@angular/material/dialog";
-import { Subject, timer, of, Subscription } from "rxjs";
+import { Subject, timer, of, Subscription, combineLatest } from "rxjs";
 import { catchError, switchMap, takeUntil } from "rxjs/operators";
 import { LastBlock } from "src/app/_classes/last-block";
 import { LastBlockService } from "src/app/_services/last-block.service";
@@ -10,12 +9,13 @@ import { UserService } from "./_services/user.service";
 import { Chain } from "@xchainjs/xchain-util";
 import { AssetAndBalance } from "./_classes/asset-and-balance";
 import { Asset } from "./_classes/asset";
-import { ReconnectXDEFIDialogComponent } from "./_components/reconnect-xdefi-dialog/reconnect-xdefi-dialog.component";
 import { environment } from "src/environments/environment";
 import { links } from "src/app/_const/links";
 import { Router } from "@angular/router";
 import { NetworkSummary } from "./_classes/network";
 import { AnalyticsService } from "./_services/analytics.service";
+import { User } from './_classes/user';
+import { MetamaskService } from "./_services/metamask.service";
 
 @Component({
   selector: "app-root",
@@ -38,6 +38,7 @@ export class AppComponent implements OnInit, OnDestroy {
   nonNativeRuneAssets: AssetAndBalance[];
   appLocked: boolean;
   mainnetUrl: string;
+  user: User;
 
   constructor(
     private midgardService: MidgardService,
@@ -45,7 +46,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private overlaysService: OverlaysService,
     private router: Router,
     private userService: UserService,
-    private analytics: AnalyticsService
+    private analytics: AnalyticsService,
+    private metaMaskService: MetamaskService
   ) {
     this.isTestnet = environment.network === "testnet";
     this.mainnetUrl = this.isTestnet ? links.mainnetUrl : links.testnetUrl;
@@ -89,21 +91,25 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.subs = [chainBalanceErrors$, balances$];
+    const user$ = this.userService.user$.subscribe(
+      (user) => (this.user = user)
+    );
+
+    this.subs = [chainBalanceErrors$, balances$, user$];
   }
 
   async ngOnInit(): Promise<void> {
     this.pollLastBlock();
     this.pollCap();
 
-    const keystoreString = localStorage.getItem("keystore");
-    const XDEFIConnected = localStorage.getItem("XDEFI_CONNECTED");
+    const keystoreString = localStorage.getItem('keystore');
+    const XDEFIConnected = localStorage.getItem('XDEFI_CONNECTED');
+    const lastLoginType = this.userService.getLastLoginType();
 
     const keystore = JSON.parse(keystoreString);
-    if (keystore) {
-      this.keystore = keystore;
-      this.openReconnectDialog();
-    } else if (XDEFIConnected) {
+    if (keystore && lastLoginType === 'keystore') {
+      this.openReconnectDialog(keystore);
+    } else if (XDEFIConnected && lastLoginType === 'XDEFI') {
       this.openReconnectXDEFIDialog();
     }
 
@@ -140,24 +146,50 @@ export class AppComponent implements OnInit, OnDestroy {
         this.overlaysService.setMenu(false);
       }
     });
+
+    const user$ = this.userService.user$;
+    const metaMaskProvider$ = this.metaMaskService.provider$;
+    const combined = combineLatest([user$, metaMaskProvider$]);
+    const subs = combined.subscribe(async ([_user, _metaMaskProvider]) => {
+      if (_metaMaskProvider) {
+        const accounts = await _metaMaskProvider.listAccounts();
+        const {chainId} = await _metaMaskProvider.getNetwork();
+
+        let validNetwork: boolean;
+        switch (+chainId) {
+          case 1:
+            validNetwork = true ? environment.network !== 'testnet' : false;
+            break;
+
+          case 3:
+            validNetwork = true ? environment.network === 'testnet' : false;
+            break;
+
+          default:
+            validNetwork = true
+            break;
+        }
+        
+        if (accounts.length > 0 && !_user && validNetwork) {
+          const signer = _metaMaskProvider.getSigner();
+          const address = await signer.getAddress();
+          const user = new User({
+            type: 'metamask',
+            wallet: address,
+          });
+          this.userService.setUser(user);
+        }
+      } else {
+        console.log('metamask provider is null');
+      }
+    });
+
+    this.subs.push(subs);
   }
 
   openReconnectDialog(keystore?) {
-    //TODO: this needs to be shown every time keystroke has been find
-    // this.showReconnect = true;
-    // this.overlaysService.setCurrentView('Reconnect')
+    this.keystore = keystore;
     this.overlaysService.setCurrentView(MainViewsEnum.Reconnect);
-    // this.dialog.open(
-    //   ReconnectDialogComponent,
-    //   {
-    //     maxWidth: '420px',
-    //     width: '50vw',
-    //     minWidth: '260px',
-    //     data: {
-    //       keystore
-    //     }
-    //   }
-    // );
   }
 
   eventFooterClick(label: string) {

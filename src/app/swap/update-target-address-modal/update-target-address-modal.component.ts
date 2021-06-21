@@ -3,6 +3,7 @@ import { Chain } from '@xchainjs/xchain-util';
 import { User } from 'src/app/_classes/user';
 import { AnalyticsService } from 'src/app/_services/analytics.service';
 import { MainViewsEnum, OverlaysService } from 'src/app/_services/overlays.service';
+import { MockClientService } from 'src/app/_services/mock-client.service';
 import { UserService } from 'src/app/_services/user.service';
 
 @Component({
@@ -22,6 +23,7 @@ export class UpdateTargetAddressModalComponent {
     private userService: UserService,
     private oveService: OverlaysService,
     private analytics: AnalyticsService,
+    private mockClientService: MockClientService
   ) {}
 
   ngOnInit() {
@@ -45,16 +47,11 @@ export class UpdateTargetAddressModalComponent {
   }
 
   updateAddress() {
-    if (!this.user?.clients) {
-      return;
-    }
-
-    const client = this.userService.getChainClient(this.user, this.chain);
-    if (!client) {
-      return;
-    }
-
-    if (!client.validateAddress(this.targetAddress)) {
+    if (
+      !this.mockClientService
+        .getMockClientByChain(this.chain)
+        .validateAddress(this.targetAddress)
+    ) {
       return;
     }
     
@@ -68,16 +65,15 @@ export class UpdateTargetAddressModalComponent {
   }
 
   formDisabled(): boolean {
-    if (!this.user?.clients) {
+    if (!this.user) {
       return true;
     }
 
-    const client = this.userService.getChainClient(this.user, this.chain);
-    if (!client) {
-      return true;
-    }
-
-    if (!client.validateAddress(this.targetAddress)) {
+    if (
+      !this.mockClientService
+        .getMockClientByChain(this.chain)
+        .validateAddress(this.targetAddress)
+    ) {
       return true;
     }
 
@@ -91,11 +87,23 @@ export class UpdateTargetAddressModalComponent {
 
     const client = this.userService.getChainClient(this.user, this.chain);
     if (!client) {
-      return {text: `No ${this.chain} Client Found`, isError: true};
+      return {text: `No ${this.chain} Client Found`, isError: false};
     }
 
     if (!client.validateAddress(this.targetAddress)) {
       return {text: `Invalid ${this.chain} Address`, isError: true};
+    }
+    
+    if (!this.user) {
+      return 'No User found';
+    }
+
+    if (
+      !this.mockClientService
+        .getMockClientByChain(this.chain)
+        .validateAddress(this.targetAddress)
+    ) {
+      return `Invalid ${this.chain} Address`;
     }
 
     return {text: 'PREPARE', isError: false};

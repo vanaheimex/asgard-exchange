@@ -27,7 +27,6 @@ import {
   baseAmount,
   assetToBase,
   assetAmount,
-  Asset,
   assetToString,
 } from "@xchainjs/xchain-util";
 import {
@@ -42,6 +41,10 @@ import { Transaction } from "src/app/_classes/transaction";
 import { CurrencyService } from "src/app/_services/currency.service";
 import { Currency } from "src/app/_components/account-settings/currency-converter/currency-converter.component";
 import { AnalyticsService, assetString } from 'src/app/_services/analytics.service';
+import { MetamaskService } from 'src/app/_services/metamask.service';
+import { Asset } from 'src/app/_classes/asset';
+import { ethers } from 'ethers';
+import { retry } from "rxjs/operators";
 export interface SwapData {
   sourceAsset: AssetAndBalance;
   targetAsset: AssetAndBalance;
@@ -79,15 +82,12 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
   @Output() overlayChange = new EventEmitter<boolean>();
   @Output() closeTransaction = new EventEmitter<null>();
 
-  binanceExplorerUrl: string;
-  bitcoinExplorerUrl: string;
-  ethereumExplorerUrl: string;
-  thorchainExplorerUrl: string;
   estimatedMinutes: number;
   balances: Balances;
   outboundHash: string;
   currency: Currency;
   isDoubleSwap: boolean = false;
+  metaMaskProvider: ethers.providers.Web3Provider;
 
   constructor(
     // @Inject(MAT_DIALOG_DATA) public swapData: SwapData,
@@ -101,7 +101,8 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
     private explorerPathsService: ExplorerPathsService,
     private copyService: CopyService,
     private currencyService: CurrencyService,
-    private analytics: AnalyticsService
+    private analytics: AnalyticsService,
+    private metaMaskService: MetamaskService
   ) {
     this.txState = TransactionConfirmationState.PENDING_CONFIRMATION;
     this.insufficientChainBalance = false;
@@ -112,10 +113,13 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
       }
     });
 
-    const slippageTolerange$ =
-      this.slipLimitService.slippageTolerance$.subscribe(
-        (limit) => (this.slippageTolerance = limit)
-      );
+    const slippageTolerange$ = this.slipLimitService.slippageTolerance$.subscribe(
+      (limit) => (this.slippageTolerance = limit)
+    );
+
+    const metaMaskProvider$ = this.metaMaskService.provider$.subscribe(
+      (provider) => (this.metaMaskProvider = provider)
+    );
 
     const balances$ = this.userService.userBalances$.subscribe(
       (balances) => (this.balances = balances)
@@ -125,13 +129,8 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
       this.currency = cur;
     });
 
-    this.subs = [user$, slippageTolerange$, balances$, curs$];
+    this.subs = [user$, slippageTolerange$, balances$, curs$, metaMaskProvider$];
 
-    //Adding explorer URL here
-    this.binanceExplorerUrl = `${this.explorerPathsService.binanceExplorerUrl}/tx`;
-    this.bitcoinExplorerUrl = `${this.explorerPathsService.bitcoinExplorerUrl}/tx`;
-    this.ethereumExplorerUrl = `${this.explorerPathsService.ethereumExplorerUrl}/tx`;
-    this.thorchainExplorerUrl = `${this.explorerPathsService.thorchainExplorerUrl}/txs`;
   }
 
   ngOnInit() {
@@ -228,12 +227,16 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
           );
 
           if (matchingPool) {
+            const userType = this.swapData.user.type;
+
             if (
-              this.swapData.user.type === "keystore" ||
-              this.swapData.user.type === "ledger" ||
-              this.swapData.user.type === "XDEFI"
+              userType === 'keystore' ||
+              userType === 'ledger' ||
+              userType === 'XDEFI'
             ) {
               this.keystoreTransfer(matchingPool);
+            } else if (userType === 'metamask') {
+              this.metaMaskTransfer(matchingPool);
             } else {
               console.log("no error type matches");
             }
@@ -260,6 +263,46 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
     }
 
     return client.validateAddress(this.swapData.targetAddress);
+  }
+
+  async metaMaskTransfer(matchingPool?: PoolAddressDTO) {
+    try {
+      const floor = this.slipLimitService.getSlipLimitFromAmount(
+        this.swapData.outputValue
+      );
+
+      const memo = this.getSwapMemo(
+        this.swapData.targetAsset.asset.chain,
+        this.swapData.targetAsset.asset.symbol,
+        this.swapData.targetAddress,
+        Math.floor(floor.toNumber())
+      );
+
+      const userAddress = this.swapData.user.wallet;
+
+      if (!this.metaMaskProvider) {
+        console.error('no metaMask provider');
+        return;
+      }
+
+      const signer = this.metaMaskProvider.getSigner();
+      const hash = await this.metaMaskService.callDeposit({
+        ethInboundAddress: matchingPool,
+        asset: this.swapData.sourceAsset.asset,
+        memo,
+        userAddress,
+        signer,
+        input: this.swapData.inputValue,
+      });
+
+      this.hash = hash.substr(2);
+      this.pushTxStatus(hash, this.swapData.sourceAsset.asset);
+      this.txState = TransactionConfirmationState.SUCCESS;
+    } catch (error) {
+      console.log('error is: ', error);
+      this.error = 'ETH transaction failed.';
+      this.txState = TransactionConfirmationState.ERROR;
+    }
   }
 
   async keystoreTransfer(matchingPool?: PoolAddressDTO) {
@@ -534,8 +577,10 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
   }
 
   getOutboundHash(hash) {
+    console.log('get outbound hash')
     const outbound$ = this.txStatusService
       .getOutboundHash(hash)
+      .pipe(retry(2))
       .subscribe((res: Transaction) => {
         this.outboundHash = res.out[0]?.txID;
         console.log(res.out[0]?.coins[0]?.amount)
@@ -566,7 +611,7 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
     });
 
     //get outbound hash for the view
-    this.getOutboundHash(hash);
+    this.getOutboundHash(this.swapData.sourceAsset.asset.chain === 'ETH' ? hash.substr(2) : hash);
   }
 
   breadcrumbNav(val: string, type: 'processing' | 'success' | 'pending' = 'pending') {
