@@ -28,8 +28,6 @@ import { MidgardService, ThorchainQueue } from "../_services/midgard.service";
 import { TransactionUtilsService } from "../_services/transaction-utils.service";
 import { UserService } from "../_services/user.service";
 import { ConfirmWithdrawData } from "./confirm-withdraw-modal/confirm-withdraw-modal.component";
-import { ConfirmWithdrawModalComponent } from "./confirm-withdraw-modal/confirm-withdraw-modal.component";
-import { WithdrawTypeOptions } from "../_const/withdraw-type-options";
 import { Balances } from "@xchainjs/xchain-client";
 import { debounceTime } from "rxjs/operators";
 import { MetamaskService } from '../_services/metamask.service';

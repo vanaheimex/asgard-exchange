@@ -19,7 +19,6 @@ import {
 } from "src/app/_services/transaction-status.service";
 import { Router } from "@angular/router";
 import { OverlaysService } from "src/app/_services/overlays.service";
-import { WithdrawTypeOptions } from "src/app/_const/withdraw-type-options";
 import { AnalyticsService, assetString } from "src/app/_services/analytics.service";
 import { EthUtilsService } from 'src/app/_services/eth-utils.service';
 import { Asset } from 'src/app/_classes/asset';
