@@ -5,7 +5,7 @@ import { BehaviorSubject } from "rxjs";
 import { AssetAndBalance } from "../_classes/asset-and-balance";
 
 export type DepositViews = "Deposit" | "Confirm" | "Asset" | "Approve" | "Connect" | "PoolType";
-export type WithdrawViews = "Withdraw" | "Confirm" | "Asset";
+export type WithdrawViews = "Withdraw" | "Confirm" | "Asset" | 'PoolType';
 export type CreatePoolViews = "Create" | "Approve" | "Asset" | "Confirm";
 export type MainViews =
   | "Reconnect"
@@ -59,7 +59,7 @@ export class OverlaysService {
   depositView = this.currentDepositViewSource.asObservable();
 
   private currentWithdrawViewSource = new BehaviorSubject<WithdrawViews>(
-    "Withdraw"
+    "PoolType"
   );
   withdrawView = this.currentWithdrawViewSource.asObservable();
 

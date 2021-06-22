@@ -162,6 +162,7 @@ export class DepositComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // should first choose the type
+    this.asset = new Asset('BTC.BTC');
     this.overlaysService.setCurrentDepositView('PoolType');
 
     const params$ = this.route.paramMap;
@@ -333,6 +334,11 @@ export class DepositComponent implements OnInit, OnDestroy {
   setPoolTypeOption(option: PoolTypeOption) {
     this.poolType = option;
     this.validate();
+  }
+
+  setPoolTypeOptionFromEvent(option: PoolTypeOption) {
+    this.setPoolTypeOption(option);
+    this.overlaysService.setCurrentDepositView('Deposit');
   }
 
   updateValues(source: 'ASSET' | 'RUNE', amount?: number) {

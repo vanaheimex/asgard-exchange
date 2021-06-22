@@ -160,7 +160,7 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
         this.txState = TransactionConfirmationState.ERROR;
         this.error = error;
       }
-    } else if (this.data.user?.type === 'keystore') {
+    } else if (this.data.user?.type === 'keystore' || this.data.user?.type === 'XDEFI') {
       const clients = this.data.user.clients;
       const thorClient = clients.thorchain;
       let assetHash = '';

@@ -10,7 +10,7 @@
             { name: 'skip', call: 'swap' },
             { name: 'Pools', call: 'pool' },
             { name: 'Deposit', disable: true },
-            { name: asset.chain + '.' + asset.ticker , disable: true },
+            { name: asset?.chain + '.' + asset?.ticker , disable: true },
             { name: poolType === 'SYM' ? 'SYMETRICAL' : 'ASSYMETRICAL', disable: true }
           ]"
           [message]="{text: formValidation.message, isError: formValidation.isError}"
@@ -147,7 +147,7 @@
             { name: 'skip', call: 'swap' },
             { name: 'Pools', call: 'pool' },
             { name: 'Deposit', call: 'deposit-back' },
-            { name: asset.chain + '.' + asset.ticker , disable: true },
+            { name: asset?.chain + '.' + asset?.ticker , disable: true },
             { name: 'SEARCH', disable: true }
           ]"
           message="SELECT"
@@ -183,14 +183,14 @@
   [asset]="asset" 
   [selectedPoolType]="poolType" 
   [poolTypeOptions]="poolTypeOptions" 
-  (selectPoolType)="setPoolTypeOption($event)"
+  (selectPoolType)="setPoolTypeOptionFromEvent($event)"
 >
 <app-breadcrumb
   [path]="[
     { name: 'skip', call: 'swap' },
     { name: 'Pools', call: 'pool' },
     { name: 'Deposit', disable: true },
-    { name: asset.chain + '.' + asset.ticker , disable: true },
+    { name: asset?.chain + '.' + asset?.ticker , disable: true },
     { name: 'type', disable: true }
   ]"
   message="select"

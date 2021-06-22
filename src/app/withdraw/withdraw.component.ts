@@ -149,6 +149,10 @@ export class WithdrawComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    //first they should pooltype
+    this.asset = new Asset("BTC.BTC")
+    this.overlaysService.setCurrentWithdrawView('PoolType');
+    
     this.getConstants();
     this.getThorchainQueue();
 
@@ -315,6 +319,11 @@ export class WithdrawComponent implements OnInit {
   setSelectedWithdrawOption(option: PoolTypeOption) {
     this.withdrawType = option;
     this.calculate();
+  }
+
+  setSelectedWithdrawOptionFromEvent(option: PoolTypeOption) {
+    this.setSelectedWithdrawOption(option);
+    this.overlaysService.setCurrentWithdrawView('Withdraw');
   }
 
   getThorchainQueue() {

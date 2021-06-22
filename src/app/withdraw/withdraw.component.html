@@ -6,15 +6,16 @@
           [path]="[
             { name: 'skip', call: 'swap' },
             { name: 'Pools', call: 'pool' },
-            { name: 'Withdraw', disable: true }
+            { name: 'Withdraw', disable: true },
+            { name: asset?.chain + '.' + asset?.ticker , disable: true },
           ]"
           [isError]="isError"
           [message]="mainButtonText()"
           (funcCaller)="breadcrumbNav($event)"
         ></app-breadcrumb>
-        <div class="top-right">
+        <!-- <div class="top-right">
           <app-pool-type-options [asset]="asset" [selectedPoolType]="withdrawType" [poolTypeOptions]="withdrawOptions" (selectPoolType)="setSelectedWithdrawOption($event)"></app-pool-type-options>
-        </div>
+        </div> -->
       </nav>
 
       <div class="percent-container">
@@ -117,3 +118,23 @@
   (close)="close($event)"
 >
 </app-confirm-withdraw-modal>
+
+<app-pool-type-options
+  *ngIf="view === 'PoolType'"
+  [asset]="asset" 
+  [selectedPoolType]="withdrawType" 
+  [poolTypeOptions]="withdrawOptions" 
+  (selectPoolType)="setSelectedWithdrawOptionFromEvent($event)"
+>
+<app-breadcrumb
+  [path]="[
+    { name: 'skip', call: 'swap' },
+    { name: 'Pools', call: 'pool' },
+    { name: 'Withdraw', disable: true },
+    { name: asset?.chain + '.' + asset?.ticker , disable: true },
+    { name: 'type', disable: true }
+  ]"
+  message="select"
+  (funcCaller)="breadcrumbNav($event)"
+></app-breadcrumb>
+</app-pool-type-options>

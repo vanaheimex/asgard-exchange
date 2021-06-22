@@ -9,7 +9,8 @@
           [path]="[
             { name: 'skip', call: 'swap' },
             { name: 'Pools', call: 'pool' },
-            { name: 'Withdraw', disable: true }
+            { name: 'Withdraw', disable: true },
+            { name: data.asset?.chain + '.' + data.asset?.ticker , disable: true },
           ]"
           [isError]="txState === 'ERROR'"
           [message]="message"
@@ -129,7 +130,8 @@
     [path]="[
       { name: 'skip', call: 'swap' },
       { name: 'Pools', call: 'pool' },
-      { name: 'Withdraw', disable: true }
+      { name: 'Withdraw', disable: true },
+      { name: data.asset?.chain + '.' + data.asset?.ticker , disable: true },
     ]"
     [isError]=""
     [message]="'TRANSACTION PROCESSING'"
@@ -155,7 +157,8 @@
     [path]="[
       { name: 'skip', call: 'swap' },
       { name: 'Pools', call: 'pool' },
-      { name: 'Withdraw', disable: true }
+      { name: 'Withdraw', disable: true },
+      { name: data.asset?.chain + '.' + data.asset?.ticker , disable: true },
     ]"
     [isError]=""
     [message]="'SUCCESS'"

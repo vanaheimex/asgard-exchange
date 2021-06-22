@@ -169,8 +169,8 @@ export class AppComponent implements OnInit, OnDestroy {
             validNetwork = true
             break;
         }
-        
-        if (accounts.length > 0 && !_user && validNetwork) {
+
+        if (accounts.length > 0 && validNetwork && (!_user || accounts[0] !== _user.wallet)) {
           const signer = _metaMaskProvider.getSigner();
           const address = await signer.getAddress();
           const user = new User({

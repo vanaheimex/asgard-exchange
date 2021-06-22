@@ -21,7 +21,7 @@ export class PoolTypeOptionsComponent implements OnInit {
   _poolType: PoolTypeOption;
   rune: Asset = new Asset('THOR.RUNE');
 
-  constructor(private overlaysSerivice: OverlaysService, private router: Router) {
+  constructor(private router: Router) {
     this.selectPoolType = new EventEmitter<PoolTypeOption>();
   }
 
@@ -35,7 +35,6 @@ export class PoolTypeOptionsComponent implements OnInit {
 
   submitPoolType() {
     this.selectPoolType.emit(this._poolType);
-    this.overlaysSerivice.setCurrentDepositView('Deposit');
   }
 
   back() {
