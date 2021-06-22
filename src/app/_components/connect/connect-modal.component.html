@@ -122,7 +122,11 @@
           <div class="flex item items-center">
             <div class="add-icon">
               <img
-              src="https://raw.githubusercontent.com/MetaMask/metamask-extension/develop/app/images/icon-64.png"
+              [src]="
+                isTestnet
+                  ? '/assets/icons/metamask-yellow.svg'
+                  : '/assets/icons/metamask-green.svg'
+              "
                 alt="folder icon"
               />
             </div>
