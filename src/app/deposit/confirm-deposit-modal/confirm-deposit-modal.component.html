@@ -10,7 +10,9 @@
             [path]="[
               { name: 'skip', call: 'swap' },
               { name: 'Pools', call: 'pool' },
-              { name: 'Deposit', disable: true }
+              { name: 'Deposit', disable: true },
+              { name: data.asset.asset.chain + '.' + data.asset.asset.ticker, disable: true },
+              { name: data.poolTypeOption === 'SYM' ? 'SYMETRICAL' : 'ASSYMETRICAL', disable: true }
             ]"
             [isError]="error"
             [message]="getMessage()"
@@ -136,7 +138,9 @@
       [path]="[
         { name: 'skip', call: 'swap' },
         { name: 'Pools', call: 'pool' },
-        { name: 'Deposit', disable: true }
+        { name: 'Deposit', disable: true },
+        { name: data.asset.asset.chain + '.' + data.asset.asset.ticker, disable: true },
+        { name: data.poolTypeOption === 'SYM' ? 'SYMETRICAL' : 'ASSYMETRICAL', disable: true }
       ]"
       message="Transaction Processing"
       (funcCaller)="breadcrumbNav($event, 'process')"
@@ -160,7 +164,9 @@
       [path]="[
         { name: 'skip', call: 'swap' },
         { name: 'Pools', call: 'pool' },
-        { name: 'Deposit', call: 'deposit-back' }
+        { name: 'Deposit', call: 'deposit-back' },
+        { name: data.asset.asset.chain + '.' + data.asset.asset.ticker, disable: true },
+        { name: data.poolTypeOption === 'SYM' ? 'SYMETRICAL' : 'ASSYMETRICAL', disable: true }
       ]"
       message="Success"
       (funcCaller)="breadcrumbNav($event, 'success')"

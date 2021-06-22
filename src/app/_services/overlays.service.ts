@@ -4,7 +4,7 @@ import { Chain } from "@xchainjs/xchain-util";
 import { BehaviorSubject } from "rxjs";
 import { AssetAndBalance } from "../_classes/asset-and-balance";
 
-export type DepositViews = "Deposit" | "Confirm" | "Asset" | "Approve" | "Connect";
+export type DepositViews = "Deposit" | "Confirm" | "Asset" | "Approve" | "Connect" | "PoolType";
 export type WithdrawViews = "Withdraw" | "Confirm" | "Asset";
 export type CreatePoolViews = "Create" | "Approve" | "Asset" | "Confirm";
 export type MainViews =
@@ -54,7 +54,7 @@ export class OverlaysService {
   currentView = this.currentViewSource.asObservable();
 
   private currentDepositViewSource = new BehaviorSubject<DepositViews>(
-    "Deposit"
+    "PoolType"
   );
   depositView = this.currentDepositViewSource.asObservable();
 

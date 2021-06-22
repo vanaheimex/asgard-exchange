@@ -125,6 +125,7 @@ export class DepositComponent implements OnInit, OnDestroy {
   formValidation: {
     message: string;
     isValid: boolean;
+    isError: boolean
   };
   metaMaskProvider?: ethers.providers.Web3Provider;
   metaMaskNetwork?: 'testnet' | 'mainnet';
@@ -155,10 +156,14 @@ export class DepositComponent implements OnInit, OnDestroy {
     this.formValidation = {
       message: '',
       isValid: false,
+      isError: false
     };
   }
 
   ngOnInit(): void {
+    // should first choose the type
+    this.overlaysService.setCurrentDepositView('PoolType');
+
     const params$ = this.route.paramMap;
     const balances$ = this.userService.userBalances$;
     const user$ = this.userService.user$.pipe(debounceTime(500));
@@ -553,16 +558,18 @@ export class DepositComponent implements OnInit, OnDestroy {
     /** Wallet not connected */
     if (!this.balances) {
       this.formValidation = {
-        message: 'Please connect wallet',
+        message: 'connect wallet',
         isValid: false,
+        isError: false
       };
       return;
     }
 
     if (this.depositsDisabled) {
       this.formValidation = {
-        message: 'Pool Cap > 90%',
+        message: 'Cap Reached',
         isValid: false,
+        isError: true
       };
       return;
     }
@@ -571,6 +578,7 @@ export class DepositComponent implements OnInit, OnDestroy {
       this.formValidation = {
         message: 'Pool Halted',
         isValid: false,
+        isError: true
       };
       return;
     }
@@ -578,8 +586,9 @@ export class DepositComponent implements OnInit, OnDestroy {
     /** User either lacks asset balance or RUNE balance */
     if (this.balances && !this.runeAmount && !this.assetAmount) {
       this.formValidation = {
-        message: 'Enter an amount',
+        message: 'Prepare',
         isValid: false,
+        isError: false
       };
       return;
     }
@@ -589,6 +598,7 @@ export class DepositComponent implements OnInit, OnDestroy {
       this.formValidation = {
         message: `Insufficient ${this.asset.ticker}`,
         isValid: false,
+        isError: true
       };
       return;
     }
@@ -601,6 +611,7 @@ export class DepositComponent implements OnInit, OnDestroy {
       this.formValidation = {
         message: 'Min 3 RUNE in Wallet',
         isValid: false,
+        isError: true
       };
       return;
     }
@@ -608,8 +619,9 @@ export class DepositComponent implements OnInit, OnDestroy {
     /** Checks sufficient chain balance for fee */
     if (this.sourceChainBalance <= this.chainNetworkFee) {
       this.formValidation = {
-        message: `Insufficient ${this.asset.chain}`,
+        message: `Insufficient ${this.asset.chain} for fees`,
         isValid: false,
+        isError: true
       };
       return;
     }
@@ -630,8 +642,9 @@ export class DepositComponent implements OnInit, OnDestroy {
         )
     ) {
       this.formValidation = {
-        message: `Insufficient ${this.asset.chain}`,
+        message: `Insufficient ${this.asset.chain} for fees`,
         isValid: false,
+        isError: true
       };
       return;
     }
@@ -639,8 +652,9 @@ export class DepositComponent implements OnInit, OnDestroy {
     /** Amount is too low, considered "dusting" */
     if (this.assetAmount <= this.userService.minimumSpendable(this.asset)) {
       this.formValidation = {
-        message: '!! Amount too low',
+        message: 'Amount too low',
         isValid: false,
+        isError: true
       };
       return;
     }
@@ -653,6 +667,7 @@ export class DepositComponent implements OnInit, OnDestroy {
       this.formValidation = {
         message: 'Amount too low',
         isValid: false,
+        isError: true
       };
       return;
     }
@@ -664,6 +679,7 @@ export class DepositComponent implements OnInit, OnDestroy {
       this.formValidation = {
         message: 'Change MetaMask Network',
         isValid: false,
+        isError: true
       };
       return;
     }
@@ -677,8 +693,9 @@ export class DepositComponent implements OnInit, OnDestroy {
       this.assetAmount <= this.assetBalance
     ) {
       this.formValidation = {
-        message: 'Deposit',
+        message: 'Prepare',
         isValid: true,
+        isError: false
       };
       return;
     }
@@ -692,8 +709,9 @@ export class DepositComponent implements OnInit, OnDestroy {
         : this.assetAmount <= this.assetBalance)
     ) {
       this.formValidation = {
-        message: 'Deposit',
+        message: 'Prepare',
         isValid: true,
+        isError: false
       };
       return;
     }
@@ -705,15 +723,17 @@ export class DepositComponent implements OnInit, OnDestroy {
       this.runeAmount + this.runeFee <= this.runeBalance
     ) {
       this.formValidation = {
-        message: 'Deposit',
+        message: 'Prepare',
         isValid: true,
+        isError: false
       };
       return;
     }
 
     this.formValidation = {
-      message: 'Form Invalid',
+      message: 'Invalid',
       isValid: false,
+      isError: true
     };
   }
 
@@ -785,7 +805,7 @@ export class DepositComponent implements OnInit, OnDestroy {
   }
 
   back(): void {
-    this.router.navigate(["/", "pool"]);
+    this.overlaysService.setCurrentDepositView('PoolType');
   }
 
   cancelButton() {

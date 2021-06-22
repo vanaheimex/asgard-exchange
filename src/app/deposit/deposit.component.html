@@ -9,14 +9,16 @@
           [path]="[
             { name: 'skip', call: 'swap' },
             { name: 'Pools', call: 'pool' },
-            { name: 'Deposit', disable: true }
+            { name: 'Deposit', disable: true },
+            { name: asset.chain + '.' + asset.ticker , disable: true },
+            { name: poolType === 'SYM' ? 'SYMETRICAL' : 'ASSYMETRICAL', disable: true }
           ]"
-          [message]="{text: formValidation.message, isError: !formValidation.isValid}"
+          [message]="{text: formValidation.message, isError: formValidation.isError}"
           (funcCaller)="breadCrumbNav($event, 'deposit')"
         ></app-breadcrumb>
-        <div class="top-right">
+        <!-- <div class="top-right">
           <app-pool-type-options [asset]="asset" [selectedPoolType]="poolType" [poolTypeOptions]="poolTypeOptions" (selectPoolType)="setPoolTypeOption($event)"></app-pool-type-options>
-        </div>
+        </div> -->
       </nav>
 
 
@@ -145,6 +147,7 @@
             { name: 'skip', call: 'swap' },
             { name: 'Pools', call: 'pool' },
             { name: 'Deposit', call: 'deposit-back' },
+            { name: asset.chain + '.' + asset.ticker , disable: true },
             { name: 'SEARCH', disable: true }
           ]"
           message="SELECT"
@@ -174,6 +177,27 @@
   [data]="depositData"
 >
 </app-confirm-deposit-modal>
+
+<app-pool-type-options 
+  *ngIf="view === 'PoolType'"
+  [asset]="asset" 
+  [selectedPoolType]="poolType" 
+  [poolTypeOptions]="poolTypeOptions" 
+  (selectPoolType)="setPoolTypeOption($event)"
+>
+<app-breadcrumb
+  [path]="[
+    { name: 'skip', call: 'swap' },
+    { name: 'Pools', call: 'pool' },
+    { name: 'Deposit', disable: true },
+    { name: asset.chain + '.' + asset.ticker , disable: true },
+    { name: 'type', disable: true }
+  ]"
+  message="select"
+  (funcCaller)="breadCrumbNav($event, 'deposit')"
+></app-breadcrumb>
+</app-pool-type-options>
+
 
 <!-- TODO: this should be checked -->
 <!-- <div *ngIf="poolNotFoundErr">

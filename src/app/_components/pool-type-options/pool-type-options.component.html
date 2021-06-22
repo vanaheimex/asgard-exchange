@@ -1,15 +1,117 @@
-<div *ngIf="poolTypeOptions" class="px-4 h-12 flex items-center">
-  <div *ngIf="poolTypeOptions.sym && asset">
-    <button (click)="selectPoolType.emit('SYM')" class="mr-2 text-sm" [ngClass]="{'underline': selectedPoolType === 'SYM'}">{{asset.ticker}} + RUNE</button>
-    <span *ngIf="poolTypeOptions.asymAsset || poolTypeOptions.asymRune" class="text-xs text-gray-500 mr-2">/</span>
-  </div>
+<div class="container-wrapper">
+  <div class="container">
+    <div class="main-container">
+      <nav class="content-top">
+        <ng-content></ng-content>
+        <div class="top-right"></div>
+      </nav>
 
-  <div *ngIf="poolTypeOptions.asymAsset && asset">
-    <button (click)="selectPoolType.emit('ASYM_ASSET')" class="mr-2 text-sm" [ngClass]="{'underline': selectedPoolType === 'ASYM_ASSET'}">{{asset.ticker}}</button>
-    <span *ngIf="poolTypeOptions.asymRune" class="text-xs text-gray-500 mr-2">/</span>
-  </div>
+      <div *ngIf="poolTypeOptions" class="lists" style="height: 167px;">
+        <button *ngIf="poolTypeOptions.sym && asset" [ngClass]="{'active': _poolType === 'SYM'}" (click)="choosenPoolType('SYM')" class="w-address" >
+          <div class="icon-addr flex-grow flex-shrink-0">
+            <div class="asset-icon-container two-icons">
+              <img class="asset-icon" [src]="asset.iconPath" />
+              <img class="asset-icon" [src]="rune.iconPath" />
+            </div>
+            <label>{{asset.ticker}} + RUNE</label>
+          </div>
+          <div class="right-sec"></div>
+        </button>
+      
+        <button *ngIf="poolTypeOptions.asymAsset && asset" [ngClass]="{'active': _poolType === 'ASYM_ASSET'}" (click)="choosenPoolType('ASYM_ASSET')" class="w-address" >
+          <div class="icon-addr flex-grow flex-shrink-0">
+            <div class="asset-icon-container">
+              <img class="asset-icon" [src]="asset.iconPath" />
+            </div>
+            <label>{{asset.ticker}}
+              <span class="grey-text">(50% {{asset.chain}}.{{asset.ticker}} SWAP <svg
+                width="18px"
+                height="10px"
+                viewBox="0 0 18 10"
+                version="1.1"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                fill="#414856"
+              >
+                <g transform="translate(-641.000000, -269.000000)">
+                  <g transform="translate(52.000000, -34.000000)">
+                    <g transform="translate(301.000000, 140.000000)">
+                      <g transform="translate(51.000000, 130.000000)">
+                        <g transform="translate(20.000000, 22.000000)">
+                          <polygon
+                            id="Path"
+                            points="229.921875 20.6914062 234.5625 16.0507812 229.921875 11.4101562 229.921875 15.2558594 217.332031 15.2558594 217.332031 16.8457031 229.921875 16.8457031"
+                          ></polygon>
+                        </g>
+                      </g>
+                    </g>
+                  </g>
+                </g>
+              </svg> THOR.RUNE)</span>
+            </label>
+          </div>
+          <div class="right-sec"></div>
+        </button>
+      
+        <button *ngIf="poolTypeOptions.asymRune" [ngClass]="{'active': _poolType === 'ASYM_RUNE'}" (click)="choosenPoolType('ASYM_RUNE')" class="w-address" >
+          <div class="icon-addr flex-grow flex-shrink-0">
+            <div class="asset-icon-container">
+              <img class="asset-icon" [src]="rune.iconPath" />
+            </div>
+            <label>RUNE
+              <span class="grey-text">(50% THOR.RUNE SWAP <svg
+                width="18px"
+                height="10px"
+                viewBox="0 0 18 10"
+                version="1.1"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                fill="#414856"
+              >
+                <g transform="translate(-641.000000, -269.000000)">
+                  <g transform="translate(52.000000, -34.000000)">
+                    <g transform="translate(301.000000, 140.000000)">
+                      <g transform="translate(51.000000, 130.000000)">
+                        <g transform="translate(20.000000, 22.000000)">
+                          <polygon
+                            id="Path"
+                            points="229.921875 20.6914062 234.5625 16.0507812 229.921875 11.4101562 229.921875 15.2558594 217.332031 15.2558594 217.332031 16.8457031 229.921875 16.8457031"
+                          ></polygon>
+                        </g>
+                      </g>
+                    </g>
+                  </g>
+                </g>
+              </svg> {{asset.chain}}.{{asset.ticker}})</span>
+            </label>
+          </div>
+          <div class="right-sec"></div>
+        </button>
+      </div>
 
-  <div>
-    <button (click)="selectPoolType.emit('ASYM_RUNE')" *ngIf="poolTypeOptions.asymRune" class="text-sm" [ngClass]="{'underline': selectedPoolType === 'ASYM_RUNE'}">RUNE</button>
+      <div class="disclaimer" style="margin-top: 14px; margin-left: 22px;">
+        <div>If you chose to deposit assymetrically using {{asset.chain}}.{{asset.ticker}} or THOR.RUNE, be aware that you will be selling 50% of your asset in order to enter the pool symmetrically ({{asset.chain}}.{{asset.ticker}} + THOR.RUNE).</div>
+        <div class="pt-5">All THORChain pools require symmetrical positions, even if you enter with one asset only.</div>
+      </div>
+
+    </div>
+    <!-- close dialog -->
+    <div class="bottom-actions two-btn">
+      <div class="left-btn">
+        <button class="close-btn" (click)="back()">
+          <span>Cancel</span>
+        </button>
+      </div>
+      <div class="divider"></div>
+      <div class="right-btn">
+        <button
+          class="next-btn"
+          (click)="submitPoolType()"
+        >
+          <span>Continue</span>
+        </button>
+      </div>
+    </div>
   </div>
 </div>
+
