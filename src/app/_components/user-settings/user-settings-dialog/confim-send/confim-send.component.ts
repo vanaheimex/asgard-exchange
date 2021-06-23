@@ -5,40 +5,46 @@ import {
   OnDestroy,
   OnInit,
   Output,
-} from "@angular/core";
-import { ETH_DECIMAL } from "@xchainjs/xchain-ethereum/lib";
+} from '@angular/core';
+import { ETH_DECIMAL } from '@xchainjs/xchain-ethereum/lib';
 import {
   baseAmount,
   assetToBase,
   assetAmount,
   Asset,
   assetToString,
-} from "@xchainjs/xchain-util";
-import { Subscription } from "rxjs";
-import { erc20ABI } from "src/app/_abi/erc20.abi";
-import { AssetAndBalance } from "src/app/_classes/asset-and-balance";
-import { User } from "src/app/_classes/user";
-import { TransactionConfirmationState } from "src/app/_const/transaction-confirmation-state";
+} from '@xchainjs/xchain-util';
+import { Subscription } from 'rxjs';
+import { erc20ABI } from 'src/app/_abi/erc20.abi';
+import { AssetAndBalance } from 'src/app/_classes/asset-and-balance';
+import { User } from 'src/app/_classes/user';
+import { TransactionConfirmationState } from 'src/app/_const/transaction-confirmation-state';
 import {
   TransactionStatusService,
   TxActions,
   TxStatus,
-} from "src/app/_services/transaction-status.service";
-import { UserService } from "src/app/_services/user.service";
-import { MainViewsEnum, OverlaysService } from "src/app/_services/overlays.service";
-import { BigNumber, ethers } from "ethers";
-import { Asset as AsgrsxAsset } from "src/app/_classes/asset";
-import { Balances } from "@xchainjs/xchain-client";
-import { MidgardService } from "src/app/_services/midgard.service";
-import { PoolAddressDTO } from "src/app/_classes/pool-address";
-import { TransactionUtilsService } from "src/app/_services/transaction-utils.service";
-import { EthUtilsService } from "src/app/_services/eth-utils.service";
-import { AnalyticsService, assetString } from "src/app/_services/analytics.service";
+} from 'src/app/_services/transaction-status.service';
+import { UserService } from 'src/app/_services/user.service';
+import {
+  MainViewsEnum,
+  OverlaysService,
+} from 'src/app/_services/overlays.service';
+import { BigNumber, ethers } from 'ethers';
+import { Asset as AsgrsxAsset } from 'src/app/_classes/asset';
+import { Balances } from '@xchainjs/xchain-client';
+import { MidgardService } from 'src/app/_services/midgard.service';
+import { PoolAddressDTO } from 'src/app/_classes/pool-address';
+import { TransactionUtilsService } from 'src/app/_services/transaction-utils.service';
+import { EthUtilsService } from 'src/app/_services/eth-utils.service';
+import {
+  AnalyticsService,
+  assetString,
+} from 'src/app/_services/analytics.service';
 
 @Component({
-  selector: "app-confim-send",
-  templateUrl: "./confim-send.component.html",
-  styleUrls: ["./confim-send.component.scss"],
+  selector: 'app-confim-send',
+  templateUrl: './confim-send.component.html',
+  styleUrls: ['./confim-send.component.scss'],
 })
 export class ConfimSendComponent implements OnInit, OnDestroy {
   @Input() set asset(asset: AssetAndBalance) {
@@ -57,25 +63,25 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
   @Output() messageChange: EventEmitter<string> = new EventEmitter<string>();
 
   private _mode:
-    | "ADDRESSES"
-    | "ADDRESS"
-    | "PENDING_TXS"
-    | "ASSET"
-    | "SEND"
-    | "CONFIRM_SEND"
-    | "PROCESSING"
-    | "SUCCESS"
-    | "ERROR";
+    | 'ADDRESSES'
+    | 'ADDRESS'
+    | 'PENDING_TXS'
+    | 'ASSET'
+    | 'SEND'
+    | 'CONFIRM_SEND'
+    | 'PROCESSING'
+    | 'SUCCESS'
+    | 'ERROR';
   @Input() get mode() {
     return this._mode;
   }
   set mode(val) {
     this._mode = val;
-    if (this._mode == "CONFIRM_SEND") this.messageChange.emit("Confirm");
-    else if (this._mode == "ERROR") this.messageChange.emit(this.error);
-    else if (this._mode == "PROCESSING")
-      this.messageChange.emit("TRANSACTION PROCESSING");
-    else if (this._mode == "SUCCESS") this.messageChange.emit("Success");
+    if (this._mode == 'CONFIRM_SEND') this.messageChange.emit('Confirm');
+    else if (this._mode == 'ERROR') this.messageChange.emit(this.error);
+    else if (this._mode == 'PROCESSING')
+      this.messageChange.emit('TRANSACTION PROCESSING');
+    else if (this._mode == 'SUCCESS') this.messageChange.emit('Success');
   }
   @Output() modeChange = new EventEmitter();
 
@@ -87,9 +93,9 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
   address: string;
   get message(): string {
     if (this.insufficientChainBalance) {
-      this.mode = "ERROR";
+      this.mode = 'ERROR';
       return `insufficient ${this.asset.asset.chain} to cover fees`;
-    } else return "confirm";
+    } else return 'confirm';
   }
   insufficientChainBalance: boolean;
   balances: Balances;
@@ -105,11 +111,11 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
   ) {
     this.back = new EventEmitter<null>();
     this.close = new EventEmitter<null>();
-    this.error = "";
+    this.error = '';
     this.transactionSuccessful = new EventEmitter<null>();
     this.txState = TransactionConfirmationState.PENDING_CONFIRMATION;
     this.insufficientChainBalance = false;
-    this.hash = "No Txid !"
+    this.hash = 'No Txid !';
 
     const user$ = this.userService.user$.subscribe(
       (user) => (this.user = user)
@@ -126,37 +132,42 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
   }
 
   submitTransaction() {
-    this.mode = "PROCESSING";
+    this.mode = 'PROCESSING';
     this.modeChange.emit(this.mode);
 
     this.txState = TransactionConfirmationState.SUBMITTING;
 
-    let sendAmountUSD = this.amount * this.asset.assetPriceUSD
-    this.analytics.event('wallet_asset_send_confirm', 'button_confirm_*WALLET*_*ASSET*_usd_*numerical_usd_value*',
+    let sendAmountUSD = this.amount * this.asset.assetPriceUSD;
+    this.analytics.event(
+      'wallet_asset_send_confirm',
+      'button_confirm_*WALLET*_*ASSET*_usd_*numerical_usd_value*',
       sendAmountUSD,
       this.asset.asset.chain,
       assetString(this.asset.asset),
       sendAmountUSD.toString()
-    )
+    );
 
-    if (this.user.type === "keystore" || this.user.type === 'XDEFI' ) {
+    if (this.user.type === 'keystore' || this.user.type === 'XDEFI') {
       this.midgardService
         .getInboundAddresses()
         .subscribe((addresses) => this.submitKeystoreTransaction(addresses));
     }
   }
 
-  async breadcrumbNav(nav: string, type: 'processing' | 'success' | 'pending' = 'pending') {
+  async breadcrumbNav(
+    nav: string,
+    type: 'processing' | 'success' | 'pending' = 'pending'
+  ) {
     let label;
     switch (type) {
       case 'success':
-        label = 'wallet_asset_send_success'
+        label = 'wallet_asset_send_success';
         break;
       case 'processing':
-        label = 'wallet_asset_send_processing'
+        label = 'wallet_asset_send_processing';
         break;
       default:
-        label = 'wallet_asset_send_confirm'
+        label = 'wallet_asset_send_confirm';
         break;
     }
 
@@ -166,30 +177,37 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
 
     if (nav === 'swap') {
       this.analytics.event(label, 'breadcrumb_skip');
-      this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
-    }
-    else if (nav === "wallet") {
+      this.overlaysService.setViews(MainViewsEnum.Swap, 'Swap');
+    } else if (nav === 'wallet') {
       this.analytics.event(label, 'breadcrumb_wallet');
       this.overlaysService.setCurrentUserView({
-        userView: "Addresses",
+        userView: 'Addresses',
         address: null,
         chain: null,
         asset: null,
       });
-    }
-    else if (nav === "chain") {
-      this.analytics.event(label, 'breadcrumb_*WALLET*', undefined, this.asset.asset.chain);
+    } else if (nav === 'chain') {
+      this.analytics.event(
+        label,
+        'breadcrumb_*WALLET*',
+        undefined,
+        this.asset.asset.chain
+      );
       this.overlaysService.setCurrentUserView({
-        userView: "Address",
+        userView: 'Address',
         address: this.address,
         chain: this.asset.asset.chain,
         asset: null,
       });
-    }
-    else if (nav === "asset") {
-      this.analytics.event(label, 'breadcrumb_*ASSET*', undefined, assetString(this.asset.asset));
+    } else if (nav === 'asset') {
+      this.analytics.event(
+        label,
+        'breadcrumb_*ASSET*',
+        undefined,
+        assetString(this.asset.asset)
+      );
       this.overlaysService.setCurrentUserView({
-        userView: "Asset",
+        userView: 'Asset',
         address: this.address,
         chain: this.asset.asset.chain,
         asset: this.asset,
@@ -203,15 +221,15 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
       const matchingAddress = inboundAddresses.find(
         (pool) => pool.chain === this.asset.asset.chain
       );
-      if (!matchingAddress && this.asset.asset.chain !== "THOR") {
-        console.error("no recipient pool found");
+      if (!matchingAddress && this.asset.asset.chain !== 'THOR') {
+        console.error('no recipient pool found');
         return;
       }
 
-      if (this.asset.asset.chain === "THOR") {
+      if (this.asset.asset.chain === 'THOR') {
         const client = this.user.clients.thorchain;
         if (!client) {
-          console.error("no thorchain client found");
+          console.error('no thorchain client found');
           return;
         }
 
@@ -227,16 +245,16 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
           this.hash = hash;
           this.pushTxStatus(hash, this.asset.asset, true);
           this.transactionSuccessful.next();
-          this.mode = "SUCCESS";
+          this.mode = 'SUCCESS';
           this.txState = TransactionConfirmationState.SUCCESS;
         } catch (error) {
-          console.error("error making transfer: ", error);
+          console.error('error making transfer: ', error);
           this.error = error.message;
           this.txState = TransactionConfirmationState.ERROR;
-          this.mode = "ERROR";
+          this.mode = 'ERROR';
           this.modeChange.emit(this.mode);
         }
-      } else if (this.asset.asset.chain === "BNB") {
+      } else if (this.asset.asset.chain === 'BNB') {
         const binanceClient = this.user.clients.binance;
 
         try {
@@ -244,21 +262,21 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
             asset: this.asset.asset,
             amount: assetToBase(assetAmount(this.amount)),
             recipient: this.recipientAddress,
-            memo: this.memo ?? "",
+            memo: this.memo ?? '',
           });
           this.hash = hash;
           this.pushTxStatus(hash, this.asset.asset, false);
           this.transactionSuccessful.next();
-          this.mode = "SUCCESS";
+          this.mode = 'SUCCESS';
           this.txState = TransactionConfirmationState.SUCCESS;
         } catch (error) {
-          console.error("error making transfer: ", error);
+          console.error('error making transfer: ', error);
           this.error = error.message;
           this.txState = TransactionConfirmationState.ERROR;
-          this.mode = "ERROR";
+          this.mode = 'ERROR';
           this.modeChange.emit(this.mode);
         }
-      } else if (this.asset.asset.chain === "BTC") {
+      } else if (this.asset.asset.chain === 'BTC') {
         const bitcoinClient = this.user.clients.bitcoin;
 
         try {
@@ -267,7 +285,7 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
           const estimatedFee = this.txUtilsService.calculateNetworkFee(
             asset,
             inboundAddresses,
-            "INBOUND"
+            'INBOUND'
           );
           const balanceAmount = this.userService.findRawBalance(
             this.balances,
@@ -285,7 +303,7 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
             : toBase.amount().minus(feeToBase.amount()); // after deductions, not enough to process, subtract fee from amount
 
           if (amount.isLessThan(0)) {
-            this.error = "Insufficient funds. Try sending a smaller amount";
+            this.error = 'Insufficient funds. Try sending a smaller amount';
             this.txState = TransactionConfirmationState.ERROR;
             return;
           }
@@ -299,16 +317,16 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
           this.hash = hash;
           this.pushTxStatus(hash, this.asset.asset, false);
           this.transactionSuccessful.next();
-          this.mode = "SUCCESS";
+          this.mode = 'SUCCESS';
           this.txState = TransactionConfirmationState.SUCCESS;
         } catch (error) {
-          console.error("error making transfer: ", error);
+          console.error('error making transfer: ', error);
           this.error = error.message;
           this.txState = TransactionConfirmationState.ERROR;
-          this.mode = "ERROR";
+          this.mode = 'ERROR';
           this.modeChange.emit(this.mode);
         }
-      } else if (this.asset.asset.chain === "BCH") {
+      } else if (this.asset.asset.chain === 'BCH') {
         const bchClient = this.user.clients.bitcoinCash;
 
         try {
@@ -317,7 +335,7 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
           const estimatedFee = this.txUtilsService.calculateNetworkFee(
             asset,
             inboundAddresses,
-            "INBOUND"
+            'INBOUND'
           );
           const balanceAmount = this.userService.findRawBalance(
             this.balances,
@@ -335,7 +353,7 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
             : toBase.amount().minus(feeToBase.amount()); // after deductions, not enough to process, subtract fee from amount
 
           if (amount.isLessThan(0)) {
-            this.error = "Insufficient funds. Try sending a smaller amount";
+            this.error = 'Insufficient funds. Try sending a smaller amount';
             this.txState = TransactionConfirmationState.ERROR;
             return;
           }
@@ -349,22 +367,22 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
           this.hash = hash;
           this.pushTxStatus(hash, this.asset.asset, false);
           this.transactionSuccessful.next();
-          this.mode = "SUCCESS";
+          this.mode = 'SUCCESS';
           this.txState = TransactionConfirmationState.SUCCESS;
         } catch (error) {
-          console.error("error making transfer: ", error);
+          console.error('error making transfer: ', error);
           this.error = error.message;
           this.txState = TransactionConfirmationState.ERROR;
-          this.mode = "ERROR";
+          this.mode = 'ERROR';
           this.modeChange.emit(this.mode);
         }
-      } else if (this.asset.asset.chain === "ETH") {
+      } else if (this.asset.asset.chain === 'ETH') {
         const ethClient = this.user.clients.ethereum;
         const asset = this.asset.asset;
         let decimal;
         const wallet = ethClient.getWallet();
 
-        if (asset.symbol === "ETH") {
+        if (asset.symbol === 'ETH') {
           decimal = ETH_DECIMAL;
         } else {
           const assetAddress = asset.symbol.slice(asset.ticker.length + 1);
@@ -380,7 +398,7 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
         }
 
         const gasPrice = baseAmount(
-          ethers.utils.parseUnits(matchingAddress.gas_rate, "gwei").toString(),
+          ethers.utils.parseUnits(matchingAddress.gas_rate, 'gwei').toString(),
           ETH_DECIMAL
         );
 
@@ -394,7 +412,7 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
             amount: assetToBase(assetAmount(this.amount, decimal)),
             recipient: this.recipientAddress,
             gasLimit:
-              assetToString(this.asset.asset) === "ETH.ETH"
+              assetToString(this.asset.asset) === 'ETH.ETH'
                 ? BigNumber.from(21000) // ETH
                 : BigNumber.from(100000), // ERC20
             gasPrice,
@@ -402,16 +420,16 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
           this.hash = hash.substr(2);
           this.pushTxStatus(hash, this.asset.asset, false);
           this.transactionSuccessful.next();
-          this.mode = "SUCCESS";
+          this.mode = 'SUCCESS';
           this.txState = TransactionConfirmationState.SUCCESS;
         } catch (error) {
-          console.error("error making transfer: ", error);
-          this.error = error.message
+          console.error('error making transfer: ', error);
+          this.error = error.message;
           this.txState = TransactionConfirmationState.ERROR;
-          this.mode = "ERROR";
+          this.mode = 'ERROR';
           this.modeChange.emit(this.mode);
         }
-      } else if (this.asset.asset.chain === "LTC") {
+      } else if (this.asset.asset.chain === 'LTC') {
         const litecoinClient = this.user.clients.litecoin;
 
         try {
@@ -420,7 +438,7 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
           const estimatedFee = this.txUtilsService.calculateNetworkFee(
             asset,
             inboundAddresses,
-            "INBOUND"
+            'INBOUND'
           );
           const balanceAmount = this.userService.findRawBalance(
             this.balances,
@@ -438,7 +456,7 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
             : toBase.amount().minus(feeToBase.amount()); // after deductions, not enough to process, subtract fee from amount
 
           if (amount.isLessThan(0)) {
-            this.error = "Insufficient funds. Try sending a smaller amount";
+            this.error = 'Insufficient funds. Try sending a smaller amount';
             this.txState = TransactionConfirmationState.ERROR;
             return;
           }
@@ -452,13 +470,13 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
           this.hash = hash;
           this.pushTxStatus(hash, this.asset.asset, false);
           this.transactionSuccessful.next();
-          this.mode = "SUCCESS";
+          this.mode = 'SUCCESS';
           this.txState = TransactionConfirmationState.SUCCESS;
         } catch (error) {
-          console.error("error making transfer: ", error);
-          this.error = error.message
+          console.error('error making transfer: ', error);
+          this.error = error.message;
           this.txState = TransactionConfirmationState.ERROR;
-          this.mode = "ERROR";
+          this.mode = 'ERROR';
           this.modeChange.emit(this.mode);
         }
       }
@@ -474,19 +492,21 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
       symbol: asset.symbol,
       isThorchainTx,
       hash,
-      pollRpc: asset.chain === "THOR",
+      pollRpc: asset.chain === 'THOR',
     });
   }
 
   backNav() {
-    let sendAmountUSD = this.amount * this.asset.assetPriceUSD
-    this.analytics.event('wallet_asset_send_confirm', 'button_cancel_*WALLET*_*ASSET*_usd_*numerical_usd_value*',
+    let sendAmountUSD = this.amount * this.asset.assetPriceUSD;
+    this.analytics.event(
+      'wallet_asset_send_confirm',
+      'button_cancel_*WALLET*_*ASSET*_usd_*numerical_usd_value*',
       sendAmountUSD,
       this.asset.asset.chain,
       assetString(this.asset.asset),
       sendAmountUSD.toString()
-    )
-    this.back.emit()
+    );
+    this.back.emit();
   }
 
   ngOnDestroy() {

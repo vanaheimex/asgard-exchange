@@ -17,7 +17,12 @@ import { ShortPipeModule } from '../_pipes/short-number.module';
 import { ConnectModule } from '../_components/connect/connect.module';
 
 @NgModule({
-  declarations: [PoolComponent, StakedPoolsListComponent, StakedPoolListItemComponent, PoolListItemComponent],
+  declarations: [
+    PoolComponent,
+    StakedPoolsListComponent,
+    StakedPoolListItemComponent,
+    PoolListItemComponent,
+  ],
   imports: [
     CommonModule,
     MatButtonModule,
@@ -32,7 +37,7 @@ import { ConnectModule } from '../_components/connect/connect.module';
     ConnectModule,
     RouterModule.forChild([
       {
-        path: "",
+        path: '',
         component: PoolComponent,
       },
     ]),

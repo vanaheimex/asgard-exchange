@@ -1,17 +1,17 @@
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 import {
   CanActivate,
   ActivatedRouteSnapshot,
   RouterStateSnapshot,
   UrlTree,
   Router,
-} from "@angular/router";
-import { Observable } from "rxjs";
-import { User } from "../_classes/user";
-import { UserService } from "../_services/user.service";
+} from '@angular/router';
+import { Observable } from 'rxjs';
+import { User } from '../_classes/user';
+import { UserService } from '../_services/user.service';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class HasUserGuard implements CanActivate {
   user: User;
@@ -31,6 +31,6 @@ export class HasUserGuard implements CanActivate {
     | boolean
     | UrlTree {
     if (this.user) return true;
-    return this.router.parseUrl("/swap");
+    return this.router.parseUrl('/swap');
   }
 }

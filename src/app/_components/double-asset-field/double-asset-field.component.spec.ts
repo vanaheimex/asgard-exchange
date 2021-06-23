@@ -1,8 +1,8 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DoubleAssetFieldComponent } from "./double-asset-field.component";
+import { DoubleAssetFieldComponent } from './double-asset-field.component';
 
-describe("DoubleAssetFieldComponent", () => {
+describe('DoubleAssetFieldComponent', () => {
   let component: DoubleAssetFieldComponent;
   let fixture: ComponentFixture<DoubleAssetFieldComponent>;
 
@@ -18,7 +18,7 @@ describe("DoubleAssetFieldComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

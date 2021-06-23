@@ -1,11 +1,11 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { UserAssetComponent } from "./user-asset.component";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
-import { MatIconModule } from "@angular/material/icon";
-import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { UserAssetComponent } from './user-asset.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
-describe("UserAssetComponent", () => {
+describe('UserAssetComponent', () => {
   let component: UserAssetComponent;
   let fixture: ComponentFixture<UserAssetComponent>;
 
@@ -22,7 +22,7 @@ describe("UserAssetComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

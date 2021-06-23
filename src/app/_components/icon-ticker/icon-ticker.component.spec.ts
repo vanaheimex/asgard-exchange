@@ -1,9 +1,9 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { MatIconModule } from "@angular/material/icon";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatIconModule } from '@angular/material/icon';
 
-import { IconTickerComponent } from "./icon-ticker.component";
+import { IconTickerComponent } from './icon-ticker.component';
 
-describe("IconTickerComponent", () => {
+describe('IconTickerComponent', () => {
   let component: IconTickerComponent;
   let fixture: ComponentFixture<IconTickerComponent>;
 
@@ -20,7 +20,7 @@ describe("IconTickerComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

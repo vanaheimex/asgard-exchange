@@ -1,9 +1,9 @@
-import { Component, Input, Output, EventEmitter } from "@angular/core";
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
-  selector: "app-section-head",
-  templateUrl: "./section-head.component.html",
-  styleUrls: ["./section-head.component.scss"],
+  selector: 'app-section-head',
+  templateUrl: './section-head.component.html',
+  styleUrls: ['./section-head.component.scss'],
 })
 export class SectionHeadComponent {
   @Input() sectionTitle: string;

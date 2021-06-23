@@ -1,8 +1,8 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ModalSectionHeaderComponent } from "./modal-section-header.component";
+import { ModalSectionHeaderComponent } from './modal-section-header.component';
 
-describe("ModalSectionHeaderComponent", () => {
+describe('ModalSectionHeaderComponent', () => {
   let component: ModalSectionHeaderComponent;
   let fixture: ComponentFixture<ModalSectionHeaderComponent>;
 
@@ -18,7 +18,7 @@ describe("ModalSectionHeaderComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

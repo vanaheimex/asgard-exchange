@@ -4,30 +4,30 @@ import {
   Input,
   OnDestroy,
   Output,
-} from "@angular/core";
-import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { assetAmount, assetToBase } from "@xchainjs/xchain-util";
-import { Subscription } from "rxjs";
-import { User } from "src/app/_classes/user";
-import { TransactionConfirmationState } from "src/app/_const/transaction-confirmation-state";
-import { MidgardService } from "src/app/_services/midgard.service";
+} from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { assetAmount, assetToBase } from '@xchainjs/xchain-util';
+import { Subscription } from 'rxjs';
+import { User } from 'src/app/_classes/user';
+import { TransactionConfirmationState } from 'src/app/_const/transaction-confirmation-state';
+import { MidgardService } from 'src/app/_services/midgard.service';
 import {
   TransactionStatusService,
   TxActions,
   TxStatus,
-} from "src/app/_services/transaction-status.service";
-import { UserService } from "src/app/_services/user.service";
-import { Client as BinanceClient } from "@xchainjs/xchain-binance";
-import { PoolAddressDTO } from "src/app/_classes/pool-address";
-import { Client as EthereumClient } from "@xchainjs/xchain-ethereum/lib";
-import { EthUtilsService } from "src/app/_services/eth-utils.service";
-import { OverlaysService } from "src/app/_services/overlays.service";
-import { Router } from "@angular/router";
-import { Client as LitecoinClient } from "@xchainjs/xchain-litecoin";
-import { Client as BchClient } from "@xchainjs/xchain-bitcoincash";
-import { Client as BitcoinClient } from "@xchainjs/xchain-bitcoin";
-import { Balances } from "@xchainjs/xchain-client";
-import { AnalyticsService } from "src/app/_services/analytics.service";
+} from 'src/app/_services/transaction-status.service';
+import { UserService } from 'src/app/_services/user.service';
+import { Client as BinanceClient } from '@xchainjs/xchain-binance';
+import { PoolAddressDTO } from 'src/app/_classes/pool-address';
+import { Client as EthereumClient } from '@xchainjs/xchain-ethereum/lib';
+import { EthUtilsService } from 'src/app/_services/eth-utils.service';
+import { OverlaysService } from 'src/app/_services/overlays.service';
+import { Router } from '@angular/router';
+import { Client as LitecoinClient } from '@xchainjs/xchain-litecoin';
+import { Client as BchClient } from '@xchainjs/xchain-bitcoincash';
+import { Client as BitcoinClient } from '@xchainjs/xchain-bitcoin';
+import { Balances } from '@xchainjs/xchain-client';
+import { AnalyticsService } from 'src/app/_services/analytics.service';
 
 export interface ConfirmCreatePoolData {
   asset;
@@ -41,9 +41,9 @@ export interface ConfirmCreatePoolData {
 }
 
 @Component({
-  selector: "app-confirm-pool-create",
-  templateUrl: "./confirm-pool-create.component.html",
-  styleUrls: ["./confirm-pool-create.component.scss"],
+  selector: 'app-confirm-pool-create',
+  templateUrl: './confirm-pool-create.component.html',
+  styleUrls: ['./confirm-pool-create.component.scss'],
 })
 export class ConfirmPoolCreateComponent implements OnDestroy {
   user: User;
@@ -99,8 +99,8 @@ export class ConfirmPoolCreateComponent implements OnDestroy {
       this.user,
       this.data.asset.chain
     );
-    if (!address || address === "") {
-      console.error("no address found");
+    if (!address || address === '') {
+      console.error('no address found');
       return;
     }
 
@@ -110,11 +110,11 @@ export class ConfirmPoolCreateComponent implements OnDestroy {
     );
 
     if (!recipientPool) {
-      console.error("no recipient pool found");
+      console.error('no recipient pool found');
       return;
     }
 
-    let hash = "";
+    let hash = '';
 
     /**
      * Deposit Token
@@ -122,7 +122,7 @@ export class ConfirmPoolCreateComponent implements OnDestroy {
     try {
       // deposit using xchain
       switch (this.data.asset.chain) {
-        case "BNB":
+        case 'BNB':
           const bnbClient = this.user.clients.binance;
           hash = await this.binanceDeposit(
             bnbClient,
@@ -131,7 +131,7 @@ export class ConfirmPoolCreateComponent implements OnDestroy {
           );
           break;
 
-        case "ETH":
+        case 'ETH':
           const ethClient = this.user.clients.ethereum;
           hash = await this.ethereumDeposit(
             ethClient,
@@ -145,12 +145,12 @@ export class ConfirmPoolCreateComponent implements OnDestroy {
           return;
       }
 
-      if (hash === "") {
-        console.error("no hash set");
+      if (hash === '') {
+        console.error('no hash set');
         return;
       }
     } catch (error) {
-      console.error("error depositing asset");
+      console.error('error depositing asset');
       console.error(error);
       return;
     }
@@ -168,7 +168,7 @@ export class ConfirmPoolCreateComponent implements OnDestroy {
 
       this.hash = runeHash;
       this.txStatusService.addTransaction({
-        chain: "THOR",
+        chain: 'THOR',
         hash: runeHash,
         ticker: `${asset.ticker}-RUNE`,
         status: TxStatus.PENDING,
@@ -179,7 +179,7 @@ export class ConfirmPoolCreateComponent implements OnDestroy {
 
       this.txState = TransactionConfirmationState.SUCCESS;
     } catch (error) {
-      console.error("error making RUNE transfer: ", error);
+      console.error('error making RUNE transfer: ', error);
       this.txState = TransactionConfirmationState.ERROR;
       this.error = error;
     }
@@ -253,30 +253,30 @@ export class ConfirmPoolCreateComponent implements OnDestroy {
     let label;
     switch (type) {
       case 'success':
-        label = 'pool_create_confirm'
+        label = 'pool_create_confirm';
         break;
       case 'processing':
-        label = 'pool_create_processing'
+        label = 'pool_create_processing';
         break;
       default:
-        label = 'pool_create_success'
+        label = 'pool_create_success';
         break;
     }
 
-    if (nav === "pool") {
+    if (nav === 'pool') {
       this.analytics.event(label, 'breadcrumb_pools');
-      this.router.navigate(["/", "pool"]);
-    } else if (nav === "swap") {
+      this.router.navigate(['/', 'pool']);
+    } else if (nav === 'swap') {
       this.analytics.event(label, 'breadcrumb_skip');
-      this.router.navigate(["/", "swap"]);
-    } else if (nav === "create") {
-      this.router.navigate(["/", "create-pool"], {
+      this.router.navigate(['/', 'swap']);
+    } else if (nav === 'create') {
+      this.router.navigate(['/', 'create-pool'], {
         queryParams: {
           pool: `${this.data.asset.chain}.${this.data.asset.symbol}`,
         },
       });
-    } else if (nav === "create-back") {
-      this.overlaysService.setCurrentCreatePoolView("Create");
+    } else if (nav === 'create-back') {
+      this.overlaysService.setCurrentCreatePoolView('Create');
     }
   }
 

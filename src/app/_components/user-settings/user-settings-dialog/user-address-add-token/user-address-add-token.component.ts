@@ -4,19 +4,19 @@ import {
   EventEmitter,
   Input,
   OnDestroy,
-} from "@angular/core";
-import { Client } from "@xchainjs/xchain-ethereum/lib";
-import { Chain } from "@xchainjs/xchain-util";
-import { Subscription } from "rxjs";
-import { UserService } from "src/app/_services/user.service";
-import { ethers } from "ethers";
-import { erc20ABI } from "src/app/_abi/erc20.abi";
-import { OverlaysService } from "src/app/_services/overlays.service";
+} from '@angular/core';
+import { Client } from '@xchainjs/xchain-ethereum/lib';
+import { Chain } from '@xchainjs/xchain-util';
+import { Subscription } from 'rxjs';
+import { UserService } from 'src/app/_services/user.service';
+import { ethers } from 'ethers';
+import { erc20ABI } from 'src/app/_abi/erc20.abi';
+import { OverlaysService } from 'src/app/_services/overlays.service';
 
 @Component({
-  selector: "app-user-address-add-token",
-  templateUrl: "./user-address-add-token.component.html",
-  styleUrls: ["./user-address-add-token.component.scss"],
+  selector: 'app-user-address-add-token',
+  templateUrl: './user-address-add-token.component.html',
+  styleUrls: ['./user-address-add-token.component.scss'],
 })
 export class UserAddressAddTokenComponent implements OnDestroy {
   @Input() chain: Chain;
@@ -34,7 +34,7 @@ export class UserAddressAddTokenComponent implements OnDestroy {
     private userService: UserService,
     private overlaysService: OverlaysService
   ) {
-    this.tokenAddress = "";
+    this.tokenAddress = '';
     this.back = new EventEmitter<null>();
 
     const clients$ = this.userService.user$.subscribe((user) => {
@@ -84,7 +84,7 @@ export class UserAddressAddTokenComponent implements OnDestroy {
         this.back.emit();
       } catch (error) {
         this.error = error;
-        this.message = "an ERROR occurred";
+        this.message = 'an ERROR occurred';
       }
     }
   }
@@ -92,16 +92,16 @@ export class UserAddressAddTokenComponent implements OnDestroy {
   async navCaller(nav) {
     const address = await this.userService.getAdrressChain(this.chain);
 
-    if (nav === "wallet")
+    if (nav === 'wallet')
       this.overlaysService.setCurrentUserView({
-        userView: "Addresses",
+        userView: 'Addresses',
         address: null,
         chain: null,
         asset: null,
       });
-    else if (nav === "chain")
+    else if (nav === 'chain')
       this.overlaysService.setCurrentUserView({
-        userView: "Address",
+        userView: 'Address',
         address: address,
         chain: this.chain,
         asset: null,

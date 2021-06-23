@@ -1,9 +1,9 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
-import { UpgradeRuneConfirmComponent } from "./upgrade-rune-confirm.component";
+import { UpgradeRuneConfirmComponent } from './upgrade-rune-confirm.component';
 
-describe("UpgradeRuneConfirmComponent", () => {
+describe('UpgradeRuneConfirmComponent', () => {
   let component: UpgradeRuneConfirmComponent;
   let fixture: ComponentFixture<UpgradeRuneConfirmComponent>;
 
@@ -20,7 +20,7 @@ describe("UpgradeRuneConfirmComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

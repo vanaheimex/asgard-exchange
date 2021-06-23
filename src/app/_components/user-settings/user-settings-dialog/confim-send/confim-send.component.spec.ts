@@ -1,10 +1,10 @@
-import { HttpClientTestingModule } from "@angular/common/http/testing";
-import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { MatIconModule } from "@angular/material/icon";
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatIconModule } from '@angular/material/icon';
 
-import { ConfimSendComponent } from "./confim-send.component";
+import { ConfimSendComponent } from './confim-send.component';
 
-describe("ConfimSendComponent", () => {
+describe('ConfimSendComponent', () => {
   let component: ConfimSendComponent;
   let fixture: ComponentFixture<ConfimSendComponent>;
 
@@ -21,7 +21,7 @@ describe("ConfimSendComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

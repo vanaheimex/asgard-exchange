@@ -1,8 +1,8 @@
-import { TestBed } from "@angular/core/testing";
+import { TestBed } from '@angular/core/testing';
 
-import { PhraseConfirmService } from "./phrase-confirm.service";
+import { PhraseConfirmService } from './phrase-confirm.service';
 
-describe("PhraseConfirmService", () => {
+describe('PhraseConfirmService', () => {
   let service: PhraseConfirmService;
 
   beforeEach(() => {
@@ -10,7 +10,7 @@ describe("PhraseConfirmService", () => {
     service = TestBed.inject(PhraseConfirmService);
   });
 
-  it("should be created", () => {
+  it('should be created', () => {
     expect(service).toBeTruthy();
   });
 });

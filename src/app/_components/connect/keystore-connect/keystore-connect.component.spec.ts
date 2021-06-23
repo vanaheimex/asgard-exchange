@@ -1,10 +1,10 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { KeystoreConnectComponent } from "./keystore-connect.component";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
-import { MatIconModule } from "@angular/material/icon";
+import { KeystoreConnectComponent } from './keystore-connect.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { MatIconModule } from '@angular/material/icon';
 
-describe("KeystoreConnectComponent", () => {
+describe('KeystoreConnectComponent', () => {
   let component: KeystoreConnectComponent;
   let fixture: ComponentFixture<KeystoreConnectComponent>;
 
@@ -21,7 +21,7 @@ describe("KeystoreConnectComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

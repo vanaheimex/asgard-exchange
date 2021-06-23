@@ -6,26 +6,26 @@ import {
   OnInit,
   Output,
   SimpleChange,
-} from "@angular/core";
-import { combineLatest, Subscription } from "rxjs";
-import { User } from "src/app/_classes/user";
-import { MidgardService } from "src/app/_services/midgard.service";
+} from '@angular/core';
+import { combineLatest, Subscription } from 'rxjs';
+import { User } from 'src/app/_classes/user';
+import { MidgardService } from 'src/app/_services/midgard.service';
 import {
   MainViewsEnum,
   OverlaysService,
-} from "src/app/_services/overlays.service";
-import { PhraseConfirmService } from "src/app/_services/phrase-confirm.service";
-import { UserService } from "src/app/_services/user.service";
-import { environment } from "src/environments/environment";
-import { DecimalPipe } from "@angular/common";
-import { HttpErrorResponse } from "@angular/common/http";
-import { AnalyticsService } from "src/app/_services/analytics.service";
-import { Router } from "@angular/router";
+} from 'src/app/_services/overlays.service';
+import { PhraseConfirmService } from 'src/app/_services/phrase-confirm.service';
+import { UserService } from 'src/app/_services/user.service';
+import { environment } from 'src/environments/environment';
+import { DecimalPipe } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
+import { AnalyticsService } from 'src/app/_services/analytics.service';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: "app-header",
-  templateUrl: "./header.component.html",
-  styleUrls: ["./header.component.scss"],
+  selector: 'app-header',
+  templateUrl: './header.component.html',
+  styleUrls: ['./header.component.scss'],
   providers: [DecimalPipe],
 })
 export class HeaderComponent implements OnDestroy {
@@ -60,7 +60,7 @@ export class HeaderComponent implements OnDestroy {
     private analytics: AnalyticsService,
     private router: Router
   ) {
-    this.isTestnet = environment.network === "testnet" ? true : false;
+    this.isTestnet = environment.network === 'testnet' ? true : false;
 
     const user$ = this.userService.user$.subscribe(
       (user) => (this.user = user)
@@ -82,7 +82,7 @@ export class HeaderComponent implements OnDestroy {
   gotoSwap() {
     this.analytics.event('navigation', 'image_logo');
     if (this.isUnderstood) {
-      this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
+      this.overlaysService.setViews(MainViewsEnum.Swap, 'Swap');
       this.router.navigate(['/', 'swap']);
     }
   }
@@ -92,33 +92,38 @@ export class HeaderComponent implements OnDestroy {
     const network$ = this.midgardService.network$;
     const combined = combineLatest([mimir$, network$]);
 
-    this.topbar = "LOADING CAPS";
+    this.topbar = 'LOADING CAPS';
     const sub = combined.subscribe(([mimir, network]) => {
       if (network instanceof HttpErrorResponse) {
         this.topbar = 'THE MIDGARD DATABASE IS HAVING ISSUES. PLEASE TRY LATER';
         this.depositsDisabled = false;
         this.error = true;
-        return
+        return;
       }
 
       this.error = false;
       this.totalPooledRune = +network?.totalPooledRune / 10 ** 8;
 
-      if (mimir && mimir["mimir//MAXIMUMLIQUIDITYRUNE"] && this.totalPooledRune != null && this.totalPooledRune != NaN) {
-        this.maxLiquidityRune = mimir["mimir//MAXIMUMLIQUIDITYRUNE"] / 10 ** 8;
+      if (
+        mimir &&
+        mimir['mimir//MAXIMUMLIQUIDITYRUNE'] &&
+        this.totalPooledRune != null &&
+        this.totalPooledRune != NaN
+      ) {
+        this.maxLiquidityRune = mimir['mimir//MAXIMUMLIQUIDITYRUNE'] / 10 ** 8;
         this.depositsDisabled =
           this.totalPooledRune / this.maxLiquidityRune >= 0.9;
 
         this.topbar = `${this._decimalPipe.transform(
           this.totalPooledRune,
-          "0.0-0"
+          '0.0-0'
         )} / ${this._decimalPipe.transform(
           this.maxLiquidityRune,
-          "0.0-0"
+          '0.0-0'
         )} RUNE POOLED (${this._decimalPipe.transform(
-          this.totalPooledRune / this.maxLiquidityRune * 100,
-          "0.2-2"
-        )} % FILLED${this.depositsDisabled ? ' • CAPS REACHED': ''})`;
+          (this.totalPooledRune / this.maxLiquidityRune) * 100,
+          '0.2-2'
+        )} % FILLED${this.depositsDisabled ? ' • CAPS REACHED' : ''})`;
       }
     });
 

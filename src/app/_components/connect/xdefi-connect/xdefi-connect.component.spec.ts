@@ -1,10 +1,10 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { XDEFIConnectComponent } from "./xdefi-connect.component";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
-import { MatIconModule } from "@angular/material/icon";
+import { XDEFIConnectComponent } from './xdefi-connect.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { MatIconModule } from '@angular/material/icon';
 
-describe("XDEFIConnectComponent", () => {
+describe('XDEFIConnectComponent', () => {
   let component: XDEFIConnectComponent;
   let fixture: ComponentFixture<XDEFIConnectComponent>;
 
@@ -21,7 +21,7 @@ describe("XDEFIConnectComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

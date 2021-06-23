@@ -1,8 +1,8 @@
-import { TestBed } from "@angular/core/testing";
+import { TestBed } from '@angular/core/testing';
 
-import { LastBlockService } from "./last-block.service";
+import { LastBlockService } from './last-block.service';
 
-describe("LastBlockService", () => {
+describe('LastBlockService', () => {
   let service: LastBlockService;
 
   beforeEach(() => {
@@ -10,7 +10,7 @@ describe("LastBlockService", () => {
     service = TestBed.inject(LastBlockService);
   });
 
-  it("should be created", () => {
+  it('should be created', () => {
     expect(service).toBeTruthy();
   });
 });

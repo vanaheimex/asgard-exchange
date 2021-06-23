@@ -17,50 +17,50 @@ import { toUtf8Bytes } from '@ethersproject/strings';
 import { Address } from '@xchainjs/xchain-client';
 import { hexlify } from '@ethersproject/bytes';
 import { MockClientService } from './mock-client.service';
-import { BehaviorSubject } from "rxjs";
-import { UserService } from "./user.service";
-import { take } from "rxjs/operators";
+import { BehaviorSubject } from 'rxjs';
+import { UserService } from './user.service';
+import { take } from 'rxjs/operators';
 
 declare global {
   interface Window {
-    xfi: any
-    ethereum: any
+    xfi: any;
+    ethereum: any;
   }
 }
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class XDEFIService {
   public static listProvider = [
     {
-      title: "Ethereum Provider",
-      providerPath: "ethereum",
+      title: 'Ethereum Provider',
+      providerPath: 'ethereum',
       enabled: true,
       disableNetworkValidation: true,
     },
     {
-      title: "Bitcoin Provider",
-      providerPath: ["xfi", "bitcoin"],
+      title: 'Bitcoin Provider',
+      providerPath: ['xfi', 'bitcoin'],
       enabled: true,
     },
     {
-      title: "BinanceDEX Provider",
-      providerPath: ["xfi", "binance"],
+      title: 'BinanceDEX Provider',
+      providerPath: ['xfi', 'binance'],
       enabled: true,
     },
     {
-      title: "BitcoinCash Provider",
-      providerPath: ["xfi", "bitcoincash"],
+      title: 'BitcoinCash Provider',
+      providerPath: ['xfi', 'bitcoincash'],
       enabled: true,
     },
     {
-      title: "LiteCoin Provider",
-      providerPath: ["xfi", "litecoin"],
+      title: 'LiteCoin Provider',
+      providerPath: ['xfi', 'litecoin'],
       enabled: true,
     },
     {
-      title: "Thorchain Provider",
-      providerPath: ["xfi", "thorchain"],
+      title: 'Thorchain Provider',
+      providerPath: ['xfi', 'thorchain'],
       enabled: true,
     },
   ];
@@ -68,13 +68,16 @@ export class XDEFIService {
   private vaildNetwork = new BehaviorSubject<boolean>(this.isValidNetwork());
   validNetwork$ = this.vaildNetwork.asObservable();
 
-  constructor(private userService: UserService, private mockClientService: MockClientService) {
+  constructor(
+    private userService: UserService,
+    private mockClientService: MockClientService
+  ) {
     try {
       if (typeof window === 'object' && window?.xfi) {
-        (window as any)?.xfi?.thorchain?.on("chainChanged", (obj) => {
-          console.log("changed", obj);
+        (window as any)?.xfi?.thorchain?.on('chainChanged', (obj) => {
+          console.log('changed', obj);
           const envNetwork =
-            environment.network === "testnet" ? "testnet" : "mainnet";
+            environment.network === 'testnet' ? 'testnet' : 'mainnet';
           this.vaildNetwork.next(this.isValidNetwork());
           if (obj.network !== envNetwork) {
             // let changeUrl = envNetwork === 'testnet' ? links.appUrl : links.testnetAppUrl;
@@ -85,23 +88,18 @@ export class XDEFIService {
         (window as any)?.ethereum?.on('accountsChanged', (accounts) => {
           // Time to reload your interface with accounts[0]!
           console.log((window as any).ethereum);
-          this.userService.user$.pipe(take(1)).subscribe(
-            (user) => {
-              if (user) {
-                this.connectXDEFI().then(
-                  (user) => {
-                    console.log('new user account', user);
-                    if (user)
-                      this.userService.setUser(user);
-                  }
-                );
-              }
+          this.userService.user$.pipe(take(1)).subscribe((user) => {
+            if (user) {
+              this.connectXDEFI().then((user) => {
+                console.log('new user account', user);
+                if (user) this.userService.setUser(user);
+              });
             }
-          )
+          });
         });
       }
     } catch (error) {
-      console.error('couldn\'t find the xdefi injections!');
+      console.error("couldn't find the xdefi injections!");
     }
   }
 
@@ -113,7 +111,7 @@ export class XDEFIService {
           return false;
         }
         const projectNetwork =
-          environment.network === "testnet" ? "testnet" : "mainnet";
+          environment.network === 'testnet' ? 'testnet' : 'mainnet';
         return projectNetwork !== providerInfo.network;
       }
     );
@@ -121,18 +119,22 @@ export class XDEFIService {
   }
 
   providerIsEmpty(value) {
-    return Object.keys(value).length === 0
-      && value.constructor === Object;
+    return Object.keys(value).length === 0 && value.constructor === Object;
   }
 
   checkTheProviders(provider) {
-    if (provider.providerPath !== "ethereum") {
-      return !this.providerIsEmpty(get(window, provider.providerPath))
-        && get(window, provider.providerPath).constructor.name.toUpperCase().includes("XDEFI");
-    }
-    else {
-      return !this.providerIsEmpty(get(window, provider.providerPath)) 
-        && (get(window, provider.providerPath) as any).isXDEFI
+    if (provider.providerPath !== 'ethereum') {
+      return (
+        !this.providerIsEmpty(get(window, provider.providerPath)) &&
+        get(window, provider.providerPath)
+          .constructor.name.toUpperCase()
+          .includes('XDEFI')
+      );
+    } else {
+      return (
+        !this.providerIsEmpty(get(window, provider.providerPath)) &&
+        (get(window, provider.providerPath) as any).isXDEFI
+      );
     }
   }
 
@@ -153,7 +155,7 @@ export class XDEFIService {
     return new Promise((resolve, reject) => {
       (window as any).xfi.binance.request(
         {
-          method: "request_accounts",
+          method: 'request_accounts',
           params: [],
         },
         (err, accounts) => {
@@ -173,7 +175,7 @@ export class XDEFIService {
     return new Promise((resolve, reject) => {
       (window as any).xfi.bitcoin.request(
         {
-          method: "request_accounts",
+          method: 'request_accounts',
           params: [],
         },
         (err, accounts) => {
@@ -193,7 +195,7 @@ export class XDEFIService {
     return new Promise((resolve, reject) => {
       (window as any).xfi.bitcoincash.request(
         {
-          method: "request_accounts",
+          method: 'request_accounts',
           params: [],
         },
         (err, accounts) => {
@@ -211,7 +213,7 @@ export class XDEFIService {
       return;
     }
     return (window as any).ethereum.request({
-      method: "eth_requestAccounts",
+      method: 'eth_requestAccounts',
       params: [],
     });
   }
@@ -223,7 +225,7 @@ export class XDEFIService {
     return new Promise((resolve, reject) => {
       (window as any).xfi.thorchain.request(
         {
-          method: "request_accounts",
+          method: 'request_accounts',
           params: [],
         },
         (err, accounts) => {
@@ -243,7 +245,7 @@ export class XDEFIService {
     return new Promise((resolve, reject) => {
       (window as any).xfi.litecoin.request(
         {
-          method: "request_accounts",
+          method: 'request_accounts',
           params: [],
         },
         (err, accounts) => {
@@ -285,11 +287,11 @@ export class XDEFIService {
 
     // Binance
     userBinanceClient.transfer = async (transferParams) => {
-      console.log("userBinanceClient.transfer", transferParams);
+      console.log('userBinanceClient.transfer', transferParams);
       return new Promise((resolve, reject) => {
         (window as any).xfi.binance.request(
           {
-            method: "transfer",
+            method: 'transfer',
             params: [
               {
                 ...transferParams,
@@ -313,11 +315,11 @@ export class XDEFIService {
 
     // Bitcoin
     userBtcClient.transfer = async (transferParams) => {
-      console.log("userBtcClient.transfer", transferParams);
+      console.log('userBtcClient.transfer', transferParams);
       return new Promise((resolve, reject) => {
         (window as any).xfi.bitcoin.request(
           {
-            method: "transfer",
+            method: 'transfer',
             params: [
               {
                 ...transferParams,
@@ -341,11 +343,11 @@ export class XDEFIService {
 
     // BCH
     userbchClient.transfer = async (transferParams) => {
-      console.log("userbchClient.transfer", transferParams);
+      console.log('userbchClient.transfer', transferParams);
       return new Promise((resolve, reject) => {
         (window as any).xfi.bitcoincash.request(
           {
-            method: "transfer",
+            method: 'transfer',
             params: [
               {
                 ...transferParams,
@@ -409,7 +411,7 @@ export class XDEFIService {
       unsignedTx.from = ethAddresses[0];
       return (window as any).ethereum
         .request({
-          method: "eth_sendTransaction",
+          method: 'eth_sendTransaction',
           params: [unsignedTx],
         })
         .then((hash: string) => {
@@ -424,7 +426,7 @@ export class XDEFIService {
       unsignedTx.value = hexlify(BigNumber.from(unsignedTx.value || 0));
       return (window as any).ethereum
         .request({
-          method: "eth_sendTransaction",
+          method: 'eth_sendTransaction',
           params: [unsignedTx],
         })
         .then((hash: string) => {
@@ -437,7 +439,7 @@ export class XDEFIService {
       unsignedTx.value = hexlify(BigNumber.from(unsignedTx.value || 0));
 
       return (window as any).ethereum.request({
-        method: "eth_signTransaction",
+        method: 'eth_signTransaction',
         params: [unsignedTx],
       });
     };
@@ -455,7 +457,7 @@ export class XDEFIService {
       gasLimit,
     }) => {
       console.log({
-        method: "ethCLient.transfer",
+        method: 'ethCLient.transfer',
         asset,
         memo,
         amount,
@@ -517,7 +519,7 @@ export class XDEFIService {
           );
           unsignedTx.from = ethAddresses[0];
           txResult = await (window as any).ethereum.request({
-            method: "eth_sendTransaction",
+            method: 'eth_sendTransaction',
             params: [unsignedTx],
           });
         } else {
@@ -527,11 +529,11 @@ export class XDEFIService {
             {
               ...overrides,
               data: memo ? toUtf8Bytes(memo) : undefined,
-              from: userEthereumClient.getAddress()
+              from: userEthereumClient.getAddress(),
             }
           );
           txResult = await (window as any).ethereum.request({
-            method: "eth_sendTransaction",
+            method: 'eth_sendTransaction',
             params: [transactionRequest],
           });
         }
@@ -550,7 +552,7 @@ export class XDEFIService {
       params: Array<any>
     ) => {
       console.log({
-        method: "ethCLient.call",
+        method: 'ethCLient.call',
         address,
         abi,
         func,
@@ -558,7 +560,7 @@ export class XDEFIService {
       });
       try {
         if (!address) {
-          return Promise.reject(new Error("address must be provided"));
+          return Promise.reject(new Error('address must be provided'));
         }
         const contract = new ethers.Contract(
           address,
@@ -572,14 +574,14 @@ export class XDEFIService {
         return txResult;
       } catch (error) {
         console.error(error);
-        console.error("stack");
+        console.error('stack');
         return Promise.reject(error);
       }
     };
     // Thor
     userThorchainClient.deposit = async (depositParams) => {
-      console.log("userThorchainClient.deposit", depositParams);
-      
+      console.log('userThorchainClient.deposit', depositParams);
+
       const params = [
         {
           ...depositParams,
@@ -588,15 +590,15 @@ export class XDEFIService {
             amount: depositParams.amount.amount().toNumber(),
             decimals: depositParams.amount.decimal,
           },
-          recipient: ''
+          recipient: '',
         },
-      ]
+      ];
 
-      console.log('params', params)
+      console.log('params', params);
       return new Promise((resolve, reject) => {
         (window as any).xfi.thorchain.request(
           {
-            method: "deposit",
+            method: 'deposit',
             params,
           },
           (err, result) => {
@@ -610,21 +612,21 @@ export class XDEFIService {
     };
 
     userThorchainClient.transfer = async (transferParams) => {
-      console.log("userThorchainClient.transfer", transferParams);
+      console.log('userThorchainClient.transfer', transferParams);
       return new Promise((resolve, reject) => {
         (window as any).xfi.thorchain.request(
           {
-            method: "transfer",
+            method: 'transfer',
             params: [
               {
                 ...transferParams,
                 from: thorAddress,
                 amount: {
                   amount: transferParams.amount.amount().toString(),
-                  decimals: transferParams.amount.decimal
-                }
-              }
-            ]
+                  decimals: transferParams.amount.decimal,
+                },
+              },
+            ],
           },
           (err, result) => {
             if (err) {
@@ -632,17 +634,17 @@ export class XDEFIService {
             }
             return resolve(result);
           }
-        )
-      })
-    }
+        );
+      });
+    };
 
     // Ltc
     userLtcClient.transfer = async (transferParams) => {
-      console.log("userLtcClient.transfer", transferParams);
+      console.log('userLtcClient.transfer', transferParams);
       return new Promise((resolve, reject) => {
         (window as any).xfi.litecoin.request(
           {
-            method: "transfer",
+            method: 'transfer',
             params: [
               {
                 ...transferParams,
@@ -674,7 +676,7 @@ export class XDEFIService {
     });
 
     const newUser = new User({
-      type: "XDEFI",
+      type: 'XDEFI',
       wallet: thorAddress,
       clients: {
         binance: userBinanceClient,

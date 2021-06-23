@@ -1,8 +1,8 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { KeystoreCreateStorePhraseComponent } from "./keystore-create-store-phrase.component";
+import { KeystoreCreateStorePhraseComponent } from './keystore-create-store-phrase.component';
 
-describe("KeystoreCreateStorePhraseComponent", () => {
+describe('KeystoreCreateStorePhraseComponent', () => {
   let component: KeystoreCreateStorePhraseComponent;
   let fixture: ComponentFixture<KeystoreCreateStorePhraseComponent>;
 
@@ -18,7 +18,7 @@ describe("KeystoreCreateStorePhraseComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

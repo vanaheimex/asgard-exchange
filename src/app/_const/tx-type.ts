@@ -1,1 +1,1 @@
-export type TxType = "INBOUND" | "OUTBOUND" | "EXTERNAL";
+export type TxType = 'INBOUND' | 'OUTBOUND' | 'EXTERNAL';

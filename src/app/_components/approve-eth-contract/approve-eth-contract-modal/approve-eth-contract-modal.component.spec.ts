@@ -1,10 +1,10 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { Asset } from "src/app/_classes/asset";
-import { ApproveEthContractModalComponent } from "./approve-eth-contract-modal.component";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Asset } from 'src/app/_classes/asset';
+import { ApproveEthContractModalComponent } from './approve-eth-contract-modal.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
-describe("ApproveEthContractModalComponent", () => {
+describe('ApproveEthContractModalComponent', () => {
   let component: ApproveEthContractModalComponent;
   let fixture: ComponentFixture<ApproveEthContractModalComponent>;
 
@@ -16,9 +16,9 @@ describe("ApproveEthContractModalComponent", () => {
         {
           provide: MAT_DIALOG_DATA,
           useValue: {
-            contractAddress: "0x9d496De78837f5a2bA64Cb40E62c19FBcB67f55a",
+            contractAddress: '0x9d496De78837f5a2bA64Cb40E62c19FBcB67f55a',
             asset: new Asset(
-              "ETH.DAI-0XAD6D458402F60FD3BD25163575031ACDCE07538D"
+              'ETH.DAI-0XAD6D458402F60FD3BD25163575031ACDCE07538D'
             ),
           },
         },
@@ -33,7 +33,7 @@ describe("ApproveEthContractModalComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

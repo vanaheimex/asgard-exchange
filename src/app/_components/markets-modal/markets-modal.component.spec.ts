@@ -1,11 +1,11 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MarketsModalComponent } from "./markets-modal.component";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
-import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { MatIconModule } from "@angular/material/icon";
+import { MarketsModalComponent } from './markets-modal.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 
-describe("MarketsModalComponent", () => {
+describe('MarketsModalComponent', () => {
   let component: MarketsModalComponent;
   let fixture: ComponentFixture<MarketsModalComponent>;
 
@@ -26,7 +26,7 @@ describe("MarketsModalComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

@@ -1,7 +1,7 @@
-import { ShortNumberPipe } from "./short-number.pipe";
+import { ShortNumberPipe } from './short-number.pipe';
 
-describe("ShortNumberPipe", () => {
-  it("create an instance", () => {
+describe('ShortNumberPipe', () => {
+  it('create an instance', () => {
     const pipe = new ShortNumberPipe();
     expect(pipe).toBeTruthy();
   });

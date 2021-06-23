@@ -41,7 +41,7 @@ export type EstimateApprovalFee = {
 const testnetBasketABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"address","name":"coin","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"addCoin","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"coins","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"giveMeCoins","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"isAdded","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"}];
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class EthUtilsService {
   MAX_UINT256 = ethers.constants.MaxUint256;
@@ -49,8 +49,8 @@ export class EthUtilsService {
   constructor(private midgardService: MidgardService) {}
 
   async getAssetDecimal(asset: Asset, client: Client): Promise<number> {
-    if (asset.chain === "ETH") {
-      if (asset.symbol === "ETH") {
+    if (asset.chain === 'ETH') {
+      if (asset.symbol === 'ETH') {
         return ETH_DECIMAL;
       } else {
         const wallet = client.getWallet();
@@ -66,7 +66,7 @@ export class EthUtilsService {
         return tokenDecimals;
       }
     } else {
-      throw new Error("asset chain not ETH");
+      throw new Error('asset chain not ETH');
     }
   }
 
@@ -78,20 +78,20 @@ export class EthUtilsService {
     amount,
   }: CallDepositParams): Promise<string> {
     let hash;
-    const abi = environment.network === "testnet" ? TCRopstenAbi : TCAbi;
+    const abi = environment.network === 'testnet' ? TCRopstenAbi : TCAbi;
     const ethAddress = await ethClient.getAddress();
     const gasPrice = baseAmount(
-      ethers.utils.parseUnits(inboundAddress.gas_rate, "gwei").toString(),
+      ethers.utils.parseUnits(inboundAddress.gas_rate, 'gwei').toString(),
       ETH_DECIMAL
     )
       .amount()
       .toFixed(0);
 
-    if (asset.ticker === "ETH") {
+    if (asset.ticker === 'ETH') {
       const contract = new ethers.Contract(inboundAddress.router, abi);
       const unsignedTx = await contract.populateTransaction.deposit(
         inboundAddress.address,
-        "0x0000000000000000000000000000000000000000",
+        '0x0000000000000000000000000000000000000000',
         amount.toFixed(),
         memo,
         { from: ethAddress, value: amount.toFixed(), gasPrice }
@@ -193,14 +193,14 @@ export class EthUtilsService {
       const wallet = await ethClient.getWallet();
 
       const basketERC20Contract = new ethers.Contract(
-        "0xEF7a88873190098F0EA2CFB7C68AF9526AD79aad",
+        '0xEF7a88873190098F0EA2CFB7C68AF9526AD79aad',
         testnetBasketABI,
         wallet
       );
       await basketERC20Contract.giveMeCoins();
 
       const testnetRuneContract = new ethers.Contract(
-        "0xd601c6A3a36721320573885A8d8420746dA3d7A0",
+        '0xd601c6A3a36721320573885A8d8420746dA3d7A0',
         ethRUNERopsten,
         wallet
       );
@@ -212,7 +212,7 @@ export class EthUtilsService {
 
   async estimateERC20Time(token: string, tokenAmount: number): Promise<number> {
     const tokenPool = await this.midgardService.getPool(token).toPromise();
-    const ethPool = await this.midgardService.getPool("ETH.ETH").toPromise();
+    const ethPool = await this.midgardService.getPool('ETH.ETH').toPromise();
     // prettier-ignore
     const assetUnitsPerEth = (+tokenPool.assetPriceUSD) / (+ethPool.assetPriceUSD);
     const totalInEth = tokenAmount * assetUnitsPerEth;
@@ -229,6 +229,6 @@ export class EthUtilsService {
   }
 
   strip0x(hash: string): string {
-    return hash.toUpperCase().indexOf("0X") === 0 ? hash.substr(2) : hash;
+    return hash.toUpperCase().indexOf('0X') === 0 ? hash.substr(2) : hash;
   }
 }

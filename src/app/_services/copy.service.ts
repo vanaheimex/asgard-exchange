@@ -1,8 +1,8 @@
-import { Injectable } from "@angular/core";
-import { MatSnackBar } from "@angular/material/snack-bar";
+import { Injectable } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class CopyService {
   constructor(private _snackBar: MatSnackBar) {}
@@ -17,7 +17,7 @@ export class CopyService {
     }
 
     function createTextArea(text) {
-      textArea = document.createElement("textArea");
+      textArea = document.createElement('textArea');
       textArea.readOnly = true;
       textArea.contentEditable = true;
       textArea.value = text;
@@ -41,7 +41,7 @@ export class CopyService {
     }
 
     function copyTo() {
-      document.execCommand("copy");
+      document.execCommand('copy');
       document.body.removeChild(textArea);
     }
 

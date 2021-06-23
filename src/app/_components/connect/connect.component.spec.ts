@@ -1,11 +1,11 @@
-import { waitForAsync, ComponentFixture, TestBed } from "@angular/core/testing";
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ConnectComponent } from "./connect.component";
-import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
-import { MatIconModule } from "@angular/material/icon";
+import { ConnectComponent } from './connect.component';
+import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { MatIconModule } from '@angular/material/icon';
 
-describe("ConnectComponent", () => {
+describe('ConnectComponent', () => {
   let component: ConnectComponent;
   let fixture: ComponentFixture<ConnectComponent>;
 
@@ -25,7 +25,7 @@ describe("ConnectComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

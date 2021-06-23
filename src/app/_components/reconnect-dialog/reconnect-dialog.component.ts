@@ -5,20 +5,20 @@ import {
   Input,
   Output,
   EventEmitter,
-} from "@angular/core";
-import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { AnalyticsService } from "src/app/_services/analytics.service";
-import { KeystoreService } from "src/app/_services/keystore.service";
+} from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { AnalyticsService } from 'src/app/_services/analytics.service';
+import { KeystoreService } from 'src/app/_services/keystore.service';
 import {
   OverlaysService,
   MainViewsEnum,
-} from "src/app/_services/overlays.service";
-import { UserService } from "src/app/_services/user.service";
+} from 'src/app/_services/overlays.service';
+import { UserService } from 'src/app/_services/user.service';
 
 @Component({
-  selector: "app-reconnect-dialog",
-  templateUrl: "./reconnect-dialog.component.html",
-  styleUrls: ["./reconnect-dialog.component.scss"],
+  selector: 'app-reconnect-dialog',
+  templateUrl: './reconnect-dialog.component.html',
+  styleUrls: ['./reconnect-dialog.component.scss'],
 })
 export class ReconnectDialogComponent {
   keystorePassword: string;
@@ -59,11 +59,10 @@ export class ReconnectDialogComponent {
   breadcrumbNav(val: string) {
     if (val === 'skip') {
       this.analytics.event('connect_reconnect_wallet', 'breadcrumb_skip');
-      this.overlayService.setViews(MainViewsEnum.Swap, "Swap");
-    }
-    else if (val === 'connect') {
+      this.overlayService.setViews(MainViewsEnum.Swap, 'Swap');
+    } else if (val === 'connect') {
       this.analytics.event('connect_reconnect_wallet', 'breadcrumb_connect');
-      this.overlayService.setViews(MainViewsEnum.Swap, "Connect");
+      this.overlayService.setViews(MainViewsEnum.Swap, 'Connect');
     }
   }
 
@@ -71,13 +70,13 @@ export class ReconnectDialogComponent {
     this.keystoreError = false;
 
     try {
-      localStorage.setItem("keystore", JSON.stringify(this.keystore));
+      localStorage.setItem('keystore', JSON.stringify(this.keystore));
       const user = await this.keystoreService.unlockKeystore(
         this.keystore,
         this.keystorePassword
       );
       this.userService.setUser(user);
-      this.overlayService.setViews(MainViewsEnum.Swap, "Swap");
+      this.overlayService.setViews(MainViewsEnum.Swap, 'Swap');
     } catch (error) {
       this.keystoreConnecting = false;
       this.keystoreError = true;
@@ -88,6 +87,6 @@ export class ReconnectDialogComponent {
   forgetKeystore() {
     this.analytics.event('connect_reconnect_wallet', 'button_forget');
     localStorage.clear();
-    this.overlayService.setViews(MainViewsEnum.Swap, "Swap");
+    this.overlayService.setViews(MainViewsEnum.Swap, 'Swap');
   }
 }

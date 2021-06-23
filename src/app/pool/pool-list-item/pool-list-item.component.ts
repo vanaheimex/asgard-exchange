@@ -1,26 +1,26 @@
-import { Component, Input, OnChanges } from "@angular/core";
-import { getPoolShare, PoolData, UnitData } from "@thorchain/asgardex-util";
-import { baseAmount } from "@xchainjs/xchain-util";
-import BigNumber from "bignumber.js";
-import { Subscription } from "rxjs";
-import { take } from "rxjs/operators";
-import { Asset } from "src/app/_classes/asset";
-import { MemberPool } from "src/app/_classes/member";
-import { PoolDTO } from "src/app/_classes/pool";
-import { Currency } from "src/app/_components/account-settings/currency-converter/currency-converter.component";
-import { AnalyticsService } from "src/app/_services/analytics.service";
-import { PoolDetailService } from "src/app/_services/pool-detail.service";
+import { Component, Input, OnChanges } from '@angular/core';
+import { getPoolShare, PoolData, UnitData } from '@thorchain/asgardex-util';
+import { baseAmount } from '@xchainjs/xchain-util';
+import BigNumber from 'bignumber.js';
+import { Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
+import { Asset } from 'src/app/_classes/asset';
+import { MemberPool } from 'src/app/_classes/member';
+import { PoolDTO } from 'src/app/_classes/pool';
+import { Currency } from 'src/app/_components/account-settings/currency-converter/currency-converter.component';
+import { AnalyticsService } from 'src/app/_services/analytics.service';
+import { PoolDetailService } from 'src/app/_services/pool-detail.service';
 import {
   TransactionStatusService,
   Tx,
-} from "src/app/_services/transaction-status.service";
-import { UserService } from "src/app/_services/user.service";
-import { environment } from "src/environments/environment";
+} from 'src/app/_services/transaction-status.service';
+import { UserService } from 'src/app/_services/user.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: "app-pool-list-item",
-  templateUrl: "./pool-list-item.component.html",
-  styleUrls: ["./pool-list-item.component.scss"],
+  selector: 'app-pool-list-item',
+  templateUrl: './pool-list-item.component.html',
+  styleUrls: ['./pool-list-item.component.scss'],
 })
 export class PoolListItemComponent implements OnChanges {
   expanded: boolean;
@@ -62,7 +62,7 @@ export class PoolListItemComponent implements OnChanges {
     this.expanded = false;
     this.activate = false;
 
-    this.isTestnet = environment.network === "tesnet" ? true : false;
+    this.isTestnet = environment.network === 'tesnet' ? true : false;
   }
 
   ngOnChanges() {
@@ -118,7 +118,7 @@ export class PoolListItemComponent implements OnChanges {
 
       if (this.activate) {
         this.poolDetailService.setPooledDetails(
-          "notMember",
+          'notMember',
           this.pooledRune,
           this.pooledAsset,
           0,
@@ -130,29 +130,43 @@ export class PoolListItemComponent implements OnChanges {
   }
 
   statEvent() {
-    this.userService.user$.pipe(take(1)).subscribe(
-      (user) => {
-        if (user) {
-          this.analytics.event('pool_select', 'tag_pool_stats_*POOL_ASSET*', undefined, `${this.asset.chain}.${this.asset.ticker}`);
-        }
-        else {
-          this.analytics.event('pool_disconnected', 'tag_stats_*POOL*', undefined, `${this.asset.chain}.${this.asset.ticker}`);
-        }
+    this.userService.user$.pipe(take(1)).subscribe((user) => {
+      if (user) {
+        this.analytics.event(
+          'pool_select',
+          'tag_pool_stats_*POOL_ASSET*',
+          undefined,
+          `${this.asset.chain}.${this.asset.ticker}`
+        );
+      } else {
+        this.analytics.event(
+          'pool_disconnected',
+          'tag_stats_*POOL*',
+          undefined,
+          `${this.asset.chain}.${this.asset.ticker}`
+        );
       }
-    )
+    });
   }
 
   depositEvent() {
-    this.userService.user$.pipe(take(1)).subscribe(
-      (user) => {
-        if (user) {
-          this.analytics.event('pool_select', 'tag_pool_deposit_*POOL_ASSET*', undefined, `${this.asset.chain}.${this.asset.ticker}`);
-        }
-        else {
-          this.analytics.event('pool_disconnected', 'tag_deposit_*POOL*', undefined, `${this.asset.chain}.${this.asset.ticker}`);
-        }
+    this.userService.user$.pipe(take(1)).subscribe((user) => {
+      if (user) {
+        this.analytics.event(
+          'pool_select',
+          'tag_pool_deposit_*POOL_ASSET*',
+          undefined,
+          `${this.asset.chain}.${this.asset.ticker}`
+        );
+      } else {
+        this.analytics.event(
+          'pool_disconnected',
+          'tag_deposit_*POOL*',
+          undefined,
+          `${this.asset.chain}.${this.asset.ticker}`
+        );
       }
-    )
+    });
   }
 
   ngOnDestroy(): void {

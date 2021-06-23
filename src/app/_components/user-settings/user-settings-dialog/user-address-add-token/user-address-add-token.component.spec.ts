@@ -1,8 +1,8 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
-import { UserAddressAddTokenComponent } from "./user-address-add-token.component";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { UserAddressAddTokenComponent } from './user-address-add-token.component';
 
-describe("UserAddressAddTokenComponent", () => {
+describe('UserAddressAddTokenComponent', () => {
   let component: UserAddressAddTokenComponent;
   let fixture: ComponentFixture<UserAddressAddTokenComponent>;
 
@@ -19,7 +19,7 @@ describe("UserAddressAddTokenComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

@@ -1,19 +1,19 @@
-import { Component, Inject, OnInit } from "@angular/core";
-import { Subscription } from "rxjs";
-import { AnalyticsService } from "src/app/_services/analytics.service";
+import { Component, Inject, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { AnalyticsService } from 'src/app/_services/analytics.service';
 import {
   MainViewsEnum,
   OverlaysService,
-} from "src/app/_services/overlays.service";
+} from 'src/app/_services/overlays.service';
 // import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { UserService } from "src/app/_services/user.service";
-import { XDEFIService } from "src/app/_services/xdefi.service";
-import { environment } from "src/environments/environment";
+import { UserService } from 'src/app/_services/user.service';
+import { XDEFIService } from 'src/app/_services/xdefi.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: "app-reconnect-xdefi-dialog",
-  templateUrl: "./reconnect-xdefi-dialog.component.html",
-  styleUrls: ["./reconnect-xdefi-dialog.component.scss"],
+  selector: 'app-reconnect-xdefi-dialog',
+  templateUrl: './reconnect-xdefi-dialog.component.html',
+  styleUrls: ['./reconnect-xdefi-dialog.component.scss'],
 })
 export class ReconnectXDEFIDialogComponent implements OnInit {
   connecting: boolean;
@@ -30,13 +30,15 @@ export class ReconnectXDEFIDialogComponent implements OnInit {
     private overlaysService: OverlaysService,
     private analytics: AnalyticsService
   ) {
-    this.isTestnet = environment.network === "testnet";
+    this.isTestnet = environment.network === 'testnet';
   }
 
   ngOnInit(): void {
     setTimeout(() => {
       this.listProviders = this.xdefiService.listEnabledXDFIProviders();
-      const vaildNetwork$ = this.xdefiService.validNetwork$.subscribe(res => this.isValidNetwork = res);
+      const vaildNetwork$ = this.xdefiService.validNetwork$.subscribe(
+        (res) => (this.isValidNetwork = res)
+      );
 
       this.subs = [vaildNetwork$];
     }, 200);
@@ -48,7 +50,7 @@ export class ReconnectXDEFIDialogComponent implements OnInit {
     }
 
     this.analytics.event('connect_reconnect_wallet', 'button_connect');
-    
+
     this.connecting = true;
 
     setTimeout(() => {
@@ -72,41 +74,43 @@ export class ReconnectXDEFIDialogComponent implements OnInit {
 
   getBreadcrumbText() {
     if (this.connectingError) {
-      return { text: "An xdefi connection error occureded", isError: true };
+      return { text: 'An xdefi connection error occureded', isError: true };
     }
 
     if (!this.isValidNetwork) {
-      return { text: `SET TO ${this.isTestnet ? 'TESTNET' : 'MAINNET'} IN XDEFI`, isError: true };
+      return {
+        text: `SET TO ${this.isTestnet ? 'TESTNET' : 'MAINNET'} IN XDEFI`,
+        isError: true,
+      };
     }
 
     if (this.listProviders?.every((p) => !p.enabled)) {
-      return { text: "All dApps are disabled !", isError: true }
+      return { text: 'All dApps are disabled !', isError: true };
     }
 
     if (this.listProviders?.some((p) => !p.enabled)) {
-      return { text: "Some dApps are disabled !", isError: false }
+      return { text: 'Some dApps are disabled !', isError: false };
     }
 
     if (this.connecting) {
-      return { text: "Connecting", isError: false };
+      return { text: 'Connecting', isError: false };
     }
 
-    return { text: "Reconnect or forget", isError: false };
+    return { text: 'Reconnect or forget', isError: false };
   }
 
   breadcrumbNav(val: string) {
     if (val === 'skip') {
       this.analytics.event('connect_reconnect_wallet', 'breadcrumb_skip');
-      this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
-    }
-    else if (val === 'connect') {
+      this.overlaysService.setViews(MainViewsEnum.Swap, 'Swap');
+    } else if (val === 'connect') {
       this.analytics.event('connect_reconnect_wallet', 'breadcrumb_connect');
-      this.overlaysService.setViews(MainViewsEnum.Swap, "Connect");
+      this.overlaysService.setViews(MainViewsEnum.Swap, 'Connect');
     }
   }
 
   providersAllDisabled() {
-    return this.listProviders?.every((p) => !p.enabled)
+    return this.listProviders?.every((p) => !p.enabled);
   }
 
   forget() {
@@ -117,8 +121,6 @@ export class ReconnectXDEFIDialogComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.subs.forEach(
-      sub => sub.unsubscribe()
-    )
+    this.subs.forEach((sub) => sub.unsubscribe());
   }
 }

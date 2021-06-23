@@ -1,8 +1,8 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LastBlockIndicatorComponent } from "./last-block-indicator.component";
+import { LastBlockIndicatorComponent } from './last-block-indicator.component';
 
-describe("LastBlockIndicatorComponent", () => {
+describe('LastBlockIndicatorComponent', () => {
   let component: LastBlockIndicatorComponent;
   let fixture: ComponentFixture<LastBlockIndicatorComponent>;
 
@@ -18,7 +18,7 @@ describe("LastBlockIndicatorComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

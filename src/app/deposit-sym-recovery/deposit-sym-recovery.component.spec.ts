@@ -1,10 +1,10 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { RouterTestingModule } from "@angular/router/testing";
-import { DepositSymRecoveryComponent } from "./deposit-sym-recovery.component";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
-import { MatDialogModule } from "@angular/material/dialog";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { DepositSymRecoveryComponent } from './deposit-sym-recovery.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { MatDialogModule } from '@angular/material/dialog';
 
-describe("DepositSymRecoveryComponent", () => {
+describe('DepositSymRecoveryComponent', () => {
   let component: DepositSymRecoveryComponent;
   let fixture: ComponentFixture<DepositSymRecoveryComponent>;
 
@@ -21,7 +21,7 @@ describe("DepositSymRecoveryComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

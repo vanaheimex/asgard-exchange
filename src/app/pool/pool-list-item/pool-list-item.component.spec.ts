@@ -1,8 +1,8 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PoolListItemComponent } from "./pool-list-item.component";
+import { PoolListItemComponent } from './pool-list-item.component';
 
-describe("PoolListItemComponent", () => {
+describe('PoolListItemComponent', () => {
   let component: PoolListItemComponent;
   let fixture: ComponentFixture<PoolListItemComponent>;
 
@@ -18,7 +18,7 @@ describe("PoolListItemComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

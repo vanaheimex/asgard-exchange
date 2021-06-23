@@ -1,8 +1,8 @@
-import { TestBed } from "@angular/core/testing";
+import { TestBed } from '@angular/core/testing';
 
-import { KeystoreService } from "./keystore.service";
+import { KeystoreService } from './keystore.service';
 
-describe("KeystoreService", () => {
+describe('KeystoreService', () => {
   let service: KeystoreService;
 
   beforeEach(() => {
@@ -10,7 +10,7 @@ describe("KeystoreService", () => {
     service = TestBed.inject(KeystoreService);
   });
 
-  it("should be created", () => {
+  it('should be created', () => {
     expect(service).toBeTruthy();
   });
 });

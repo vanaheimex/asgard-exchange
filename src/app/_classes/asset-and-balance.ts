@@ -1,5 +1,5 @@
-import { AssetAmount } from "@xchainjs/xchain-util";
-import { Asset } from "./asset";
+import { AssetAmount } from '@xchainjs/xchain-util';
+import { Asset } from './asset';
 
 export type AssetAndBalance = {
   asset: Asset;

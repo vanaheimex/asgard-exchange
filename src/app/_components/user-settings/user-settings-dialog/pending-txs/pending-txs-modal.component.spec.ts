@@ -1,11 +1,11 @@
-import { HttpClientTestingModule } from "@angular/common/http/testing";
-import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { MatDialogRef } from "@angular/material/dialog";
-import { MatIconModule } from "@angular/material/icon";
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialogRef } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 
-import { PendingTxsModalComponent } from "./pending-txs-modal.component";
+import { PendingTxsModalComponent } from './pending-txs-modal.component';
 
-describe("PendingTxsModalComponent", () => {
+describe('PendingTxsModalComponent', () => {
   let component: PendingTxsModalComponent;
   let fixture: ComponentFixture<PendingTxsModalComponent>;
 
@@ -23,7 +23,7 @@ describe("PendingTxsModalComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

@@ -1,10 +1,10 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { Asset } from "src/app/_classes/asset";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Asset } from 'src/app/_classes/asset';
 
-import { NativeRunePromptModalComponent } from "./native-rune-prompt-modal.component";
+import { NativeRunePromptModalComponent } from './native-rune-prompt-modal.component';
 
-describe("NativeRunePromptModalComponent", () => {
+describe('NativeRunePromptModalComponent', () => {
   let component: NativeRunePromptModalComponent;
   let fixture: ComponentFixture<NativeRunePromptModalComponent>;
 
@@ -15,7 +15,7 @@ describe("NativeRunePromptModalComponent", () => {
         {
           provide: MAT_DIALOG_DATA,
           useValue: {
-            asset: new Asset("BNB.RUNE"),
+            asset: new Asset('BNB.RUNE'),
             amount: 1000,
           },
         },
@@ -30,7 +30,7 @@ describe("NativeRunePromptModalComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

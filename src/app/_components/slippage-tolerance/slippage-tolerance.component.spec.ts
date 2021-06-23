@@ -1,8 +1,8 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SlippageToleranceComponent } from "./slippage-tolerance.component";
+import { SlippageToleranceComponent } from './slippage-tolerance.component';
 
-describe("SlippageToleranceComponent", () => {
+describe('SlippageToleranceComponent', () => {
   let component: SlippageToleranceComponent;
   let fixture: ComponentFixture<SlippageToleranceComponent>;
 
@@ -18,7 +18,7 @@ describe("SlippageToleranceComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

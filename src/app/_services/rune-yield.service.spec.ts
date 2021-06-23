@@ -1,8 +1,8 @@
-import { TestBed } from "@angular/core/testing";
+import { TestBed } from '@angular/core/testing';
 
-import { RuneYieldService } from "./rune-yield.service";
+import { RuneYieldService } from './rune-yield.service';
 
-describe("RuneYieldService", () => {
+describe('RuneYieldService', () => {
   let service: RuneYieldService;
 
   beforeEach(() => {
@@ -10,7 +10,7 @@ describe("RuneYieldService", () => {
     service = TestBed.inject(RuneYieldService);
   });
 
-  it("should be created", () => {
+  it('should be created', () => {
     expect(service).toBeTruthy();
   });
 });

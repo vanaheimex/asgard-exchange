@@ -1,8 +1,8 @@
-import { TestBed } from "@angular/core/testing";
+import { TestBed } from '@angular/core/testing';
 
-import { ExplorerPathsService } from "./explorer-paths.service";
+import { ExplorerPathsService } from './explorer-paths.service';
 
-describe("ExplorerPathsService", () => {
+describe('ExplorerPathsService', () => {
   let service: ExplorerPathsService;
 
   beforeEach(() => {
@@ -10,7 +10,7 @@ describe("ExplorerPathsService", () => {
     service = TestBed.inject(ExplorerPathsService);
   });
 
-  it("should be created", () => {
+  it('should be created', () => {
     expect(service).toBeTruthy();
   });
 });

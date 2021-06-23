@@ -1,10 +1,10 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
-import { UserSettingsComponent } from "./user-settings.component";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
-import { TransactionStatusService } from "src/app/_services/transaction-status.service";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { UserSettingsComponent } from './user-settings.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { TransactionStatusService } from 'src/app/_services/transaction-status.service';
 
-describe("UserSettingsComponent", () => {
+describe('UserSettingsComponent', () => {
   let component: UserSettingsComponent;
   let fixture: ComponentFixture<UserSettingsComponent>;
 
@@ -25,7 +25,7 @@ describe("UserSettingsComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

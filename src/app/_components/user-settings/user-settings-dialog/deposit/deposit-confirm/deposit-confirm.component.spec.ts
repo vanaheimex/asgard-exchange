@@ -1,9 +1,9 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
-import { DepositConfirmComponent } from "./deposit-confirm.component";
+import { DepositConfirmComponent } from './deposit-confirm.component';
 
-describe("DepositConfirmComponent", () => {
+describe('DepositConfirmComponent', () => {
   let component: DepositConfirmComponent;
   let fixture: ComponentFixture<DepositConfirmComponent>;
 
@@ -20,7 +20,7 @@ describe("DepositConfirmComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

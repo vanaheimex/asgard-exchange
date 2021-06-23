@@ -1,14 +1,14 @@
-import { Component, OnDestroy } from "@angular/core";
-import { Subscription } from "rxjs";
-import { LastBlockService } from "src/app/_services/last-block.service";
-import { environment } from "src/environments/environment";
-import { links } from "src/app/_const/links";
-import { AnalyticsService } from "src/app/_services/analytics.service";
+import { Component, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { LastBlockService } from 'src/app/_services/last-block.service';
+import { environment } from 'src/environments/environment';
+import { links } from 'src/app/_const/links';
+import { AnalyticsService } from 'src/app/_services/analytics.service';
 
 @Component({
-  selector: "app-last-block-indicator",
-  templateUrl: "./last-block-indicator.component.html",
-  styleUrls: ["./last-block-indicator.component.scss"],
+  selector: 'app-last-block-indicator',
+  templateUrl: './last-block-indicator.component.html',
+  styleUrls: ['./last-block-indicator.component.scss'],
 })
 export class LastBlockIndicatorComponent implements OnDestroy {
   subs: Subscription[];
@@ -19,8 +19,11 @@ export class LastBlockIndicatorComponent implements OnDestroy {
   gitHubUrl: string;
   links: any;
 
-  constructor(private lastBlockService: LastBlockService, private analytics: AnalyticsService) {
-    this.isTestnet = environment.network === "testnet";
+  constructor(
+    private lastBlockService: LastBlockService,
+    private analytics: AnalyticsService
+  ) {
+    this.isTestnet = environment.network === 'testnet';
     this.gitHubUrl = links.github;
     this.links = links;
 

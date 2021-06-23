@@ -1,12 +1,12 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { AssetAndBalance } from "src/app/_classes/asset-and-balance";
-import { CGCoinListItem } from "src/app/_services/coin-gecko.service";
-import { ActionOptions } from "../action-options.enum";
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { AssetAndBalance } from 'src/app/_classes/asset-and-balance';
+import { CGCoinListItem } from 'src/app/_services/coin-gecko.service';
+import { ActionOptions } from '../action-options.enum';
 
 @Component({
-  selector: "app-deposit-form",
-  templateUrl: "./deposit-form.component.html",
-  styleUrls: ["./deposit-form.component.scss"],
+  selector: 'app-deposit-form',
+  templateUrl: './deposit-form.component.html',
+  styleUrls: ['./deposit-form.component.scss'],
 })
 export class DepositFormComponent {
   @Input() asset: AssetAndBalance;
@@ -45,7 +45,7 @@ export class DepositFormComponent {
       this._withdrawAmount = amount;
       this.withdrawAmountChange.next(amount);
 
-      if (this.action === "WITHDRAW") {
+      if (this.action === 'WITHDRAW') {
         this.updateMemo(2, String(amount));
       }
     }
@@ -92,12 +92,12 @@ export class DepositFormComponent {
   }
 
   updateAction(action: ActionOptions) {
-    this.destinationAddressChange.next("");
-    this.memoAssetChange.next("");
+    this.destinationAddressChange.next('');
+    this.memoAssetChange.next('');
     this.actionChange.next(action);
     this.memoChange.next(action);
 
-    if (action === "WITHDRAW" || action === "LEAVE" || action === "UNBOND") {
+    if (action === 'WITHDRAW' || action === 'LEAVE' || action === 'UNBOND') {
       /**
        * this should be 0, will be updated on thorchain bugfix in 0.24.0
        */
@@ -121,8 +121,8 @@ export class DepositFormComponent {
   }
 
   updateMemo(position: number, val: string): void {
-    const splitMemo = this.memo.split(":");
-    let memo = "";
+    const splitMemo = this.memo.split(':');
+    let memo = '';
 
     if (+position > splitMemo.length) {
       for (let i = 0; i <= position; i++) {
@@ -130,7 +130,7 @@ export class DepositFormComponent {
           memo += `${splitMemo[i]}:`;
         } else {
           if (i !== position) {
-            memo += ":";
+            memo += ':';
           }
         }
 
@@ -149,14 +149,14 @@ export class DepositFormComponent {
         }
 
         if (index < splitMemo.length - 1) {
-          updatedMemo += ":";
+          updatedMemo += ':';
         }
 
         return updatedMemo;
-      }, "");
+      }, '');
     }
 
-    if (memo.charAt(memo.length - 1) === ":") {
+    if (memo.charAt(memo.length - 1) === ':') {
       memo = memo.slice(0, -1);
     }
 

@@ -23,7 +23,7 @@ import BigNumber from 'bignumber.js';
 import { PoolAddressDTO } from '../_classes/pool-address';
 import { TransactionUtilsService } from './transaction-utils.service';
 import { TxType } from '../_const/tx-type';
-import { HttpClient, HttpParams } from "@angular/common/http";
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { ETH_DECIMAL, Client as EthClient } from '@xchainjs/xchain-ethereum';
 import { HaskoinService } from './haskoin.service';
 
@@ -34,7 +34,7 @@ export interface MidgardData<T> {
 }
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class UserService {
   private _user: User;
@@ -68,7 +68,7 @@ export class UserService {
     this._chainBalanceErrors = [];
 
     this.asgardexBncClient = new BinanceClient({
-      network: environment.network === "testnet" ? "testnet" : "mainnet",
+      network: environment.network === 'testnet' ? 'testnet' : 'mainnet',
     });
   }
 
@@ -77,7 +77,7 @@ export class UserService {
     this.userSource.next(user);
     this.setLastLoginType(user?.type);
     if (user) {
-      this.ThorAddress = this.getTokenAddress(user, "THOR") ?? undefined;
+      this.ThorAddress = this.getTokenAddress(user, 'THOR') ?? undefined;
       this.fetchBalances();
     } else {
       this.ThorAddress = undefined;
@@ -93,21 +93,23 @@ export class UserService {
       let balances;
 
       if (environment.network === 'testnet') {
-        balances = btcBalances
-      }
-      else {
-        const HASKOIN_API_URL = 'https://api.haskoin.com/btc'
-        const { confirmed, unconfirmed } = await this.http.get(`${HASKOIN_API_URL}/address/${address}/balance`).toPromise() as any
-        const baseConfirmed = baseAmount(confirmed)
-        const baseUnconfirmed = baseAmount(unconfirmed)
+        balances = btcBalances;
+      } else {
+        const HASKOIN_API_URL = 'https://api.haskoin.com/btc';
+        const { confirmed, unconfirmed } = (await this.http
+          .get(`${HASKOIN_API_URL}/address/${address}/balance`)
+          .toPromise()) as any;
+        const baseConfirmed = baseAmount(confirmed);
+        const baseUnconfirmed = baseAmount(unconfirmed);
 
-        balances = baseAmount(baseConfirmed.amount().plus(baseUnconfirmed.amount()))
-
+        balances = baseAmount(
+          baseConfirmed.amount().plus(baseUnconfirmed.amount())
+        );
       }
 
       this.pushBalances(balances);
     } catch (error) {
-      console.error("error fetching binance balances: ", error);
+      console.error('error fetching binance balances: ', error);
     }
   }
 
@@ -126,16 +128,15 @@ export class UserService {
       (this._user.type === 'XDEFI' || this._user.type === 'keystore')
     ) {
       for (const [key, _value] of Object.entries(this._user.clients)) {
-        if (key === "binance") {
+        if (key === 'binance') {
           promises.push(this.getBinanceBalances());
-        } else if (key === "ethereum") {
+        } else if (key === 'ethereum') {
           const client = this._user.clients.ethereum;
           const address = client.getAddress();
           promises.push(this.getEthereumBalances(client, address));
-        } else if (key === "bitcoin") {
-          promises.push(this.getBitcoinBalances())
-        }
-        else {
+        } else if (key === 'bitcoin') {
+          promises.push(this.getBitcoinBalances());
+        } else {
           promises.push(this.getGeneralBalance(key));
         }
       }
@@ -153,41 +154,46 @@ export class UserService {
         etherscanApiKey: environment.etherscanKey,
         infuraCreds: { projectId: environment.infuraProjectId },
       });
-      this._user.clients = { ethereum: userEthereumClient, binance: undefined, bitcoin: undefined, bitcoinCash: undefined, thorchain: undefined, litecoin: undefined };
+      this._user.clients = {
+        ethereum: userEthereumClient,
+        binance: undefined,
+        bitcoin: undefined,
+        bitcoinCash: undefined,
+        thorchain: undefined,
+        litecoin: undefined,
+      };
 
       this.getEthereumBalances(userEthereumClient, this._user.wallet);
     }
 
     // allSettled is not yet added into ts, need an update for this
-    (Promise as any).allSettled(promises).then(
-      (_) => {
-        this._pendingBalances = false;
-        this.pendingBalancesSource.next(this._pendingBalances);
-      }
-    )
+    (Promise as any).allSettled(promises).then((_) => {
+      this._pendingBalances = false;
+      this.pendingBalancesSource.next(this._pendingBalances);
+    });
   }
 
   // helper function to get the client name by chain name
   getClientByChain(chain: Chain): string {
     let key: string;
     switch (chain) {
-      case "BNB":
-        key = "binance";
+      case 'BNB':
+        key = 'binance';
         break;
-      case "ETH":
-        key = "ethereum";
+      case 'ETH':
+        key = 'ethereum';
         break;
-      case "BTC":
-        key = "bitcoin";
+      case 'BTC':
+        key = 'bitcoin';
         break;
-      case "BCH":
-        key = "bitcoinCash";
+      case 'BCH':
+        key = 'bitcoinCash';
         break;
-      case "LTC":
-        key = "litecoin";
+      case 'LTC':
+        key = 'litecoin';
         break;
-      case "THOR":
-        key = "thorchain";
+      case 'THOR':
+        key = 'thorchain';
         break;
     }
     return key;
@@ -195,14 +201,14 @@ export class UserService {
 
   async fetchBalance(chain: Chain): Promise<void> {
     let key = this.getClientByChain(chain);
-    if (key === "binance") {
+    if (key === 'binance') {
       this.getBinanceBalances();
-    } else if (key === "ethereum") {
+    } else if (key === 'ethereum') {
       const client = this._user.clients.ethereum;
       const address = client.getAddress();
       this.getEthereumBalances(client, address);
-    } else if (key === "bitcoin") {
-      this.getBitcoinBalances()
+    } else if (key === 'bitcoin') {
+      this.getBitcoinBalances();
     } else {
       this.getGeneralBalance(key);
     }
@@ -248,17 +254,17 @@ export class UserService {
       console.error(error);
       // ethereum and binance are handled in respected functions
       switch (key) {
-        case "bitcoin":
-          this.pushChainBalanceErrors("BTC");
+        case 'bitcoin':
+          this.pushChainBalanceErrors('BTC');
           break;
-        case "bitcoinCash":
-          this.pushChainBalanceErrors("BCH");
+        case 'bitcoinCash':
+          this.pushChainBalanceErrors('BCH');
           break;
-        case "litecoin":
-          this.pushChainBalanceErrors("LTC");
+        case 'litecoin':
+          this.pushChainBalanceErrors('LTC');
           break;
-        case "thorchain":
-          this.pushChainBalanceErrors("THOR");
+        case 'thorchain':
+          this.pushChainBalanceErrors('THOR');
           break;
       }
     }
@@ -283,7 +289,7 @@ export class UserService {
 
       this.pushBalances(balances);
     } catch (error) {
-      console.error("error fetching binance balances: ", error);
+      console.error('error fetching binance balances: ', error);
     }
   }
 
@@ -306,12 +312,12 @@ export class UserService {
        * Add ETH RUNE
        */
       assetsToQuery.push(
-        environment.network === "testnet"
+        environment.network === 'testnet'
           ? new Asset(
-              `ETH.RUNE-${"0xd601c6A3a36721320573885A8d8420746dA3d7A0"}`
+              `ETH.RUNE-${'0xd601c6A3a36721320573885A8d8420746dA3d7A0'}`
             )
           : new Asset(
-              `ETH.RUNE-${"0x3155BA85D5F96b2d030a4966AF206230e46849cb"}`
+              `ETH.RUNE-${'0x3155BA85D5F96b2d030a4966AF206230e46849cb'}`
             )
       );
 
@@ -320,8 +326,8 @@ export class UserService {
        */
       const pools = await this.midgardService.getPools().toPromise();
       const ethTokenPools = pools
-        .filter((pool) => pool.asset.indexOf("ETH") === 0)
-        .filter((ethPool) => ethPool.asset.indexOf("-") >= 0);
+        .filter((pool) => pool.asset.indexOf('ETH') === 0)
+        .filter((ethPool) => ethPool.asset.indexOf('-') >= 0);
 
       for (const token of ethTokenPools) {
         const tokenAsset = checkSummedAsset(token.asset);
@@ -364,15 +370,15 @@ export class UserService {
           catchError((error) => of(error))
         )
         .subscribe(async (res: Balances) => {
-          const runeBalance = this.findBalance(res, new Asset("THOR.RUNE"));
+          const runeBalance = this.findBalance(res, new Asset('THOR.RUNE'));
           if (runeBalance && currentBalance < runeBalance) {
-            console.log("increased!");
+            console.log('increased!');
             this.fetchBalances();
             this.killRunePolling.next();
           }
         });
     } else {
-      console.error("no thorchain client found");
+      console.error('no thorchain client found');
     }
   }
 
@@ -386,32 +392,32 @@ export class UserService {
     let fee: number;
 
     switch (assetToString(asset)) {
-      case "THOR.RUNE":
+      case 'THOR.RUNE':
         fee = this.txUtilsService.calculateNetworkFee(
           asset,
           inboundAddresses,
-          txType ?? "INBOUND"
+          txType ?? 'INBOUND'
         );
         max = balance - fee - 3;
         break;
 
-      case "BTC.BTC":
-      case "LTC.LTC":
-      case "BCH.BCH":
-      case "BNB.BNB":
+      case 'BTC.BTC':
+      case 'LTC.LTC':
+      case 'BCH.BCH':
+      case 'BNB.BNB':
         fee = this.txUtilsService.calculateNetworkFee(
           asset,
           inboundAddresses,
-          txType ?? "INBOUND"
+          txType ?? 'INBOUND'
         );
         max = balance - fee;
         break;
 
-      case "ETH.ETH":
+      case 'ETH.ETH':
         fee = this.txUtilsService.calculateNetworkFee(
           asset,
           inboundAddresses,
-          txType ?? "INBOUND"
+          txType ?? 'INBOUND'
         );
         max = balance - fee * 1.01;
         break;
@@ -422,16 +428,16 @@ export class UserService {
 
   minimumSpendable(asset: Asset) {
     switch (`${asset.chain}.${asset.symbol}`) {
-      case "BTC.BTC":
-      case "LTC.LTC":
-      case "BCH.BCH":
-      case "THOR.RUNE":
+      case 'BTC.BTC':
+      case 'LTC.LTC':
+      case 'BCH.BCH':
+      case 'THOR.RUNE':
         return 0.0001;
 
-      case "BNB.BNB":
+      case 'BNB.BNB':
         return 0.001;
 
-      case "ETH.ETH":
+      case 'ETH.ETH':
         return 0.001;
 
       default:
@@ -489,13 +495,13 @@ export class UserService {
             balMap[`${mItem.asset.chain}.${mItem.asset.symbol}`.toUpperCase()]
               .amount
           ),
-          assetPriceUSD: mItem.assetPriceUSD ?? 0
+          assetPriceUSD: mItem.assetPriceUSD ?? 0,
         };
       } else {
         return {
           asset: mItem.asset,
           balance: assetAmount(0),
-          assetPriceUSD: mItem.assetPriceUSD ?? 0
+          assetPriceUSD: mItem.assetPriceUSD ?? 0,
         };
       }
     });
@@ -568,22 +574,22 @@ export class UserService {
 
   getChainClient(user: User = this._user, chain: Chain) {
     switch (chain) {
-      case "BTC":
+      case 'BTC':
         return user.clients.bitcoin;
 
-      case "ETH":
+      case 'ETH':
         return user.clients.ethereum;
 
-      case "BNB":
+      case 'BNB':
         return user.clients.binance;
 
-      case "BCH":
+      case 'BCH':
         return user.clients.bitcoinCash;
 
-      case "LTC":
+      case 'LTC':
         return user.clients.litecoin;
 
-      case "THOR":
+      case 'THOR':
         return user.clients.thorchain;
     }
 

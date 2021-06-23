@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import BigNumber from 'bignumber.js';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SwapServiceService {
   private targetAmount: BigNumber = new BigNumber(0);

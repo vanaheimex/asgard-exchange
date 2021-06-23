@@ -1,34 +1,40 @@
-import { Injectable } from "@angular/core";
-import { Router } from "@angular/router";
-import { Chain } from "@xchainjs/xchain-util";
-import { BehaviorSubject } from "rxjs";
-import { AssetAndBalance } from "../_classes/asset-and-balance";
+import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import { Chain } from '@xchainjs/xchain-util';
+import { BehaviorSubject } from 'rxjs';
+import { AssetAndBalance } from '../_classes/asset-and-balance';
 
-export type DepositViews = "Deposit" | "Confirm" | "Asset" | "Approve" | "Connect" | "PoolType";
-export type WithdrawViews = "Withdraw" | "Confirm" | "Asset" | 'PoolType';
-export type CreatePoolViews = "Create" | "Approve" | "Asset" | "Confirm";
+export type DepositViews =
+  | 'Deposit'
+  | 'Confirm'
+  | 'Asset'
+  | 'Approve'
+  | 'Connect'
+  | 'PoolType';
+export type WithdrawViews = 'Withdraw' | 'Confirm' | 'Asset' | 'PoolType';
+export type CreatePoolViews = 'Create' | 'Approve' | 'Asset' | 'Confirm';
 export type MainViews =
-  | "Reconnect"
-  | "User Setting"
-  | "Swap"
-  | "Account Setting";
+  | 'Reconnect'
+  | 'User Setting'
+  | 'Swap'
+  | 'Account Setting';
 export type SwapViews =
-  | "Swap"
-  | "TargetAsset"
-  | "SourceAsset"
-  | "Connect"
-  | "Confirm"
-  | "Approve"
+  | 'Swap'
+  | 'TargetAsset'
+  | 'SourceAsset'
+  | 'Connect'
+  | 'Confirm'
+  | 'Approve'
   | 'Update-target';
 export type UserViews =
-  | "Addresses"
-  | "Address"
-  | "Asset"
-  | "Send"
-  | "Confirm"
-  | "ADDRESS_ADD_TOKEN";
-export type SettingViews = "ACCOUNT" | "PHRASE" | "SLIP" | "CURRENCY";
-export type PoolViews = "Pool" | "Connect";
+  | 'Addresses'
+  | 'Address'
+  | 'Asset'
+  | 'Send'
+  | 'Confirm'
+  | 'ADDRESS_ADD_TOKEN';
+export type SettingViews = 'ACCOUNT' | 'PHRASE' | 'SLIP' | 'CURRENCY';
+export type PoolViews = 'Pool' | 'Connect';
 export type UserOverlay = {
   userView: UserViews;
   address?: string;
@@ -36,16 +42,16 @@ export type UserOverlay = {
   asset?: AssetAndBalance;
 };
 export enum MainViewsEnum {
-  Swap = "Swap",
-  Reconnect = "Reconnect",
-  UserSetting = "User Setting",
-  AccountSetting = "Account Setting",
-  Upgrade = "Upgrade",
-  Transaction = "Transaction",
-  ReconnectXDEFI = "ReconnectXDEFI",
+  Swap = 'Swap',
+  Reconnect = 'Reconnect',
+  UserSetting = 'User Setting',
+  AccountSetting = 'Account Setting',
+  Upgrade = 'Upgrade',
+  Transaction = 'Transaction',
+  ReconnectXDEFI = 'ReconnectXDEFI',
 }
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class OverlaysService {
   private currentViewSource = new BehaviorSubject<MainViewsEnum>(
@@ -54,33 +60,31 @@ export class OverlaysService {
   currentView = this.currentViewSource.asObservable();
 
   private currentDepositViewSource = new BehaviorSubject<DepositViews>(
-    "PoolType"
+    'PoolType'
   );
   depositView = this.currentDepositViewSource.asObservable();
 
   private currentWithdrawViewSource = new BehaviorSubject<WithdrawViews>(
-    "PoolType"
+    'PoolType'
   );
   withdrawView = this.currentWithdrawViewSource.asObservable();
 
   private currentCreatePoolViewSource = new BehaviorSubject<CreatePoolViews>(
-    "Create"
+    'Create'
   );
   createPoolView = this.currentCreatePoolViewSource.asObservable();
 
-  private currentPoolViewSource = new BehaviorSubject<PoolViews>(
-    "Pool"
-  );
+  private currentPoolViewSource = new BehaviorSubject<PoolViews>('Pool');
   PoolView = this.currentPoolViewSource.asObservable();
 
-  private innerSwapView: SwapViews = "Swap";
+  private innerSwapView: SwapViews = 'Swap';
 
   private userViewSource = new BehaviorSubject<UserOverlay>({
-    userView: "Addresses",
+    userView: 'Addresses',
   });
   innerUserView = this.userViewSource.asObservable();
 
-  private innerSettingView: SettingViews = "ACCOUNT";
+  private innerSettingView: SettingViews = 'ACCOUNT';
   private innerSettingViewSwap: boolean = false;
 
   private showMenu: boolean = false;
@@ -139,9 +143,9 @@ export class OverlaysService {
     this.currentViewSource.next(mainView);
     this.innerSwapView = swapView;
     //if it's in deposit it will set the nav to the main page of deposit
-    this.setCurrentDepositView("Deposit");
-    this.setCurrentCreatePoolView("Create");
-    this.setCurrentWithdrawView("Withdraw");
+    this.setCurrentDepositView('Deposit');
+    this.setCurrentCreatePoolView('Create');
+    this.setCurrentWithdrawView('Withdraw');
     // this.router.navigate(['/', 'pool']);
   }
 

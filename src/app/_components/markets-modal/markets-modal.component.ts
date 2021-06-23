@@ -6,23 +6,27 @@ import {
   Input,
   Output,
   EventEmitter,
-} from "@angular/core";
-import { Market } from "src/app/_classes/market";
-import { UserService } from "src/app/_services/user.service";
-import { Asset } from "../../_classes/asset";
-import { Subscription } from "rxjs";
-import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { User } from "src/app/_classes/user";
-import { Balances } from "@xchainjs/xchain-client";
-import { AssetAndBalance } from "src/app/_classes/asset-and-balance";
-import { OverlaysService } from "src/app/_services/overlays.service";
-import { MidgardService } from "src/app/_services/midgard.service";
-import { AnalyticsService, assetString, Events } from "src/app/_services/analytics.service";
+} from '@angular/core';
+import { Market } from 'src/app/_classes/market';
+import { UserService } from 'src/app/_services/user.service';
+import { Asset } from '../../_classes/asset';
+import { Subscription } from 'rxjs';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { User } from 'src/app/_classes/user';
+import { Balances } from '@xchainjs/xchain-client';
+import { AssetAndBalance } from 'src/app/_classes/asset-and-balance';
+import { OverlaysService } from 'src/app/_services/overlays.service';
+import { MidgardService } from 'src/app/_services/midgard.service';
+import {
+  AnalyticsService,
+  assetString,
+  Events,
+} from 'src/app/_services/analytics.service';
 
 @Component({
-  selector: "app-markets-modal",
-  templateUrl: "./markets-modal.component.html",
-  styleUrls: ["./markets-modal.component.scss"],
+  selector: 'app-markets-modal',
+  templateUrl: './markets-modal.component.html',
+  styleUrls: ['./markets-modal.component.scss'],
 })
 export class MarketsModalComponent implements OnInit, OnDestroy {
   get searchTerm(): string {
@@ -68,7 +72,6 @@ export class MarketsModalComponent implements OnInit, OnDestroy {
     public overlaysService: OverlaysService,
     private analytics: AnalyticsService
   ) {
-
     const user$ = this.userService.user$.subscribe((user) => {
       this.user = user;
       if (!user) {
@@ -118,10 +121,15 @@ export class MarketsModalComponent implements OnInit, OnDestroy {
   }
 
   selectItem(item: Asset) {
-    if (item.symbol !== "") {
+    if (item.symbol !== '') {
       if (this.disabledAssetSymbol != item.symbol) {
         if (this.user)
-          this.analytics.event(this.events?.event_category, `option_selected_*ASSET*`, undefined, assetString(item));
+          this.analytics.event(
+            this.events?.event_category,
+            `option_selected_*ASSET*`,
+            undefined,
+            assetString(item)
+          );
         this.selectedAssetChange.emit(item);
         this.close.emit();
       }
@@ -130,7 +138,7 @@ export class MarketsModalComponent implements OnInit, OnDestroy {
 
   closeDialog() {
     if (this.user)
-      this.analytics.event(this.events?.event_category, 'button_cancel')
+      this.analytics.event(this.events?.event_category, 'button_cancel');
     this.close.emit();
   }
 }

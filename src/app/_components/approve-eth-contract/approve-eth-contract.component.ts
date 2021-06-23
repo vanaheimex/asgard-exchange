@@ -5,20 +5,20 @@ import {
   OnInit,
   Output,
   EventEmitter,
-} from "@angular/core";
-import { Router } from "@angular/router";
-import { Asset } from "@xchainjs/xchain-util";
-import { Subscription } from "rxjs";
-import { User } from "src/app/_classes/user";
-import { OverlaysService } from "src/app/_services/overlays.service";
-import { TransactionStatusService } from "src/app/_services/transaction-status.service";
-import { UserService } from "src/app/_services/user.service";
-import { ApproveEthContractModalComponent } from "./approve-eth-contract-modal/approve-eth-contract-modal.component";
+} from '@angular/core';
+import { Router } from '@angular/router';
+import { Asset } from '@xchainjs/xchain-util';
+import { Subscription } from 'rxjs';
+import { User } from 'src/app/_classes/user';
+import { OverlaysService } from 'src/app/_services/overlays.service';
+import { TransactionStatusService } from 'src/app/_services/transaction-status.service';
+import { UserService } from 'src/app/_services/user.service';
+import { ApproveEthContractModalComponent } from './approve-eth-contract-modal/approve-eth-contract-modal.component';
 
 @Component({
-  selector: "app-approve-eth-contract",
-  templateUrl: "./approve-eth-contract.component.html",
-  styleUrls: ["./approve-eth-contract.component.scss"],
+  selector: 'app-approve-eth-contract',
+  templateUrl: './approve-eth-contract.component.html',
+  styleUrls: ['./approve-eth-contract.component.scss'],
 })
 export class ApproveEthContractComponent implements OnDestroy {
   @Input() contractAddress: string;

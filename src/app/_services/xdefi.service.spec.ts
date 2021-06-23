@@ -1,8 +1,8 @@
-import { TestBed } from "@angular/core/testing";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
-import { XDEFIService } from "./xdefi.service";
+import { TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { XDEFIService } from './xdefi.service';
 
-describe("XDEFIService", () => {
+describe('XDEFIService', () => {
   let service: XDEFIService;
 
   beforeEach(() => {
@@ -12,7 +12,7 @@ describe("XDEFIService", () => {
     service = TestBed.inject(XDEFIService);
   });
 
-  it("should be created", () => {
+  it('should be created', () => {
     expect(service).toBeTruthy();
   });
 });

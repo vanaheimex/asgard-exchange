@@ -5,32 +5,35 @@ import {
   Output,
   EventEmitter,
   OnDestroy,
-} from "@angular/core";
-import { Asset } from "src/app/_classes/asset";
-import { MarketsModalComponent } from "../markets-modal/markets-modal.component";
-import { MatDialog } from "@angular/material/dialog";
-import { UserService } from "src/app/_services/user.service";
-import { AssetAndBalance } from "src/app/_classes/asset-and-balance";
-import { userInfo } from "os";
+} from '@angular/core';
+import { Asset } from 'src/app/_classes/asset';
+import { MarketsModalComponent } from '../markets-modal/markets-modal.component';
+import { MatDialog } from '@angular/material/dialog';
+import { UserService } from 'src/app/_services/user.service';
+import { AssetAndBalance } from 'src/app/_classes/asset-and-balance';
+import { userInfo } from 'os';
 import {
   MainViewsEnum,
   OverlaysService,
-} from "src/app/_services/overlays.service";
-import { EthUtilsService } from "src/app/_services/eth-utils.service";
-import { User } from "src/app/_classes/user";
-import { Subscription } from "rxjs";
-import { Balance } from "@xchainjs/xchain-client";
-import { baseToAsset } from "@xchainjs/xchain-util";
-import { MidgardService } from "src/app/_services/midgard.service";
-import { ThorchainPricesService } from "src/app/_services/thorchain-prices.service";
-import { CurrencyService } from "src/app/_services/currency.service";
-import { Currency } from "../account-settings/currency-converter/currency-converter.component";
-import { AnalyticsService, assetString as assetStringFunc } from "src/app/_services/analytics.service";
+} from 'src/app/_services/overlays.service';
+import { EthUtilsService } from 'src/app/_services/eth-utils.service';
+import { User } from 'src/app/_classes/user';
+import { Subscription } from 'rxjs';
+import { Balance } from '@xchainjs/xchain-client';
+import { baseToAsset } from '@xchainjs/xchain-util';
+import { MidgardService } from 'src/app/_services/midgard.service';
+import { ThorchainPricesService } from 'src/app/_services/thorchain-prices.service';
+import { CurrencyService } from 'src/app/_services/currency.service';
+import { Currency } from '../account-settings/currency-converter/currency-converter.component';
+import {
+  AnalyticsService,
+  assetString as assetStringFunc,
+} from 'src/app/_services/analytics.service';
 
 @Component({
-  selector: "app-double-asset-field",
-  templateUrl: "./double-asset-field.component.html",
-  styleUrls: ["./double-asset-field.component.scss"],
+  selector: 'app-double-asset-field',
+  templateUrl: './double-asset-field.component.html',
+  styleUrls: ['./double-asset-field.component.scss'],
 })
 export class DoubleAssetFieldComponent implements OnInit {
   /**
@@ -94,8 +97,6 @@ export class DoubleAssetFieldComponent implements OnInit {
     this.subs = [user$, curs$];
   }
 
-  ngOnInit(): void {}
-
   async gotoWallet(inputAsset: Asset) {
     const userBalance$ = this.userService.userBalances$.subscribe(
       (balances) => {
@@ -110,10 +111,15 @@ export class DoubleAssetFieldComponent implements OnInit {
           const asset = new Asset(
             `${balance.asset.chain}.${balance.asset.symbol}`
           );
-          this.analytics.event(this.assetEvents.event_category, this.assetEvents.event_tag_wallet, undefined, assetStringFunc(inputAsset))
+          this.analytics.event(
+            this.assetEvents.event_category,
+            this.assetEvents.event_tag_wallet,
+            undefined,
+            assetStringFunc(inputAsset)
+          );
           let assetBalance: AssetAndBalance;
           this.midgardService.getPools().subscribe(async (pools) => {
-            if (asset.ticker === "RUNE") {
+            if (asset.ticker === 'RUNE') {
               assetBalance = {
                 asset,
                 assetPriceUSD:
@@ -135,7 +141,7 @@ export class DoubleAssetFieldComponent implements OnInit {
               inputAsset.chain
             );
             this.overlayService.setCurrentUserView({
-              userView: "Asset",
+              userView: 'Asset',
               address,
               chain: inputAsset.chain,
               asset: assetBalance,
@@ -150,7 +156,13 @@ export class DoubleAssetFieldComponent implements OnInit {
   }
 
   getCumulativeVal(): number {
-    return this.priceInputs[0] ?? 0 * this.assetUnits[0] ?? 0 + this.priceInputs[1] ?? 0 * this.assetUnits[1] ?? 0 
+    return (
+      this.priceInputs[0] ??
+      0 * this.assetUnits[0] ??
+      0 + this.priceInputs[1] ??
+      0 * this.assetUnits[1] ??
+      0
+    );
   }
 
   ngOnDestroy() {

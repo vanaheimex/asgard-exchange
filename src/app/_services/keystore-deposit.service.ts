@@ -72,7 +72,7 @@ export interface RuneDepositParams {
 }
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class KeystoreDepositService {
   constructor(
@@ -169,7 +169,7 @@ export class KeystoreDepositService {
       : toBase.amount().minus(feeToBase.amount()); // after deductions, not enough to process, subtract fee from amount
 
     if (amount.isLessThan(0)) {
-      throw new Error("Insufficient funds. Try sending a smaller amount");
+      throw new Error('Insufficient funds. Try sending a smaller amount');
     }
     // TODO -> consolidate this with BTC, BCH, LTC
 
@@ -217,7 +217,7 @@ export class KeystoreDepositService {
       : toBase.amount().minus(feeToBase.amount()); // after deductions, not enough to process, subtract fee from amount
 
     if (amount.isLessThan(0)) {
-      throw new Error("Insufficient funds. Try sending a smaller amount");
+      throw new Error('Insufficient funds. Try sending a smaller amount');
     }
     // TODO -> consolidate this with BTC, BCH, LTC
 
@@ -267,7 +267,7 @@ export class KeystoreDepositService {
         : toBase.amount().minus(feeToBase.amount()); // after deductions, not enough to process, subtract fee from amount
 
       if (amount.isLessThan(0)) {
-        throw new Error("Insufficient funds. Try sending a smaller amount");
+        throw new Error('Insufficient funds. Try sending a smaller amount');
       }
       // TODO -> consolidate this with BTC, BCH, LTC
 

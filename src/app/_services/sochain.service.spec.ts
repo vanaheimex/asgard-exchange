@@ -1,9 +1,9 @@
-import { TestBed } from "@angular/core/testing";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
-import { SochainService } from "./sochain.service";
+import { SochainService } from './sochain.service';
 
-describe("SochainService", () => {
+describe('SochainService', () => {
   let service: SochainService;
 
   beforeEach(() => {
@@ -13,7 +13,7 @@ describe("SochainService", () => {
     service = TestBed.inject(SochainService);
   });
 
-  it("should be created", () => {
+  it('should be created', () => {
     expect(service).toBeTruthy();
   });
 });

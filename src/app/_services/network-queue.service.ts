@@ -1,10 +1,10 @@
-import { Injectable } from "@angular/core";
-import { Observable, timer } from "rxjs";
-import { retry, share, switchMap } from "rxjs/operators";
-import { MidgardService, ThorchainQueue } from "./midgard.service";
+import { Injectable } from '@angular/core';
+import { Observable, timer } from 'rxjs';
+import { retry, share, switchMap } from 'rxjs/operators';
+import { MidgardService, ThorchainQueue } from './midgard.service';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class NetworkQueueService {
   networkQueue$: Observable<ThorchainQueue>;

@@ -1,10 +1,10 @@
-import { waitForAsync, ComponentFixture, TestBed } from "@angular/core/testing";
+import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PoolComponent } from "./pool.component";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
-import { MatIconModule } from "@angular/material/icon";
+import { PoolComponent } from './pool.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { MatIconModule } from '@angular/material/icon';
 
-describe("PoolComponent", () => {
+describe('PoolComponent', () => {
   let component: PoolComponent;
   let fixture: ComponentFixture<PoolComponent>;
 
@@ -23,7 +23,7 @@ describe("PoolComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

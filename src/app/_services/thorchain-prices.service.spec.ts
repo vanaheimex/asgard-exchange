@@ -1,8 +1,8 @@
-import { TestBed } from "@angular/core/testing";
+import { TestBed } from '@angular/core/testing';
 
-import { ThorchainPricesService } from "./thorchain-prices.service";
+import { ThorchainPricesService } from './thorchain-prices.service';
 
-describe("ThorchainPricesService", () => {
+describe('ThorchainPricesService', () => {
   let service: ThorchainPricesService;
 
   beforeEach(() => {
@@ -10,7 +10,7 @@ describe("ThorchainPricesService", () => {
     service = TestBed.inject(ThorchainPricesService);
   });
 
-  it("should be created", () => {
+  it('should be created', () => {
     expect(service).toBeTruthy();
   });
 });

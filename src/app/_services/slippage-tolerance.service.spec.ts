@@ -1,8 +1,8 @@
-import { TestBed } from "@angular/core/testing";
+import { TestBed } from '@angular/core/testing';
 
-import { SlippageToleranceService } from "./slippage-tolerance.service";
+import { SlippageToleranceService } from './slippage-tolerance.service';
 
-describe("SlipLimitService", () => {
+describe('SlipLimitService', () => {
   let service: SlippageToleranceService;
 
   beforeEach(() => {
@@ -10,7 +10,7 @@ describe("SlipLimitService", () => {
     service = TestBed.inject(SlippageToleranceService);
   });
 
-  it("should be created", () => {
+  it('should be created', () => {
     expect(service).toBeTruthy();
   });
 });

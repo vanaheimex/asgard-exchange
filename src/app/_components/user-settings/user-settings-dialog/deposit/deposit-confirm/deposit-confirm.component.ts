@@ -4,23 +4,23 @@ import {
   Output,
   Input,
   OnDestroy,
-} from "@angular/core";
-import { assetAmount, assetToBase } from "@xchainjs/xchain-util";
-import { Subscription } from "rxjs";
-import { User } from "src/app/_classes/user";
-import { TransactionConfirmationState } from "src/app/_const/transaction-confirmation-state";
+} from '@angular/core';
+import { assetAmount, assetToBase } from '@xchainjs/xchain-util';
+import { Subscription } from 'rxjs';
+import { User } from 'src/app/_classes/user';
+import { TransactionConfirmationState } from 'src/app/_const/transaction-confirmation-state';
 import {
   TransactionStatusService,
   TxActions,
   TxStatus,
-} from "src/app/_services/transaction-status.service";
-import { UserService } from "src/app/_services/user.service";
-import { ActionOptions } from "../action-options.enum";
+} from 'src/app/_services/transaction-status.service';
+import { UserService } from 'src/app/_services/user.service';
+import { ActionOptions } from '../action-options.enum';
 
 @Component({
-  selector: "app-deposit-confirm",
-  templateUrl: "./deposit-confirm.component.html",
-  styleUrls: ["./deposit-confirm.component.scss"],
+  selector: 'app-deposit-confirm',
+  templateUrl: './deposit-confirm.component.html',
+  styleUrls: ['./deposit-confirm.component.scss'],
 })
 export class DepositConfirmComponent implements OnDestroy {
   @Input() memo: string;
@@ -64,18 +64,18 @@ export class DepositConfirmComponent implements OnDestroy {
 
         this.hash = hash;
         this.txStatusService.addTransaction({
-          chain: "THOR",
+          chain: 'THOR',
           hash: this.hash,
-          ticker: "RUNE",
+          ticker: 'RUNE',
           status: TxStatus.PENDING,
           action: TxActions.DEPOSIT,
           isThorchainTx: true,
-          symbol: "RUNE",
+          symbol: 'RUNE',
         });
 
         this.transactionSubmitted.next(hash);
       } catch (error) {
-        console.error("error making RUNE transfer: ", error);
+        console.error('error making RUNE transfer: ', error);
         this.txState = TransactionConfirmationState.ERROR;
       }
     }

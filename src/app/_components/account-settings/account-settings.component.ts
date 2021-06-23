@@ -1,21 +1,21 @@
-import { Component, OnInit } from "@angular/core";
-import { Subscription } from "rxjs";
-import { User } from "src/app/_classes/user";
-import { AnalyticsService } from "src/app/_services/analytics.service";
-import { CurrencyService } from "src/app/_services/currency.service";
+import { Component, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { User } from 'src/app/_classes/user';
+import { AnalyticsService } from 'src/app/_services/analytics.service';
+import { CurrencyService } from 'src/app/_services/currency.service';
 import {
   MainViewsEnum,
   OverlaysService,
   SettingViews,
-} from "src/app/_services/overlays.service";
-import { SlippageToleranceService } from "src/app/_services/slippage-tolerance.service";
-import { UserService } from "src/app/_services/user.service";
-import { Currency } from "./currency-converter/currency-converter.component";
+} from 'src/app/_services/overlays.service';
+import { SlippageToleranceService } from 'src/app/_services/slippage-tolerance.service';
+import { UserService } from 'src/app/_services/user.service';
+import { Currency } from './currency-converter/currency-converter.component';
 
 @Component({
-  selector: "app-account-settings",
-  templateUrl: "./account-settings.component.html",
-  styleUrls: ["./account-settings.component.scss"],
+  selector: 'app-account-settings',
+  templateUrl: './account-settings.component.html',
+  styleUrls: ['./account-settings.component.scss'],
 })
 export class AccountSettingsComponent implements OnInit {
   loading: boolean;
@@ -51,9 +51,9 @@ export class AccountSettingsComponent implements OnInit {
   }
 
   breadcrumbNav(val: string) {
-    if (val === "swap") {
+    if (val === 'swap') {
       this.analytics.event('setting_select', 'breadcrumb_skip');
-      this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
+      this.overlaysService.setViews(MainViewsEnum.Swap, 'Swap');
     }
   }
 
@@ -63,7 +63,7 @@ export class AccountSettingsComponent implements OnInit {
 
   close() {
     this.analytics.event('setting_select', 'button_close');
-    this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
+    this.overlaysService.setViews(MainViewsEnum.Swap, 'Swap');
   }
 
   getSettingView() {
@@ -71,7 +71,12 @@ export class AccountSettingsComponent implements OnInit {
   }
 
   setSettingView(val: SettingViews) {
-    this.analytics.event('setting_select', 'option_selected_*SETTING*', undefined, val);
+    this.analytics.event(
+      'setting_select',
+      'option_selected_*SETTING*',
+      undefined,
+      val
+    );
     this.overlaysService.setSettingView(val);
   }
 
@@ -84,6 +89,6 @@ export class AccountSettingsComponent implements OnInit {
       sub.unsubscribe();
     }
 
-    this.overlaysService.setSettingView("ACCOUNT");
+    this.overlaysService.setSettingView('ACCOUNT');
   }
 }

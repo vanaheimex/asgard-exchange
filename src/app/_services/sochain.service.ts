@@ -1,7 +1,7 @@
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
-import { Chain } from "@xchainjs/xchain-util";
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { Chain } from '@xchainjs/xchain-util';
 
 export type SochainTxResponse = {
   status: string;
@@ -20,7 +20,7 @@ export type SochainTxResponse = {
 };
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class SochainService {
   constructor(private http: HttpClient) {}
@@ -36,12 +36,12 @@ export class SochainService {
   }): Observable<SochainTxResponse> {
     let sochainNetwork: string;
 
-    if (chain === "LTC") {
-      sochainNetwork = network === "testnet" ? "LTCTEST" : "LTC";
-    } else if (chain === "BTC") {
-      sochainNetwork = network === "testnet" ? "BTCTEST" : "BTC";
+    if (chain === 'LTC') {
+      sochainNetwork = network === 'testnet' ? 'LTCTEST' : 'LTC';
+    } else if (chain === 'BTC') {
+      sochainNetwork = network === 'testnet' ? 'BTCTEST' : 'BTC';
     } else {
-      console.error("no chains match");
+      console.error('no chains match');
       return;
     }
 

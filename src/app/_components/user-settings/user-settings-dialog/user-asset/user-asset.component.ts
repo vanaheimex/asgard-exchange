@@ -1,22 +1,28 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import { Tx, TxsPage } from "@xchainjs/xchain-client";
-import { Chain } from "@xchainjs/xchain-util";
-import { Subscription } from "rxjs";
-import { Asset } from "src/app/_classes/asset";
-import { AssetAndBalance } from "src/app/_classes/asset-and-balance";
-import { User } from "src/app/_classes/user";
-import { Currency } from "src/app/_components/account-settings/currency-converter/currency-converter.component";
-import { AnalyticsService, assetString } from "src/app/_services/analytics.service";
-import { CopyService } from "src/app/_services/copy.service";
-import { CurrencyService } from "src/app/_services/currency.service";
-import { ExplorerPathsService } from "src/app/_services/explorer-paths.service";
-import { MainViewsEnum, OverlaysService } from "src/app/_services/overlays.service";
-import { UserService } from "src/app/_services/user.service";
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Tx, TxsPage } from '@xchainjs/xchain-client';
+import { Chain } from '@xchainjs/xchain-util';
+import { Subscription } from 'rxjs';
+import { Asset } from 'src/app/_classes/asset';
+import { AssetAndBalance } from 'src/app/_classes/asset-and-balance';
+import { User } from 'src/app/_classes/user';
+import { Currency } from 'src/app/_components/account-settings/currency-converter/currency-converter.component';
+import {
+  AnalyticsService,
+  assetString,
+} from 'src/app/_services/analytics.service';
+import { CopyService } from 'src/app/_services/copy.service';
+import { CurrencyService } from 'src/app/_services/currency.service';
+import { ExplorerPathsService } from 'src/app/_services/explorer-paths.service';
+import {
+  MainViewsEnum,
+  OverlaysService,
+} from 'src/app/_services/overlays.service';
+import { UserService } from 'src/app/_services/user.service';
 
 @Component({
-  selector: "app-user-asset",
-  templateUrl: "./user-asset.component.html",
-  styleUrls: ["./user-asset.component.scss"],
+  selector: 'app-user-asset',
+  templateUrl: './user-asset.component.html',
+  styleUrls: ['./user-asset.component.scss'],
 })
 export class UserAssetComponent {
   @Input() set asset(asset: AssetAndBalance) {
@@ -111,50 +117,56 @@ export class UserAssetComponent {
       this.user,
       this.asset.asset.chain
     );
-    
+
     return client.getExplorerTxUrl(hash);
   }
 
   getExplorerEvent() {
     /** Analytics section */
-    this.analytics.event('wallet_asset', 'tx_list_tag_txid_explore_*WALLET*_*ASSET*', undefined, this.chain, assetString(this.asset.asset))
+    this.analytics.event(
+      'wallet_asset',
+      'tx_list_tag_txid_explore_*WALLET*_*ASSET*',
+      undefined,
+      this.chain,
+      assetString(this.asset.asset)
+    );
   }
 
   formatDate(date) {
     var d = new Date(date),
-      month = "" + (d.getMonth() + 1),
-      day = "" + d.getDate(),
+      month = '' + (d.getMonth() + 1),
+      day = '' + d.getDate(),
       year = d.getFullYear() % 100;
 
-    if (month.length < 2) month = "0" + month;
-    if (day.length < 2) day = "0" + day;
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
 
-    return [day, month, year].join("/");
+    return [day, month, year].join('/');
   }
 
   setExplorerPath() {
     switch (this.asset.asset.chain) {
-      case "BTC":
+      case 'BTC':
         this.explorerPath = `${this.explorerPathsService.bitcoinExplorerUrl}/address/${this.address}`;
         break;
 
-      case "BNB":
+      case 'BNB':
         this.explorerPath = `${this.explorerPathsService.binanceExplorerUrl}/address/${this.address}`;
         break;
 
-      case "THOR":
+      case 'THOR':
         this.explorerPath = `${this.explorerPathsService.thorchainExplorerUrl}/address/${this.address}`;
         break;
 
-      case "ETH":
+      case 'ETH':
         this.explorerPath = `${this.explorerPathsService.ethereumExplorerUrl}/address/${this.address}`;
         break;
 
-      case "LTC":
+      case 'LTC':
         this.explorerPath = `${this.explorerPathsService.litecoinExplorerUrl}/${this.address}`;
         break;
 
-      case "BCH":
+      case 'BCH':
         this.explorerPath = `${this.explorerPathsService.bchExplorerUrl}/address/${this.address}`;
         break;
 
@@ -167,20 +179,23 @@ export class UserAssetComponent {
     if (nav === 'swap') {
       this.analytics.event('wallet_asset', 'breadcrumb_skip');
       this.overlaysService.setViews(MainViewsEnum.Swap, 'Swap');
-    }
-    else if (nav === "wallet") {
+    } else if (nav === 'wallet') {
       this.analytics.event('wallet_asset', 'breadcrumb_wallet');
       this.overlaysService.setCurrentUserView({
-        userView: "Addresses",
+        userView: 'Addresses',
         address: null,
         chain: null,
         asset: null,
       });
-    }
-    else if (nav === "chain") {
-      this.analytics.event('wallet_asset', 'breadcrumb_*WALLET*', undefined, this.chain);
+    } else if (nav === 'chain') {
+      this.analytics.event(
+        'wallet_asset',
+        'breadcrumb_*WALLET*',
+        undefined,
+        this.chain
+      );
       this.overlaysService.setCurrentUserView({
-        userView: "Address",
+        userView: 'Address',
         address: this.address,
         chain: this.chain,
         asset: null,
@@ -190,8 +205,14 @@ export class UserAssetComponent {
 
   copyToClipboard() {
     if (this.address) {
-      this.analytics.event('wallet_asset', 'tag_txid_copy_*WALLET*_*ASSET*', undefined, this.chain, assetString(this.asset.asset));
-      
+      this.analytics.event(
+        'wallet_asset',
+        'tag_txid_copy_*WALLET*_*ASSET*',
+        undefined,
+        this.chain,
+        assetString(this.asset.asset)
+      );
+
       let result = this.copyService.copyToClipboard(this.address);
 
       if (result) this.copied = true;
@@ -199,17 +220,35 @@ export class UserAssetComponent {
   }
 
   eventClick() {
-    this.analytics.event('wallet_asset', 'tag_txid_explore_*WALLET*_*ASSET*', undefined, this.chain, assetString(this.asset.asset));
+    this.analytics.event(
+      'wallet_asset',
+      'tag_txid_explore_*WALLET*_*ASSET*',
+      undefined,
+      this.chain,
+      assetString(this.asset.asset)
+    );
   }
 
   sendNav() {
-    this.analytics.event('wallet_asset', 'button_send_*WALLET*_*ASSET*', undefined, this.chain, assetString(this.asset.asset));
+    this.analytics.event(
+      'wallet_asset',
+      'button_send_*WALLET*_*ASSET*',
+      undefined,
+      this.chain,
+      assetString(this.asset.asset)
+    );
     this.send.emit();
   }
 
   backNav() {
-    this.analytics.event('wallet_asset', 'button_assets_*WALLET*_*ASSET*', undefined, this.chain, assetString(this.asset.asset));
-    this.back.emit()
+    this.analytics.event(
+      'wallet_asset',
+      'button_assets_*WALLET*_*ASSET*',
+      undefined,
+      this.chain,
+      assetString(this.asset.asset)
+    );
+    this.back.emit();
   }
 
   ngOnDestroy(): void {

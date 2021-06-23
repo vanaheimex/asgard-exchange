@@ -1,10 +1,10 @@
-import { Injectable } from "@angular/core";
-import { ReplaySubject } from "rxjs";
-import { Asset } from "../_classes/asset";
-import { PoolDTO } from "../_classes/pool";
+import { Injectable } from '@angular/core';
+import { ReplaySubject } from 'rxjs';
+import { Asset } from '../_classes/asset';
+import { PoolDTO } from '../_classes/pool';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class ThorchainPricesService {
   private runeUsdPriceSource = new ReplaySubject<number>();
@@ -17,9 +17,9 @@ export class ThorchainPricesService {
       const asset = new Asset(pool.asset);
 
       return (
-        (asset.chain === "ETH" && asset.ticker === "USDT") ||
-        (asset.chain === "BNB" &&
-          (asset.ticker === "USDT" || asset.ticker === "BUSD"))
+        (asset.chain === 'ETH' && asset.ticker === 'USDT') ||
+        (asset.chain === 'BNB' &&
+          (asset.ticker === 'USDT' || asset.ticker === 'BUSD'))
       );
     });
 

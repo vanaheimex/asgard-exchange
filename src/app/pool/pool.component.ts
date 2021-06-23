@@ -1,28 +1,28 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
-import { Balances } from "@xchainjs/xchain-client";
-import { combineLatest, Subscription } from "rxjs";
-import { User } from "../_classes/user";
-import { MidgardService } from "../_services/midgard.service";
-import { UserService } from "../_services/user.service";
-import { PoolDTO } from "../_classes/pool";
-import { MemberPool } from "../_classes/member";
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Balances } from '@xchainjs/xchain-client';
+import { combineLatest, Subscription } from 'rxjs';
+import { User } from '../_classes/user';
+import { MidgardService } from '../_services/midgard.service';
+import { UserService } from '../_services/user.service';
+import { PoolDTO } from '../_classes/pool';
+import { MemberPool } from '../_classes/member';
 import {
   TransactionStatusService,
   Tx,
-} from "../_services/transaction-status.service";
-import { PoolDetailService } from "../_services/pool-detail.service";
-import { Router } from "@angular/router";
-import { isNonNativeRuneToken } from "../_classes/asset";
-import { ThorchainPricesService } from "../_services/thorchain-prices.service";
-import { CurrencyService } from "../_services/currency.service";
-import { Currency } from "../_components/account-settings/currency-converter/currency-converter.component";
-import { OverlaysService, PoolViews } from "../_services/overlays.service";
-import { AnalyticsService } from "../_services/analytics.service";
+} from '../_services/transaction-status.service';
+import { PoolDetailService } from '../_services/pool-detail.service';
+import { Router } from '@angular/router';
+import { isNonNativeRuneToken } from '../_classes/asset';
+import { ThorchainPricesService } from '../_services/thorchain-prices.service';
+import { CurrencyService } from '../_services/currency.service';
+import { Currency } from '../_components/account-settings/currency-converter/currency-converter.component';
+import { OverlaysService, PoolViews } from '../_services/overlays.service';
+import { AnalyticsService } from '../_services/analytics.service';
 
 @Component({
-  selector: "app-pool",
-  templateUrl: "./pool.component.html",
-  styleUrls: ["./pool.component.scss"],
+  selector: 'app-pool',
+  templateUrl: './pool.component.html',
+  styleUrls: ['./pool.component.scss'],
 })
 export class PoolComponent implements OnInit, OnDestroy {
   user: User;
@@ -33,7 +33,7 @@ export class PoolComponent implements OnInit, OnDestroy {
   balances: Balances;
   createablePools: string[];
   memberPools: MemberPool[];
-  poolType: "member" | "notMember";
+  poolType: 'member' | 'notMember';
   runePrice: number;
   currency: Currency;
   pooledRune: number;
@@ -120,11 +120,9 @@ export class PoolComponent implements OnInit, OnDestroy {
       this.currency = cur;
     });
 
-    const ovr$ = this.ovrService.PoolView.subscribe(
-      (ovr) => {
-        this.mode = ovr;
-      }
-    )
+    const ovr$ = this.ovrService.PoolView.subscribe((ovr) => {
+      this.mode = ovr;
+    });
 
     this.subs.push(
       user$,
@@ -139,14 +137,14 @@ export class PoolComponent implements OnInit, OnDestroy {
 
   getBreadcrumbText() {
     if (this.userPoolError) {
-      return { text: "Cannot fetch user Pools", isError: true };
+      return { text: 'Cannot fetch user Pools', isError: true };
     }
 
     if (this.depositsDisabled) {
-      return { text: "CAPS REACHED", isError: true };
+      return { text: 'CAPS REACHED', isError: true };
     }
 
-    return "SELECT";
+    return 'SELECT';
   }
 
   clearPoolDetail() {
@@ -166,7 +164,7 @@ export class PoolComponent implements OnInit, OnDestroy {
     this.midgardService.getPools().subscribe((res) => {
       this.pools = res;
       let availablePools = this.pools.filter(
-        (pool) => pool.status === "available"
+        (pool) => pool.status === 'available'
       );
       this.runePrice =
         this.thorchainPricesService.estimateRunePrice(availablePools);
@@ -175,42 +173,33 @@ export class PoolComponent implements OnInit, OnDestroy {
   }
 
   breadcrumbNav(nav: string) {
-    if (nav === "pool") {
-      this.router.navigate(["/", "pool"]);
-    } else if (nav === "swap") {
-      this.router.navigate(["/", "swap"]);
+    if (nav === 'pool') {
+      this.router.navigate(['/', 'pool']);
+    } else if (nav === 'swap') {
+      this.router.navigate(['/', 'swap']);
       if (!this.user) {
         this.analytics.event('pool_disconnected', 'breadcrumb_skip');
-      }
-      else {
+      } else {
         this.analytics.event('pool_select', 'breadcrumb_skip');
       }
     }
   }
 
   switchNav(val: string) {
-    if (val === "left") {
-      if (!this.user)
-        this.analytics.event('pool_disconnected', 'switch_swap');
+    if (val === 'left') {
+      if (!this.user) this.analytics.event('pool_disconnected', 'switch_swap');
       else if (this.user) {
         this.analytics.event('pool_select', 'switch_swap');
       }
-      this.router.navigate([
-        "/",
-        "swap"
-      ]);
-    }
-    else if (val === "right") {
-      this.router.navigate([
-        "/",
-        "pool"
-      ]);
+      this.router.navigate(['/', 'swap']);
+    } else if (val === 'right') {
+      this.router.navigate(['/', 'pool']);
     }
   }
 
   connectWallet() {
     this.analytics.event('pool_disconnected', 'button_connect_wallet');
-    this.ovrService.setCurrentPoolView('Connect')
+    this.ovrService.setCurrentPoolView('Connect');
   }
 
   checkCreateableMarkets() {
@@ -223,7 +212,7 @@ export class PoolComponent implements OnInit, OnDestroy {
               (pool) => pool.asset === `${asset.chain}.${asset.symbol}`
             ) &&
             !isNonNativeRuneToken(asset) &&
-            asset.chain !== "THOR"
+            asset.chain !== 'THOR'
           );
         })
         .map((balance) => `${balance.asset.chain}.${balance.asset.symbol}`);
@@ -238,7 +227,7 @@ export class PoolComponent implements OnInit, OnDestroy {
       // prettier-ignore
       this.totalPooledRune = +network.totalPooledRune / (10 ** 8);
 
-      if (mimir && mimir["mimir//MAXIMUMLIQUIDITYRUNE"]) {
+      if (mimir && mimir['mimir//MAXIMUMLIQUIDITYRUNE']) {
         // prettier-ignore
         this.maxLiquidityRune = mimir['mimir//MAXIMUMLIQUIDITYRUNE'] / (10 ** 8);
         this.depositsDisabled =
@@ -310,7 +299,6 @@ export class PoolComponent implements OnInit, OnDestroy {
           }
         });
       }
-
     }
 
     this.loading = false;

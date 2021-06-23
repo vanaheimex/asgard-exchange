@@ -1,26 +1,29 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
-import { Subject, timer, of, Subscription, combineLatest } from "rxjs";
-import { catchError, switchMap, takeUntil } from "rxjs/operators";
-import { LastBlock } from "src/app/_classes/last-block";
-import { LastBlockService } from "src/app/_services/last-block.service";
-import { MidgardService, MimirResponse } from "src/app/_services/midgard.service";
-import { OverlaysService, MainViewsEnum } from "./_services/overlays.service";
-import { UserService } from "./_services/user.service";
-import { Chain } from "@xchainjs/xchain-util";
-import { AssetAndBalance } from "./_classes/asset-and-balance";
-import { Asset } from "./_classes/asset";
-import { environment } from "src/environments/environment";
-import { links } from "src/app/_const/links";
-import { Router } from "@angular/router";
-import { NetworkSummary } from "./_classes/network";
-import { AnalyticsService } from "./_services/analytics.service";
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subject, timer, of, Subscription, combineLatest } from 'rxjs';
+import { catchError, switchMap, takeUntil } from 'rxjs/operators';
+import { LastBlock } from 'src/app/_classes/last-block';
+import { LastBlockService } from 'src/app/_services/last-block.service';
+import {
+  MidgardService,
+  MimirResponse,
+} from 'src/app/_services/midgard.service';
+import { OverlaysService, MainViewsEnum } from './_services/overlays.service';
+import { UserService } from './_services/user.service';
+import { Chain } from '@xchainjs/xchain-util';
+import { AssetAndBalance } from './_classes/asset-and-balance';
+import { Asset } from './_classes/asset';
+import { environment } from 'src/environments/environment';
+import { links } from 'src/app/_const/links';
+import { Router } from '@angular/router';
+import { NetworkSummary } from './_classes/network';
+import { AnalyticsService } from './_services/analytics.service';
 import { User } from './_classes/user';
-import { MetamaskService } from "./_services/metamask.service";
+import { MetamaskService } from './_services/metamask.service';
 
 @Component({
-  selector: "app-root",
-  templateUrl: "./app.component.html",
-  styleUrls: ["./app.component.scss"],
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit, OnDestroy {
   killPolling: Subject<void> = new Subject();
@@ -49,9 +52,9 @@ export class AppComponent implements OnInit, OnDestroy {
     private analytics: AnalyticsService,
     private metaMaskService: MetamaskService
   ) {
-    this.isTestnet = environment.network === "testnet";
+    this.isTestnet = environment.network === 'testnet';
     this.mainnetUrl = this.isTestnet ? links.mainnetUrl : links.testnetUrl;
-    this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
+    this.overlaysService.setViews(MainViewsEnum.Swap, 'Swap');
     const overlay$ = this.overlaysService.currentView.subscribe((val) => {
       this.currentView = val;
     });
@@ -70,9 +73,9 @@ export class AppComponent implements OnInit, OnDestroy {
           // get ETH.RUNE and BNB.RUNE
           .filter((balance) => {
             return (
-              (balance.asset.chain === "BNB" &&
-                balance.asset.ticker === "RUNE") ||
-              (balance.asset.chain === "ETH" && balance.asset.ticker === "RUNE")
+              (balance.asset.chain === 'BNB' &&
+                balance.asset.ticker === 'RUNE') ||
+              (balance.asset.chain === 'ETH' && balance.asset.ticker === 'RUNE')
             );
           })
           // filter out 0 amounts
@@ -115,29 +118,29 @@ export class AppComponent implements OnInit, OnDestroy {
 
     if (this.isTestnet) {
       document.documentElement.style.setProperty(
-        "--primary-default",
-        "#F3BA2F"
+        '--primary-default',
+        '#F3BA2F'
       );
       document.documentElement.style.setProperty(
-        "--primary-graident-bottom-left",
-        "#F3BA2F"
+        '--primary-graident-bottom-left',
+        '#F3BA2F'
       );
       document.documentElement.style.setProperty(
-        "--primary-graident-top-right",
-        "#F3BA2F"
+        '--primary-graident-top-right',
+        '#F3BA2F'
       );
     }
 
     if (this.appLocked) {
-      this.router.navigate(["/", "swap"]);
-      this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
+      this.router.navigate(['/', 'swap']);
+      this.overlaysService.setViews(MainViewsEnum.Swap, 'Swap');
     }
 
-    document.addEventListener("mousedown", (e) => {
+    document.addEventListener('mousedown', (e) => {
       if (
-        document.querySelector(".expandable") &&
+        document.querySelector('.expandable') &&
         (e.target as HTMLTextAreaElement).compareDocumentPosition(
-          document.querySelector(".expandable")
+          document.querySelector('.expandable')
         ) !== 10
       ) {
         if (this.overlaysService.getMenu()) {

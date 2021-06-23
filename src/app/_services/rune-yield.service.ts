@@ -1,8 +1,8 @@
-import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
-import { shareReplay } from "rxjs/operators";
-import { environment } from "src/environments/environment";
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { shareReplay } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 export interface RuneYieldPoolResponse {
   assetstake;
   assetwithdrawn;
@@ -25,18 +25,18 @@ export interface RuneYieldPoolResponse {
 }
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class RuneYieldService {
   constructor(private http: HttpClient) {}
 
   getCurrentValueOfPool(address: string): Observable<RuneYieldPoolResponse[]> {
-    if (environment.network === "testnet") {
+    if (environment.network === 'testnet') {
       return;
     }
     return this.http
       .get<RuneYieldPoolResponse[]>(
-        "https://multichain-asgard-consumer-api.vercel.app/api/v2/member/poollist?address=" +
+        'https://multichain-asgard-consumer-api.vercel.app/api/v2/member/poollist?address=' +
           address
       )
       .pipe(shareReplay());

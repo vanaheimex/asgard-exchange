@@ -1,8 +1,8 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RightOptionComponent } from "./right-option.component";
+import { RightOptionComponent } from './right-option.component';
 
-describe("RightOptionComponent", () => {
+describe('RightOptionComponent', () => {
   let component: RightOptionComponent;
   let fixture: ComponentFixture<RightOptionComponent>;
 
@@ -18,7 +18,7 @@ describe("RightOptionComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

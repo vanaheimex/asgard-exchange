@@ -1,4 +1,10 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { User } from 'src/app/_classes/user';
 import { MetamaskService } from 'src/app/_services/metamask.service';
@@ -6,13 +12,16 @@ import { UserService } from 'src/app/_services/user.service';
 import { environment } from 'src/environments/environment';
 import { ethers } from 'ethers';
 import { combineLatest, Subscription } from 'rxjs';
-import { MainViewsEnum, OverlaysService } from "src/app/_services/overlays.service";
-import { AnalyticsService } from "src/app/_services/analytics.service";
+import {
+  MainViewsEnum,
+  OverlaysService,
+} from 'src/app/_services/overlays.service';
+import { AnalyticsService } from 'src/app/_services/analytics.service';
 
 @Component({
-  selector: "app-connect",
-  templateUrl: "./connect.component.html",
-  styleUrls: ["./connect.component.scss"],
+  selector: 'app-connect',
+  templateUrl: './connect.component.html',
+  styleUrls: ['./connect.component.scss'],
 })
 export class ConnectComponent implements OnInit, OnDestroy {
   metaMaskProvider: ethers.providers.Web3Provider;
@@ -21,7 +30,7 @@ export class ConnectComponent implements OnInit, OnDestroy {
 
   constructor(
     private metaMaskService: MetamaskService,
-    private userService: UserService,
+    private userService: UserService
   ) {
     this.openWalletOptions = new EventEmitter<null>();
     this.subs = [];
@@ -63,24 +72,24 @@ export class ConnectComponent implements OnInit, OnDestroy {
 }
 
 export enum ConnectionMethod {
-  LEDGER = "LEDGER",
-  KEYSTORE = "KEYSTORE",
-  KEYSTORE_CREATE = "KEYSTORE_CREATE",
-  WALLET_CONNECT = "WALLET_CONNECT",
-  XDEFI = "XDEFI",
+  LEDGER = 'LEDGER',
+  KEYSTORE = 'KEYSTORE',
+  KEYSTORE_CREATE = 'KEYSTORE_CREATE',
+  WALLET_CONNECT = 'WALLET_CONNECT',
+  XDEFI = 'XDEFI',
 }
 export enum ConnectionView {
-  KEYSTORE_CONNECT = "KEYSTORE_CONNECT",
-  KEYSTORE_CREATE = "KEYSTORE_CREATE",
-  KEYSTORE_WRITE_PHRASE = "KEYSTORE_WRITE_PHRASE",
-  KEYSTORE_IMPORT_PHRASE = "KEYSTORE_IMPORT_PHRASE",
-  XDEFI = "XDEFI",
+  KEYSTORE_CONNECT = 'KEYSTORE_CONNECT',
+  KEYSTORE_CREATE = 'KEYSTORE_CREATE',
+  KEYSTORE_WRITE_PHRASE = 'KEYSTORE_WRITE_PHRASE',
+  KEYSTORE_IMPORT_PHRASE = 'KEYSTORE_IMPORT_PHRASE',
+  XDEFI = 'XDEFI',
 }
 
 @Component({
-  selector: "app-connect-modal",
-  templateUrl: "connect-modal.component.html",
-  styleUrls: ["./connect.component.scss"],
+  selector: 'app-connect-modal',
+  templateUrl: 'connect-modal.component.html',
+  styleUrls: ['./connect.component.scss'],
 })
 // eslint-disable-next-line @angular-eslint/component-class-suffix
 export class ConnectModal {
@@ -92,8 +101,12 @@ export class ConnectModal {
 
   @Output() closeEvent = new EventEmitter<null>();
 
-  constructor(public overlaysService: OverlaysService, private analytics: AnalyticsService, private metaMaskService: MetamaskService) {
-    this.isTestnet = environment.network === "testnet" ? true : false;
+  constructor(
+    public overlaysService: OverlaysService,
+    private analytics: AnalyticsService,
+    private metaMaskService: MetamaskService
+  ) {
+    this.isTestnet = environment.network === 'testnet' ? true : false;
 
     this.isXDEFIConnected = false;
     if ((window as any).xfi) {
@@ -103,7 +116,7 @@ export class ConnectModal {
 
   breadcrumbNav(val: string) {
     if (val === 'swap') {
-      this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
+      this.overlaysService.setViews(MainViewsEnum.Swap, 'Swap');
       this.analytics.event('connect_select_wallet', 'breadcrumb_skip');
     }
   }
@@ -135,12 +148,12 @@ export class ConnectModal {
   async connectMetaMask(): Promise<void> {
     this.analytics.event('connect_select_wallet', 'option_connect_wallet');
     await this.metaMaskService.connect();
-    this.close()
+    this.close();
   }
 
-  storePhrasePrompt(values: {phrase: string, label: string}) {
+  storePhrasePrompt(values: { phrase: string; label: string }) {
     this.phrase = values.phrase;
-    this.writePhraseCategory = values.label
+    this.writePhraseCategory = values.label;
     this.connectionView = ConnectionView.KEYSTORE_WRITE_PHRASE;
   }
 

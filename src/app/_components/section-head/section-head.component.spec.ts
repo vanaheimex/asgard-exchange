@@ -1,8 +1,8 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SectionHeadComponent } from "./section-head.component";
+import { SectionHeadComponent } from './section-head.component';
 
-describe("SectionHeadComponent", () => {
+describe('SectionHeadComponent', () => {
   let component: SectionHeadComponent;
   let fixture: ComponentFixture<SectionHeadComponent>;
 
@@ -18,7 +18,7 @@ describe("SectionHeadComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

@@ -1,30 +1,30 @@
-import { Component, Input, OnChanges } from "@angular/core";
-import { getPoolShare, PoolData, UnitData } from "@thorchain/asgardex-util";
-import { assetToString, baseAmount } from "@xchainjs/xchain-util";
-import BigNumber from "bignumber.js";
-import { Subscription } from "rxjs";
-import { take } from "rxjs/operators";
-import { Asset } from "src/app/_classes/asset";
-import { MemberPool } from "src/app/_classes/member";
-import { PoolDTO } from "src/app/_classes/pool";
-import { Currency } from "src/app/_components/account-settings/currency-converter/currency-converter.component";
-import { AnalyticsService } from "src/app/_services/analytics.service";
-import { PoolDetailService } from "src/app/_services/pool-detail.service";
+import { Component, Input, OnChanges } from '@angular/core';
+import { getPoolShare, PoolData, UnitData } from '@thorchain/asgardex-util';
+import { assetToString, baseAmount } from '@xchainjs/xchain-util';
+import BigNumber from 'bignumber.js';
+import { Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
+import { Asset } from 'src/app/_classes/asset';
+import { MemberPool } from 'src/app/_classes/member';
+import { PoolDTO } from 'src/app/_classes/pool';
+import { Currency } from 'src/app/_components/account-settings/currency-converter/currency-converter.component';
+import { AnalyticsService } from 'src/app/_services/analytics.service';
+import { PoolDetailService } from 'src/app/_services/pool-detail.service';
 import {
   RuneYieldPoolResponse,
   RuneYieldService,
-} from "src/app/_services/rune-yield.service";
+} from 'src/app/_services/rune-yield.service';
 import {
   TransactionStatusService,
   Tx,
-} from "src/app/_services/transaction-status.service";
-import { UserService } from "src/app/_services/user.service";
-import { environment } from "src/environments/environment";
+} from 'src/app/_services/transaction-status.service';
+import { UserService } from 'src/app/_services/user.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: "app-staked-pool-list-item",
-  templateUrl: "./staked-pool-list-item.component.html",
-  styleUrls: ["./staked-pool-list-item.component.scss"],
+  selector: 'app-staked-pool-list-item',
+  templateUrl: './staked-pool-list-item.component.html',
+  styleUrls: ['./staked-pool-list-item.component.scss'],
 })
 export class StakedPoolListItemComponent implements OnChanges {
   expanded: boolean;
@@ -81,7 +81,7 @@ export class StakedPoolListItemComponent implements OnChanges {
     this.expanded = false;
     this.activate = false;
 
-    this.isTestnet = environment.network === "testnet" ? true : false;
+    this.isTestnet = environment.network === 'testnet' ? true : false;
   }
 
   ngOnChanges() {
@@ -127,15 +127,30 @@ export class StakedPoolListItemComponent implements OnChanges {
   }
 
   statEvent() {
-    this.analytics.event('pool_select', 'tag_pool_stats_*POOL_ASSET*', undefined, `${this.asset.chain}.${this.asset.ticker}`);
+    this.analytics.event(
+      'pool_select',
+      'tag_pool_stats_*POOL_ASSET*',
+      undefined,
+      `${this.asset.chain}.${this.asset.ticker}`
+    );
   }
 
   depositEvent() {
-    this.analytics.event('pool_select', 'tag_pool_deposit_*POOL_ASSET*', undefined, `${this.asset.chain}.${this.asset.ticker}`);
+    this.analytics.event(
+      'pool_select',
+      'tag_pool_deposit_*POOL_ASSET*',
+      undefined,
+      `${this.asset.chain}.${this.asset.ticker}`
+    );
   }
 
   withdrawEvent() {
-    this.analytics.event('pool_select', 'tag_pool_withdraw_*POOL_ASSET*', undefined, `${this.asset.chain}.${this.asset.ticker}`)
+    this.analytics.event(
+      'pool_select',
+      'tag_pool_withdraw_*POOL_ASSET*',
+      undefined,
+      `${this.asset.chain}.${this.asset.ticker}`
+    );
   }
 
   getPoolShare(): void {
@@ -166,7 +181,7 @@ export class StakedPoolListItemComponent implements OnChanges {
 
       if (this.activate) {
         this.poolDetailService.setPooledDetails(
-          "member",
+          'member',
           this.pooledRune,
           this.pooledAsset,
           this.poolShare,
@@ -181,11 +196,14 @@ export class StakedPoolListItemComponent implements OnChanges {
           this.poolShare *
             +this.poolData.assetDepth *
             +this.poolData.assetPriceUSD
-      ).plus(
-        new BigNumber(this.runeYieldPool?.find(
-          (p) => p.pool === this.memberPoolData.pool
-        )?.totalunstakedusd)
       )
+        .plus(
+          new BigNumber(
+            this.runeYieldPool?.find(
+              (p) => p.pool === this.memberPoolData.pool
+            )?.totalunstakedusd
+          )
+        )
         .div(10 ** 8)
         .toNumber();
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 export type SwitchField = {
   right: {
@@ -14,12 +14,12 @@ export type SwitchField = {
 };
 
 @Component({
-  selector: "app-right-option",
-  templateUrl: "./right-option.component.html",
-  styleUrls: ["./right-option.component.scss"],
+  selector: 'app-right-option',
+  templateUrl: './right-option.component.html',
+  styleUrls: ['./right-option.component.scss'],
 })
 export class RightOptionComponent implements OnInit {
-  @Input() whichType: "SWITCH" | "FIELD" | "BUTTON" = "SWITCH";
+  @Input() whichType: 'SWITCH' | 'FIELD' | 'BUTTON' = 'SWITCH';
   @Input() switchField: SwitchField;
   @Output() clickCaller: EventEmitter<string>;
 
@@ -28,5 +28,4 @@ export class RightOptionComponent implements OnInit {
   }
 
   ngOnInit(): void {}
-
 }

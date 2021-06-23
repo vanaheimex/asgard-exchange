@@ -1,9 +1,9 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { MatIconModule } from "@angular/material/icon";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatIconModule } from '@angular/material/icon';
 
-import { ConnectErrorComponent } from "./connect-error.component";
+import { ConnectErrorComponent } from './connect-error.component';
 
-describe("ConnectErrorComponent", () => {
+describe('ConnectErrorComponent', () => {
   let component: ConnectErrorComponent;
   let fixture: ComponentFixture<ConnectErrorComponent>;
 
@@ -20,7 +20,7 @@ describe("ConnectErrorComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

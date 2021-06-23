@@ -1,9 +1,9 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
-import { RetryRuneDepositComponent } from "./retry-rune-deposit.component";
-import { RouterTestingModule } from "@angular/router/testing";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RetryRuneDepositComponent } from './retry-rune-deposit.component';
+import { RouterTestingModule } from '@angular/router/testing';
 
-describe("RetryRuneDepositComponent", () => {
+describe('RetryRuneDepositComponent', () => {
   let component: RetryRuneDepositComponent;
   let fixture: ComponentFixture<RetryRuneDepositComponent>;
 
@@ -20,7 +20,7 @@ describe("RetryRuneDepositComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

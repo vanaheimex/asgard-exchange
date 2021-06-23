@@ -1,16 +1,16 @@
-import { Component, OnInit, Output, EventEmitter } from "@angular/core";
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import {
   decryptFromKeystore,
   encryptToKeyStore,
-} from "@xchainjs/xchain-crypto";
-import { CopyService } from "src/app/_services/copy.service";
-import { KeystoreService } from "src/app/_services/keystore.service";
-import { environment } from "src/environments/environment";
+} from '@xchainjs/xchain-crypto';
+import { CopyService } from 'src/app/_services/copy.service';
+import { KeystoreService } from 'src/app/_services/keystore.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: "app-seed-phrase",
-  templateUrl: "./seed-phrase.component.html",
-  styleUrls: ["./seed-phrase.component.scss"],
+  selector: 'app-seed-phrase',
+  templateUrl: './seed-phrase.component.html',
+  styleUrls: ['./seed-phrase.component.scss'],
 })
 export class SeedPhraseComponent implements OnInit {
   @Output() close: EventEmitter<null> = new EventEmitter<null>();
@@ -33,11 +33,9 @@ export class SeedPhraseComponent implements OnInit {
 
     if (result == true) {
       this.copied = true;
-      setTimeout(
-        () => {
-          this.copied = false;
-        }
-      , 1500)
+      setTimeout(() => {
+        this.copied = false;
+      }, 1500);
     }
   }
 
@@ -48,7 +46,7 @@ export class SeedPhraseComponent implements OnInit {
         this.keystorePassword
       );
 
-      localStorage.setItem("keystore", JSON.stringify(keystore));
+      localStorage.setItem('keystore', JSON.stringify(keystore));
       const user = await this.keystoreService.unlockKeystore(
         keystore,
         this.keystorePassword
@@ -58,17 +56,17 @@ export class SeedPhraseComponent implements OnInit {
       const addressLength = binanceAddress.length;
       const minAddress = `${binanceAddress.substring(
         0,
-        environment.network === "testnet" ? 7 : 6
+        environment.network === 'testnet' ? 7 : 6
       )}_${binanceAddress.substring(addressLength - 3, addressLength)}`;
       const bl = new Blob([JSON.stringify(keystore)], {
-        type: "text/plain",
+        type: 'text/plain',
       });
-      const a = document.createElement("a");
+      const a = document.createElement('a');
       a.href = URL.createObjectURL(bl);
       a.download = `asgardex-${minAddress}`;
       a.hidden = true;
       document.body.appendChild(a);
-      a.innerHTML = "loading";
+      a.innerHTML = 'loading';
       a.click();
     } catch (error) {
       console.error(error);
@@ -77,7 +75,7 @@ export class SeedPhraseComponent implements OnInit {
 
   async unlock() {
     try {
-      const keystoreString = localStorage.getItem("keystore");
+      const keystoreString = localStorage.getItem('keystore');
       const keystore = JSON.parse(keystoreString);
       this.phrase = await decryptFromKeystore(keystore, this.keystorePassword);
       this.passwordAccepted = true;

@@ -1,18 +1,18 @@
-import { Component, OnInit } from "@angular/core";
-import { Subscription } from "rxjs";
-import { AssetAndBalance } from "src/app/_classes/asset-and-balance";
+import { Component, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { AssetAndBalance } from 'src/app/_classes/asset-and-balance';
 import {
   MainViewsEnum,
   OverlaysService,
-} from "src/app/_services/overlays.service";
-import { UserService } from "src/app/_services/user.service";
-import { Asset } from "src/app/_classes/asset";
-import { AnalyticsService } from "src/app/_services/analytics.service";
+} from 'src/app/_services/overlays.service';
+import { UserService } from 'src/app/_services/user.service';
+import { Asset } from 'src/app/_classes/asset';
+import { AnalyticsService } from 'src/app/_services/analytics.service';
 
 @Component({
-  selector: "app-native-rune-prompt",
-  templateUrl: "./native-rune-prompt.component.html",
-  styleUrls: ["./native-rune-prompt.component.scss"],
+  selector: 'app-native-rune-prompt',
+  templateUrl: './native-rune-prompt.component.html',
+  styleUrls: ['./native-rune-prompt.component.scss'],
 })
 export class NativeRunePromptComponent implements OnInit {
   subs: Subscription[];
@@ -32,9 +32,9 @@ export class NativeRunePromptComponent implements OnInit {
           // get ETH.RUNE and BNB.RUNE
           .filter((balance) => {
             return (
-              (balance.asset.chain === "BNB" &&
-                balance.asset.ticker === "RUNE") ||
-              (balance.asset.chain === "ETH" && balance.asset.ticker === "RUNE")
+              (balance.asset.chain === 'BNB' &&
+                balance.asset.ticker === 'RUNE') ||
+              (balance.asset.chain === 'ETH' && balance.asset.ticker === 'RUNE')
             );
           })
           // filter out 0 amounts

@@ -1,9 +1,9 @@
-import { TestBed } from "@angular/core/testing";
+import { TestBed } from '@angular/core/testing';
 
-import { ThorchainRpcService } from "./thorchain-rpc.service";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { ThorchainRpcService } from './thorchain-rpc.service';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
-describe("ThorchainRpcService", () => {
+describe('ThorchainRpcService', () => {
   let service: ThorchainRpcService;
 
   beforeEach(() => {
@@ -13,7 +13,7 @@ describe("ThorchainRpcService", () => {
     service = TestBed.inject(ThorchainRpcService);
   });
 
-  it("should be created", () => {
+  it('should be created', () => {
     expect(service).toBeTruthy();
   });
 });

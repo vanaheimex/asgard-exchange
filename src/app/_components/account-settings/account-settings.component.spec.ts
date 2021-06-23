@@ -1,8 +1,8 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AccountSettingsComponent } from "./account-settings.component";
+import { AccountSettingsComponent } from './account-settings.component';
 
-describe("AccountSettingsComponent", () => {
+describe('AccountSettingsComponent', () => {
   let component: AccountSettingsComponent;
   let fixture: ComponentFixture<AccountSettingsComponent>;
 
@@ -18,7 +18,7 @@ describe("AccountSettingsComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

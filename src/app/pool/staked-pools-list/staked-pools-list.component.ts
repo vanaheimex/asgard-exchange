@@ -1,19 +1,19 @@
-import { Component, Input, OnInit } from "@angular/core";
-import { Subscription } from "rxjs";
-import { MemberPool } from "src/app/_classes/member";
-import { PoolDTO } from "src/app/_classes/pool";
-import { Currency } from "src/app/_components/account-settings/currency-converter/currency-converter.component";
-import { CurrencyService } from "src/app/_services/currency.service";
+import { Component, Input, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { MemberPool } from 'src/app/_classes/member';
+import { PoolDTO } from 'src/app/_classes/pool';
+import { Currency } from 'src/app/_components/account-settings/currency-converter/currency-converter.component';
+import { CurrencyService } from 'src/app/_services/currency.service';
 import {
   RuneYieldPoolResponse,
   RuneYieldService,
-} from "src/app/_services/rune-yield.service";
-import { environment } from "src/environments/environment";
+} from 'src/app/_services/rune-yield.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: "app-staked-pools-list",
-  templateUrl: "./staked-pools-list.component.html",
-  styleUrls: ["./staked-pools-list.component.scss"],
+  selector: 'app-staked-pools-list',
+  templateUrl: './staked-pools-list.component.html',
+  styleUrls: ['./staked-pools-list.component.scss'],
 })
 export class StakedPoolsListComponent {
   activePool: PoolDTO;
@@ -93,7 +93,7 @@ export class StakedPoolsListComponent {
         a.asset > b.asset ? 1 : b.asset > a.asset ? -1 : 0
       );
 
-      if (environment.network !== "testnet") {
+      if (environment.network !== 'testnet') {
         this.runeYieldService
           .getCurrentValueOfPool(this.memberPools[0].runeAddress)
           .subscribe((pools) => {

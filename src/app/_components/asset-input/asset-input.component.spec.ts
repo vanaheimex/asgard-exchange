@@ -1,12 +1,12 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AssetInputComponent } from "./asset-input.component";
-import { MatDialogModule } from "@angular/material/dialog";
-import { IconTickerModule } from "../icon-ticker/icon-ticker.module";
-import { MatIconModule } from "@angular/material/icon";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { AssetInputComponent } from './asset-input.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { IconTickerModule } from '../icon-ticker/icon-ticker.module';
+import { MatIconModule } from '@angular/material/icon';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
-describe("AssetInputComponent", () => {
+describe('AssetInputComponent', () => {
   let component: AssetInputComponent;
   let fixture: ComponentFixture<AssetInputComponent>;
 
@@ -28,7 +28,7 @@ describe("AssetInputComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

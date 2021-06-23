@@ -1,9 +1,9 @@
-import { Injectable } from "@angular/core";
-import { BehaviorSubject } from "rxjs";
-import { Asset } from "../_classes/asset";
+import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { Asset } from '../_classes/asset';
 
 type poolDetail = {
-  poolType?: "member" | "notMember";
+  poolType?: 'member' | 'notMember';
   pooledRune?: number;
   pooledAsset?: number;
   pooledShare?: number;
@@ -12,7 +12,7 @@ type poolDetail = {
 };
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class PoolDetailService {
   private pooledDetails = new BehaviorSubject<poolDetail>({});
@@ -36,7 +36,7 @@ export class PoolDetailService {
   }
 
   setPooledDetails(
-    poolType?: "member" | "notMember",
+    poolType?: 'member' | 'notMember',
     pooledRune?: number,
     pooledAsset?: number,
     pooledShare?: number,

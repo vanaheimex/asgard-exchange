@@ -1,10 +1,10 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { ConfirmPoolCreateComponent } from "./confirm-pool-create.component";
-import { Asset } from "src/app/_classes/asset";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ConfirmPoolCreateComponent } from './confirm-pool-create.component';
+import { Asset } from 'src/app/_classes/asset';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
-describe("ConfirmPoolCreateComponent", () => {
+describe('ConfirmPoolCreateComponent', () => {
   let component: ConfirmPoolCreateComponent;
   let fixture: ComponentFixture<ConfirmPoolCreateComponent>;
 
@@ -15,8 +15,8 @@ describe("ConfirmPoolCreateComponent", () => {
         {
           provide: MAT_DIALOG_DATA,
           useValue: {
-            asset: new Asset("BUSD"),
-            rune: new Asset("RUNE-B1A"),
+            asset: new Asset('BUSD'),
+            rune: new Asset('RUNE-B1A'),
             assetAmount: 100,
             runeAmount: 100,
           },
@@ -33,7 +33,7 @@ describe("ConfirmPoolCreateComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

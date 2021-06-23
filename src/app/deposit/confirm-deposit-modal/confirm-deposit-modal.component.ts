@@ -6,29 +6,32 @@ import {
   Input,
   Output,
   EventEmitter,
-} from "@angular/core";
-import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { assetToString } from "@xchainjs/xchain-util";
-import { Subscription, timer } from "rxjs";
-import { PoolAddressDTO } from "src/app/_classes/pool-address";
-import { User } from "src/app/_classes/user";
-import { TransactionConfirmationState } from "src/app/_const/transaction-confirmation-state";
-import { MidgardService } from "src/app/_services/midgard.service";
-import { UserService } from "src/app/_services/user.service";
+} from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { assetToString } from '@xchainjs/xchain-util';
+import { Subscription, timer } from 'rxjs';
+import { PoolAddressDTO } from 'src/app/_classes/pool-address';
+import { User } from 'src/app/_classes/user';
+import { TransactionConfirmationState } from 'src/app/_const/transaction-confirmation-state';
+import { MidgardService } from 'src/app/_services/midgard.service';
+import { UserService } from 'src/app/_services/user.service';
 import {
   TransactionStatusService,
   TxActions,
   TxStatus,
-} from "src/app/_services/transaction-status.service";
-import { EthUtilsService } from "src/app/_services/eth-utils.service";
-import { OverlaysService } from "src/app/_services/overlays.service";
-import { Router } from "@angular/router";
-import { Balances } from "@xchainjs/xchain-client";
-import { AssetAndBalance } from "src/app/_classes/asset-and-balance";
-import { KeystoreDepositService } from "src/app/_services/keystore-deposit.service";
-import { Asset } from "src/app/_classes/asset";
-import { AnalyticsService, assetString } from "src/app/_services/analytics.service";
-import { switchMap, takeWhile } from "rxjs/operators";
+} from 'src/app/_services/transaction-status.service';
+import { EthUtilsService } from 'src/app/_services/eth-utils.service';
+import { OverlaysService } from 'src/app/_services/overlays.service';
+import { Router } from '@angular/router';
+import { Balances } from '@xchainjs/xchain-client';
+import { AssetAndBalance } from 'src/app/_classes/asset-and-balance';
+import { KeystoreDepositService } from 'src/app/_services/keystore-deposit.service';
+import { Asset } from 'src/app/_classes/asset';
+import {
+  AnalyticsService,
+  assetString,
+} from 'src/app/_services/analytics.service';
+import { switchMap, takeWhile } from 'rxjs/operators';
 import { PoolTypeOption } from 'src/app/_const/pool-type-options';
 import { Client } from '@xchainjs/xchain-thorchain';
 import { MetamaskService } from 'src/app/_services/metamask.service';
@@ -53,12 +56,12 @@ export interface ConfirmDepositData {
 }
 
 @Component({
-  selector: "app-confirm-deposit-modal",
-  templateUrl: "./confirm-deposit-modal.component.html",
-  styleUrls: ["./confirm-deposit-modal.component.scss"],
+  selector: 'app-confirm-deposit-modal',
+  templateUrl: './confirm-deposit-modal.component.html',
+  styleUrls: ['./confirm-deposit-modal.component.scss'],
 })
 export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
-  txState: TransactionConfirmationState | "RETRY_RUNE_DEPOSIT";
+  txState: TransactionConfirmationState | 'RETRY_RUNE_DEPOSIT';
   hash: string;
   subs: Subscription[];
   error: string;
@@ -109,8 +112,8 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
 
   async estimateTime() {
     if (
-      this.data.asset.asset.chain === "ETH" &&
-      this.data.asset.asset.symbol !== "ETH"
+      this.data.asset.asset.chain === 'ETH' &&
+      this.data.asset.asset.symbol !== 'ETH'
     ) {
       this.estimatedMinutes = await this.ethUtilsService.estimateERC20Time(
         assetToString(this.data.asset.asset),
@@ -133,18 +136,33 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
       }
     });
 
-    let depositAmountUSD = this.data.runeAmount * this.data.runePrice + this.data.assetAmount * this.data.assetPrice;
-    this.analyticsService.event('pool_deposit_symmetrical_confirm', 'button_deposit_confirm_symmetrical_*POOL_ASSET*_usd_*numerical_usd_value*', depositAmountUSD, assetString(this.data.asset.asset), depositAmountUSD.toString());
-  
-    let depositFeeAmountUSD = this.data.runeFee * this.data.runePrice + this.data.estimatedFee * this.data.assetPrice;
-    this.analyticsService.event('pool_deposit_symmetrical_confirm', 'button_deposit_confirm_symmetrical_*POOL_ASSET*_fee_usd_*numerical_usd_value*', depositFeeAmountUSD, assetString(this.data.asset.asset), depositFeeAmountUSD.toString());
+    let depositAmountUSD =
+      this.data.runeAmount * this.data.runePrice +
+      this.data.assetAmount * this.data.assetPrice;
+    this.analyticsService.event(
+      'pool_deposit_symmetrical_confirm',
+      'button_deposit_confirm_symmetrical_*POOL_ASSET*_usd_*numerical_usd_value*',
+      depositAmountUSD,
+      assetString(this.data.asset.asset),
+      depositAmountUSD.toString()
+    );
 
+    let depositFeeAmountUSD =
+      this.data.runeFee * this.data.runePrice +
+      this.data.estimatedFee * this.data.assetPrice;
+    this.analyticsService.event(
+      'pool_deposit_symmetrical_confirm',
+      'button_deposit_confirm_symmetrical_*POOL_ASSET*_fee_usd_*numerical_usd_value*',
+      depositFeeAmountUSD,
+      assetString(this.data.asset.asset),
+      depositFeeAmountUSD.toString()
+    );
   }
 
   async deposit(pools: PoolAddressDTO[]) {
     const clients = this.data.user.clients;
     const asset = this.data.asset.asset;
-    
+
     if (this.data.user?.type === 'metamask') {
       try {
         const hash = await this.metaMaskDepositAsset(pools);
@@ -160,7 +178,10 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
         this.txState = TransactionConfirmationState.ERROR;
         this.error = error;
       }
-    } else if (this.data.user?.type === 'keystore' || this.data.user?.type === 'XDEFI') {
+    } else if (
+      this.data.user?.type === 'keystore' ||
+      this.data.user?.type === 'XDEFI'
+    ) {
       const clients = this.data.user.clients;
       const thorClient = clients.thorchain;
       let assetHash = '';
@@ -287,15 +308,15 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
     const clients = this.data.user.clients;
     const thorClient = clients.thorchain;
     const thorchainAddress = await thorClient.getAddress();
-    let hash = "";
+    let hash = '';
 
     // get token address
     const address = this.userService.getTokenAddress(
       this.data.user,
       this.data.asset.asset.chain
     );
-    if (!address || address === "") {
-      console.error("no address found");
+    if (!address || address === '') {
+      console.error('no address found');
       return;
     }
 
@@ -304,7 +325,7 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
       (pool) => pool.chain === this.data.asset.asset.chain
     );
     if (!recipientPool) {
-      console.error("no recipient pool found");
+      console.error('no recipient pool found');
       return;
     }
 
@@ -312,7 +333,7 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
     try {
       // deposit using xchain
       switch (this.data.asset.asset.chain) {
-        case "BNB":
+        case 'BNB':
           hash = await this.keystoreDepositService.binanceDeposit({
             asset: this.data.asset.asset as Asset,
             inputAmount: this.data.assetAmount,
@@ -323,7 +344,7 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
           });
           break;
 
-        case "BTC":
+        case 'BTC':
           hash = await this.keystoreDepositService.bitcoinDeposit({
             asset: this.data.asset.asset as Asset,
             inputAmount: this.data.assetAmount,
@@ -336,7 +357,7 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
           });
           break;
 
-        case "LTC":
+        case 'LTC':
           hash = await this.keystoreDepositService.litecoinDeposit({
             asset: this.data.asset.asset as Asset,
             inputAmount: this.data.assetAmount,
@@ -349,7 +370,7 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
           });
           break;
 
-        case "BCH":
+        case 'BCH':
           hash = await this.keystoreDepositService.bchDeposit({
             asset: this.data.asset.asset as Asset,
             inputAmount: this.data.assetAmount,
@@ -363,7 +384,7 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
 
           break;
 
-        case "ETH":
+        case 'ETH':
           hash = await this.keystoreDepositService.ethereumDeposit({
             asset: this.data.asset.asset as Asset,
             inputAmount: this.data.assetAmount,
@@ -380,13 +401,13 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
           return;
       }
 
-      if (hash === "") {
-        console.error("no hash set");
+      if (hash === '') {
+        console.error('no hash set');
         return;
       }
       return hash;
     } catch (error) {
-      console.error("error making token transfer: ", error);
+      console.error('error making token transfer: ', error);
       this.txState = TransactionConfirmationState.ERROR;
       this.error = error.message || error;
       return;
@@ -415,8 +436,8 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
 
       return runeHash;
     } catch (error) {
-      console.error("error making RUNE transfer: ", error);
-      this.txState = "RETRY_RUNE_DEPOSIT";
+      console.error('error making RUNE transfer: ', error);
+      this.txState = 'RETRY_RUNE_DEPOSIT';
       this.error = error.message || error;
       return;
     }
@@ -442,7 +463,7 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
   runeDepositSuccess(runeHash: string) {
     this.hash = runeHash;
     this.txStatusService.addTransaction({
-      chain: "THOR",
+      chain: 'THOR',
       hash: runeHash,
       ticker: `RUNE`,
       status: TxStatus.PENDING,
@@ -452,31 +473,37 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
     });
 
     //temporary patch for successing of both transfers in deposit
-    console.log("rune hash", runeHash)
-    timer(0, 10000)
-    .pipe(
+    console.log('rune hash', runeHash);
+    timer(0, 10000).pipe(
       switchMap(() => this.midgardService.getTransaction(runeHash)),
       takeWhile((res) => {
-        console.log("this is the result", res)
+        console.log('this is the result', res);
         for (const resTx of res.actions) {
-          if (resTx.status.toUpperCase() === "SUCCESS") {
-            this.analyticsService.event('pool_deposit_symmetrical_success', 'tag_deposited_asset_container_wallet_*POOL_ASSET*', undefined, assetToString(this.data.asset.asset));
-            this.analyticsService.event('pool_deposit_symmetrical_success', 'tag_deposited_wallet_THOR.RUNE');
-            return false
+          if (resTx.status.toUpperCase() === 'SUCCESS') {
+            this.analyticsService.event(
+              'pool_deposit_symmetrical_success',
+              'tag_deposited_asset_container_wallet_*POOL_ASSET*',
+              undefined,
+              assetToString(this.data.asset.asset)
+            );
+            this.analyticsService.event(
+              'pool_deposit_symmetrical_success',
+              'tag_deposited_wallet_THOR.RUNE'
+            );
+            return false;
           }
         }
-        return true
+        return true;
       })
-    )
-    
+    );
+
     this.txState = TransactionConfirmationState.SUCCESS;
-    
   }
 
   withdrawSuccess(hash: string) {
     this.hash = hash;
     this.txStatusService.addTransaction({
-      chain: "THOR",
+      chain: 'THOR',
       hash,
       ticker: `${this.data.asset.asset.ticker}-RUNE`,
       status: TxStatus.PENDING,
@@ -489,30 +516,48 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
   }
 
   breadcrumbNav(nav: string, type: 'pending' | 'success' | 'process') {
-    if (nav === "pool") {
-      this.router.navigate(["/", "pool"]);
+    if (nav === 'pool') {
+      this.router.navigate(['/', 'pool']);
       if (type === 'pending')
-        this.analyticsService.event('pool_deposit_symmetrical_confirm', 'breadcrumb_pools');
+        this.analyticsService.event(
+          'pool_deposit_symmetrical_confirm',
+          'breadcrumb_pools'
+        );
       else if (type === 'process')
-        this.analyticsService.event('pool_deposit_symmetrical_processing', 'breadcrumb_pools');
+        this.analyticsService.event(
+          'pool_deposit_symmetrical_processing',
+          'breadcrumb_pools'
+        );
       else if (type === 'success')
-        this.analyticsService.event('pool_deposit_symmetrical_success', 'breadcrumb_pools');
-    } else if (nav === "swap") {
-      this.router.navigate(["/", "swap"]);
+        this.analyticsService.event(
+          'pool_deposit_symmetrical_success',
+          'breadcrumb_pools'
+        );
+    } else if (nav === 'swap') {
+      this.router.navigate(['/', 'swap']);
       if (type === 'pending')
-        this.analyticsService.event('pool_deposit_symmetrical_confirm', 'breadcrumb_skip');
+        this.analyticsService.event(
+          'pool_deposit_symmetrical_confirm',
+          'breadcrumb_skip'
+        );
       else if (type === 'process')
-        this.analyticsService.event('pool_deposit_symmetrical_processing', 'breadcrumb_skip');
+        this.analyticsService.event(
+          'pool_deposit_symmetrical_processing',
+          'breadcrumb_skip'
+        );
       else if (type === 'success')
-        this.analyticsService.event('pool_deposit_symmetrical_success', 'breadcrumb_skip');
-    } else if (nav === "deposit") {
+        this.analyticsService.event(
+          'pool_deposit_symmetrical_success',
+          'breadcrumb_skip'
+        );
+    } else if (nav === 'deposit') {
       this.router.navigate([
-        "/",
-        "deposit",
+        '/',
+        'deposit',
         `${this.data.asset.asset.chain}.${this.data.asset.asset.symbol}`,
       ]);
-    } else if (nav === "deposit-back") {
-      this.overlaysService.setCurrentDepositView("Deposit");
+    } else if (nav === 'deposit-back') {
+      this.overlaysService.setCurrentDepositView('Deposit');
     }
   }
 
@@ -520,22 +565,38 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
     if (this.error) {
       return this.error;
     } else {
-      return "confirm";
+      return 'confirm';
     }
   }
 
   closeDialog(transactionSucess?: boolean) {
-    let depositAmountUSD = this.data.runeAmount * this.data.runePrice + this.data.assetAmount * this.data.assetPrice;
-    this.analyticsService.event('pool_deposit_symmetrical_confirm', 'button_deposit_cancel_symmetrical_*POOL_ASSET*_usd_*numerical_usd_value*', depositAmountUSD, assetString(this.data.asset.asset), depositAmountUSD.toString());
-    
-    let depositFeeAmountUSD = this.data.runeFee * this.data.runePrice + this.data.estimatedFee * this.data.assetPrice;
-    this.analyticsService.event('pool_deposit_symmetrical_confirm', 'button_deposit_cancel_symmetrical_*POOL_ASSET*_fee_usd_*numerical_usd_value*', depositFeeAmountUSD, assetString(this.data.asset.asset), depositFeeAmountUSD.toString());
+    let depositAmountUSD =
+      this.data.runeAmount * this.data.runePrice +
+      this.data.assetAmount * this.data.assetPrice;
+    this.analyticsService.event(
+      'pool_deposit_symmetrical_confirm',
+      'button_deposit_cancel_symmetrical_*POOL_ASSET*_usd_*numerical_usd_value*',
+      depositAmountUSD,
+      assetString(this.data.asset.asset),
+      depositAmountUSD.toString()
+    );
+
+    let depositFeeAmountUSD =
+      this.data.runeFee * this.data.runePrice +
+      this.data.estimatedFee * this.data.assetPrice;
+    this.analyticsService.event(
+      'pool_deposit_symmetrical_confirm',
+      'button_deposit_cancel_symmetrical_*POOL_ASSET*_fee_usd_*numerical_usd_value*',
+      depositFeeAmountUSD,
+      assetString(this.data.asset.asset),
+      depositFeeAmountUSD.toString()
+    );
 
     this.close.emit(transactionSucess);
   }
 
   closeToPool() {
-    this.router.navigate(["/", "pool"]);
+    this.router.navigate(['/', 'pool']);
   }
 
   ngOnDestroy() {

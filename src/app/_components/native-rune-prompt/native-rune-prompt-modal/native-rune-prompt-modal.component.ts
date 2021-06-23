@@ -1,27 +1,30 @@
-import { Component, Inject, OnInit } from "@angular/core";
-import { Asset } from "src/app/_classes/asset";
-import { Subscription } from "rxjs";
-import { AssetAndBalance } from "src/app/_classes/asset-and-balance";
-import { MidgardService } from "src/app/_services/midgard.service";
+import { Component, Inject, OnInit } from '@angular/core';
+import { Asset } from 'src/app/_classes/asset';
+import { Subscription } from 'rxjs';
+import { AssetAndBalance } from 'src/app/_classes/asset-and-balance';
+import { MidgardService } from 'src/app/_services/midgard.service';
 import {
   MainViewsEnum,
   OverlaysService,
-} from "src/app/_services/overlays.service";
-import { ThorchainPricesService } from "src/app/_services/thorchain-prices.service";
-import { UserService } from "src/app/_services/user.service";
-import { assetAmount } from "@xchainjs/xchain-util";
-import { AnalyticsService, assetString } from "src/app/_services/analytics.service";
+} from 'src/app/_services/overlays.service';
+import { ThorchainPricesService } from 'src/app/_services/thorchain-prices.service';
+import { UserService } from 'src/app/_services/user.service';
+import { assetAmount } from '@xchainjs/xchain-util';
+import {
+  AnalyticsService,
+  assetString,
+} from 'src/app/_services/analytics.service';
 
 @Component({
-  selector: "app-native-rune-prompt-modal",
-  templateUrl: "./native-rune-prompt-modal.component.html",
-  styleUrls: ["./native-rune-prompt-modal.component.scss"],
+  selector: 'app-native-rune-prompt-modal',
+  templateUrl: './native-rune-prompt-modal.component.html',
+  styleUrls: ['./native-rune-prompt-modal.component.scss'],
 })
 export class NativeRunePromptModalComponent {
   assets: AssetAndBalance[];
   loading: boolean;
   subs: Subscription[];
-  mode: "SELECT_ASSET" | "UPGRADE_ASSET" | "CONFIRM" | "SUCCESS";
+  mode: 'SELECT_ASSET' | 'UPGRADE_ASSET' | 'CONFIRM' | 'SUCCESS';
   selectedAsset: AssetAndBalance;
   amountToSend: number;
   successfulTxHash: string;
@@ -37,7 +40,7 @@ export class NativeRunePromptModalComponent {
   ) {
     this.nonNativeRuneAssets = [];
     this.loading = true;
-    this.mode = "SELECT_ASSET";
+    this.mode = 'SELECT_ASSET';
 
     const balances$ = this.userService.userBalances$.subscribe((balances) => {
       if (balances) {
@@ -45,9 +48,9 @@ export class NativeRunePromptModalComponent {
           // get ETH.RUNE and BNB.RUNE
           .filter((balance) => {
             return (
-              (balance.asset.chain === "BNB" &&
-                balance.asset.ticker === "RUNE") ||
-              (balance.asset.chain === "ETH" && balance.asset.ticker === "RUNE")
+              (balance.asset.chain === 'BNB' &&
+                balance.asset.ticker === 'RUNE') ||
+              (balance.asset.chain === 'ETH' && balance.asset.ticker === 'RUNE')
             );
           })
           // filter out 0 amounts
@@ -77,7 +80,7 @@ export class NativeRunePromptModalComponent {
         //get THOR.RUNE
         .filter((balance) => {
           return (
-            balance.asset.chain === "THOR" && balance.asset.ticker === "RUNE"
+            balance.asset.chain === 'THOR' && balance.asset.ticker === 'RUNE'
           );
         })
         // Create asset
@@ -93,7 +96,7 @@ export class NativeRunePromptModalComponent {
         )[0];
       else {
         this.nativeRune = {
-          asset: new Asset("THOR.RUNE"),
+          asset: new Asset('THOR.RUNE'),
           balance: assetAmount(0),
         };
       }
@@ -102,7 +105,7 @@ export class NativeRunePromptModalComponent {
       this.midgardService.getPools().subscribe(
         (res) => {
           const availablePools = res.filter(
-            (pool) => pool.status === "available"
+            (pool) => pool.status === 'available'
           );
           const runePrice =
             this.thorchainPricesService.estimateRunePrice(availablePools);
@@ -116,7 +119,7 @@ export class NativeRunePromptModalComponent {
           this.assets = this.nonNativeRuneAssets;
           this.loading = false;
         },
-        (err) => console.error("error fetching pools:", err)
+        (err) => console.error('error fetching pools:', err)
       );
     });
 
@@ -130,30 +133,35 @@ export class NativeRunePromptModalComponent {
         `${asset.chain}.${asset.symbol}`
     );
     this.selectedAsset = withBalance;
-    this.mode = "UPGRADE_ASSET";
+    this.mode = 'UPGRADE_ASSET';
 
-    this.analytics.event('upgrade_select', 'option_selected_*ASSET*', undefined, assetString(asset));
+    this.analytics.event(
+      'upgrade_select',
+      'option_selected_*ASSET*',
+      undefined,
+      assetString(asset)
+    );
   }
 
   transactionSuccessful(hash: string) {
     this.successfulTxHash = hash;
-    this.mode = "SUCCESS";
+    this.mode = 'SUCCESS';
   }
 
   breadcrumbNav(val: string) {
     if (val === 'swap') {
       this.analytics.event('upgrade_select', 'breadcrumb_skip');
-      this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
+      this.overlaysService.setViews(MainViewsEnum.Swap, 'Swap');
     }
   }
 
   confirmUpgradeRune(p: { amount: number }) {
     this.amountToSend = p.amount;
-    this.mode = "CONFIRM";
+    this.mode = 'CONFIRM';
   }
 
   close() {
-    this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
+    this.overlaysService.setViews(MainViewsEnum.Swap, 'Swap');
   }
 
   ngOnDestroy(): void {

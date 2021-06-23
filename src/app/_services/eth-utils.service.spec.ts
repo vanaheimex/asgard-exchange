@@ -1,8 +1,8 @@
-import { TestBed } from "@angular/core/testing";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
-import { EthUtilsService } from "./eth-utils.service";
+import { TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { EthUtilsService } from './eth-utils.service';
 
-describe("EthUtilsService", () => {
+describe('EthUtilsService', () => {
   let service: EthUtilsService;
 
   beforeEach(() => {
@@ -12,7 +12,7 @@ describe("EthUtilsService", () => {
     service = TestBed.inject(EthUtilsService);
   });
 
-  it("should be created", () => {
+  it('should be created', () => {
     expect(service).toBeTruthy();
   });
 });
