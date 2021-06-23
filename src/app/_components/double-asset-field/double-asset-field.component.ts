@@ -35,7 +35,7 @@ import {
   templateUrl: './double-asset-field.component.html',
   styleUrls: ['./double-asset-field.component.scss'],
 })
-export class DoubleAssetFieldComponent implements OnInit {
+export class DoubleAssetFieldComponent {
   /**
    * Selected Asset
    */
