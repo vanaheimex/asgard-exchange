@@ -376,7 +376,7 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
             wallet
           );
           const decimals = await tokenContract.decimals();
-          decimal = decimals.toNumber();
+          decimal = decimals;
         }
 
         const gasPrice = baseAmount(
