@@ -160,13 +160,9 @@ export class TransactionSuccessModalComponent {
   explorerPath(hash: string = this.hash, chain: Chain = this.chain): string {
     if (this.externalTx) chain = "THOR";
 
-    if (chain === "THOR") {
-      return this.thorchainExplorerUrl + "/" + hash;
-    } else if (chain === "ETH") {
-      return `${this.ethereumExplorerUrl}/0x${hash}`;
-    } else {
-      return this.explorerUrl(chain) + "/" + hash;
-    }
+    let urlHash = chain === 'ETH' ? `0x${hash}` : hash;
+    let url = this.userService.getChainClient(undefined, chain).getExplorerTxUrl(urlHash);
+    return url;
   }
 
   viewBlockPath(hash: string): string {

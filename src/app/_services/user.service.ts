@@ -566,7 +566,7 @@ export class UserService {
     }
   }
 
-  getChainClient(user: User, chain: Chain) {
+  getChainClient(user: User = this._user, chain: Chain) {
     switch (chain) {
       case "BTC":
         return user.clients.bitcoin;
