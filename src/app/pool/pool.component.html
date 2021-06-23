@@ -133,9 +133,7 @@
       </div>
 
       <div class="bottom-actions" *ngIf="!user">
-        <button class="next-btn" (click)="connectWallet()">
-          <span>CONNECT WALLET</span>
-        </button>
+        <app-connect (openWalletOptions)="connectWallet()"></app-connect>
       </div>
       
     </ng-container>

@@ -114,9 +114,7 @@
         </div>
         <div class="divider"></div>
         <div class="right-btn">
-          <button class="next-btn" (click)="connectWallet()">
-            <span>Connect</span>
-          </button>
+          <app-connect (openWalletOptions)="connectWallet()"></app-connect>
         </div>
       </div>
     </div>

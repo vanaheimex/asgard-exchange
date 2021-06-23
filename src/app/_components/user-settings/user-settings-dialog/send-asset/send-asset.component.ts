@@ -187,8 +187,7 @@ export class SendAssetComponent implements OnInit, OnDestroy {
     }
 
     if (
-      !this.client.validateAddress(this.recipientAddress) ||
-      this.client.getAddress() === this.recipientAddress
+      !this.client.validateAddress(this.recipientAddress)
     ) {
       return {text: `Invalid ${this.asset.asset.chain} Address`, isError: true};
     }

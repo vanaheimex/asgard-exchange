@@ -168,9 +168,7 @@
 
         <!-- please connect button -->
         <div class="bottom-actions">
-          <button *ngIf="!user" class="next-btn wallet-connect" (click)="connectWallet()">
-            <span>Connect Wallet</span>
-          </button>
+          <app-connect *ngIf="!user" (openWalletOptions)="connectWallet()"></app-connect>
 
 
           <button

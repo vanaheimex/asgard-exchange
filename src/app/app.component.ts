@@ -146,45 +146,6 @@ export class AppComponent implements OnInit, OnDestroy {
         this.overlaysService.setMenu(false);
       }
     });
-
-    const user$ = this.userService.user$;
-    const metaMaskProvider$ = this.metaMaskService.provider$;
-    const combined = combineLatest([user$, metaMaskProvider$]);
-    const subs = combined.subscribe(async ([_user, _metaMaskProvider]) => {
-      if (_metaMaskProvider) {
-        const accounts = await _metaMaskProvider.listAccounts();
-        const {chainId} = await _metaMaskProvider.getNetwork();
-
-        let validNetwork: boolean;
-        switch (+chainId) {
-          case 1:
-            validNetwork = true ? environment.network !== 'testnet' : false;
-            break;
-
-          case 3:
-            validNetwork = true ? environment.network === 'testnet' : false;
-            break;
-
-          default:
-            validNetwork = true
-            break;
-        }
-
-        if (accounts.length > 0 && validNetwork && (!_user || accounts[0] !== _user.wallet)) {
-          const signer = _metaMaskProvider.getSigner();
-          const address = await signer.getAddress();
-          const user = new User({
-            type: 'metamask',
-            wallet: address,
-          });
-          this.userService.setUser(user);
-        }
-      } else {
-        console.log('metamask provider is null');
-      }
-    });
-
-    this.subs.push(subs);
   }
 
   openReconnectDialog(keystore?) {

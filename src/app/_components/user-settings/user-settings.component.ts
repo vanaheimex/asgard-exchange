@@ -17,6 +17,7 @@ import {
 } from "src/app/_services/overlays.service";
 import { Router } from "@angular/router";
 import { AnalyticsService } from "src/app/_services/analytics.service";
+import { MetamaskService } from "src/app/_services/metamask.service";
 
 @Component({
   selector: "app-user-settings",
@@ -47,10 +48,12 @@ export class UserSettingsComponent implements OnDestroy {
 
   constructor(
     private txStatusService: TransactionStatusService,
+    private transactionStatusService: TransactionStatusService,
     private router: Router,
     private userService: UserService,
     public overlaysService: OverlaysService,
-    private analyticsService: AnalyticsService
+    private analyticsService: AnalyticsService,
+    private metaMaskService: MetamaskService
   ) {
     this.pendingTxCount = 0;
     this.showMenu = false;
@@ -89,7 +92,11 @@ export class UserSettingsComponent implements OnDestroy {
   }
 
   disconnect() {
+    localStorage.clear();
     this.userService.setUser(null);
+    this.metaMaskService.setProvider(null);
+    this.transactionStatusService.clearPendingTransactions();
+    
     this.analyticsService.event('menu', 'option_selected_*MENU_OPTION*', undefined, "disconnect");
     this.overlaysService.setViews(MainViewsEnum.Swap, "Swap");
 

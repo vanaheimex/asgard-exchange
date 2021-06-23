@@ -17,12 +17,13 @@ import { AnalyticsService } from "src/app/_services/analytics.service";
 export class ConnectComponent implements OnInit, OnDestroy {
   metaMaskProvider: ethers.providers.Web3Provider;
   subs: Subscription[];
+  @Output() openWalletOptions: EventEmitter<null>;
 
   constructor(
     private metaMaskService: MetamaskService,
     private userService: UserService,
-    private overlaysService: OverlaysService
   ) {
+    this.openWalletOptions = new EventEmitter<null>();
     this.subs = [];
   }
 
@@ -51,7 +52,7 @@ export class ConnectComponent implements OnInit, OnDestroy {
   }
 
   openDialog() {
-    this.overlaysService.setCurrentSwapView("Connect");
+    this.openWalletOptions.emit();
   }
 
   ngOnDestroy() {
