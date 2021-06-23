@@ -69,35 +69,39 @@ export class XDEFIService {
   validNetwork$ = this.vaildNetwork.asObservable();
 
   constructor(private userService: UserService, private mockClientService: MockClientService) {
-    if (typeof window === 'object' && window?.xfi) {
-      (window as any)?.xfi?.thorchain?.on("chainChanged", (obj) => {
-        console.log("changed", obj);
-        const envNetwork =
-          environment.network === "testnet" ? "testnet" : "mainnet";
-        this.vaildNetwork.next(this.isValidNetwork());
-        if (obj.network !== envNetwork) {
-          // let changeUrl = envNetwork === 'testnet' ? links.appUrl : links.testnetAppUrl;
-          // location.href = changeUrl;
-        }
-      });
-
-      (window as any)?.ethereum?.on('accountsChanged', (accounts) => {
-        // Time to reload your interface with accounts[0]!
-        console.log((window as any).ethereum);
-        this.userService.user$.pipe(take(1)).subscribe(
-          (user) => {
-            if (user) {
-              this.connectXDEFI().then(
-                (user) => {
-                  console.log('new user account', user);
-                  if (user)
-                    this.userService.setUser(user);
-                }
-              );
-            }
+    try {
+      if (typeof window === 'object' && window?.xfi) {
+        (window as any)?.xfi?.thorchain?.on("chainChanged", (obj) => {
+          console.log("changed", obj);
+          const envNetwork =
+            environment.network === "testnet" ? "testnet" : "mainnet";
+          this.vaildNetwork.next(this.isValidNetwork());
+          if (obj.network !== envNetwork) {
+            // let changeUrl = envNetwork === 'testnet' ? links.appUrl : links.testnetAppUrl;
+            // location.href = changeUrl;
           }
-        )
-      });
+        });
+
+        (window as any)?.ethereum?.on('accountsChanged', (accounts) => {
+          // Time to reload your interface with accounts[0]!
+          console.log((window as any).ethereum);
+          this.userService.user$.pipe(take(1)).subscribe(
+            (user) => {
+              if (user) {
+                this.connectXDEFI().then(
+                  (user) => {
+                    console.log('new user account', user);
+                    if (user)
+                      this.userService.setUser(user);
+                  }
+                );
+              }
+            }
+          )
+        });
+      }
+    } catch (error) {
+      console.error('couldn\'t find the xdefi injections!');
     }
   }
 
@@ -116,11 +120,27 @@ export class XDEFIService {
     return !invalidNetworkProvider;
   }
 
+  providerIsEmpty(value) {
+    return Object.keys(value).length === 0
+      && value.constructor === Object;
+  }
+
+  checkTheProviders(provider) {
+    if (provider.providerPath !== "ethereum") {
+      return !this.providerIsEmpty(get(window, provider.providerPath))
+        && get(window, provider.providerPath).constructor.name.toUpperCase().includes("XDEFI");
+    }
+    else {
+      return !this.providerIsEmpty(get(window, provider.providerPath)) 
+        && (get(window, provider.providerPath) as any).isXDEFI
+    }
+  }
+
   listEnabledXDFIProviders() {
     return XDEFIService.listProvider.map((provider) => ({
       ...provider,
       // @ts-ignore
-      enabled: get(window, provider.providerPath),
+      enabled: this.checkTheProviders(provider),
     }));
   }
 
@@ -507,6 +527,7 @@ export class XDEFIService {
             {
               ...overrides,
               data: memo ? toUtf8Bytes(memo) : undefined,
+              from: userEthereumClient.getAddress()
             }
           );
           txResult = await (window as any).ethereum.request({
@@ -587,6 +608,34 @@ export class XDEFIService {
         );
       });
     };
+
+    userThorchainClient.transfer = async (transferParams) => {
+      console.log("userThorchainClient.transfer", transferParams);
+      return new Promise((resolve, reject) => {
+        (window as any).xfi.thorchain.request(
+          {
+            method: "transfer",
+            params: [
+              {
+                ...transferParams,
+                from: thorAddress,
+                amount: {
+                  amount: transferParams.amount.amount().toString(),
+                  decimals: transferParams.amount.decimal
+                }
+              }
+            ]
+          },
+          (err, result) => {
+            if (err) {
+              return reject(err);
+            }
+            return resolve(result);
+          }
+        )
+      })
+    }
+
     // Ltc
     userLtcClient.transfer = async (transferParams) => {
       console.log("userLtcClient.transfer", transferParams);
