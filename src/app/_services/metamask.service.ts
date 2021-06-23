@@ -142,7 +142,8 @@ export class MetamaskService {
   async init(): Promise<void> {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const lastLoginType = localStorage.getItem('lastLoginType');
-    if (provider && lastLoginType === 'metamask') {
+    const isXDEFI = window.ethereum?.isXDEFI;
+    if (provider && lastLoginType === 'metamask' && !isXDEFI) {
       this.setProvider(provider);
       this.setMetaMaskNetwork(provider);
     } else {
