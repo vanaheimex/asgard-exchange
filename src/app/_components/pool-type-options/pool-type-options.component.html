@@ -90,8 +90,7 @@
       </div>
 
       <div class="disclaimer" style="margin-top: 14px; margin-left: 22px;">
-        <div>If you chose to deposit assymetrically using {{asset.chain}}.{{asset.ticker}} or THOR.RUNE, be aware that you will be selling 50% of your asset in order to enter the pool symmetrically ({{asset.chain}}.{{asset.ticker}} + THOR.RUNE).</div>
-        <div class="pt-5">All THORChain pools require symmetrical positions, even if you enter with one asset only.</div>
+        <ng-content select="[disclaimer]"></ng-content>
       </div>
 
     </div>

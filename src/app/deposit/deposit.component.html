@@ -183,17 +183,23 @@
   [poolTypeOptions]="poolTypeOptions" 
   (selectPoolType)="setPoolTypeOptionFromEvent($event)"
 >
-<app-breadcrumb
-  [path]="[
-    { name: 'skip', call: 'swap' },
-    { name: 'Pools', call: 'pool' },
-    { name: 'Deposit', disable: true },
-    { name: asset?.chain + '.' + asset?.ticker , disable: true },
-    { name: 'type', disable: true }
-  ]"
-  message="select"
-  (funcCaller)="breadCrumbNav($event, 'deposit')"
-></app-breadcrumb>
+<ng-container>
+  <app-breadcrumb
+    [path]="[
+      { name: 'skip', call: 'swap' },
+      { name: 'Pools', call: 'pool' },
+      { name: 'Deposit', disable: true },
+      { name: asset?.chain + '.' + asset?.ticker , disable: true },
+      { name: 'type', disable: true }
+    ]"
+    message="select"
+    (funcCaller)="breadCrumbNav($event, 'deposit')"
+  ></app-breadcrumb>
+</ng-container>
+<ng-container disclaimer>
+  <div>If you chose to deposit assymetrically using {{asset.chain}}.{{asset.ticker}} or THOR.RUNE, be aware that you will be selling 50% of your asset in order to enter the pool symmetrically ({{asset.chain}}.{{asset.ticker}} + THOR.RUNE).</div>
+  <div class="pt-5">All THORChain pools require symmetrical positions, even if you enter with one asset only.</div>
+</ng-container>
 </app-pool-type-options>
 
 
