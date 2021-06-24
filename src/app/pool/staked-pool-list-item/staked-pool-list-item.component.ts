@@ -257,21 +257,19 @@ export class StakedPoolListItemComponent
         (pool) => pool.runeAddress
       ).runeAddress;
 
-      for (let memPoolData of this.memberPoolData) {
-        const poolType = this.getPoolType(memPoolData);
-
-        const { pooledRune, pooledAsset, poolShare } = this.calculatePoolShare(
-          memPoolData,
-          poolType
-        );
-
-        this.pooledRune = this.pooledRune ?? 0 + pooledRune;
-        this.pooledAsset = this.pooledAsset ?? 0 + pooledAsset;
-        this.poolShare = this.poolShare ?? 0 + poolShare;
-      }
-
-      //calculating the sum of pool share from the whole deposited options
       if (this.activate) {
+        for (let memPoolData of this.memberPoolData) {
+          const poolType = this.getPoolType(memPoolData);
+
+          const { pooledRune, pooledAsset, poolShare } =
+            this.calculatePoolShare(memPoolData, poolType);
+
+          this.pooledRune = (this.pooledRune ?? 0) + pooledRune;
+          this.pooledAsset = (this.pooledAsset ?? 0) + pooledAsset;
+          this.poolShare = (this.poolShare ?? 0) + poolShare;
+        }
+
+        //calculating the sum of pool share from the whole deposited options
         this.poolDetailService.setPooledDetails(
           'member',
           this.pooledRune,
