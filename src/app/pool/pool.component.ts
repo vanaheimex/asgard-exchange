@@ -289,7 +289,10 @@ export class PoolComponent implements OnInit, OnDestroy {
         this.midgardService.getMember(address).subscribe((res) => {
           for (const pool of res.pools) {
             const match = this.memberPools.find(
-              (existingPool) => existingPool.pool === pool.pool
+              (existingPool) =>
+                existingPool.pool === pool.pool &&
+                existingPool.assetAddress === pool.assetAddress &&
+                existingPool.runeAddress === pool.runeAddress
             );
             if (!match) {
               const memberPools = this.memberPools;

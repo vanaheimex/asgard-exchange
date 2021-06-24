@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { MemberPool } from 'src/app/_classes/member';
 import { PoolDTO } from 'src/app/_classes/pool';
@@ -15,7 +15,7 @@ import { environment } from 'src/environments/environment';
   templateUrl: './staked-pools-list.component.html',
   styleUrls: ['./staked-pools-list.component.scss'],
 })
-export class StakedPoolsListComponent {
+export class StakedPoolsListComponent implements OnDestroy {
   activePool: PoolDTO;
 
   @Input() runePrice: number;
@@ -40,7 +40,7 @@ export class StakedPoolsListComponent {
 
   mappedPools: {
     poolData: PoolDTO;
-    memberData: MemberPool;
+    memberData: MemberPool[];
   }[];
 
   notMamberPools: PoolDTO[];
@@ -61,15 +61,20 @@ export class StakedPoolsListComponent {
 
   mapPools() {
     if (this.pools && this.memberPools) {
-      this.mappedPools = this.memberPools.map((memberPool) => {
-        return {
-          poolData: {
-            ...this.pools.find((pool) => pool.asset === memberPool.pool),
-            runePrice: this.runePrice,
-          },
-          memberData: memberPool,
-        };
-      });
+      this.mappedPools = [];
+      [...new Set(this.memberPools.map((el) => el.pool))].forEach(
+        (memberPool) => {
+          this.mappedPools.push({
+            poolData: {
+              ...this.pools.find((pool) => pool.asset === memberPool),
+              runePrice: this.runePrice,
+            },
+            memberData: this.memberPools.filter(
+              (existingPool) => existingPool.pool === memberPool
+            ),
+          });
+        }
+      );
 
       this.mappedPools.sort((a, b) =>
         a.poolData.asset > b.poolData.asset
