@@ -434,12 +434,14 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
             .div(10 ** 8)
             .toNumber();
 
-          this.outboundHash = res.out.find((outTx) =>
-            outTx.coins.find(
-              (c) =>
-                c.asset === `${this.data.asset.chain}.${this.data.asset.ticker}`
-            )
-          ).txID;
+          this.outboundHash =
+            res.out.find((outTx) =>
+              outTx.coins.find(
+                (c) =>
+                  c.asset ===
+                  `${this.data.asset.chain}.${this.data.asset.ticker}`
+              )
+            )?.txID || '';
         }
       });
   }

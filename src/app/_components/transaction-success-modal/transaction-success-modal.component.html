@@ -181,7 +181,7 @@
             <app-notice style="width: calc(50% - 5px)" [isMono]="true">
               <span class="no-wrap" text style="font-family: inherit"
                 ><span style="font-family: 'Roboto'"
-                  >{{ asset[0].asset.ticker }}: </span
+                  >{{ modalType === 'DEPOSIT' ? asset[1].asset.ticker : asset[0].asset.ticker }}: </span
                 >{{
                   hash.substring(0, 3) +
                     "..." +
@@ -221,7 +221,7 @@
               <span class="no-wrap" *ngIf="hashOutbound" text style="font-family: inherit">
                 <ng-container *ngIf="hashOutbound !== 'success'">
                   <span style="font-family: 'Roboto'"
-                    >{{ asset[1].asset.ticker }}: </span
+                    >{{ modalType === 'DEPOSIT' ? asset[0].asset.ticker : asset[1].asset.ticker }}: </span
                   >{{
                     hashOutbound.substring(0, 3) +
                       "..." +
@@ -233,7 +233,7 @@
                 </ng-container>
                 <ng-container *ngIf="hashOutbound === 'success'">
                   <span style="font-family: 'Roboto'"
-                    >{{ asset[1].asset.ticker }}: </span
+                    >{{ modalType === 'DEPOSIT' ? asset[0].asset.ticker : asset[1].asset.ticker }}: </span
                   >NO TXID!
                 </ng-container>
               </span>
@@ -241,7 +241,7 @@
                 *ngIf="!hashOutbound"
                 text
                 style="font-family: 'Roboto'; color: #fff"
-                >WAITING FOR {{ asset[1].asset.ticker }} TX...</span
+                >WAITING FOR {{ modalType === 'DEPOSIT' ? asset[0].asset.ticker : asset[1].asset.ticker }} TX...</span
               >
               <ng-container tags>
                 <app-tag *ngIf="hashOutbound && hashOutbound !== 'success'">
@@ -259,7 +259,7 @@
                       (click)="txEventClick('outbound')"
                       [href]="
                         hashOutbound !== 'success'
-                          ? explorerPath(hashOutbound, asset[1].asset.chain)
+                          ? explorerPath(hashOutbound, modalType === 'DEPOSIT' ? asset[0].asset.chain : asset[1].asset.chain)
                           : viewBlockPath(hash)
                       "
                       >Explore</a
@@ -393,12 +393,20 @@
                 </ng-container>
               </span>
               <span
-                *ngIf="!hashOutbound"
+                *ngIf="hashOutbound === undefined"
                 text
                 class="no-wrap"
                 style="font-family: 'Roboto'; color: #fff"
               >
                 WAITING FOR {{ asset[0].asset.ticker }} TX...
+              </span>
+              <span
+                *ngIf="hashOutbound === ''"
+                text
+                class="no-wrap"
+                style="font-family: 'Roboto'; color: #fff"
+              >
+                NO TXID!
               </span>
               <ng-container *ngIf="hashOutbound" tags>
                 <app-tag>

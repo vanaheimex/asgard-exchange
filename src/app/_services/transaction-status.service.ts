@@ -269,7 +269,7 @@ export class TransactionStatusService {
         .subscribe(async (res: TransactionDTO) => {
           if (res.count > 0) {
             for (const resTx of res.actions) {
-              if (resTx.out.length > 0 && resTx.type === 'swap') {
+              if (resTx.status === 'success' && resTx.type === 'swap') {
                 let tx_number = this._txs.findIndex(
                   (tx) =>
                     tx.hash.toUpperCase() == resTx.in[0].txID.toUpperCase()
@@ -281,6 +281,11 @@ export class TransactionStatusService {
               } else if (
                 resTx.type === 'withdraw' &&
                 resTx.status === 'success'
+              ) {
+                this.transactionSource.next(this._txs);
+              } else if (
+                resTx.status === 'succcess' &&
+                resTx.type === 'depoist'
               ) {
                 this.transactionSource.next(this._txs);
               }

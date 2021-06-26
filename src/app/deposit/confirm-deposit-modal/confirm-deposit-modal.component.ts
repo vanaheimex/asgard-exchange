@@ -8,7 +8,7 @@ import {
   EventEmitter,
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { assetToString } from '@xchainjs/xchain-util';
+import { assetToString, bn } from '@xchainjs/xchain-util';
 import { Subscription, timer } from 'rxjs';
 import { PoolAddressDTO } from 'src/app/_classes/pool-address';
 import { User } from 'src/app/_classes/user';
@@ -36,6 +36,7 @@ import { PoolTypeOption } from 'src/app/_const/pool-type-options';
 import { Client } from '@xchainjs/xchain-thorchain';
 import { MetamaskService } from 'src/app/_services/metamask.service';
 import { ethers } from 'ethers';
+import { Transaction } from 'src/app/_classes/transaction';
 
 // assets should be added for asset-input as designed.
 export interface ConfirmDepositData {
@@ -70,6 +71,8 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
   estimatedMinutes: number;
   balances: Balances;
   metaMaskProvider?: ethers.providers.Web3Provider;
+  depositSuccess: boolean;
+  outboundHash: string;
 
   //foe this interface it should be imported from despoit page
   @Input() data: ConfirmDepositData;
@@ -86,6 +89,7 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
     private keystoreDepositService: KeystoreDepositService,
     private metaMaskService: MetamaskService
   ) {
+    this.depositSuccess = false;
     this.loading = true;
     this.txState = TransactionConfirmationState.PENDING_CONFIRMATION;
     const user$ = this.userService.user$.subscribe((user) => {
@@ -448,6 +452,59 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
     this.error = error;
   }
 
+  getOutboundSuccess(hash: string) {
+    this.txStatusService.getOutboundHash(hash).subscribe((res: Transaction) => {
+      if (res.status === 'success') {
+        this.depositSuccess = true;
+
+        this.data.runeAmount = bn(
+          res.in
+            .find((inTX) =>
+              inTX.coins.find(
+                (c) =>
+                  c.asset ===
+                  `${this.data.rune.asset.chain}.${this.data.rune.asset.ticker}`
+              )
+            )
+            ?.coins.find(
+              (c) =>
+                c.asset ===
+                `${this.data.rune.asset.chain}.${this.data.rune.asset.ticker}`
+            ).amount
+        )
+          .div(10 ** 8)
+          .toNumber();
+
+        this.data.assetAmount = bn(
+          res.in
+            .find((inTX) =>
+              inTX.coins.find(
+                (c) =>
+                  c.asset ===
+                  `${this.data.asset.asset.chain}.${this.data.asset.asset.ticker}`
+              )
+            )
+            ?.coins.find(
+              (c) =>
+                c.asset ===
+                `${this.data.asset.asset.chain}.${this.data.asset.asset.ticker}`
+            ).amount
+        )
+          .div(10 ** 8)
+          .toNumber();
+
+        this.outboundHash =
+          res.in.find((inTX) =>
+            inTX.coins.find(
+              (c) =>
+                c.asset ===
+                `${this.data.asset.asset.chain}.${this.data.asset.asset.ticker}`
+            )
+          )?.txID || '';
+      }
+    });
+  }
+
   assetDepositSuccess(asset: Asset, hash: string) {
     this.txStatusService.addTransaction({
       chain: asset.chain,
@@ -458,6 +515,8 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
       symbol: this.data.asset.asset.symbol,
       isThorchainTx: this.data.poolTypeOption === 'SYM' ? false : true,
     });
+
+    this.getOutboundSuccess(hash);
   }
 
   runeDepositSuccess(runeHash: string) {
@@ -472,31 +531,7 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
       isThorchainTx: true,
     });
 
-    //temporary patch for successing of both transfers in deposit
-    console.log('rune hash', runeHash);
-    timer(0, 10000).pipe(
-      switchMap(() => this.midgardService.getTransaction(runeHash)),
-      takeWhile((res) => {
-        console.log('this is the result', res);
-        for (const resTx of res.actions) {
-          if (resTx.status.toUpperCase() === 'SUCCESS') {
-            this.analyticsService.event(
-              'pool_deposit_symmetrical_success',
-              'tag_deposited_asset_container_wallet_*POOL_ASSET*',
-              undefined,
-              assetToString(this.data.asset.asset)
-            );
-            this.analyticsService.event(
-              'pool_deposit_symmetrical_success',
-              'tag_deposited_wallet_THOR.RUNE'
-            );
-            return false;
-          }
-        }
-        return true;
-      })
-    );
-
+    this.getOutboundSuccess(runeHash);
     this.txState = TransactionConfirmationState.SUCCESS;
   }
 

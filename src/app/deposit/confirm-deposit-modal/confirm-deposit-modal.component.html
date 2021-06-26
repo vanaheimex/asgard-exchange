@@ -159,6 +159,8 @@
     [isPlus]="true"
     modalType="DEPOSIT"
     [poolType]="data.poolTypeOption"
+    [hasOutbound]="data.poolTypeOption !== 'ASYM_RUNE'"
+    [hashOutbound]="outboundHash"
   >
     <app-breadcrumb
       [path]="[
@@ -168,7 +170,7 @@
         { name: data.asset.asset.chain + '.' + data.asset.asset.ticker, disable: true },
         { name: data.poolTypeOption === 'SYM' ? 'SYMETRICAL' : 'ASSYMETRICAL', disable: true }
       ]"
-      message="Success"
+      [message]="depositSuccess ? 'Success' : 'Waiting for Confirmation'"
       (funcCaller)="breadcrumbNav($event, 'success')"
     ></app-breadcrumb>
   </app-transaction-success-modal>
