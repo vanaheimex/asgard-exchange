@@ -130,7 +130,8 @@
                 alt="folder icon"
               />
             </div>
-            <span class="item-text">MetaMask</span>
+            <span *ngIf="!isXDEFI" class="item-text">Connect with MetaMask</span>
+            <span *ngIf="isXDEFI" class="item-text">Disale XDEFI dapps</span>
           </div>
         </button>
 

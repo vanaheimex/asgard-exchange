@@ -119,12 +119,13 @@ export class XDEFIService {
   }
 
   providerIsEmpty(value) {
-    return Object.keys(value).length === 0 && value.constructor === Object;
+    return Object.keys(value).length === 0 && value?.constructor === Object;
   }
 
   checkTheProviders(provider) {
     if (provider.providerPath !== 'ethereum') {
       return (
+        get(window, provider.providerPath) &&
         !this.providerIsEmpty(get(window, provider.providerPath)) &&
         get(window, provider.providerPath)
           .constructor.name.toUpperCase()
@@ -132,6 +133,7 @@ export class XDEFIService {
       );
     } else {
       return (
+        get(window, provider.providerPath) &&
         !this.providerIsEmpty(get(window, provider.providerPath)) &&
         (get(window, provider.providerPath) as any).isXDEFI
       );

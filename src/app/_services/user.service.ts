@@ -163,7 +163,9 @@ export class UserService {
         litecoin: undefined,
       };
 
-      this.getEthereumBalances(userEthereumClient, this._user.wallet);
+      promises.push(
+        this.getEthereumBalances(userEthereumClient, this._user.wallet)
+      );
     }
 
     // allSettled is not yet added into ts, need an update for this

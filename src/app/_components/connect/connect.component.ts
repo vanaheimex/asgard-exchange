@@ -96,6 +96,7 @@ export class ConnectModal {
   connectionView: ConnectionView;
   isTestnet: boolean;
   isXDEFIConnected: boolean;
+  isXDEFI: boolean;
   phrase: string;
   writePhraseCategory: string;
 
@@ -111,6 +112,11 @@ export class ConnectModal {
     this.isXDEFIConnected = false;
     if ((window as any).xfi) {
       this.isXDEFIConnected = true;
+    }
+
+    this.isXDEFI = false;
+    if ((window as any)?.ethereum?.isXDEFI) {
+      this.isXDEFI = true;
     }
   }
 
@@ -146,9 +152,11 @@ export class ConnectModal {
   }
 
   async connectMetaMask(): Promise<void> {
-    this.analytics.event('connect_select_wallet', 'option_connect_wallet');
-    await this.metaMaskService.connect();
-    this.close();
+    if (!this.isXDEFI) {
+      this.analytics.event('connect_select_wallet', 'option_connect_wallet');
+      await this.metaMaskService.connect();
+      this.close();
+    }
   }
 
   storePhrasePrompt(values: { phrase: string; label: string }) {
