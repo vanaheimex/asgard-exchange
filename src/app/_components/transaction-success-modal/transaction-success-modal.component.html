@@ -39,7 +39,7 @@
         <app-arrow></app-arrow>
 
         <app-notice [isMono]="true">
-          <span text style="font-family: inherit" *ngIf="hash">{{
+          <span class="no-wrap" text style="font-family: inherit" *ngIf="hash">{{
             hash.substring(0, 16) +
               "..." +
               hash.substring(hash.length - 16, hash.length)
@@ -119,7 +119,7 @@
 
         <ng-container *ngIf="!hasOutbound">
           <app-notice [isMono]="true">
-            <span text style="font-family: inherit">{{
+            <span class="no-wrap" text style="font-family: inherit">{{
               hash.substring(0, 12) +
                 "..." +
                 hash.substring(hash.length - 12, hash.length)
@@ -179,7 +179,7 @@
         <ng-container *ngIf="hasOutbound">
           <div style="display: flex">
             <app-notice style="width: calc(50% - 5px)" [isMono]="true">
-              <span text style="font-family: inherit"
+              <span class="no-wrap" text style="font-family: inherit"
                 ><span style="font-family: 'Roboto'"
                   >{{ asset[0].asset.ticker }}: </span
                 >{{
@@ -218,7 +218,7 @@
               style="width: calc(50% - 5px)"
               [isMono]="true"
             >
-              <span *ngIf="hashOutbound" text style="font-family: inherit">
+              <span class="no-wrap" *ngIf="hashOutbound" text style="font-family: inherit">
                 <ng-container *ngIf="hashOutbound !== 'success'">
                   <span style="font-family: 'Roboto'"
                     >{{ asset[1].asset.ticker }}: </span
@@ -304,33 +304,129 @@
 
         <app-arrow></app-arrow>
 
-        <app-notice [isMono]="true">
-          <span text style="font-family: inherit">{{
-            hash.substring(0, 16) +
-              "..." +
-              hash.substring(hash.length - 16, hash.length)
-          }}</span>
-          <ng-container tags>
-            <app-tag>
-              <div (click)="copyToClipboard()">
-                <span *ngIf="!copied">COPY</span>
-                <span *ngIf="copied">COPIED</span>
-              </div>
-            </app-tag>
-            <div style="width: 5px"></div>
-            <app-tag>
-              <div>
-                <a
-                  target="_blank"
-                  style="text-decoration: none; color: inherit"
-                  [href]="explorerPath()"
-                  (click)="txEventClick()"
-                  >Explore</a
-                >
-              </div>
-            </app-tag>
-          </ng-container>
-        </app-notice>
+        <ng-container *ngIf="!hasOutbound">
+          <app-notice [isMono]="true">
+            <span class="no-wrap" text style="font-family: inherit">{{
+              hash.substring(0, 16) +
+                "..." +
+                hash.substring(hash.length - 16, hash.length)
+            }}</span>
+            <ng-container tags>
+              <app-tag>
+                <div (click)="copyToClipboard()">
+                  <span *ngIf="!copied">COPY</span>
+                  <span *ngIf="copied">COPIED</span>
+                </div>
+              </app-tag>
+              <div style="width: 5px"></div>
+              <app-tag>
+                <div>
+                  <a
+                    target="_blank"
+                    style="text-decoration: none; color: inherit"
+                    [href]="explorerPath()"
+                    (click)="txEventClick()"
+                    >Explore</a
+                  >
+                </div>
+              </app-tag>
+            </ng-container>
+          </app-notice>
+        </ng-container>
+
+        <ng-container *ngIf="hasOutbound">
+          <div style="display: flex">
+            <app-notice style="width: calc(50% - 5px)" [isMono]="true">
+              <span class="no-wrap" text style="font-family: inherit">
+                <span style="font-family: 'Roboto'">
+                  {{ asset[1].asset.chain }}: 
+                </span>
+                {{
+                  hash.substring(0, 3) +
+                    "..." +
+                    hash.substring(hash.length - 3, hash.length)
+                }}
+              </span>
+              <ng-container tags>
+                <app-tag>
+                  <div (click)="copyToClipboard()">
+                    <span *ngIf="!copied">COPY</span>
+                    <span *ngIf="copied">COPIED</span>
+                  </div>
+                </app-tag>
+                <div style="width: 5px"></div>
+                <app-tag>
+                  <div>
+                    <a
+                      target="_blank"
+                      style="text-decoration: none; color: inherit"
+                      [href]="explorerPath()"
+                    >
+                    Explore
+                    </a>
+                  </div>
+                </app-tag>
+              </ng-container>
+            </app-notice>
+
+            <div style="width: 10px"></div>
+
+            <app-notice
+              [isDisabled]="!hashOutbound"
+              [isTag]="hashOutbound"
+              style="width: calc(50% - 5px)"
+              [isMono]="true"
+            >
+              <span class="no-wrap" *ngIf="hashOutbound" text style="font-family: inherit;">
+                <ng-container>
+                  <span style="font-family: 'Roboto'">
+                    {{ asset[0].asset.ticker }}: 
+                  </span>
+                  {{
+                    hashOutbound.substring(0, 3) +
+                      "..." +
+                      hashOutbound.substring(
+                        hashOutbound.length - 3,
+                        hashOutbound.length
+                      )
+                  }}
+                </ng-container>
+              </span>
+              <span
+                *ngIf="!hashOutbound"
+                text
+                class="no-wrap"
+                style="font-family: 'Roboto'; color: #fff"
+              >
+                WAITING FOR {{ asset[0].asset.ticker }} TX...
+              </span>
+              <ng-container *ngIf="hashOutbound" tags>
+                <app-tag>
+                  <div (click)="copyToClipboard(hashOutbound, true)">
+                    <span *ngIf="!copiedOutbound">COPY</span>
+                    <span *ngIf="copiedOutbound">COPIED</span>
+                  </div>
+                </app-tag>
+                <div style="width: 5px"></div>
+                <app-tag>
+                  <div>
+                  <a
+                    target="_blank"
+                    style="text-decoration: none; color: inherit"
+                    [href]="
+                      hashOutbound !== 'success'
+                        ? explorerPath(hashOutbound, asset[0].asset.chain)
+                        : viewBlockPath(hash)
+                    "
+                  >
+                    Explore
+                  </a>
+                  </div>
+                </app-tag>
+              </ng-container>
+            </app-notice>
+          </div>
+        </ng-container>
       </div>
     </div>
 

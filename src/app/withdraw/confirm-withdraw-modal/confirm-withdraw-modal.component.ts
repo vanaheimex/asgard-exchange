@@ -11,7 +11,12 @@ import { Subject, Subscription } from 'rxjs';
 import { User } from '../../_classes/user';
 import { TransactionConfirmationState } from '../../_const/transaction-confirmation-state';
 import { UserService } from '../../_services/user.service';
-import { assetAmount, assetToBase, assetToString } from '@xchainjs/xchain-util';
+import {
+  assetAmount,
+  assetToBase,
+  assetToString,
+  bn,
+} from '@xchainjs/xchain-util';
 import {
   TransactionStatusService,
   TxActions,
@@ -30,6 +35,8 @@ import { TransactionUtilsService } from 'src/app/_services/transaction-utils.ser
 import { MidgardService } from 'src/app/_services/midgard.service';
 import { MetamaskService } from 'src/app/_services/metamask.service';
 import { ethers } from 'ethers';
+import { retry } from 'rxjs/operators';
+import { Transaction } from 'src/app/_classes/transaction';
 
 // TODO: this is the same as ConfirmStakeData in confirm stake modal
 export interface ConfirmWithdrawData {
@@ -64,10 +71,12 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
 
   //new reskin data injection
   @Input() data: ConfirmWithdrawData;
-  @Output() close: EventEmitter<boolean>;
+  @Output() closeEvent: EventEmitter<boolean>;
 
   message: string = 'confirm';
   metaMaskProvider?: ethers.providers.Web3Provider;
+  hashSuccess: boolean;
+  outboundHash: string;
 
   constructor(
     private txStatusService: TransactionStatusService,
@@ -80,7 +89,8 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
     private analytics: AnalyticsService,
     private metaMaskService: MetamaskService
   ) {
-    this.close = new EventEmitter<boolean>();
+    this.hashSuccess = false;
+    this.closeEvent = new EventEmitter<boolean>();
     this.txState = TransactionConfirmationState.PENDING_CONFIRMATION;
     const user$ = this.userService.user$.subscribe((user) => {
       if (!user) {
@@ -381,6 +391,57 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
       action: TxActions.WITHDRAW,
       isThorchainTx: true,
     });
+
+    this.hashIsSuccessful(hash);
+  }
+
+  hashIsSuccessful(hash: string) {
+    this.txStatusService
+      .getOutboundHash(hash)
+      .pipe(retry(2))
+      .subscribe((res: Transaction) => {
+        if (res.type === 'withdraw' && res.status === 'success') {
+          this.hashSuccess = true;
+          this.data.runeAmount = bn(
+            res.out
+              .find((outTx) =>
+                outTx.coins.find(
+                  (c) => c.asset === `${this.rune.chain}.${this.rune.ticker}`
+                )
+              )
+              ?.coins.find(
+                (c) => c.asset === `${this.rune.chain}.${this.rune.ticker}`
+              ).amount
+          )
+            .div(10 ** 8)
+            .toNumber();
+
+          this.data.assetAmount = bn(
+            res.out
+              .find((outTx) =>
+                outTx.coins.find(
+                  (c) =>
+                    c.asset ===
+                    `${this.data.asset.chain}.${this.data.asset.ticker}`
+                )
+              )
+              ?.coins.find(
+                (c) =>
+                  c.asset ===
+                  `${this.data.asset.chain}.${this.data.asset.ticker}`
+              ).amount
+          )
+            .div(10 ** 8)
+            .toNumber();
+
+          this.outboundHash = res.out.find((outTx) =>
+            outTx.coins.find(
+              (c) =>
+                c.asset === `${this.data.asset.chain}.${this.data.asset.ticker}`
+            )
+          ).txID;
+        }
+      });
   }
 
   closeDialog(transactionSucess?: boolean) {
@@ -406,7 +467,7 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
       withdrawFeeAmountUSD.toString()
     );
 
-    this.close.emit(transactionSucess);
+    this.closeEvent.emit(transactionSucess);
   }
 
   closeToPool() {

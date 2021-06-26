@@ -278,6 +278,11 @@ export class TransactionStatusService {
                 this._txs[tx_number].outbound.hash = resTx.out[0].txID;
 
                 this.transactionSource.next(this._txs);
+              } else if (
+                resTx.type === 'withdraw' &&
+                resTx.status === 'success'
+              ) {
+                this.transactionSource.next(this._txs);
               }
 
               sub.next(resTx);

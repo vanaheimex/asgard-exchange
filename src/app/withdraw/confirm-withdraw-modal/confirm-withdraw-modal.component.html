@@ -152,6 +152,8 @@
   [percentage]="data.unstakePercent"
   [label]="['Withdrawn']"
   (closeDialog)="closeToPool()"
+  [hashOutbound]="outboundHash"
+  [hasOutbound]="data.withdrawType !== 'ASYM_RUNE'"
 >
   <app-breadcrumb
     [path]="[
@@ -161,7 +163,7 @@
       { name: data.asset?.chain + '.' + data.asset?.ticker , disable: true },
     ]"
     [isError]=""
-    [message]="'SUCCESS'"
+    [message]="hashSuccess ? 'SUCCESS' : 'Waiting for Confirmation'"
     (funcCaller)="breadcrumbNav($event, 'success')"
   ></app-breadcrumb>
 </app-transaction-success-modal>

@@ -323,7 +323,7 @@ export class UpgradeRuneConfirmComponent implements OnInit, OnDestroy {
       }
     } catch (error) {
       console.error('error making transfer: ', error);
-      this.message = error.message;
+      this.message = error.message || error;
       this.txState = TransactionConfirmationState.ERROR;
     }
   }

@@ -43,6 +43,7 @@ import { EthUtilsService } from '../_services/eth-utils.service';
 import { MetamaskService } from '../_services/metamask.service';
 import { ethers } from 'ethers';
 import { environment } from 'src/environments/environment';
+import { isError } from 'util';
 
 @Component({
   selector: 'app-deposit',
@@ -637,7 +638,10 @@ export class DepositComponent implements OnInit, OnDestroy {
     }
 
     /** Checks sufficient chain balance for fee */
-    if (this.sourceChainBalance <= this.chainNetworkFee) {
+    if (
+      this.sourceChainBalance <= this.chainNetworkFee &&
+      this.poolType !== 'ASYM_RUNE'
+    ) {
       this.formValidation = {
         message: `Insufficient ${this.asset.chain} for fees`,
         isValid: false,
@@ -659,14 +663,24 @@ export class DepositComponent implements OnInit, OnDestroy {
           this.asset,
           this.sourceChainBalance,
           this.inboundAddresses
-        )
+        ) &&
+      this.poolType !== 'ASYM_RUNE'
     ) {
       this.formValidation = {
-        message: `Insufficient ${this.asset.chain} for fees`,
+        message: `Insufficient ${this.asset.chain}.${this.asset.ticker} for fees`,
         isValid: false,
         isError: true,
       };
       return;
+    }
+
+    /** Rune balance is suffient for fees */
+    if (this.runeBalance <= this.runeFee) {
+      this.formValidation = {
+        message: `Insufficient ${this.rune.chain}.${this.rune.ticker} for fees`,
+        isValid: false,
+        isError: true,
+      };
     }
 
     /** Amount is too low, considered "dusting" */

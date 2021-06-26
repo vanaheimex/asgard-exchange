@@ -8,6 +8,7 @@ import { PoolAddressDTO } from '../_classes/pool-address';
 import { UserService } from './user.service';
 import { ETH_DECIMAL, getTokenAddress } from '@xchainjs/xchain-ethereum';
 import { TCAbi } from '../_abi/thorchain.abi';
+import { environment } from 'src/environments/environment';
 
 declare global {
   interface Window {
@@ -45,12 +46,14 @@ export class MetamaskService {
       window.ethereum.on('chainChanged', (_chainId) => {
         switch (+_chainId) {
           case 1:
-            window.location.href = 'https://app.skip.exchange';
+            if (environment.network === 'testnet')
+              window.location.href = 'https://app.skip.exchange';
             this._metaMaskNetwork.next('mainnet');
             break;
 
           case 3:
-            window.location.href = 'https://testnet.app.skip.exchange';
+            if (environment.network !== 'testnet')
+              window.location.href = 'https://testnet.app.skip.exchange';
             this._metaMaskNetwork.next('testnet');
             break;
 
@@ -142,8 +145,7 @@ export class MetamaskService {
   async init(): Promise<void> {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const lastLoginType = localStorage.getItem('lastLoginType');
-    const isXDEFI = window.ethereum?.isXDEFI;
-    if (provider && lastLoginType === 'metamask' && !isXDEFI) {
+    if (provider && lastLoginType === 'metamask') {
       this.setProvider(provider);
       this.setMetaMaskNetwork(provider);
     } else {
