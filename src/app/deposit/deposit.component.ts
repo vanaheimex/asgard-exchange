@@ -1,41 +1,42 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   getValueOfAssetInRune,
   getValueOfRuneInAsset,
   PoolData,
-} from "@thorchain/asgardex-util";
+} from '@thorchain/asgardex-util';
 import {
   baseAmount,
   assetToBase,
   assetAmount,
   baseToAsset,
   assetToString,
-} from "@xchainjs/xchain-util";
-import { combineLatest, Subscription } from "rxjs";
-import { Asset, getChainAsset, isNonNativeRuneToken } from "../_classes/asset";
-import { MidgardService } from "../_services/midgard.service";
-import { UserService } from "../_services/user.service";
-import { MatDialog } from "@angular/material/dialog";
-import { ConfirmDepositData } from "./confirm-deposit-modal/confirm-deposit-modal.component";
-import { User } from "../_classes/user";
-import { Balances } from "@xchainjs/xchain-client";
-import { AssetAndBalance } from "../_classes/asset-and-balance";
-import { EthUtilsService } from "../_services/eth-utils.service";
-import { DepositViews, OverlaysService } from "../_services/overlays.service";
-import { ThorchainPricesService } from "../_services/thorchain-prices.service";
-import { TransactionUtilsService } from "../_services/transaction-utils.service";
-import { debounceTime } from "rxjs/operators";
-import { PoolAddressDTO } from "../_classes/pool-address";
+} from '@xchainjs/xchain-util';
+import { combineLatest, Subscription } from 'rxjs';
+import { Asset, getChainAsset, isNonNativeRuneToken } from '../_classes/asset';
+import { MidgardService, ThorchainQueue } from '../_services/midgard.service';
+import { UserService } from '../_services/user.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDepositData } from './confirm-deposit-modal/confirm-deposit-modal.component';
+import { User } from '../_classes/user';
+import { Balances } from '@xchainjs/xchain-client';
+import { AssetAndBalance } from '../_classes/asset-and-balance';
+import { EthUtilsService } from '../_services/eth-utils.service';
+import { DepositViews, OverlaysService } from '../_services/overlays.service';
+import { ThorchainPricesService } from '../_services/thorchain-prices.service';
+import { TransactionUtilsService } from '../_services/transaction-utils.service';
+import { debounceTime } from 'rxjs/operators';
+import { PoolAddressDTO } from '../_classes/pool-address';
 import { toLegacyAddress } from '@xchainjs/xchain-bitcoincash';
-import { CurrencyService } from "../_services/currency.service";
-import { Currency } from "../_components/account-settings/currency-converter/currency-converter.component";
-import { AnalyticsService, assetString } from "../_services/analytics.service";
+import { CurrencyService } from '../_services/currency.service';
+import { Currency } from '../_components/account-settings/currency-converter/currency-converter.component';
+import { AnalyticsService, assetString } from '../_services/analytics.service';
+import { NetworkQueueService } from '../_services/network-queue.service';
 
 @Component({
-  selector: "app-deposit",
-  templateUrl: "./deposit.component.html",
-  styleUrls: ["./deposit.component.scss"],
+  selector: 'app-deposit',
+  templateUrl: './deposit.component.html',
+  styleUrls: ['./deposit.component.scss'],
 })
 export class DepositComponent implements OnInit, OnDestroy {
   /**
@@ -60,7 +61,7 @@ export class DepositComponent implements OnInit, OnDestroy {
         this._asset = val;
       } else {
         if (val.symbol !== this._asset.symbol) {
-          this.router.navigate(["/", "deposit", `${val.chain}.${val.symbol}`]);
+          this.router.navigate(['/', 'deposit', `${val.chain}.${val.symbol}`]);
           this._asset = val;
           this.assetBalance = this.userService.findBalance(
             this.balances,
@@ -90,7 +91,6 @@ export class DepositComponent implements OnInit, OnDestroy {
   private _assetAmount: number;
   assetPoolData: PoolData;
   assetPrice: number;
-
 
   /**
    * Balances
@@ -128,6 +128,7 @@ export class DepositComponent implements OnInit, OnDestroy {
 
   bchLegacyPooled: boolean;
   loading: boolean;
+  queue: ThorchainQueue;
 
   constructor(
     private userService: UserService,
@@ -139,11 +140,12 @@ export class DepositComponent implements OnInit, OnDestroy {
     private txUtilsService: TransactionUtilsService,
     private curService: CurrencyService,
     private analytics: AnalyticsService,
+    private networkQueueService: NetworkQueueService
   ) {
     this.poolNotFoundErr = false;
     this.ethContractApprovalRequired = false;
-    this.rune = new Asset("THOR.RUNE");
-    this.overlaysService.setCurrentDepositView("Deposit");
+    this.rune = new Asset('THOR.RUNE');
+    this.overlaysService.setCurrentDepositView('Deposit');
     this.subs = [];
     this.depositsDisabled = false;
     this.haltedChains = [];
@@ -202,52 +204,61 @@ export class DepositComponent implements OnInit, OnDestroy {
             this.asset
           );
 
-          if (this.asset.chain === "ETH" && this.asset.ticker !== "ETH") {
+          if (this.asset.chain === 'ETH' && this.asset.ticker !== 'ETH') {
             this.checkContractApproved(this.asset);
           }
 
           if (this.selectableMarkets) {
-            this.assetPrice = this.selectableMarkets.find(item => item.asset.chain === this.asset.chain && item.asset.ticker === this.asset.ticker).assetPriceUSD;
+            this.assetPrice = this.selectableMarkets.find(
+              (item) =>
+                item.asset.chain === this.asset.chain &&
+                item.asset.ticker === this.asset.ticker
+            ).assetPriceUSD;
           }
-
         }
       }
     );
 
-    const userSub = combinedUser.subscribe(([user, balances, pendingBalances]) => {
-      // User
-      this.user = user;
+    const userSub = combinedUser.subscribe(
+      ([user, balances, pendingBalances]) => {
+        // User
+        this.user = user;
 
-      // Balance
-      this.balances = balances;
-      this.runeBalance = this.userService.findBalance(this.balances, this.rune);
-      this.assetBalance = this.userService.findBalance(
-        this.balances,
-        this.asset
-      );
+        // Balance
+        this.balances = balances;
+        this.runeBalance = this.userService.findBalance(
+          this.balances,
+          this.rune
+        );
+        this.assetBalance = this.userService.findBalance(
+          this.balances,
+          this.asset
+        );
 
-      if (pendingBalances) {
-        this.assetBalance = undefined;
-      } 
-      
-      this.setSourceChainBalance();
+        if (pendingBalances) {
+          this.assetBalance = undefined;
+        }
 
-    });
+        this.setSourceChainBalance();
+      }
+    );
 
     const depositView$ = this.overlaysService.depositView.subscribe((view) => {
       this.view = view;
     });
 
-    const cur$ = this.curService.cur$.subscribe(
-      (cur) => {
-        this.currency = cur
-      }
-    )
+    const cur$ = this.curService.cur$.subscribe((cur) => {
+      this.currency = cur;
+    });
+
+    const queue$ = this.networkQueueService.networkQueue$.subscribe(
+      (queue) => (this.queue = queue)
+    );
 
     this.getPools();
     this.getEthRouter();
     this.getPoolCap();
-    this.subs.push(userSub, combinedPoolSub, depositView$, cur$);
+    this.subs.push(userSub, combinedPoolSub, depositView$, cur$, queue$);
   }
 
   /**
@@ -299,7 +310,7 @@ export class DepositComponent implements OnInit, OnDestroy {
       // prettier-ignore
       const totalPooledRune = +network.totalPooledRune / (10 ** 8);
 
-      if (mimir && mimir["mimir//MAXIMUMLIQUIDITYRUNE"]) {
+      if (mimir && mimir['mimir//MAXIMUMLIQUIDITYRUNE']) {
         // prettier-ignore
         const maxLiquidityRune = mimir['mimir//MAXIMUMLIQUIDITYRUNE'] / (10 ** 8);
         this.depositsDisabled = totalPooledRune / maxLiquidityRune >= 0.99;
@@ -311,7 +322,7 @@ export class DepositComponent implements OnInit, OnDestroy {
 
   getEthRouter() {
     this.midgardService.getInboundAddresses().subscribe((addresses) => {
-      const ethInbound = addresses.find((inbound) => inbound.chain === "ETH");
+      const ethInbound = addresses.find((inbound) => inbound.chain === 'ETH');
       if (ethInbound) {
         this.ethRouter = ethInbound.router;
       }
@@ -321,13 +332,10 @@ export class DepositComponent implements OnInit, OnDestroy {
   setMaxError(val) {
     this.isMaxError = val;
 
-    setTimeout(
-      () => {
-        this.isMaxError = false;
-      }
-    , 2000)
+    setTimeout(() => {
+      this.isMaxError = false;
+    }, 2000);
   }
-
 
   contractApproved() {
     this.ethContractApprovalRequired = false;
@@ -361,7 +369,7 @@ export class DepositComponent implements OnInit, OnDestroy {
 
   async getPoolDetail(asset: string) {
     if (!this.inboundAddresses) {
-      console.error("error fetching inbound addresses");
+      console.error('error fetching inbound addresses');
       return;
     }
 
@@ -378,21 +386,21 @@ export class DepositComponent implements OnInit, OnDestroy {
           this.networkFee = this.txUtilsService.calculateNetworkFee(
             this.asset,
             this.inboundAddresses,
-            "INBOUND",
+            'INBOUND',
             res
           );
 
           this.chainNetworkFee = this.txUtilsService.calculateNetworkFee(
             getChainAsset(this.asset.chain),
             this.inboundAddresses,
-            "INBOUND",
+            'INBOUND',
             res
           );
 
           this.runeFee = this.txUtilsService.calculateNetworkFee(
-            new Asset("THOR.RUNE"),
+            new Asset('THOR.RUNE'),
             this.inboundAddresses,
-            "INBOUND",
+            'INBOUND',
             res
           );
 
@@ -400,7 +408,7 @@ export class DepositComponent implements OnInit, OnDestroy {
         }
       },
       (err) => {
-        console.error("error getting pool detail: ", err);
+        console.error('error getting pool detail: ', err);
         this.poolNotFoundErr = true;
       }
     );
@@ -433,12 +441,12 @@ export class DepositComponent implements OnInit, OnDestroy {
 
         //add rune price
         const availablePools = res.filter(
-          (pool) => pool.status === "available"
+          (pool) => pool.status === 'available'
         );
         this.runePrice =
           this.thorchainPricesService.estimateRunePrice(availablePools);
       },
-      (err) => console.error("error fetching pools:", err)
+      (err) => console.error('error fetching pools:', err)
     );
   }
 
@@ -450,6 +458,7 @@ export class DepositComponent implements OnInit, OnDestroy {
       this.ethContractApprovalRequired ||
       this.depositsDisabled ||
       this.isHalted ||
+      (this.queue && this.queue.outbound >= 12) ||
       this.assetAmount <= this.userService.minimumSpendable(this.asset) ||
       // check sufficient underlying chain balance to cover fees
       this.sourceChainBalance <= this.chainNetworkFee ||
@@ -475,56 +484,67 @@ export class DepositComponent implements OnInit, OnDestroy {
   mainButtonText() {
     /** Wallet not connected */
     if (!this.balances) {
-      return {text: "connect wallet", isError: false};
+      return { text: 'connect wallet', isError: false };
     }
 
     if (this.isMaxError) {
-      return {text: "Input Amount Less Than Fees", isError: true};
+      return { text: 'Input Amount Less Than Fees', isError: true };
     }
 
     if (this.assetBalance == undefined) {
-      return {text: "Loading the Balance", isError: false}
+      return { text: 'Loading the Balance', isError: false };
+    }
+
+    /** THORChain is backed up */
+    if (this.queue && this.queue.outbound >= 12) {
+      return { text: 'THORChain TX QUEUE FILLED.', isError: true };
     }
 
     if (this.balances && (!this.runeAmount || !this.assetAmount)) {
-      return {text: "Prepare", isError: false};
+      return { text: 'Prepare', isError: false };
     }
 
     if (this.depositsDisabled) {
-      return {text: "CAPS REACHED", isError: true};
+      return { text: 'CAPS REACHED', isError: true };
     }
 
     if (this.bchLegacyPooled) {
-      return {text: "Pooled BCH with a legacy address", isError: true}
+      return { text: 'Pooled BCH with a legacy address', isError: true };
     }
 
     if (!this.asset) {
-      return {text: "There is no asset here!", isError: true};
+      return { text: 'There is no asset here!', isError: true };
     }
 
     if (this.isHalted) {
-      return {text: "Pool Halted", isError: true};
+      return { text: 'Pool Halted', isError: true };
     }
 
     /** User either lacks asset balance or RUNE balance */
     if (this.balances && (!this.runeAmount || !this.assetAmount)) {
-      return {text: "Enter an amount", isError: false};
+      return { text: 'Enter an amount', isError: false };
     }
 
     /** Asset amount is greater than balance */
     if (this.assetBalance < this.assetAmount) {
-      return {text: `Insufficient ${this.asset.chain}.${this.asset.ticker}`, isError: true};
+      return {
+        text: `Insufficient ${this.asset.chain}.${this.asset.ticker}`,
+        isError: true,
+      };
     }
 
     /** RUNE amount exceeds RUNE balance. Leave 3 RUNE in balance */
     if (this.runeBalance - this.runeAmount < 3) {
-      return {text: "Min 3 RUNE in Wallet", isError: true};
+      return { text: 'Min 3 RUNE in Wallet', isError: true };
     }
 
     /** Checks sufficient chain balance for fee */
     if (this.sourceChainBalance <= this.chainNetworkFee) {
       const chainAsset = getChainAsset(this.asset.chain);
-      return {text: `Insufficient ${chainAsset.chain}.${chainAsset.ticker} for Fees`, isError: true};
+      return {
+        text: `Insufficient ${chainAsset.chain}.${chainAsset.ticker} for Fees`,
+        isError: true,
+      };
     }
 
     /**
@@ -542,12 +562,15 @@ export class DepositComponent implements OnInit, OnDestroy {
         )
     ) {
       const chainAsset = getChainAsset(this.asset.chain);
-      return {text: `Insufficient ${chainAsset.chain}.${chainAsset.ticker} for Fees`, isError: true};
+      return {
+        text: `Insufficient ${chainAsset.chain}.${chainAsset.ticker} for Fees`,
+        isError: true,
+      };
     }
 
     /** Amount is too low, considered "dusting" */
     if (this.assetAmount <= this.userService.minimumSpendable(this.asset)) {
-      return {text: "Amount too low", isError: true};
+      return { text: 'Amount too low', isError: true };
     }
 
     /**
@@ -555,7 +578,7 @@ export class DepositComponent implements OnInit, OnDestroy {
      * Ensures sufficient amount to withdraw
      */
     if (this.assetAmount <= this.networkFee * 3 + this.networkFee) {
-      return {text: "Amount too low", isError: true};
+      return { text: 'Amount too low', isError: true };
     }
 
     /** Good to go */
@@ -565,9 +588,9 @@ export class DepositComponent implements OnInit, OnDestroy {
       this.runeAmount <= this.runeBalance &&
       this.assetAmount <= this.assetBalance
     ) {
-      return {text: "Ready", isError: false};
+      return { text: 'Ready', isError: false };
     } else {
-      console.warn("mismatch case for main button text");
+      console.warn('mismatch case for main button text');
       return;
     }
   }
@@ -617,12 +640,28 @@ export class DepositComponent implements OnInit, OnDestroy {
       assetPrice,
     };
 
-    let depositAmountUsd = assetData.assetPriceUSD * this.assetAmount + runeData.assetPriceUSD * this.runeAmount
-    this.analytics.event('pool_deposit_symmetrical_prepare', 'button_deposit_symmetrical_*POOL_ASSET*_usd_*numerical_usd_value*',  depositAmountUsd, assetString(this.asset), (depositAmountUsd).toString());
-    let depositFeeAmountUSD = this.networkFee * assetData.assetPriceUSD + runeData.assetPriceUSD * this.runeFee
-    this.analytics.event('pool_deposit_symmetrical_prepare', 'button_deposit_symmetrical_*POOL_ASSET*_fee_usd_*numerical_usd_value*',  depositFeeAmountUSD, assetString(this.asset), (depositFeeAmountUSD).toString());
-    
-    if (this.depositData) this.overlaysService.setCurrentDepositView("Confirm");
+    let depositAmountUsd =
+      assetData.assetPriceUSD * this.assetAmount +
+      runeData.assetPriceUSD * this.runeAmount;
+    this.analytics.event(
+      'pool_deposit_symmetrical_prepare',
+      'button_deposit_symmetrical_*POOL_ASSET*_usd_*numerical_usd_value*',
+      depositAmountUsd,
+      assetString(this.asset),
+      depositAmountUsd.toString()
+    );
+    let depositFeeAmountUSD =
+      this.networkFee * assetData.assetPriceUSD +
+      runeData.assetPriceUSD * this.runeFee;
+    this.analytics.event(
+      'pool_deposit_symmetrical_prepare',
+      'button_deposit_symmetrical_*POOL_ASSET*_fee_usd_*numerical_usd_value*',
+      depositFeeAmountUSD,
+      assetString(this.asset),
+      depositFeeAmountUSD.toString()
+    );
+
+    if (this.depositData) this.overlaysService.setCurrentDepositView('Confirm');
   }
 
   closeSuccess(transactionSuccess: boolean): void {
@@ -630,23 +669,41 @@ export class DepositComponent implements OnInit, OnDestroy {
       this.assetAmount = 0;
     }
 
-    this.overlaysService.setCurrentDepositView("Deposit");
+    this.overlaysService.setCurrentDepositView('Deposit');
   }
 
   back(): void {
-    this.router.navigate(["/", "pool"]);
+    this.router.navigate(['/', 'pool']);
   }
 
   cancelButton() {
     if (this.user) {
       this.analytics.event('pool_deposit_symmetrical_prepare', 'button_cancel');
-      let depositAmountUsd = this.assetPrice * this.assetAmount + this.runeFee * this.runeAmount
-      this.analytics.event('pool_deposit_symmetrical_prepare', 'button_deposit_cancel_symmetrical_*POOL_ASSET*_usd_*numerical_usd_value*',  depositAmountUsd, assetString(this.asset), (depositAmountUsd).toString());
-      let depositFeeAmountUSD = this.networkFee * this.assetPrice + this.runeFee * this.runeFee
-      this.analytics.event('pool_deposit_symmetrical_prepare', 'button_deposit_cancel_symmetrical_*POOL_ASSET*_fee_usd_*numerical_usd_value*',  depositFeeAmountUSD, assetString(this.asset), (depositFeeAmountUSD).toString());
-    }
-    else
-      this.analytics.event('pool_disconnected_deposit', 'button_cancel_*POOL*', undefined, assetToString(this.asset));
+      let depositAmountUsd =
+        this.assetPrice * this.assetAmount + this.runeFee * this.runeAmount;
+      this.analytics.event(
+        'pool_deposit_symmetrical_prepare',
+        'button_deposit_cancel_symmetrical_*POOL_ASSET*_usd_*numerical_usd_value*',
+        depositAmountUsd,
+        assetString(this.asset),
+        depositAmountUsd.toString()
+      );
+      let depositFeeAmountUSD =
+        this.networkFee * this.assetPrice + this.runeFee * this.runeFee;
+      this.analytics.event(
+        'pool_deposit_symmetrical_prepare',
+        'button_deposit_cancel_symmetrical_*POOL_ASSET*_fee_usd_*numerical_usd_value*',
+        depositFeeAmountUSD,
+        assetString(this.asset),
+        depositFeeAmountUSD.toString()
+      );
+    } else
+      this.analytics.event(
+        'pool_disconnected_deposit',
+        'button_cancel_*POOL*',
+        undefined,
+        assetToString(this.asset)
+      );
     this.back();
   }
 
@@ -654,44 +711,50 @@ export class DepositComponent implements OnInit, OnDestroy {
     let label;
     switch (type) {
       case 'deposit':
-        if (this.user)
-          label = 'pool_deposit_symmetrical_prepare'
-        else
-          label = 'pool_disconnected_deposit'
+        if (this.user) label = 'pool_deposit_symmetrical_prepare';
+        else label = 'pool_disconnected_deposit';
         break;
       case 'market':
-        label = 'pool_deposit_symmetrical_asset_search'
+        label = 'pool_deposit_symmetrical_asset_search';
         break;
       default:
-        label = 'pool_disconnected_deposit'
+        label = 'pool_disconnected_deposit';
         break;
     }
 
-    if (nav === "pool") {
-      this.router.navigate(["/", "pool"]);
+    if (nav === 'pool') {
+      this.router.navigate(['/', 'pool']);
       this.analytics.event(label, 'breadcrumb_pools');
-    } else if (nav === "swap") {
-      this.router.navigate(["/", "swap"]);
+    } else if (nav === 'swap') {
+      this.router.navigate(['/', 'swap']);
       this.analytics.event(label, 'breadcrumb_skip');
-    } else if (nav === "deposit") {
+    } else if (nav === 'deposit') {
       this.router.navigate([
-        "/",
-        "deposit",
+        '/',
+        'deposit',
         `${this.asset.chain}.${this.asset.symbol}`,
       ]);
-    } else if (nav === "deposit-back") {
+    } else if (nav === 'deposit-back') {
       this.analytics.event(label, 'breadcrumb_deposit');
-      this.overlaysService.setCurrentDepositView("Deposit");
+      this.overlaysService.setCurrentDepositView('Deposit');
     }
   }
 
   lunchMarket() {
-    this.analytics.event('pool_deposit_symmetrical_prepare', 'select_deposit_symmetrical_container_asset');
-    this.overlaysService.setCurrentDepositView('Asset')
+    this.analytics.event(
+      'pool_deposit_symmetrical_prepare',
+      'select_deposit_symmetrical_container_asset'
+    );
+    this.overlaysService.setCurrentDepositView('Asset');
   }
 
   connectWallet() {
-    this.analytics.event('pool_disconnected_deposit', 'button_connect_wallet_*POOL*', undefined, `${this.asset.chain}.${this.asset.ticker}`);
+    this.analytics.event(
+      'pool_disconnected_deposit',
+      'button_connect_wallet_*POOL*',
+      undefined,
+      `${this.asset.chain}.${this.asset.ticker}`
+    );
     this.overlaysService.setCurrentDepositView('Connect');
   }
 
