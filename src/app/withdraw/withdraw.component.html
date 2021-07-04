@@ -89,7 +89,7 @@
         >
           <span class="tx-detail-label">Fees:</span>
           <span *ngIf="runeFee">{{ runeFee }} RUNE <span *ngIf="currency && runePrice">({{this.currency.value * runePrice * runeFee | number: '0.0-2'}} {{currency.code}})</span></span>
-          <span *ngIf="!runeFee && !networkFee">...</span>
+          <span *ngIf="!runeFee">...</span>
         </div>
         <div
           *ngIf="withdrawType === 'ASYM_ASSET'"
@@ -99,7 +99,7 @@
           <span *ngIf="networkFee"
             >{{ networkFee | number: "1.0-4" }} {{ asset.ticker }} <span *ngIf="currency && assetPrice">({{this.currency.value * assetPrice * networkFee | number: '0.0-2'}} {{currency.code}})</span></span
           >
-          <span *ngIf="!networkFee && !networkFee">...</span>
+          <span *ngIf="!networkFee">...</span>
         </div>
       </div>
 

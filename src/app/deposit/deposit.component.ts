@@ -207,14 +207,6 @@ export class DepositComponent implements OnInit, OnDestroy {
           if (this.asset.chain === 'ETH' && this.asset.ticker !== 'ETH') {
             this.checkContractApproved(this.asset);
           }
-
-          if (this.selectableMarkets) {
-            this.assetPrice = this.selectableMarkets.find(
-              (item) =>
-                item.asset.chain === this.asset.chain &&
-                item.asset.ticker === this.asset.ticker
-            ).assetPriceUSD;
-          }
         }
       }
     );
@@ -445,6 +437,12 @@ export class DepositComponent implements OnInit, OnDestroy {
         );
         this.runePrice =
           this.thorchainPricesService.estimateRunePrice(availablePools);
+
+        this.assetPrice = this.selectableMarkets.find(
+          (item) =>
+            item.asset.chain === this.asset.chain &&
+            item.asset.ticker === this.asset.ticker
+        ).assetPriceUSD;
       },
       (err) => console.error('error fetching pools:', err)
     );
