@@ -53,7 +53,7 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
   @Output() approvedHash = new EventEmitter<string>();
   @Output() close = new EventEmitter<null>();
 
-  @Input() eventCategory: string = 'contract_approve';
+  @Input() eventCategory: string = 'swap_approve_contract';
 
   //breadcurmb path
   path: Path[];
@@ -186,7 +186,8 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
         );
         this.closeDialog();
       } catch (error) {
-        this.message.text = error.message;
+        console.error(error);
+        this.message.text = error.message || error;
         this.message.isError = true;
         this.loading = false;
       }
