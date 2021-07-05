@@ -18,6 +18,8 @@ import { CurrencyService } from "../_services/currency.service";
 import { Currency } from "../_components/account-settings/currency-converter/currency-converter.component";
 import { OverlaysService, PoolViews } from "../_services/overlays.service";
 import { AnalyticsService } from "../_services/analytics.service";
+import { HttpErrorResponse } from "@angular/common/http";
+import { NetworkSummary } from "../_classes/network";
 
 @Component({
   selector: "app-pool",
@@ -235,14 +237,16 @@ export class PoolComponent implements OnInit, OnDestroy {
     const network$ = this.midgardService.network$;
     const combined = combineLatest([mimir$, network$]);
     const sub = combined.subscribe(([mimir, network]) => {
-      // prettier-ignore
-      this.totalPooledRune = +network.totalPooledRune / (10 ** 8);
-
-      if (mimir && mimir["mimir//MAXIMUMLIQUIDITYRUNE"]) {
+      if (network instanceof HttpErrorResponse || mimir instanceof HttpErrorResponse) {
+        this.depositsDisabled = true;
+      } else {
         // prettier-ignore
-        this.maxLiquidityRune = mimir['mimir//MAXIMUMLIQUIDITYRUNE'] / (10 ** 8);
-        this.depositsDisabled =
-          this.totalPooledRune / this.maxLiquidityRune >= 0.99;
+        const totalPooledRune = +(network as NetworkSummary).totalPooledRune / (10 ** 8);
+        if (mimir && mimir['mimir//MAXIMUMLIQUIDITYRUNE']) {
+          // prettier-ignore
+          const maxLiquidityRune = mimir['mimir//MAXIMUMLIQUIDITYRUNE'] / (10 ** 8);
+          this.depositsDisabled = totalPooledRune / maxLiquidityRune >= 0.99;
+        }
       }
 
       setTimeout(() => {

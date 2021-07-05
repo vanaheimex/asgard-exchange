@@ -24,6 +24,8 @@ import {
 import { TransactionUtilsService } from "../_services/transaction-utils.service";
 import { PoolAddressDTO } from "../_classes/pool-address";
 import { AnalyticsService, assetString } from "../_services/analytics.service";
+import { HttpErrorResponse } from "@angular/common/http";
+import { NetworkSummary } from "../_classes/network";
 
 @Component({
   selector: "app-pool-create",
@@ -226,12 +228,16 @@ export class PoolCreateComponent implements OnInit, OnDestroy {
     const combined = combineLatest([mimir$, network$]);
     const sub = combined.subscribe(([mimir, network]) => {
       // prettier-ignore
-      const totalPooledRune = +network.totalPooledRune / (10 ** 8);
-
-      if (mimir && mimir["mimir//MAXIMUMLIQUIDITYRUNE"]) {
+      if (network instanceof HttpErrorResponse || mimir instanceof HttpErrorResponse) {
+        this.depositsDisabled = true;
+      } else {
         // prettier-ignore
-        const maxLiquidityRune = mimir['mimir//MAXIMUMLIQUIDITYRUNE'] / (10 ** 8);
-        this.depositsDisabled = totalPooledRune / maxLiquidityRune >= 0.99;
+        const totalPooledRune = +(network as NetworkSummary).totalPooledRune / (10 ** 8);
+        if (mimir && mimir['mimir//MAXIMUMLIQUIDITYRUNE']) {
+          // prettier-ignore
+          const maxLiquidityRune = mimir['mimir//MAXIMUMLIQUIDITYRUNE'] / (10 ** 8);
+          this.depositsDisabled = totalPooledRune / maxLiquidityRune >= 0.99;
+        }
       }
     });
 
