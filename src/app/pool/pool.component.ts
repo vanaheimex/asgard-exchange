@@ -242,7 +242,7 @@ export class PoolComponent implements OnInit, OnDestroy {
         // prettier-ignore
         this.maxLiquidityRune = mimir['mimir//MAXIMUMLIQUIDITYRUNE'] / (10 ** 8);
         this.depositsDisabled =
-          this.totalPooledRune / this.maxLiquidityRune >= 0.9;
+          this.totalPooledRune / this.maxLiquidityRune >= 0.99;
       }
 
       setTimeout(() => {
