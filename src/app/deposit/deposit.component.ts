@@ -352,6 +352,7 @@ export class DepositComponent implements OnInit, OnDestroy {
   setPoolTypeOption(option: PoolTypeOption) {
     this.poolType = option;
     this.validate();
+    this.checkContractApproved(this.asset);
   }
 
   setPoolTypeOptionFromEvent(option: PoolTypeOption) {
@@ -441,6 +442,11 @@ export class DepositComponent implements OnInit, OnDestroy {
     );
 
     if (!ethInboundAddress) {
+      return;
+    }
+
+    if (this.poolType === 'ASYM_RUNE') {
+      this.contractApproved();
       return;
     }
 

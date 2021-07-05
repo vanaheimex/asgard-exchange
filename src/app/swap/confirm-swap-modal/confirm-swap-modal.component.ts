@@ -376,8 +376,8 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
       this.pushTxStatus(hash, this.swapData.sourceAsset.asset);
       this.txState = TransactionConfirmationState.SUCCESS;
     } catch (error) {
-      console.log('error is: ', error);
-      this.error = 'ETH transaction failed.';
+      console.error('the error is: ', error);
+      this.error = error.message || error;
       this.txState = TransactionConfirmationState.ERROR;
     }
   }
@@ -439,8 +439,6 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
         this.getOutboundHash(hash);
         this.txState = TransactionConfirmationState.SUCCESS;
       } catch (error) {
-        console.error('error making transfer: ', error);
-        console.error(error.stack);
         this.error = error;
         this.txState = TransactionConfirmationState.ERROR;
       }

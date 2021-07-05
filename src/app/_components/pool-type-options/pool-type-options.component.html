@@ -10,8 +10,8 @@
         <button *ngIf="poolTypeOptions.sym && asset" [ngClass]="{'active': _poolType === 'SYM'}" (click)="choosenPoolType('SYM')" class="w-address" >
           <div class="icon-addr flex-grow flex-shrink-0">
             <div class="asset-icon-container two-icons">
-              <img class="asset-icon" [src]="asset.iconPath" />
-              <img class="asset-icon" [src]="rune.iconPath" />
+              <img class="asset-icon" [src]="asset.iconPath" appImgFallback/>
+              <img class="asset-icon" [src]="rune.iconPath" appImgFallback/>
             </div>
             <label>{{asset.ticker}} + RUNE</label>
           </div>
@@ -21,7 +21,7 @@
         <button *ngIf="poolTypeOptions.asymAsset && asset" [ngClass]="{'active': _poolType === 'ASYM_ASSET'}" (click)="choosenPoolType('ASYM_ASSET')" class="w-address" >
           <div class="icon-addr flex-grow flex-shrink-0">
             <div class="asset-icon-container">
-              <img class="asset-icon" [src]="asset.iconPath" />
+              <img class="asset-icon" [src]="asset.iconPath" appImgFallback/>
             </div>
             <label>{{asset.ticker}}
               <span class="grey-text">(50% {{asset.chain}}.{{asset.ticker}} SWAP <svg
@@ -56,7 +56,7 @@
         <button *ngIf="poolTypeOptions.asymRune" [ngClass]="{'active': _poolType === 'ASYM_RUNE'}" (click)="choosenPoolType('ASYM_RUNE')" class="w-address" >
           <div class="icon-addr flex-grow flex-shrink-0">
             <div class="asset-icon-container">
-              <img class="asset-icon" [src]="rune.iconPath" />
+              <img class="asset-icon" [src]="rune.iconPath" appImgFallback/>
             </div>
             <label>RUNE
               <span class="grey-text">(50% THOR.RUNE SWAP <svg
