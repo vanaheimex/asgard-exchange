@@ -94,7 +94,7 @@ export class HeaderComponent implements OnDestroy {
 
     this.topbar = "LOADING CAPS";
     const sub = combined.subscribe(([mimir, network]) => {
-      if (network instanceof HttpErrorResponse) {
+      if (network instanceof HttpErrorResponse || mimir instanceof HttpErrorResponse) {
         this.topbar = 'THE MIDGARD DATABASE IS HAVING ISSUES. PLEASE TRY LATER';
         this.depositsDisabled = false;
         this.error = true;

@@ -12,7 +12,7 @@ export class NetworkQueueService {
   constructor(private midgardService: MidgardService) {
     this.networkQueue$ = timer(0, 60000).pipe(
       switchMap(() => this.midgardService.getQueue()),
-      retry(),
+      retry(5),
       share()
     );
   }

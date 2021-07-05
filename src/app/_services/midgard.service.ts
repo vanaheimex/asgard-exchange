@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { HttpClient, HttpParams } from "@angular/common/http";
+import { HttpClient, HttpErrorResponse, HttpParams } from "@angular/common/http";
 import { BehaviorSubject, Observable, timer } from "rxjs";
 import { MidgardConstants } from "../_classes/midgard-constants";
 import { PoolAddressDTO } from "../_classes/pool-address";
@@ -37,10 +37,10 @@ export class MidgardService {
   private _constants$: Observable<MidgardConstants>;
   private _mimir$: Observable<MimirResponse>;
 
-  private mimirSource = new BehaviorSubject<MimirResponse>(null);
+  private mimirSource = new BehaviorSubject<MimirResponse | HttpErrorResponse>(null);
   mimir$ = this.mimirSource.asObservable();
 
-  private networkSource = new BehaviorSubject<NetworkSummary>(null);
+  private networkSource = new BehaviorSubject<NetworkSummary | HttpErrorResponse>(null);
   network$ = this.networkSource.asObservable();
 
   constructor(private http: HttpClient) {
@@ -79,7 +79,7 @@ export class MidgardService {
     return this.http.get<NetworkSummary>(`${this.v2BasePath}/network`);
   }
 
-  setNetwork(res: NetworkSummary) {
+  setNetwork(res: NetworkSummary | HttpErrorResponse) {
     this.networkSource.next(res);
   }
 
@@ -135,7 +135,7 @@ export class MidgardService {
     return this._mimir$;
   }
 
-  setMimir(res: MimirResponse) {
+  setMimir(res: MimirResponse | HttpErrorResponse) {
     this.mimirSource.next(res);
   }
 
