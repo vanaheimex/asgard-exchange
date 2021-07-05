@@ -472,6 +472,38 @@ export const events = {
         value: true,
       },
   },
+  swap_approve_contract: {
+    breadcrumb_skip: {
+      label: 'breadcrumb_skip',
+      category: 'swap_approve_contract',
+      action: 'skip_pool',
+      value: false,
+    },
+    breadcrumb_pools: {
+      label: 'breadcrumb_pools',
+      category: 'swap_approve_contract',
+      action: 'skip_pool',
+      value: false,
+    },
+    deposit_container_asset: {
+      label: 'deposit_container_asset',
+      category: 'swap_approve_contract',
+      action: 'skip_pool',
+      value: false,
+    },
+    button_cancel: {
+      label: 'button_cancel',
+      category: 'swap_approve_contract',
+      action: 'skip_pool',
+      value: false,
+    },
+    'button_approve_*ASSET*_usd_*numerical_usd_value*': {
+      label: 'button_approve_*ASSET*_usd_*numerical_usd_value*',
+      category: 'swap_approve_contract',
+      action: 'skip_pool',
+      value: true,
+    },
+  },
   swap_processing: {
     breadcrumb_skip: {
       label: 'breadcrumb_skip',
@@ -973,6 +1005,38 @@ export const events = {
         action: 'skip_pool',
         value: true,
       },
+  },
+  deposit_approve_contract: {
+    breadcrumb_skip: {
+      label: 'breadcrumb_skip',
+      category: 'deposit_approve_contract',
+      action: 'skip_pool',
+      value: false,
+    },
+    breadcrumb_pools: {
+      label: 'breadcrumb_pools',
+      category: 'deposit_approve_contract',
+      action: 'skip_pool',
+      value: false,
+    },
+    deposit_container_asset: {
+      label: 'deposit_container_asset',
+      category: 'deposit_approve_contract',
+      action: 'skip_pool',
+      value: false,
+    },
+    button_cancel: {
+      label: 'button_cancel',
+      category: 'deposit_approve_contract',
+      action: 'skip_pool',
+      value: false,
+    },
+    'button_approve_*ASSET*_usd_*numerical_usd_value*': {
+      label: 'button_approve_*ASSET*_usd_*numerical_usd_value*',
+      category: 'deposit_approve_contract',
+      action: 'skip_pool',
+      value: true,
+    },
   },
   pool_deposit_symmetrical_processing: {
     breadcrumb_skip: {

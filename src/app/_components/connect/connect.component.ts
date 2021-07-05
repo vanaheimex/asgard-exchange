@@ -115,7 +115,11 @@ export class ConnectModal {
     }
 
     this.isXDEFI = false;
-    if ((window as any)?.ethereum?.isXDEFI) {
+    if (
+      (window as any)?.ethereum?.constructor.name
+        .toUpperCase()
+        .includes('XDEFI')
+    ) {
       this.isXDEFI = true;
     }
   }

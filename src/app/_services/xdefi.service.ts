@@ -135,7 +135,9 @@ export class XDEFIService {
       return (
         get(window, provider.providerPath) &&
         !this.providerIsEmpty(get(window, provider.providerPath)) &&
-        (get(window, provider.providerPath) as any).isXDEFI
+        get(window, provider.providerPath)
+          .constructor.name.toUpperCase()
+          .includes('XDEFI')
       );
     }
   }
