@@ -861,6 +861,7 @@ a.mat-primary {
 
   &:disabled,
   .disabled {
+    color: #fff;
     background-color: #0d1b23;
     background-image: unset;
   }
@@ -928,7 +929,7 @@ a.mat-primary {
 
   &:disabled,
   &.disabled {
-    // border: 2px solid #fff;
+    color: #fff;
     background-color: #0d1b23;
     background-image: unset;
   }
@@ -1203,7 +1204,7 @@ main {
 }
 
 .mat-slider-min-value:not(.mat-slider-thumb-label-showing) .mat-slider-thumb {
-  background-color: rgb(195, 197, 203);
+  background-color: rgb(160, 181, 241);
 }
 
 .tag {

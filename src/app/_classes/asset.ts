@@ -64,6 +64,8 @@ export class Asset {
             if (this.ticker === 'ALCX') {
               this.iconPath =
                 'https://etherscan.io/token/images/Alchemix_32.png';
+            } else if (this.ticker === 'XRUNE') {
+              this.iconPath = '/assets/icons/xrune-icon.png';
             }
           }
           break;
