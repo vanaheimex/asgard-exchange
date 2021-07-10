@@ -65,8 +65,9 @@
           [loading]="calculatingTargetAsset"
           [hideMax]="true"
           [error]="poolDetailTargetError || poolDetailSourceError"
-          [selectableMarkets]="selectableTargetMarkets">
+          [selectableMarkets]="selectableTargetMarkets"
           [showBalance]="false"
+          [hasAddress]="user ? true : false"
         >
         </app-asset-input>
 

@@ -88,7 +88,7 @@ export class StakedPoolsListComponent implements OnDestroy {
     if (this.pools && this.memberPools) {
       this.notMamberPools = [] as PoolDTO[];
       this.pools.forEach((pool) => {
-        if (this.memberPools.find((p) => p.pool === pool.asset)) {
+        if (this.memberPools?.find((p) => p.pool === pool.asset)) {
           return;
         }
         this.notMamberPools.push({ ...pool, runePrice: this.runePrice });
@@ -100,8 +100,8 @@ export class StakedPoolsListComponent implements OnDestroy {
 
       if (environment.network !== 'testnet') {
         this.runeYieldService
-          .getCurrentValueOfPool(this.memberPools[0].runeAddress)
-          .subscribe((pools) => {
+          .getCurrentValueOfPool(this.memberPools[0]?.runeAddress)
+          ?.subscribe((pools) => {
             this.runeYieldPools = pools;
           });
       }
