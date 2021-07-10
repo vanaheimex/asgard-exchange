@@ -100,6 +100,7 @@ export class ConnectModal {
   isXDEFI: boolean;
   phrase: string;
   writePhraseCategory: string;
+  message: string = 'select';
 
   @Output() closeEvent = new EventEmitter<null>();
 
@@ -167,7 +168,9 @@ export class ConnectModal {
 
   async connectWalletConnect() {
     this.analytics.event('connect_select_wallet', 'option_connect_wallet');
+    this.message = 'loading';
     await this.wcService.connect();
+    this.message = 'select';
     this.closeEvent.emit();
   }
 

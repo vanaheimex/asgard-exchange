@@ -171,8 +171,6 @@ export class WalletConnectService {
 
       // display QR Code modal OR MobileLink for trustwallet
       QRCodeModal.open(connector.uri, () => {}, qrcodeModalOptions);
-    } else {
-      this.killSession();
     }
 
     this.connector = connector;
@@ -186,11 +184,13 @@ export class WalletConnectService {
 
         QRCodeModal.close();
 
-        console.log(payload);
-        console.log(this.connector);
+        const {
+          accounts,
+          peerMeta: { name: name },
+        } = connector;
 
         // get accounts
-        this.getAccounts(payload).then((res) => {
+        this.getAccounts({ accounts, name }).then((res) => {
           if (!res) return;
           this.makeUser().then((user) => {
             this.userService.setUser(user);
@@ -206,23 +206,36 @@ export class WalletConnectService {
         this.connector = null;
         this.userService.setUser(null);
       });
+
+      if (connector.connected) {
+        const {
+          accounts,
+          peerMeta: { name: name },
+        } = connector;
+
+        // get accounts
+        this.getAccounts({ accounts, name }).then((res) => {
+          if (!res) return;
+          this.makeUser().then((user) => {
+            this.userService.setUser(user);
+            resolve(true);
+          });
+        });
+      }
     });
   }
 
-  supportWC(payload) {
-    return payload.params[0].peerMeta.name
-      .toUpperCase()
-      .includes('TRUST WALLET');
+  supportWC(name) {
+    return name.toUpperCase().includes('TRUST WALLET');
   }
 
-  getAccounts = async (payload): Promise<any> => {
+  getAccounts = async ({ accounts, name }): Promise<any> => {
     if (!this.connector) {
       throw new Error(errorCodes.ERROR_SESSION_DISCONNECTED);
     }
 
     // see if all walletconnects support get_accounts extension
-    if (payload && !this.supportWC(payload)) {
-      const { accounts } = payload.params[0];
+    if (accounts && !this.supportWC(name)) {
       const isEth = this.mockClientService
         .getMockClientByChain('ETH')
         .validateAddress(accounts[0]);
@@ -230,7 +243,7 @@ export class WalletConnectService {
         this.killSession();
         console.error(
           `This wallet is not supported yet. If you want us to support ${
-            payload.params[0].peerMeta.name ?? 'this wallet'
+            name ?? 'this wallet'
           }. Let us know!`
         );
         return;
