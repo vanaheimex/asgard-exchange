@@ -10,11 +10,11 @@
           (<span class="mono">{{ balance }}</span> balance)</span
         ><span style="color: #474e5d"> {{ extraLabel }}</span></label
       >
-      <div class="flex target-address" *ngIf="targetAddress" (click)="openTargetAddress()">
+      <div class="flex target-address" *ngIf="hasAddress || targetAddress" (click)="openTargetAddress()">
         <span>{{targetLabel ? targetLabel: 'Receive at'}}</span>
         <div class=" flex clickable-span items-center" [ngClass]="{'disabled': disabledMarketSelect}">
-          <span *ngIf="targetAddress !== 'No Address'" class="address mono">{{targetAddress.substring(0,7)}}...{{targetAddress.substring(targetAddress.length - 7, targetAddress.length)}}</span>
-          <span *ngIf="targetAddress === 'No Address'">{{targetAddress}}</span>
+          <span *ngIf="targetAddress" class="address mono">{{targetAddress.substring(0,7)}}...{{targetAddress.substring(targetAddress.length - 7, targetAddress.length)}}</span>
+          <span *ngIf="!targetAddress">No Address</span>
           <svg
             *ngIf="!disabledMarketSelect"
             class="expand-more"

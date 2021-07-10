@@ -107,6 +107,7 @@ export class AssetInputComponent implements OnInit, OnDestroy {
   }
   _selectableMarkets: AssetAndBalance[];
 
+  @Input() hasAddress: boolean = false;
   @Input() priceInput: number;
   @Input() inputColor: string;
   @Input() txType?: TxType;
