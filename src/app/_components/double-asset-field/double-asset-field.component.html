@@ -101,7 +101,7 @@
       class="usd-est"
       *ngIf="showPrice"
       >{{
-        (priceInputs[0] * assetUnits[0] || 0 + priceInputs[1] * assetUnits[1] || 0) *
+        (priceInputs[0] * (assetUnits[0] || 0) + priceInputs[1] * (assetUnits[1] || 0)) *
           currency.value | number: ".2-3"
       }}
       {{ currency.code }} CUMULATIVE</span
