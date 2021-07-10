@@ -65,6 +65,7 @@ export class UserAddressComponent implements OnInit {
         this.balances = balances.filter(
           (balance) => balance.asset.chain === this.chain
         );
+        this.error = undefined;
       }
 
       this.createAssetList();
@@ -209,6 +210,7 @@ export class UserAddressComponent implements OnInit {
       this.chain
     );
     this.loadingBalance = true;
+    this.error = undefined;
     await this.userService.fetchBalances();
     setTimeout(() => {
       this.loadingBalance = false;
