@@ -30,7 +30,9 @@ export interface RuneYieldPoolResponse {
 export class RuneYieldService {
   constructor(private http: HttpClient) {}
 
+  // TODO: add other chain addresses
   getCurrentValueOfPool(address: string): Observable<RuneYieldPoolResponse[]> {
+    if (!address) return;
     if (environment.network === 'testnet') {
       return;
     }
