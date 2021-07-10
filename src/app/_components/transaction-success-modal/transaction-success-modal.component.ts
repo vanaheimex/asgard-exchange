@@ -18,6 +18,7 @@ import {
   assetString,
 } from 'src/app/_services/analytics.service';
 import { PoolTypeOption } from 'src/app/_const/pool-type-options';
+import { MockClientService } from 'src/app/_services/mock-client.service';
 
 @Component({
   selector: 'app-transaction-success-modal',
@@ -68,7 +69,8 @@ export class TransactionSuccessModalComponent {
     private explorerPathsService: ExplorerPathsService,
     private copyService: CopyService,
     private userService: UserService,
-    private analyticsService: AnalyticsService
+    private analyticsService: AnalyticsService,
+    private mockClientService: MockClientService
   ) {
     this.closeDialog = new EventEmitter<null>();
     this.binanceExplorerUrl = `${this.explorerPathsService.binanceExplorerUrl}/tx`;
@@ -211,8 +213,8 @@ export class TransactionSuccessModalComponent {
     if (this.externalTx) chain = 'THOR';
 
     let urlHash = chain === 'ETH' ? `0x${hash}` : hash;
-    let url = this.userService
-      .getChainClient(undefined, chain)
+    let url = this.mockClientService
+      .getMockClientByChain(chain)
       .getExplorerTxUrl(urlHash);
     return url;
   }
@@ -223,31 +225,6 @@ export class TransactionSuccessModalComponent {
       path += '?network=testnet';
     }
     return path;
-  }
-
-  explorerUrl(chain: string): string {
-    switch (chain) {
-      case 'BTC':
-        return this.bitcoinExplorerUrl;
-
-      case 'BNB':
-        return this.binanceExplorerUrl;
-
-      case 'THOR':
-        return this.thorchainExplorerUrl;
-
-      case 'ETH':
-        return this.ethereumExplorerUrl;
-
-      case 'LTC':
-        return this.litecoinExplorerUrl;
-
-      case 'BCH':
-        return this.bchExplorerUrl;
-
-      default:
-        return '';
-    }
   }
 
   ngOnInit(): void {
