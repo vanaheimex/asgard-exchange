@@ -7,10 +7,15 @@ import { TransactionDTO } from '../_classes/transaction';
 import { LastBlock } from '../_classes/last-block';
 import { PoolDTO } from '../_classes/pool';
 import { MemberDTO } from '../_classes/member';
-import { shareReplay } from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { NetworkSummary } from '../_classes/network';
 import { LiquidityProvider } from '../_classes/liquidity-provider';
+import {
+  MsgNativeTx,
+  ThorchainDepositResponse,
+} from '@xchainjs/xchain-thorchain';
+import { StdTx } from 'cosmos-client/x/auth';
 
 export interface MimirResponse {
   [key: string]: number;
@@ -152,4 +157,35 @@ export class MidgardService {
       `${this._thornodeBasePath}/thorchain/pool/${asset}/liquidity_providers`
     );
   }
+
+  buildDepositTx = async (msgNativeTx: MsgNativeTx): Promise<StdTx> => {
+    try {
+      const response = await this.http
+        .post<ThorchainDepositResponse>(
+          `${this._thornodeBasePath}/thorchain/deposit`,
+          {
+            coins: msgNativeTx.coins,
+            memo: msgNativeTx.memo,
+            base_req: { chain_id: 'thorchain', from: msgNativeTx.signer },
+          }
+        )
+        .toPromise();
+
+      console.log(msgNativeTx, response);
+      if (!response || !response.value) {
+        throw new Error('Invalid client url');
+      }
+
+      const unsignedStdTx = StdTx.fromJSON({
+        msg: response.value.msg,
+        fee: response.value.fee,
+        signatures: [],
+        memo: '',
+      });
+
+      return unsignedStdTx;
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  };
 }
