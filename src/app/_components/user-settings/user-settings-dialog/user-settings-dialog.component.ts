@@ -117,12 +117,12 @@ export class UserSettingsDialogComponent implements OnInit, OnDestroy {
         this.user = user;
 
         if (this.user.clients) {
-          this.binanceAddress = await this.user.clients?.binance.getAddress();
-          this.bitcoinAddress = await this.user.clients?.bitcoin.getAddress();
-          this.thorAddress = await this.user.clients?.thorchain.getAddress();
-          this.ethereumAddress = await this.user.clients?.ethereum.getAddress();
-          this.litecoinAddress = await this.user.clients?.litecoin.getAddress();
-          this.bchAddress = await this.user.clients?.bitcoinCash.getAddress();
+          this.binanceAddress = await this.user.clients?.binance?.getAddress();
+          this.bitcoinAddress = await this.user.clients?.bitcoin?.getAddress();
+          this.thorAddress = await this.user.clients?.thorchain?.getAddress();
+          this.ethereumAddress = await this.user.clients?.ethereum?.getAddress();
+          this.litecoinAddress = await this.user.clients?.litecoin?.getAddress();
+          this.bchAddress = await this.user.clients?.bitcoinCash?.getAddress();
         }
 
         this.loading = false;
