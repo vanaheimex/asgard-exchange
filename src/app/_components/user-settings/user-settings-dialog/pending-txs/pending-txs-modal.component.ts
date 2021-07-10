@@ -75,11 +75,7 @@ export class PendingTxsModalComponent implements OnDestroy {
   }
 
   ngOnInit(): void {
-    if (this.user.type === 'metamask') {
-      this.getThorchainTxs(this.user.wallet);
-    } else {
-      this.getThorchainTxs(this.user.clients.thorchain.getAddress());
-    }
+    this.getThorchainTxs(this.user.wallet);
   }
 
   getStatus(status: string): TxStatus {
@@ -123,6 +119,7 @@ export class PendingTxsModalComponent implements OnDestroy {
     this.activeIndex = index;
   }
 
+  // TODO: need check all the deposit txs for asyms
   transactionToTx(transactions: TransactionDTO): Tx[] {
     let txs: Tx[] = [];
 
@@ -146,7 +143,7 @@ export class PendingTxsModalComponent implements OnDestroy {
         const outboundAsset = new Asset(transaction.pools[0]);
 
         outbound = {
-          hash: transaction.in[1].txID,
+          hash: transaction?.in[1]?.txID,
           asset: outboundAsset,
         };
       }
