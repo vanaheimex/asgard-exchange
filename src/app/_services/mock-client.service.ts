@@ -44,6 +44,13 @@ export class MockClientService {
     });
     this.mockLtcClient = new litecoinClient({ network, phrase });
     this.mockBchClient = new bitcoinCashClient({ network, phrase });
+
+    this.mockThorchainClient.getAddress = () => undefined;
+    this.mockBinanceClient.getAddress = () => undefined;
+    this.mockBtcClient.getAddress = () => undefined;
+    this.mockBchClient.getAddress = () => undefined;
+    this.mockEthereumClient.getAddress = () => undefined;
+    this.mockLtcClient.getAddress = () => undefined;
   }
 
   getMockClientByChain(chain: Chain) {
