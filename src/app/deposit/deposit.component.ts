@@ -454,11 +454,15 @@ export class DepositComponent implements OnInit, OnDestroy {
       const assetAddress = asset.symbol.slice(asset.ticker.length + 1);
       const strip0x = assetAddress.substr(2);
       const provider =
-        this.user.type === 'keystore' || this.user.type === 'XDEFI'
+        this.user.type === 'keystore' ||
+        this.user.type === 'XDEFI' ||
+        this.user.type === 'walletconnect'
           ? this.user.clients.ethereum.getProvider()
           : this.metaMaskProvider;
       const userAddress =
-        this.user.type === 'keystore' || this.user.type === 'XDEFI'
+        this.user.type === 'keystore' ||
+        this.user.type === 'XDEFI' ||
+        this.user.type === 'walletconnect'
           ? this.user.clients.ethereum.getAddress()
           : await this.metaMaskProvider.getSigner().getAddress();
 
@@ -669,8 +673,7 @@ export class DepositComponent implements OnInit, OnDestroy {
           this.asset,
           this.sourceChainBalance,
           this.inboundAddresses
-        ) &&
-      this.poolType !== 'ASYM_RUNE'
+        )
     ) {
       this.formValidation = {
         message: `Insufficient ${this.asset.chain}.${this.asset.ticker} for fees`,
@@ -681,7 +684,7 @@ export class DepositComponent implements OnInit, OnDestroy {
     }
 
     /** Rune balance is suffient for fees */
-    if (this.runeBalance <= this.runeFee) {
+    if (this.runeBalance <= this.runeFee && this.poolType !== 'ASYM_ASSET') {
       this.formValidation = {
         message: `Insufficient ${this.rune.chain}.${this.rune.ticker} for fees`,
         isValid: false,

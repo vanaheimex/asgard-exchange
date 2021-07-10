@@ -125,7 +125,9 @@ export class UserService {
     if (
       this._user &&
       this._user.clients &&
-      (this._user.type === 'XDEFI' || this._user.type === 'keystore')
+      (this._user.type === 'XDEFI' ||
+        this._user.type === 'keystore' ||
+        this._user.type === 'walletconnect')
     ) {
       for (const [key, _value] of Object.entries(this._user.clients)) {
         if (key === 'binance') {
@@ -400,7 +402,7 @@ export class UserService {
           inboundAddresses,
           txType ?? 'INBOUND'
         );
-        max = balance - fee - 3;
+        max = balance - fee;
         break;
 
       case 'BTC.BTC':
@@ -535,6 +537,22 @@ export class UserService {
       } else {
         return '';
       }
+    } else if (user.type === 'walletconnect') {
+      const clients: AvailableClients = user.clients;
+
+      switch (chain) {
+        case 'BNB':
+          const bnbClient = clients.binance;
+          return bnbClient?.getAddress() ?? undefined;
+        case 'ETH':
+          const ethClient = clients.ethereum;
+          return ethClient?.getAddress() ?? undefined;
+        case 'THOR':
+          const thorClient = clients.thorchain;
+          return thorClient?.getAddress() ?? undefined;
+        default:
+          return undefined;
+      }
     } else {
       const clients: AvailableClients = user.clients;
 
@@ -606,6 +624,20 @@ export class UserService {
     return localStorage.getItem('lastLoginType');
   }
 
+  walletConnectAvailableClients() {
+    let availableChains = [];
+    for (const [key, _value] of Object.entries(this._user.clients)) {
+      if (key === 'binance') {
+        availableChains.push('BNB');
+      } else if (key === 'ethereum') {
+        availableChains.push('ETH');
+      } else if (key === 'thorchain') {
+        availableChains.push('ETH');
+      }
+    }
+    return availableChains;
+  }
+
   filterAvailableSourceChains({
     userType,
     assets,
@@ -616,7 +648,10 @@ export class UserService {
     switch (userType) {
       case 'metamask':
         return assets.filter((pool) => pool.asset.chain === 'ETH');
-
+      case 'walletconnect':
+        return assets.filter((pool) =>
+          this.walletConnectAvailableClients().includes(pool.asset.chain)
+        );
       case 'XDEFI':
       case 'keystore':
       default:

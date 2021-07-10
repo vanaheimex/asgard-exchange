@@ -48,6 +48,7 @@ import { MetamaskService } from 'src/app/_services/metamask.service';
 import { Asset } from 'src/app/_classes/asset';
 import { ethers } from 'ethers';
 import { retry } from 'rxjs/operators';
+import { MockClientService } from 'src/app/_services/mock-client.service';
 export interface SwapData {
   sourceAsset: AssetAndBalance;
   targetAsset: AssetAndBalance;
@@ -60,6 +61,12 @@ export interface SwapData {
   runePrice: number;
   networkFeeInSource: number;
   targetAddress: string;
+}
+
+export interface successData {
+  asset: Asset;
+  hash: string;
+  inner?: boolean;
 }
 
 @Component({
@@ -105,7 +112,8 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
     private copyService: CopyService,
     private currencyService: CurrencyService,
     private analytics: AnalyticsService,
-    private metaMaskService: MetamaskService
+    private metaMaskService: MetamaskService,
+    private mockClientService: MockClientService
   ) {
     this.txState = TransactionConfirmationState.PENDING_CONFIRMATION;
     this.insufficientChainBalance = false;
@@ -309,7 +317,8 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
             if (
               userType === 'keystore' ||
               userType === 'ledger' ||
-              userType === 'XDEFI'
+              userType === 'XDEFI' ||
+              userType === 'walletconnect'
             ) {
               this.keystoreTransfer(matchingPool);
             } else if (userType === 'metamask') {
@@ -331,10 +340,11 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
   }
 
   validateTargetAddress(): boolean {
-    const client = this.userService.getChainClient(
-      this.swapData.user,
-      this.swapData.targetAsset.asset.chain
-    );
+    const client =
+      this.userService.getChainClient(
+        this.swapData.user,
+        this.swapData.targetAsset.asset.chain
+      ) ?? this.mockClientService.getMockClientByChain('THOR');
     if (!client) {
       return false;
     }
@@ -651,7 +661,6 @@ export class ConfirmSwapModalComponent implements OnInit, OnDestroy {
   }
 
   getOutboundHash(hash) {
-    console.log('get outbound hash');
     const outbound$ = this.txStatusService
       .getOutboundHash(hash)
       .pipe(retry(2))

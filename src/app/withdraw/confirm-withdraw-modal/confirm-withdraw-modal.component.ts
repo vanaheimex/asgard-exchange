@@ -153,7 +153,11 @@ export class ConfirmWithdrawModalComponent implements OnInit, OnDestroy {
     }`;
     const user = this.data.user;
 
-    if (user?.type === 'XDEFI' || user?.type === 'keystore') {
+    if (
+      user?.type === 'XDEFI' ||
+      user?.type === 'keystore' ||
+      user?.type === 'walletconnect'
+    ) {
       if (this.data.withdrawType === 'ASYM_ASSET') {
         this.keystoreAssetWithdraw(memo);
       } else {

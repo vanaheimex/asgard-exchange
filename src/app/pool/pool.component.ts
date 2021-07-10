@@ -246,6 +246,18 @@ export class PoolComponent implements OnInit, OnDestroy {
   async getAddresses(): Promise<string[]> {
     if (this.user && this.user.type === 'metamask') {
       return [this.user.wallet.toLowerCase()];
+    } else if (this.user && this.user.type === 'walletconnect') {
+      const clientsChain = this.userService.walletConnectAvailableClients();
+
+      let addresses = [];
+      clientsChain.forEach(async (chain) => {
+        let address = await this.userService
+          .getChainClient(this.user, chain)
+          .getAddress();
+        if (address) addresses.push(address);
+      });
+
+      return addresses;
     } else {
       const thorClient = this.user.clients.thorchain;
       const thorAddress = await thorClient.getAddress();

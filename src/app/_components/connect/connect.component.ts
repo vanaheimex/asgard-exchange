@@ -17,6 +17,7 @@ import {
   OverlaysService,
 } from 'src/app/_services/overlays.service';
 import { AnalyticsService } from 'src/app/_services/analytics.service';
+import { WalletConnectService } from 'src/app/_services/wallet-connect.service';
 
 @Component({
   selector: 'app-connect',
@@ -105,7 +106,8 @@ export class ConnectModal {
   constructor(
     public overlaysService: OverlaysService,
     private analytics: AnalyticsService,
-    private metaMaskService: MetamaskService
+    private metaMaskService: MetamaskService,
+    private wcService: WalletConnectService
   ) {
     this.isTestnet = environment.network === 'testnet' ? true : false;
 
@@ -159,8 +161,14 @@ export class ConnectModal {
     if (!this.isXDEFI) {
       this.analytics.event('connect_select_wallet', 'option_connect_wallet');
       await this.metaMaskService.connect();
-      this.close();
+      this.closeEvent.emit();
     }
+  }
+
+  async connectWalletConnect() {
+    this.analytics.event('connect_select_wallet', 'option_connect_wallet');
+    await this.wcService.connect();
+    this.closeEvent.emit();
   }
 
   storePhrasePrompt(values: { phrase: string; label: string }) {

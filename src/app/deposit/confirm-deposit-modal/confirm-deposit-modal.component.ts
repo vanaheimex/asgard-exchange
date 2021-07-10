@@ -184,7 +184,8 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
       }
     } else if (
       this.data.user?.type === 'keystore' ||
-      this.data.user?.type === 'XDEFI'
+      this.data.user?.type === 'XDEFI' ||
+      this.data.user?.type === 'walletconnect'
     ) {
       const clients = this.data.user.clients;
       const thorClient = clients.thorchain;
@@ -311,7 +312,7 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
   async keystoreDepositAsset(pools: PoolAddressDTO[]) {
     const clients = this.data.user.clients;
     const thorClient = clients.thorchain;
-    const thorchainAddress = await thorClient.getAddress();
+    const thorchainAddress = await thorClient?.getAddress();
     let hash = '';
 
     // get token address

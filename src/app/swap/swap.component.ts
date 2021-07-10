@@ -481,11 +481,10 @@ export class SwapComponent implements OnInit, OnDestroy {
 
   setTargetAddress() {
     if (this.selectedTargetAsset && this.user) {
-      this.targetAddress =
-        this.userService.getTokenAddress(
-          this.user,
-          this.selectedTargetAsset.chain
-        ) || 'No Address';
+      this.targetAddress = this.userService.getTokenAddress(
+        this.user,
+        this.selectedTargetAsset.chain
+      );
     }
   }
 
@@ -727,11 +726,15 @@ export class SwapComponent implements OnInit, OnDestroy {
       );
       const strip0x = assetAddress.substr(2);
       const provider =
-        this.user.type === 'keystore' || this.user.type === 'XDEFI'
+        this.user.type === 'keystore' ||
+        this.user.type === 'XDEFI' ||
+        this.user.type === 'walletconnect'
           ? this.user.clients.ethereum.getProvider()
           : this.metaMaskProvider;
       const userAddress =
-        this.user.type === 'keystore' || this.user.type === 'XDEFI'
+        this.user.type === 'keystore' ||
+        this.user.type === 'XDEFI' ||
+        this.user.type === 'walletconnect'
           ? this.user.clients.ethereum.getAddress()
           : await this.metaMaskProvider.getSigner().getAddress();
 
@@ -1191,7 +1194,11 @@ export class SwapComponent implements OnInit, OnDestroy {
       !this.selectedSourceAsset ||
       !this.selectedTargetAsset ||
       (this.user?.type === 'metamask' &&
-        this.selectedTargetAsset?.chain !== 'ETH')
+        this.selectedTargetAsset?.chain !== 'ETH') ||
+      (this.user?.type === 'walletconnect' &&
+        !this.userService
+          .walletConnectAvailableClients()
+          .includes(this.selectedTargetAsset?.chain))
     );
   }
 

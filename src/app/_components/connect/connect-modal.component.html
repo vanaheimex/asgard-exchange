@@ -135,6 +135,22 @@
           </div>
         </button>
 
+        <button class="connect-option" (click)="connectWalletConnect()">
+          <div class="flex item items-center">
+            <div class="add-icon">
+              <img
+              [src]="
+                isTestnet
+                  ? '/assets/images/wallet-connect-icon-testnet.png'
+                  : '/assets/images/wallet-connect-icon-mainnet.png'
+              "
+                alt="folder icon"
+              />
+            </div>
+            <span class="item-text">Connect with Wallet Connect</span>
+          </div>
+        </button>
+
         <!-- close dialog -->
       </div>
     </div>

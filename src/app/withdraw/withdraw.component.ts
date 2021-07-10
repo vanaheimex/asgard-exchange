@@ -209,7 +209,11 @@ export class WithdrawComponent implements OnInit {
       let chainAddress: string;
       let thorAddress: string;
 
-      if (this.user.type === 'XDEFI' || this.user.type === 'keystore') {
+      if (
+        this.user.type === 'XDEFI' ||
+        this.user.type === 'keystore' ||
+        this.user.type === 'walletconnect'
+      ) {
         const thorclient = this.user.clients.thorchain;
         const chainClient = this.userService.getChainClient(
           this.user,

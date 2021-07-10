@@ -18,6 +18,7 @@ import {
 import { Router } from '@angular/router';
 import { AnalyticsService } from 'src/app/_services/analytics.service';
 import { MetamaskService } from 'src/app/_services/metamask.service';
+import { WalletConnectService } from 'src/app/_services/wallet-connect.service';
 
 @Component({
   selector: 'app-user-settings',
@@ -53,7 +54,8 @@ export class UserSettingsComponent implements OnDestroy {
     private userService: UserService,
     public overlaysService: OverlaysService,
     private analyticsService: AnalyticsService,
-    private metaMaskService: MetamaskService
+    private metaMaskService: MetamaskService,
+    private wcService: WalletConnectService
   ) {
     this.pendingTxCount = 0;
     this.showMenu = false;
@@ -119,6 +121,9 @@ export class UserSettingsComponent implements OnDestroy {
       'disconnect'
     );
     this.overlaysService.setViews(MainViewsEnum.Swap, 'Swap');
+
+    // kill TrustWallet session if TW client is valid
+    this.wcService.killSession();
 
     // add this guard in case the route is not in the swap change it to the swap
     if (this.router.url !== '/swap') {

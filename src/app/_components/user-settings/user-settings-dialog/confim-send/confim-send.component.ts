@@ -147,7 +147,11 @@ export class ConfimSendComponent implements OnInit, OnDestroy {
       sendAmountUSD.toString()
     );
 
-    if (this.user.type === 'keystore' || this.user.type === 'XDEFI') {
+    if (
+      this.user.type === 'keystore' ||
+      this.user.type === 'XDEFI' ||
+      this.user.type === 'walletconnect'
+    ) {
       this.midgardService
         .getInboundAddresses()
         .subscribe((addresses) => this.submitKeystoreTransaction(addresses));
