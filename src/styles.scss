@@ -454,6 +454,24 @@ button {
 }
 
 .uni-input {
+  position: relative;
+
+  .pulse-placeholder {
+    display: none;
+    position: absolute;
+    content: " ";
+    width: 12px;
+    height: 2px;
+    left: 20px;
+    bottom: 24px;
+    background-color: var(--primary-default);
+    animation: blink 1s step-end infinite;
+  }
+
+  input:placeholder-shown + .pulse-placeholder {
+    display: block;
+  }
+
   .search {
     line-height: 26px;
     font-weight: 500;
@@ -1319,6 +1337,11 @@ input:focus {
     height: 14px;
     fill: var(--primary-default);
   }
+}
+
+@keyframes blink {
+  from, to { color: transparent }
+  50% { color: var(--primary-default); }
 }
 
 .no-wrap {

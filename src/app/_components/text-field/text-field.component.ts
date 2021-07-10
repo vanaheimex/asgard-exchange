@@ -27,10 +27,7 @@ export class TextFieldComponent implements OnInit {
   @Input() disable: boolean = false;
   @Input() disableTwo: boolean = false;
 
-  @Input() placeHolder: string[] = [
-    '____________________________________________',
-    '____________________________________________',
-  ];
+  @Input() placeHolder: string[] = [' ', ' '];
 
   constructor() {}
 
