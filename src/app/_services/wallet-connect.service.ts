@@ -192,10 +192,14 @@ export class WalletConnectService {
         // get accounts
         this.getAccounts({ accounts, name }).then((res) => {
           if (!res) return;
-          this.makeUser().then((user) => {
-            this.userService.setUser(user);
-            resolve(true);
-          });
+          this.makeUser()
+            .then((user) => {
+              this.userService.setUser(user);
+              resolve(true);
+            })
+            .catch((error) => {
+              reject(error);
+            });
         });
       });
 
@@ -216,10 +220,14 @@ export class WalletConnectService {
         // get accounts
         this.getAccounts({ accounts, name }).then((res) => {
           if (!res) return;
-          this.makeUser().then((user) => {
-            this.userService.setUser(user);
-            resolve(true);
-          });
+          this.makeUser()
+            .then((user) => {
+              this.userService.setUser(user);
+              resolve(true);
+            })
+            .catch((error) => {
+              reject(error);
+            });
         });
       }
     });

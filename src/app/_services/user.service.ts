@@ -26,6 +26,7 @@ import { TxType } from '../_const/tx-type';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { ETH_DECIMAL, Client as EthClient } from '@xchainjs/xchain-ethereum';
 import { HaskoinService } from './haskoin.service';
+import { MainViewsEnum, OverlaysService } from './overlays.service';
 
 export interface MidgardData<T> {
   key: string;
@@ -62,7 +63,8 @@ export class UserService {
     private midgardService: MidgardService,
     private http: HttpClient,
     private haskoinService: HaskoinService,
-    private txUtilsService: TransactionUtilsService
+    private txUtilsService: TransactionUtilsService,
+    private overlaysService: OverlaysService
   ) {
     this._balances = [];
     this._chainBalanceErrors = [];
@@ -82,6 +84,7 @@ export class UserService {
     } else {
       this.ThorAddress = undefined;
       this.userBalancesSource.next(null);
+      this.overlaysService.setCurrentView(MainViewsEnum.Swap);
     }
   }
 
