@@ -13,12 +13,12 @@ import { Client as BitcoinCashClient } from '@xchainjs/xchain-bitcoincash';
 import { Balances } from '@xchainjs/xchain-client';
 
 export interface AvailableClients {
-  binance: BinanceClient;
-  bitcoin: BitcoinClient;
-  bitcoinCash: BitcoinCashClient;
-  thorchain: ThorchainClient;
-  ethereum: EthereumClient;
-  litecoin: LitecoinClient;
+  binance?: BinanceClient;
+  bitcoin?: BitcoinClient;
+  bitcoinCash?: BitcoinCashClient;
+  thorchain?: ThorchainClient;
+  ethereum?: EthereumClient;
+  litecoin?: LitecoinClient;
 }
 
 export class User {

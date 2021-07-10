@@ -27,6 +27,7 @@ import { UserService } from 'src/app/_services/user.service';
 import { Path } from '../../breadcrumb/breadcrumb.component';
 import { MetamaskService } from 'src/app/_services/metamask.service';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
+import { getTokenAddress } from '@xchainjs/xchain-ethereum';
 
 export type ApproveEthContractModalParams = {
   routerAddress: string;
@@ -146,7 +147,7 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
       let approve: TransactionResponse;
 
       try {
-        if (this.user.type === 'keystore' || this.user.type === 'XDEFI') {
+        if (this.user.type === 'keystore') {
           const inboundAddresses = await this.midgardService
             .getInboundAddresses()
             .toPromise();
@@ -173,6 +174,19 @@ export class ApproveEthContractModalComponent implements OnInit, OnDestroy {
             contractAddress: strip0x,
             routerContractAddress,
             provider: this.metaMaskProvider,
+          });
+        } else if (
+          this.user.type === 'walletconnect' ||
+          this.user.type === 'XDEFI'
+        ) {
+          const ethClient = this.user.clients.ethereum;
+          const assetAddress = getTokenAddress(asset);
+
+          approve = await ethClient.approve({
+            walletIndex: 0,
+            spender: routerContractAddress,
+            sender: assetAddress,
+            feeOptionKey: 'fast',
           });
         }
         this.txStatusService.pollEthContractApproval(approve.hash);
