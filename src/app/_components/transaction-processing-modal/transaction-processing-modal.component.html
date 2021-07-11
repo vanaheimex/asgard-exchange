@@ -106,7 +106,7 @@
       <div style="width: 100%">
         <button
           [disabled]="true"
-          class="next-btn"
+          class="next-btn waiting"
           aria-label="TRANSACTION PROCESSING…"
           (click)="onCloseDialog()"
         >
@@ -116,29 +116,3 @@
     </div>
   </div>
 </div>
-
-<!-- <div class="submitting">
-
-  <div class="icon-container">
-    <mat-progress-spinner mode="indeterminate" diameter="60"></mat-progress-spinner>
-  </div>
-
-  <div class="flex justify-center flex-col items-center p-4">
-
-    <div class="flex justify-between items-center mb-2">
-      <h1 mat-dialog-title class="text-2xl">Transaction Processing</h1>
-    </div>
-
-    <span *ngIf="transactionDetail" class="swap-details">{{transactionDetail}}</span>
-
-    <span class="swap-details">Confirm this transaction in your wallet</span>
-
-  </div>
-
-  <div mat-dialog-actions class="dialog-actions">
-    <button mat-icon-button aria-label="Close Markets Dialog" (click)="onCloseDialog()" mat-dialog-close>
-      <mat-icon>close</mat-icon>
-    </button>
-  </div>
-
-</div> -->
