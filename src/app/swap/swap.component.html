@@ -89,17 +89,13 @@
         </div> -->
 
         <div class="swap-details">
-          <div class="flex justify-between">
+          <div class="flex justify-between" *ngIf="basePrice && selectedTargetAsset && selectedSourceAsset">
             <span class="tx-detail-label">Price:</span>
             <span
-              *ngIf="
-                basePrice && selectedTargetAsset && selectedSourceAsset;
-                else noPrice
-              "
               >{{ basePrice | number: "1.2-4" }}
-              {{ selectedSourceAsset.ticker }} per
-              {{ selectedTargetAsset.ticker
-              }}<span
+              {{ selectedSourceAsset.ticker }} =
+              1 {{ selectedTargetAsset.ticker }}
+              <span
                 *ngIf="sourceAssetPrice"
                 class="mono"
                 style="margin-left: 5px"
@@ -110,13 +106,10 @@
                 {{ currency.code }})</span
               ></span
             >
-            <ng-template #noPrice>
-              <span>...</span>
-            </ng-template>
           </div>
-          <div *ngIf="selectedSourceAsset" class="flex justify-between">
+          <div *ngIf="selectedSourceAsset && networkFeeInSource" class="flex justify-between" style="color: #fff;">
             <span class="tx-detail-label">Network Fee:</span>
-            <span *ngIf="networkFeeInSource"
+            <span
               >{{ networkFeeInSource | number: "1.0-8" }}
               {{ selectedSourceAsset.chain }}.{{ selectedSourceAsset.ticker
               }}<span
@@ -130,12 +123,10 @@
                 {{ currency.code }})</span
               ></span
             >
-            <span *ngIf="!networkFeeInSource">...</span>
           </div>
-          <div class="flex justify-between">
+          <div class="flex justify-between" *ngIf="slip">
             <span class="tx-detail-label">Slip:</span>
             <span
-              *ngIf="slip"
               [ngStyle]="{
                 color:
                   slip * 100 > slippageTolerance
@@ -154,16 +145,24 @@
                 {{ currency.code }})</span
               ></span
             >
-            <span *ngIf="!slip">...</span>
           </div>
           <div *ngIf="user" class="flex justify-between">
             <span>Settings:</span>
-            <span
-              >{{ slippageTolerance }}% slip tolerance
-              <span class="adjust" (click)="goToSettings()"
-                >(click to adjust)</span
-              ></span
-            >
+            <span (click)="goToSettings()" class="hoverable-item">
+              {{ slippageTolerance }}% slip tolerance
+              <svg
+                class="expand-more"
+                [ngClass]="{ disable: !user }"
+                width="10"
+                height="5"
+                viewBox="0 0 15 9"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M7.50071 8.69094C7.23188 8.69094 6.96308 8.5883 6.75812 8.38344L0.308445 1.9337C-0.101838 1.52341 -0.101838 0.858209 0.308445 0.448091C0.718563 0.0379736 1.38363 0.0379736 1.79395 0.448091L7.50071 6.15518L13.2075 0.44829C13.6178 0.0381727 14.2828 0.0381727 14.6929 0.44829C15.1034 0.858408 15.1034 1.52361 14.6929 1.9339L8.24329 8.38364C8.03824 8.58853 7.76944 8.69094 7.50071 8.69094Z"
+                />
+              </svg>
+            </span>
           </div>
         </div>
 

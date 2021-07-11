@@ -138,3 +138,12 @@ $default-font-size: 14px;
     }
   }
 }
+
+.expand-more {
+  display: inline-block;
+  margin-left: 2px;
+  font-size: 24px;
+  height: 28px;
+  color: var(--primary-default);
+  fill: var(--primary-default);
+}
