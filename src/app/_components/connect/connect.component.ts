@@ -166,12 +166,19 @@ export class ConnectModal {
     }
   }
 
-  async connectWalletConnect() {
+  connectWalletConnect() {
     this.analytics.event('connect_select_wallet', 'option_connect_wallet');
     this.message = 'loading';
-    await this.wcService.connect();
-    this.message = 'select';
-    this.closeEvent.emit();
+    this.wcService
+      .connect()
+      .then((res) => {
+        this.message = 'select';
+        this.closeEvent.emit();
+      })
+      .catch((err) => {
+        this.message = err.message || err;
+        this.wcService.killSession();
+      });
   }
 
   storePhrasePrompt(values: { phrase: string; label: string }) {

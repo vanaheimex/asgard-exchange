@@ -56,6 +56,11 @@ const chainToNet = {
   THOR: CoinType.thorchain,
 };
 
+const supportedNetworkChains = {
+  mainnet: 1,
+  testnet: 3,
+};
+
 const errorCodes = {
   ERROR_SESSION_DISCONNECTED: 'Trust Wallet Session has ended.',
 };
@@ -278,7 +283,25 @@ export class WalletConnectService {
     }
   };
 
+  checkEnvironmet() {
+    if (
+      supportedNetworkChains[environment.network] !== this.connector.chainId ||
+      (this.getAddressbyChain('BNB') &&
+        !this.mockClientService
+          .getMockClientByChain('BNB')
+          .validateAddress(this.getAddressbyChain('BNB'))) ||
+      (this.getAddressbyChain('THOR') &&
+        !this.mockClientService
+          .getMockClientByChain('THOR')
+          .validateAddress(this.getAddressbyChain('THOR')))
+    ) {
+      throw new Error('Environmet is not right');
+    }
+  }
+
   async makeUser(): Promise<User> {
+    this.checkEnvironmet();
+
     // binance client
     const userBinanceClient = this.getAddressbyChain('BNB')
       ? await this.trustWalletBinanceClient()
