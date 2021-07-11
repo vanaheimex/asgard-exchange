@@ -553,7 +553,7 @@ button {
   font-size: 10px;
   left: 0px;
   bottom: -10px;
-  color: #474e5d;
+  color: var(--primary-default);
 }
 
 .max {
@@ -953,7 +953,7 @@ a.mat-primary {
     background-color: #0d1b23;
     background-image: unset;
 
-    .waiting {
+    &.waiting {
       color: #fff;
     }
   }
