@@ -635,7 +635,7 @@ export class UserService {
       } else if (key === 'ethereum') {
         availableChains.push('ETH');
       } else if (key === 'thorchain') {
-        availableChains.push('ETH');
+        availableChains.push('THOR');
       }
     }
     return availableChains;
