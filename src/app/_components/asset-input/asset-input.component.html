@@ -1,15 +1,9 @@
 <div class="swap-input uni-input" [ngClass]="{ disable: disableUser }">
   <div class="swap-input--inner">
     <div class="flex justify-between label-wrapper">
-      <label class="label-title" for="{{ label }}Input"
-        >{{ label
-        }}<span
-          style="color: #474e5d"
-          *ngIf="selectedAsset && balance && !disableUser && showBalance"
-        >
-          (<span class="mono">{{ balance }}</span> balance)</span
-        ><span style="color: #474e5d"> {{ extraLabel }}</span></label
-      >
+      <label class="label-title" for="{{ label }}Input">
+        {{ label }} <span style="color: #474e5d"> {{ extraLabel }} </span>
+      </label>
       <div class="flex target-address" *ngIf="hasAddress || targetAddress" (click)="openTargetAddress()">
         <span>{{targetLabel ? targetLabel: 'Receive at'}}</span>
         <div class=" flex clickable-span items-center" [ngClass]="{'disabled': disabledMarketSelect}">
@@ -45,8 +39,7 @@
             font-size: 22px;
             font-family: 'Roboto Mono';
           "
-          >0.0</span
-        >
+        >0.0</span>
       </div>
 
       <div
@@ -166,20 +159,25 @@
       </button>
     </div>
 
-    <span class="usd-est" *ngIf="showPrice && inputUsdValue"
-      >{{ inputUsdValue * currency.value | number: ".2-3" }}
-      {{ currency.code }}</span
+    <span 
+      class="usd-est"
+      *ngIf="selectedAsset && balance && !disableUser && showBalance"
     >
+      {{ balance }} BALANCE /  
+    </span>
+    <span class="usd-est" *ngIf="showPrice && inputUsdValue">
+      {{ inputUsdValue * currency.value | number: ".2-3" }} {{ currency.code }}
+    </span>
     <span
       class="usd-est"
       *ngIf="showPrice && !inputUsdValue && priceInput && assetUnit"
-      >{{ priceInput * currency.value * assetUnit | number: ".2-3" }}
-      {{ currency.code }}</span
     >
+      {{ priceInput * currency.value * assetUnit | number: ".2-3" }} {{ currency.code }} 
+    </span>
     <span
       class="usd-est"
       *ngIf="showPrice && !inputUsdValue && (assetUnit == 0 || !assetUnit)"
-      >{{ 0 | number: ".2-3" }} {{ currency.code }}</span
-    >
+    >{{ 0 | number: ".2-3" }} {{ currency.code }}
+    </span>
   </div>
 </div>

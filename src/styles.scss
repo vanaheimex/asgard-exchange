@@ -465,11 +465,20 @@ button {
     left: 20px;
     bottom: 24px;
     background-color: var(--primary-default);
-    animation: blink 1s step-end infinite;
+    animation: holder-blink 1s step-end infinite;
   }
 
   input:placeholder-shown + .pulse-placeholder {
     display: block;
+  }
+
+  input:focus + .pulse-placeholder {
+    display: none;
+  }
+
+  input:placeholder-shown:disabled + .pulse-placeholder {
+    display: block;
+    animation: holder-blink-grey 1s step-end infinite;
   }
 
   .search {
@@ -1354,11 +1363,6 @@ input:focus {
   }
 }
 
-@keyframes blink {
-  from, to { color: transparent }
-  50% { color: var(--primary-default); }
-}
-
 .no-wrap {
   white-space: nowrap;
 }
@@ -1381,18 +1385,14 @@ input:focus {
   }
 
 }
-// .swap-details {
-//   padding: 6px 1rem 0;
-//   font-weight: 500;
-//   font-size: 14px;
-//   color: rgb(195, 197, 203);
-// }
 
-// .pool-list-item {
-//   float: left;
-//   width: 100%;
-//   border: 1px solid #40444f;
-//   border-radius: 12px;
-//   padding: 1rem;
-//   margin-bottom: 12px;
-// }
+@keyframes holder-blink {
+  from, to { background-color: transparent }
+  50% { background-color: var(--primary-default); }
+}
+
+
+@keyframes holder-blink-grey {
+  from, to { background-color: transparent }
+  50% { background-color: var(--primary-grey-color); }
+}

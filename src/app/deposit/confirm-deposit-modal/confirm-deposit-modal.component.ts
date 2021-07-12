@@ -241,7 +241,7 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
           } catch (error) {
             console.error('error making token transfer: ', error);
             this.txState = TransactionConfirmationState.ERROR;
-            this.error = error;
+            this.error = error.message || error;
             return;
           }
           break;
@@ -258,8 +258,8 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
             break;
           } catch (error) {
             console.error('error making RUNE transfer: ', error);
-            this.txState = 'RETRY_RUNE_DEPOSIT';
-            this.error = error;
+            this.txState = TransactionConfirmationState.ERROR;
+            this.error = error.message || error;
             return;
           }
       }
@@ -421,31 +421,24 @@ export class ConfirmDepositModalComponent implements OnInit, OnDestroy {
 
   async depositRune(thorClient: Client, asset: Asset): Promise<string> {
     // deposit RUNE
-    try {
-      const address = this.userService.getTokenAddress(
-        this.data.user,
-        this.data.asset.asset.chain
-      );
-      if (!address || address === '') {
-        throw new Error('No Address Found');
-      }
-
-      const runeHash = await this.keystoreDepositService.runeDeposit({
-        client: thorClient,
-        inputAmount: this.data.runeAmount,
-        memo:
-          this.data.poolTypeOption === 'SYM'
-            ? `+:${asset.chain}.${asset.symbol}:${address}`
-            : `+:${asset.chain}.${asset.symbol}`,
-      });
-
-      return runeHash;
-    } catch (error) {
-      console.error('error making RUNE transfer: ', error);
-      this.txState = 'RETRY_RUNE_DEPOSIT';
-      this.error = error.message || error;
-      return;
+    const address = this.userService.getTokenAddress(
+      this.data.user,
+      this.data.asset.asset.chain
+    );
+    if (!address || address === '') {
+      throw new Error('No Address Found');
     }
+
+    const runeHash = await this.keystoreDepositService.runeDeposit({
+      client: thorClient,
+      inputAmount: this.data.runeAmount,
+      memo:
+        this.data.poolTypeOption === 'SYM'
+          ? `+:${asset.chain}.${asset.symbol}:${address}`
+          : `+:${asset.chain}.${asset.symbol}`,
+    });
+
+    return runeHash;
   }
 
   assetDepositError(error: string) {
