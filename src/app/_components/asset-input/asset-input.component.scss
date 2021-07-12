@@ -57,13 +57,14 @@
     color: var(--primary-default);
   }
 
-  &.disable {
-    color: #474e5d;
+  &.processing {
+    color: #474e5d !important;
 
     &::placeholder {
-      color: #474e5d;
+      color: #474e5d !important;
     }
   }
+
 }
 
 .select-token {
@@ -163,4 +164,8 @@
   &:hover {
     color: var(--primary-default);
   }
+}
+
+.usd-est.processing {
+  color: var(--primary-grey-color);
 }

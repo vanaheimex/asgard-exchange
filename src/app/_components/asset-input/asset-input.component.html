@@ -2,7 +2,7 @@
   <div class="swap-input--inner">
     <div class="flex justify-between label-wrapper">
       <label class="label-title" for="{{ label }}Input">
-        {{ label }} <span style="color: #474e5d"> {{ extraLabel }} </span>
+        {{ label }} <span style="color: var(--primary-grey-color)"> {{ extraLabel }} </span>
       </label>
       <div class="flex target-address" *ngIf="hasAddress || targetAddress" (click)="openTargetAddress()">
         <span>{{targetLabel ? targetLabel: 'Receive at'}}</span>
@@ -61,7 +61,7 @@
         placeholder="0.0"
         type="number"
         [disabled]="disableInput"
-        [ngClass]="{ disable: disableUser }"
+        [ngClass]="{ disable: disableUser, processing: processing }"
         [ngStyle]="{ color: inputColor }"
       />
 
@@ -161,21 +161,24 @@
 
     <span 
       class="usd-est"
+      [ngClass]="{ processing: processing }"
       *ngIf="selectedAsset && balance && !disableUser && showBalance"
     >
       {{ balance }} BALANCE /  
     </span>
-    <span class="usd-est" *ngIf="showPrice && inputUsdValue">
+    <span class="usd-est" [ngClass]="{ processing: processing }" *ngIf="showPrice && inputUsdValue">
       {{ inputUsdValue * currency.value | number: ".2-3" }} {{ currency.code }}
     </span>
     <span
       class="usd-est"
+      [ngClass]="{ processing: processing }"
       *ngIf="showPrice && !inputUsdValue && priceInput && assetUnit"
     >
       {{ priceInput * currency.value * assetUnit | number: ".2-3" }} {{ currency.code }} 
     </span>
     <span
       class="usd-est"
+      [ngClass]="{ processing: processing }"
       *ngIf="showPrice && !inputUsdValue && (assetUnit == 0 || !assetUnit)"
     >{{ 0 | number: ".2-3" }} {{ currency.code }}
     </span>

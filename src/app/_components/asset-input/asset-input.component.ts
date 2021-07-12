@@ -87,6 +87,7 @@ export class AssetInputComponent implements OnInit, OnDestroy {
   }
   _balance: number;
 
+  // TODO: clean asset-input structare
   @Input() hideMax: boolean;
   @Input() extraLabel: string;
   @Input() showBalance: boolean = true;
@@ -96,6 +97,7 @@ export class AssetInputComponent implements OnInit, OnDestroy {
 
   @Input() disabledMarketSelect: boolean;
   @Input() loading: boolean;
+  @Input() processing: boolean;
   @Input() error: boolean;
   @Input() set selectableMarkets(markets: AssetAndBalance[]) {
     this._selectableMarkets = markets;
